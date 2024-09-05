@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-    <artifactId>codelearna</artifactId>
-    <groupId>mks.assistant.codelearna</groupId>
-    <version>23.0</version>
-  </parent>
+<!--	<parent>-->
+<!--		<artifactId>codelearna</artifactId>-->
+<!--		<groupId>mks.assistant.codelearna</groupId>-->
+<!--		<version>23.0</version>-->
+<!--	</parent>-->
 	<!-- Comments parent tag to run the web standalone -->
 	<groupId>mks.assistant.codelearna</groupId>
 	<artifactId>codelearna-web</artifactId>
@@ -25,7 +25,7 @@
         <sakai.commons.fileupload.version>1.5</sakai.commons.fileupload.version>
         <sakai.jackson.version>2.13.2</sakai.jackson.version>
         <sakai.jstl.version>1.2</sakai.jstl.version>
-        <!-- More -->
+		<!-- More -->
         <sakai.log4j.version>2.20.0</sakai.log4j.version>
         <sakai.slf4j.version>1.7.36</sakai.slf4j.version>
         <sakai.poi.version>5.2.3</sakai.poi.version>
