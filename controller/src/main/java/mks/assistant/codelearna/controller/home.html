@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>The generated source code Web Application for Sakai</title>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div th:replace="~{fragments/header :: header}">Header</div>
+    <div class="container">
+        <div class="text-center">
+            <div class="lead">
+                <H1>Refer document at http://www.thymeleaf.org/doc/articles/layouts.html to make your own layout.</H1>
+            </div>
+            <div class="lead">Welcome to the generated source code Web Application for Sakai.</div>
+			<p>Login userId: <span th:text="${session.userDisplayName}"></span></p>
+			<p>Login Display Username: <span th:text="${session.userEid}"></span></p>
+            <p>
+                <a id="signup" class="btn btn-success btn-lg">Sign up</a>
+            </p>
+        </div>
+        <div th:insert="~{fragments/footer :: footer}">&copy; 2017 The MKS Group</div>
+    </div>
+
+</body>
+</html>
