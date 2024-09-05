@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+http://www.springframework.org/schema/security 
+http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+
+    
+    <beans:bean id="webexpressionHandler" 
+        class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" >
+    </beans:bean>
+        
+<!-- Uncomment this authentication for Development environment -->
+<!--     <http auto-config="true"> -->
+<!--         <access-denied-handler error-page="/403" /> -->
+<!--         <intercept-url pattern="/recovery" access="ROLE_ANONYMOUS" /> -->
+<!--         <intercept-url pattern="/recovery/**" access="ROLE_ANONYMOUS" /> -->
+<!--         <intercept-url pattern="/recoverAccount" access="ROLE_ADMIN,ROLE_USER,ROLE_ANONYMOUS" /> -->
+<!--         <intercept-url pattern="/forgetPassword" access="ROLE_ADMIN,ROLE_USER,ROLE_ANONYMOUS" /> -->
+<!--         <intercept-url pattern="/changePassword" access="ROLE_ADMIN,ROLE_USER,ROLE_ANONYMOUS" /> -->
+<!--         <intercept-url pattern="/checkInfo" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER,ROLE_MANAGER" /> -->
+<!--         <intercept-url pattern="/checkPhoneInfo" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER,ROLE_MANAGER" /> -->
+<!--         <intercept-url pattern="/login" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER,ROLE_MANAGER" /> -->
+<!--         <intercept-url pattern="/register" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_USER,ROLE_MANAGER" /> -->
+<!--         <intercept-url pattern="/resources/**" access="ROLE_ADMIN,ROLE_USER,ROLE_ANONYMOUS,ROLE_MANAGER" /> -->
+<!--         <intercept-url pattern="/**" access="ROLE_ADMIN,ROLE_USER,ROLE_MANAGER" /> -->
+<!--         <form-login login-page="/login" default-target-url="/home" -->
+<!--             authentication-failure-url="/login?error"/> -->
+<!--         <logout logout-success-url="/login?logout" invalidate-session="true"/> -->
+<!--     </http> -->
+
+    <!-- Uncomment this authentication for Development environment -->
+<!--     <authentication-manager alias="authenticationManager"> -->
+<!--         <authentication-provider> -->
+<!--             <user-service> -->
+<!--                 <user name="member" password="member" authorities="ROLE_TEAMMEMBER" /> -->
+<!--                  <user name="projectmanager" password="projectmanager" authorities="ROLE_PROJECTMANAGER" /> -->
+<!--                  <user name="generalmanager" password="generalmanager" authorities="ROLE_GENERALMANAGER" /> -->
+<!--                  <user name="admin" password="admin123456" authorities="ROLE_ADMIN" /> -->
+<!--             </user-service> -->
+<!--         </authentication-provider> -->
+<!--     </authentication-manager> -->
+
+<!-- Uncomment this authentication for Development environment using LDAP for authentication-->
+<!--     <authentication-manager> -->
+<!--         <ldap-authentication-provider  -->
+<!--             user-search-filter="(uid={0})" -->
+<!--             user-search-base="ou=People" -->
+<!--             group-search-filter="(member={0})" -->
+<!--             group-search-base="ou=AM,ou=ROLES" -->
+<!--             group-role-attribute="cn" -->
+<!--             role-prefix="ROLE_"> -->
+<!--         </ldap-authentication-provider> -->
+<!--     </authentication-manager> -->
+<!--     <ldap-server url="ldap://localhost:389/dc=maxcrc,dc=com" manager-dn="cn=Manager,dc=maxcrc,dc=com" manager-password="secret" /> -->
+
+    <!-- CAS authentication.START -->
+    
+    <!-- Uncomment this authentication-manager to use LDAP for authentication -->
+<!--     <authentication-manager> -->
+<!--         <ldap-authentication-provider  -->
+<!--             user-search-filter="(uid={0})" -->
+<!--             user-search-base="ou=People" -->
+<!--             group-search-filter="(member={0})" -->
+<!--             group-search-base="ou=AM,ou=ROLES" -->
+<!--             group-role-attribute="cn" -->
+<!--             role-prefix="ROLE_"> -->
+<!--         </ldap-authentication-provider> -->
+<!--     </authentication-manager> -->
+    
+    <!--
+        Enable security, let the casAuthenticationEntryPoint handle all intercepted urls.
+        The CAS_FILTER needs to be in the right position within the filter chain.
+    -->
+    <!-- Uncomment this entry-point-refer to use CAS for authentication -->
+<!--     <http entry-point-ref="casAuthenticationEntryPoint" auto-config="true"> -->
+<!--         <intercept-url pattern="/**" access="IS_AUTHENTICATED_FULLY"></intercept-url> -->
+<!--         <custom-filter position="CAS_FILTER" ref="casAuthenticationFilter"></custom-filter> -->
+<!--     </http> -->
+        <http entry-point-ref="casAuthenticationEntryPoint" use-expressions="true">
+            <intercept-url pattern="/" access="isAuthenticated()" />
+            <intercept-url pattern="/**" access="isAuthenticated()" />
+            <intercept-url pattern="/logout" access="permitAll"/>
+        
+<!--             <custom-filter ref="singleLogoutFilter" before="LOGOUT_FILTER" /> -->
+            <custom-filter ref="casAuthenticationFilter" position="CAS_FILTER" />
+        
+<!--             <logout logout-url="/logout" logout-success-url="http://localhost:7070/cas/logout?service=http://localhost:9090/FileMSakai-web" /> -->
+        </http>
+
+    <!--
+        Required for the casProcessingFilter, so define it explicitly set and
+        specify an Id Even though the authenticationManager is created by
+        default when namespace based config is used.
+    -->
+    <!-- Uncomment this entry-point-refer to use CAS for authentication -->
+    <authentication-manager alias="authenticationManager">
+        <authentication-provider ref="casAuthenticationProvider"></authentication-provider>
+    </authentication-manager>
+    
+    <!--
+        The entryPoint intercepts all the CAS authentication requests.
+        It redirects to the CAS loginUrl for the CAS login page.
+    -->
+    <beans:bean id="casAuthenticationEntryPoint" class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+        <beans:property name="loginUrl" value="http://localhost:7070/cas/login"></beans:property>
+        <beans:property name="serviceProperties" ref="serviceProperties"></beans:property>
+    </beans:bean>
+    
+    <!--
+        The CAS filter handles the redirect from the CAS server and starts the ticket validation.
+    -->
+    <beans:bean id="casAuthenticationFilter" class="org.springframework.security.cas.web.CasAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
+    </beans:bean>
+
+    <!-- 
+        Handles the CAS ticket processing.
+     -->
+    <beans:bean id="casAuthenticationProvider" class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+        <beans:property name="authenticationUserDetailsService">
+          <beans:bean class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+            <beans:constructor-arg ref="userService" />
+          </beans:bean>
+        </beans:property>
+        <beans:property name="serviceProperties" ref="serviceProperties"></beans:property>
+        <beans:property name="ticketValidator">
+            <beans:bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+                <beans:constructor-arg index="0" value="http://localhost:7070/cas"></beans:constructor-arg>
+            </beans:bean>
+        </beans:property>
+        <beans:property name="key" value="cas"></beans:property>
+    </beans:bean>
+
+ 
+    <beans:bean id="userService" class="org.springframework.security.core.userdetails.CasUserDetailsServiceImpl">
+    </beans:bean>
+    
+    <!-- Using local LDAP.START -->
+<!--     <ldap-user-service id="userService" -->
+<!--         server-ref="ldapServer"  -->
+<!--         user-search-base="ou=People" -->
+<!--         user-search-filter="(uid={0})" -->
+<!--     /> -->
+<!--     <ldap-server id="ldapServer" url="ldap://localhost:389/dc=maxcrc,dc=com" manager-dn="cn=Manager,dc=maxcrc,dc=com" manager-password="secret" /> -->
+    <!-- Using local LDAP.END -->
+       
+    <!--
+        This section is used to configure CAS. The service is the
+        actual redirect that will be triggered after the CAS login sequence.
+    -->
+    <beans:bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
+        <beans:property name="service" value="http://localhost:9090/FileMSakai-web/j_spring_cas_security_check"></beans:property>
+        <beans:property name="sendRenew" value="false"></beans:property>
+    </beans:bean>
+
+    <!-- Handles a Single Logout Request from the CAS Server must be in custom-filter of security.xml -->
+<!--     <beans:bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/> -->
+
+    <!-- CAS authentication.END -->
+
+</beans:beans>

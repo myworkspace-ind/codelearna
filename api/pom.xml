@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>codelearna</artifactId>
+		<groupId>mks.assistant.codelearna</groupId>
+		<version>23.0</version>
+        <relativePath>../pom.xml</relativePath>
+	</parent>
+<!-- 	<groupId>mks.assistant.codelearna</groupId> -->
+	<artifactId>codelearna-api</artifactId>
+
+	<properties>
+		<deploy.target>shared</deploy.target>
+	</properties>
+	<dependencies>
+		<!-- Allow create entities -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+
+		<!-- Sakai dependencies -->
+		<dependency>
+			<groupId>org.sakaiproject.kernel</groupId>
+			<artifactId>sakai-kernel-api</artifactId>
+		</dependency>
+
+
+	</dependencies>
+	<build>
+		<!-- configure the build to use the standard maven structure -->
+		<sourceDirectory>src/main/java</sourceDirectory>
+	</build>
+</project>

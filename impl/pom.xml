@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>codelearna</artifactId>
+		<groupId>mks.assistant.codelearna</groupId>
+		<version>23.0</version>
+        <relativePath>../pom.xml</relativePath>
+	</parent>
+<!-- 	<groupId>mks.assistant.codelearna</groupId> -->
+	<artifactId>codelearna-impl</artifactId>
+	<packaging>jar</packaging>
+	<dependencies>
+        <dependency>
+            <groupId>mks.assistant.codelearna</groupId>
+            <artifactId>codelearna-common</artifactId>
+            <version>${module.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>mks.assistant.codelearna</groupId>
+			<artifactId>codelearna-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+            <version>${spring.data.commons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring.data.jpa.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+
+		<!-- Sakai dependencies -->
+		<dependency>
+			<groupId>org.sakaiproject.kernel</groupId>
+			<artifactId>sakai-kernel-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.sakaiproject.kernel</groupId>
+			<artifactId>sakai-component-manager</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>org.sakaiproject.sitemanage</groupId>
+            <artifactId>sakai-site-manage-util</artifactId>
+        </dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.sakaiproject.kernel</groupId>-->
+<!--			<artifactId>sakai-kernel-util</artifactId>-->
+<!--		</dependency>-->
+
+	</dependencies>
+	<build>
+		<!-- configure the build to use the standard maven structure -->
+		<sourceDirectory>src/main/java</sourceDirectory>
+	</build>
+</project>
