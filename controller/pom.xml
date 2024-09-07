@@ -28,6 +28,11 @@
             <artifactId>codelearna-impl</artifactId>
 <!--             <version>${module.version}</version> -->
         </dependency>
+        <dependency>
+            <groupId>mks.assistant.codelearna</groupId>
+            <artifactId>codelearna-biz</artifactId>
+             <version>${module.version}</version> 
+        </dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
