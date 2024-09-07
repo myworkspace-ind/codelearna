@@ -67,7 +67,7 @@
         </property>
     </bean>
 
-	<context:component-scan base-package="mks.assistant.codelearna" />
+	<context:component-scan base-package="mks.myworkspace.learna" />
 	    <!-- Datasource -->
     <!-- Step 1 -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -97,7 +97,7 @@
 <!--     </bean> -->
     <bean id="entityManagerFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
-        <property name="packagesToScan" value="mks.myworkspace.codelearna.entity" />
+        <property name="packagesToScan" value="mks.myworkspace.learna.entity" />
 		<!-- <property name="mappingResources">
 			<list>
 				<value>ContentReviewItem.hbm.xml</value>
@@ -118,5 +118,6 @@
 <!--     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"> -->
 <!--         <property name="entityManagerFactory" ref="entityManagerFactory" /> -->
 <!--     </bean> -->
+	<jpa:repositories base-package="mks.myworkspace.learna.repository" />
 	<import resource="jpa.xml"/>
 </beans>

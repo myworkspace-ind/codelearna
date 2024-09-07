@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package mks.assistant.codelearna.controller;
+package mks.myworkspace.learna.controller;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package mks.assistant.codelearna.entity;
+package mks.myworkspace.learna.entity;
 
 import java.util.Date;
 
