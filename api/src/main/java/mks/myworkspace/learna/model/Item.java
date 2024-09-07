@@ -1,4 +1,4 @@
-package mks.assistant.codelearna.model;
+package mks.myworkspace.learna.model;
 
 /**
  * Licensed to MKS Group under one or more contributor license

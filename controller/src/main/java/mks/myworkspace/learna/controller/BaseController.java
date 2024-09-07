@@ -35,8 +35,8 @@ import org.springframework.beans.factory.annotation.Value;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import mks.assistant.codelearna.logic.ProjectLogic;
-import mks.assistant.codelearna.logic.SakaiProxy;
+import mks.myworkspace.learna.logic.ProjectLogic;
+import mks.myworkspace.learna.logic.SakaiProxy;
 
 /**
  * Handles requests for the application home page.
