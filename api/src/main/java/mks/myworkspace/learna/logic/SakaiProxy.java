@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package mks.assistant.codelearna.logic;
+package mks.myworkspace.learna.logic;
 
 import java.util.List;
 

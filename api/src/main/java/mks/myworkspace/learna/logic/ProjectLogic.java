@@ -17,11 +17,11 @@
  * under the License.
  */
 
-package mks.assistant.codelearna.logic;
+package mks.myworkspace.learna.logic;
 
 import java.util.List;
 
-import mks.assistant.codelearna.model.Item;
+import mks.myworkspace.learna.model.Item;
 
 /**
  * An example logic interface
