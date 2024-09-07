@@ -25,8 +25,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
-import mks.assistant.codelearna.logic.ProjectLogic;
-import mks.assistant.codelearna.model.Item;
+import mks.myworkspace.learna.logic.ProjectLogic;
+import mks.myworkspace.learna.model.Item;
 
 /**
  * Implementation of {@link ProjectLogic}
