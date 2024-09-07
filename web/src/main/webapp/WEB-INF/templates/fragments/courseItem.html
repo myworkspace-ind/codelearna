@@ -1,0 +1,12 @@
+<div th:fragment="courseItem(course)">
+    <div class="col-md-3 mb-4">
+        <div class="course-item">
+            <a href="javascript:void(0);" class="course-link" style="text-decoration: none; color: inherit;">
+                <div class="course-placeholder" th:style="'background-color: ' + ${course.color} + '; height: 200px;'"></div>
+                <h3 th:text="${course.name}"></h3>
+                <p th:text="${course.price}"></p>
+                <p th:text="${course.discount}"></p>
+            </a>
+        </div>
+    </div>
+</div>
