@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package mks.assistant.codelearna.controller;
+package mks.myworkspace.learna.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

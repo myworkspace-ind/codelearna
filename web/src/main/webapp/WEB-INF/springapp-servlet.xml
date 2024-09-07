@@ -67,5 +67,57 @@
         </property>
     </bean>
 
-	<context:component-scan base-package="mks.assistant.codelearna" />
+	<context:component-scan base-package="mks.myworkspace.learna" />
+	    <!-- Datasource -->
+    <!-- Step 1 -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${driverClassName@javax.sql.BaseDataSource}" />
+        <property name="url" value="${url@javax.sql.BaseDataSource}" />
+        <property name="username" value="${username@javax.sql.BaseDataSource}" />
+        <property name="password" value="${password@javax.sql.BaseDataSource}" />
+    </bean>
+    
+    <!-- Step 2 -->
+<!--     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"> -->
+<!--         <property name="dataSource" ref="dataSource" /> -->
+<!--         <property name="packagesToScan" value="mks.myworkspace.cvhub.entity" /> -->
+<!--         <property name="jpaVendorAdapter"> -->
+<!--             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"> -->
+<!--                 <property name="generateDdl" value="${auto.ddl}" /> -->
+<!--             </bean> -->
+<!--         </property> -->
+<!--         <property name="jpaProperties"> -->
+<!--             <props> -->
+<!--                 <prop key="hibernate.show_sql">${hibernate.show_sql}</prop> -->
+<!--                 <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop> -->
+<!--                 <prop key="hibernate.dialect">${hibernate.dialect}</prop> -->
+<!--                 <prop key="hibernate.globally_quoted_identifiers">true</prop> -->
+<!--             </props> -->
+<!--         </property> -->
+<!--     </bean> -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="mks.myworkspace.learna.entity" />
+		<!-- <property name="mappingResources">
+			<list>
+				<value>ContentReviewItem.hbm.xml</value>
+			</list>
+		</property> -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<!-- <prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop> -->
+				<prop key="hibernate.query.substitutions">true 1, false 0</prop>
+				<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+			</props>
+		</property>
+
+    </bean>
+    <!-- Step 3 -->
+<!--     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"> -->
+<!--         <property name="entityManagerFactory" ref="entityManagerFactory" /> -->
+<!--     </bean> -->
+	<jpa:repositories base-package="mks.myworkspace.learna.repository" />
+	<import resource="jpa.xml"/>
 </beans>

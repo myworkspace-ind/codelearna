@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package mks.assistant.codelearna.logic;
+package mks.myworkspace.learna.logic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
-
+import mks.assistant.codelearna.logic.ProjectLogic;
 import mks.assistant.codelearna.model.Item;
 
 /**

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package mks.assistant.codelearna.logic;
+package mks.myworkspace.learna.logic;
 
 import java.util.List;
 
@@ -40,6 +40,7 @@ import org.sakaiproject.user.api.UserDirectoryService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import mks.assistant.codelearna.logic.SakaiProxy;
 
 /**
  * Implementation of {@link SakaiProxy}
