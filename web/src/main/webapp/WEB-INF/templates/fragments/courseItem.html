@@ -1,12 +1,18 @@
-<div th:fragment="courseItem(course)">
-    <div class="col-md-3 mb-4">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/resources/css/courseItem.css}">
+</head>
+<body>
+    <div th:fragment="courseItem(course)">
         <div class="course-item">
             <a href="javascript:void(0);" class="course-link" style="text-decoration: none; color: inherit;">
-                <div class="course-placeholder" th:style="'background-color: ' + ${course.color} + '; height: 200px;'"></div>
-                <h3 th:text="${course.name}"></h3>
-                <p th:text="${course.price}"></p>
-                <p th:text="${course.discount}"></p>
+                <img th:src="${course.imageUrl}" th:alt="${course.name}" style="height: 200px; width: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif';">
+                <h3 th:text="${course.name}" style="text-align: left;"></h3>
+                <p th:text="'VNĐ ' + ${#numbers.formatDecimal(course.originalPrice, 0, 0)}" style="text-decoration: line-through; text-align: right;"></p>
+                <h5 th:text="'VNĐ ' + ${#numbers.formatDecimal(course.discountedPrice, 0, 0)}" style="color: red; text-align: right;"></h5>
             </a>
         </div>
     </div>
-</div>
+</body>
+</html>
