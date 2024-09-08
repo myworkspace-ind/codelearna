@@ -1,28 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>The generated source code Web Application for Sakai</title>
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Page</title>
+    <link rel="stylesheet" href="resources/css/play.css">
 </head>
 <body>
-
-    <div th:replace="~{fragments/header :: header}">Header</div>
     <div class="container">
-        <div class="text-center">
-            <div class="lead">
-                <H1>play </H1>
+        <!-- Nút Toggle -->
+        <button id="toggle-btn">☰</button>
+
+        <!-- Video Section -->
+        <div class="main-video" id="main-video">
+            <div class="video">
+                <video id="main-video-player" src="http://media.w3.org/2010/05/sintel/trailer.mp4" controls muted autoplay></video>
+                <h3 class="title">Bài 1</h3>
             </div>
-            <div class="lead">Welcome to the generated source code Web Application for Sakai.</div>
-			<p>Login userId: <span th:text="${session.userDisplayName}"></span></p>
-			<p>Login Display Username: <span th:text="${session.userEid}"></span></p>
-            <p>
-                <a id="signup" class="btn btn-success btn-lg">Sign up</a>
-            </p>
+
+            <!-- Nút điều khiển video -->
+            <div class="controls">
+                <button id="prev-btn">Bài trước</button>
+                <button id="play-pause-btn">Tạm dừng</button>
+                <button id="next-btn">Bài tiếp theo</button>
+            </div>
         </div>
-        <div th:insert="~{fragments/footer :: footer}">&copy; 2017 The MKS Group</div>
+
+        <!-- Danh sách video -->
+        <div class="video-list" id="video-list">
+            <div class="video-list-content">
+                <div class="video-list-header">
+                    <input type="text" placeholder="Tìm kiếm bài học" id="search">
+                    <button>Tìm kiếm</button>
+                </div>
+                <div class="vid active">
+                    <video src="http://media.w3.org/2010/05/sintel/trailer.mp4" muted></video>
+                    <h3 class="title">Bài 1</h3>
+                </div>
+                <div class="vid">
+                    <video src="http://media.w3.org/2010/05/sintel/trailer.mp4" muted></video>
+                    <h3 class="title">Bài 2</h3>
+                </div>
+                <div class="vid">
+                    <video src="http://media.w3.org/2010/05/sintel/trailer.mp4" muted></video>
+                    <h3 class="title">Bài 3</h3>
+                </div>
+                <div class="vid">
+                    <video src="http://media.w3.org/2010/05/sintel/trailer.mp4" muted></video>
+                    <h3 class="title">Bài 4</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phần bình luận -->
+        <div class="comment-section">
+            <h3>Bình luận</h3>
+            <div class="comment-input">
+                <textarea id="comment-text" placeholder="Nhập bình luận của bạn..." rows="3"></textarea>
+                <button id="submit-comment-btn">Gửi bình luận</button>
+            </div>
+            <div class="comment-list">
+                <h4>Danh sách bình luận:</h4>
+                <ul id="comment-list">
+                    <!-- Các bình luận sẽ được thêm tại đây -->
+                </ul>
+            </div>
+        </div>
     </div>
 
+    <script src="resources/js/play.js"></script>
 </body>
 </html>
