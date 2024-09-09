@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.service.CourseService;
+import mks.myworkspace.learna.service.SearchService;
 
 @Controller
 public class SearchController extends BaseController {
 
     @Autowired
-    private CourseService courseService;
+    private SearchService searchService;
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ModelAndView searchCourses(@RequestParam(value = "keyword", required = false) String keyword, 
@@ -32,9 +33,9 @@ public class SearchController extends BaseController {
         // Tìm kiếm khóa học theo từ khóa
         List<Course> courses;
         if (keyword != null && !keyword.isEmpty()) {
-            courses = courseService.searchCoursesByKeyword(keyword);
+            courses = searchService.searchCoursesByKeyword(keyword);
         } else {
-            courses = courseService.getAllCourses();
+            courses = searchService.getAllCourses();
         }
 
         

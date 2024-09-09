@@ -10,5 +10,4 @@ public interface CourseService {
     Course getCourseById(Long id);
     void deleteCourse(Long id);
     List<Course> getAllCourses();
-    List<Course> searchCoursesByKeyword(String keyword);
 }

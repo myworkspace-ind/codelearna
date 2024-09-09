@@ -38,9 +38,5 @@ public class CourseServiceImpl implements CourseService {
         return repo.findAll();
     }
     
- // Tìm kiếm khóa học theo từ khóa
-    @Override
-    public List<Course> searchCoursesByKeyword(String keyword) {
-        return repo.findByNameContainingIgnoreCase(keyword);
-    }
+
 }
