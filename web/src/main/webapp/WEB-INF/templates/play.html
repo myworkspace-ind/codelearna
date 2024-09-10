@@ -1,64 +1,87 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Play Page</title>
-    <link rel="stylesheet" th:href="@{/resources/css/play.css}">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Play Page</title>
+<link rel="stylesheet" th:href="@{/resources/css/play.css}">
 </head>
 <body>
-    <div class="container">
-        <!-- Nút Toggle -->
-        <button id="toggle-btn">☰</button>
+	<div class="container">
+		<!-- Nút Toggle -->
+		<button id="toggle-btn">☰</button>
 
-        <!-- Video Section -->
-        <div class="main-video" id="main-video">
-            <div class="video">
-                <!-- Hiển thị video đầu tiên từ danh sách các bài học -->
-                <video id="main-video-player" th:src="${lessons[0].videoUrl}" controls muted autoplay></video>
-                <h3 class="title" th:text="${lessons[0].title}">Bài 1</h3>
-            </div>
+		<!-- Video Section -->
+		<div class="main-video" id="main-video">
+			<div class="video">
+				<!-- Hiển thị video đầu tiên từ danh sách các bài học -->
+				<video id="main-video-player" th:src="${lessons[0].videoUrl}"
+					controls muted autoplay></video>
+				<h3 class="title" th:text="${lessons[0].title}">Bài 1</h3>
+			</div>
 
-            <!-- Nút điều khiển video -->
-            <div class="controls">
-                <button id="prev-btn">Bài trước</button>
-                <button id="play-pause-btn">Tạm dừng</button>
-                <button id="next-btn">Bài tiếp theo</button>
-            </div>
-        </div>
+			<!-- Nút điều khiển video -->
+			<div class="controls">
+				<button id="prev-btn">Bài trước</button>
+				<button id="play-pause-btn">Tạm dừng</button>
+				<button id="next-btn">Bài tiếp theo</button>
+			</div>
+		</div>
 
-        <!-- Danh sách video -->
-        <div class="video-list" id="video-list">
-            <div class="video-list-content">
-                <div class="video-list-header">
-                    <input type="text" placeholder="Tìm kiếm bài học" id="search">
-                    <button>Tìm kiếm</button>
-                </div>
-                <!-- Lặp qua các bài học và hiển thị từng video -->
-                <div th:each="lesson : ${lessons}" class="vid" th:classappend="${lessonStat.first} ? 'active'">
-                    <video th:src="${lesson.videoUrl}" muted></video>
-                    <h3 class="title" th:text="${lesson.title}">Bài học</h3>
-                </div>
-            </div>
-        </div>
+		<!-- Danh sách video -->
+		<div class="video-list" id="video-list">
+			<div class="video-list-content">
+				<div class="video-list-header">
+					<input type="text" placeholder="Tìm kiếm bài học" id="search">
+					<button>Tìm kiếm</button>
+				</div>
+				<!-- Lặp qua các bài học và hiển thị từng video -->
+				<div th:each="lesson : ${lessons}" class="vid"
+					th:classappend="${lessonStat.first} ? 'active'">
+					<video th:src="${lesson.videoUrl}" muted></video>
+					<h3 class="title" th:text="${lesson.title}">Bài học</h3>
+				</div>
+			</div>
+		</div>
 
-        <!-- Phần bình luận -->
-        <div class="comment-section">
-            <h3>Bình luận</h3>
-            <div class="comment-input">
-                <textarea id="comment-text" placeholder="Nhập bình luận của bạn..." rows="3"></textarea>
-                <button id="submit-comment-btn">Gửi bình luận</button>
-            </div>
-            <div class="comment-list">
-                <h4>Danh sách bình luận:</h4>
-                <ul id="comment-list">
-                    <!-- Các bình luận sẽ được thêm tại đây -->
-                </ul>
-            </div>
-        </div>
-    </div>
+		<div class="comment-section">
+			<h3>Bình luận</h3>
+			<div class="comment-input">
+				<textarea id="comment-text" placeholder="Nhập bình luận của bạn..."
+					rows="3"></textarea>
+				<button id="submit-comment-btn">Gửi bình luận</button>
+			</div>
 
-    <script th:src="@{/resources/js/play.js}"></script>
+			<div class="comment-list">
+				<h4>Danh sách bình luận:</h4>
+				<ul id="comment-list">
+					
+					<li th:each="lesson : ${lessons}">
+						<h5 th:text="${lesson.title}">Bài học</h5>
+						<ul>
+						
+							<li th:each="comment : ${commentsByLesson[lesson.id]}">
+								<div class="comment-item">
+									
+									<img th:src="${comment.user.avatarUrl}" alt="Avatar"
+										class="avatar">
+									
+									<span class="username" th:text="${comment.user.username}">Tên
+										người dùng</span>
+									
+									<p class="comment-content" th:text="${comment.content}">Nội
+										dung bình luận</p>
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+
+	<script th:src="@{/resources/js/play.js}"></script>
 </body>
 </html>
