@@ -12,6 +12,9 @@ import org.springframework.web.servlet.ModelAndView;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.service.CourseService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 @RequestMapping(value = {"/", "/home"})
 public class HomeController {
@@ -35,7 +38,7 @@ public class HomeController {
 
         List<Course> courses = courseService.getAllCourses();
         mav.addObject("courses", courses);
-        System.out.println("Danh sách khóa học: " + courses);
+        log.debug("Danh sách khóa học: {}", courses);
 
         return mav;
     }
