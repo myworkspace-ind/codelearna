@@ -2,35 +2,89 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>The generated source code Web Application for Sakai</title>
-<!-- Latest compiled and minified CSS -->
+<title>Search Courses</title>
 <link rel="stylesheet"
-	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="resources/css/home.css?v=1.1">
 </head>
 <body>
 
-	<div th:replace="~{fragments/header :: header}">Header</div>
+	<!-- Header Section -->
 	<div class="container">
-		<div class="text-center">
-			<div class="lead">
-				<H1>search</H1>
+		<div class="row">
+			<div class="col-md-2">
+				<img src="logo-url" alt="Logo" class="img-responsive" />
 			</div>
-			<div class="lead">Welcome to the generated source code Web
-				Application for Sakai.</div>
-			<p>
-				Login userId: <span th:text="${session.userDisplayName}"></span>
-			</p>
-			<p>
-				Login Display Username: <span th:text="${session.userEid}"></span>
-			</p>
-			<p>
-				<a id="signup" class="btn btn-success btn-lg">Sign up</a>
-			</p>
+			<!-- Search -->
+			<div class="col-md-6">
+				<form th:action="@{/search}" method="get">
+					<input type="text" name="keyword" class="form-control"
+						placeholder="Find the course you want" />
+				</form>
+			</div>
+
+			<div class="col-md-4 text-right">
+				<button class="btn btn-default">Search</button>
+				<button class="btn btn-default">My profile</button>
+			</div>
 		</div>
-		<div th:insert="~{fragments/footer :: footer}">&copy; 2017 The
-			MKS Group</div>
 	</div>
 
+<!-- 	Main Container with Filters and Courses -->
+	<div class="container mt-4">
+		<div class="row">
+			<!-- Filter Section -->
+			<div class="col-md-3 filter-section">
+				<h4>Filter by</h4>
+
+				<!-- Filter by Ratings -->
+				<h5>Ratings</h5>
+				<ul class="filters">
+					<li><input type="radio" name="rating" /> 5 stars</li>
+					<li><input type="radio" name="rating" /> 4 stars</li>
+					<li><input type="radio" name="rating" /> 3 stars</li>
+				</ul>
+
+				<!-- Filter by Price -->
+				<h5>Price</h5>
+				<ul class="filters">
+					<li><input type="radio" name="price" /> Under 50$</li>
+					<li><input type="radio" name="price" /> Between 50-100$</li>
+					<li><input type="radio" name="price" /> Over 100$</li>
+				</ul>
+
+				<!-- Filter by Duration -->
+				<h5>Duration</h5>
+				<ul class="filters">
+					<li><input type="radio" name="duration" /> Under 1 month</li>
+					<li><input type="radio" name="duration" /> 1-3 months</li>
+					<li><input type="radio" name="duration" /> Over 3 months</li>
+				</ul>
+			</div>
+
+			<!-- Courses Section -->
+			<div class="col-md-9">
+				<h4>Results for ...</h4>
+				<!-- <div class="row">
+					Display course list using courseItem fragment
+					<div class="col-md-4" th:each="course : ${courses}">
+						Use courseItem fragment to display each course
+						<div th:replace="~{fragments/courseItem :: courseItem(course)}"></div>
+					</div>
+				</div> -->
+				<div class="row mt-4 mb-4" id="coursesContainer">
+					<div th:each="course, iterStat : ${courses}"
+						th:id="'course-' + ${iterStat.index}" class="col-md-3 mb-4">
+						<div th:replace="fragments/courseItem :: courseItem(${course})"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="text-center">&copy; 2024 The MKS Group</div>
+	</div>
 
 </body>
 </html>

@@ -5,20 +5,8 @@ document.getElementById('searchInput').addEventListener('blur', function() {
     this.placeholder = 'Bạn đang tìm kiếm điều gì';
 });
 
-// Dữ liệu mẫu cho các khóa học
-const courses = [
-    { name: 'Tên khóa học 1', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#ff9999' },
-    { name: 'Tên khóa học 2', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#99ccff' },
-    { name: 'Tên khóa học 3', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#99ff99' },
-    { name: 'Tên khóa học 4', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#ffcc99' },
-    { name: 'Tên khóa học 5', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#ff9999' },
-    { name: 'Tên khóa học 6', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#99ccff' },
-    { name: 'Tên khóa học 7', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#99ff99' },
-    { name: 'Tên khóa học 8', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#ffcc99' },
-    { name: 'Tên khóa học 9', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#ff9999' },
-    { name: 'Tên khóa học 10', price: '3.000.000 đ', discount: '2.500.000 đ', color: '#99ccff' },
-    // Thêm nhiều khóa học hơn nếu cần
-];
+const itemsPerPage = 8; // Số lượng khóa học trên mỗi trang
+let currentPage = 1;
 
 // Dữ liệu mẫu cho các khóa học nổi bật
 const featuredCourses = [
@@ -39,35 +27,32 @@ const promotions = [
     // Thêm nhiều chương trình khuyến mãi hơn nếu cần
 ];
 
-const itemsPerPage = 8; // Tăng số lượng khóa học hiển thị trên mỗi trang
-let currentPage = 1;
 
-function displayCourses(page) {
+function getRandomColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function showPage(page) {
+    const courses = document.querySelectorAll('.course-item');
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    const paginatedCourses = courses.slice(start, end);
 
-    const coursesContainer = document.getElementById('coursesContainer');
-    coursesContainer.innerHTML = '';
-
-    paginatedCourses.forEach(course => {
-        const courseItem = document.createElement('div');
-        courseItem.className = 'col-md-3 mb-4'; // Thêm khoảng cách dưới cho mỗi khóa học
-        courseItem.innerHTML = `
-            <div class="course-item">
-                <a href="javascript:void(0);" class="course-link" style="text-decoration: none; color: inherit;">
-                    <div class="course-placeholder" style="background-color: ${course.color}; height: 200px;"></div>
-                    <h3>${course.name}</h3>
-                    <p>${course.price}</p>
-                    <p>${course.discount}</p>
-                </a>
-            </div>
-        `;
-        coursesContainer.appendChild(courseItem);
+    courses.forEach((course, index) => {
+        if (index >= start && index < end) {
+            course.style.display = 'block';
+        } else {
+            course.style.display = 'none';
+        }
     });
 }
 
 function setupPagination() {
+    const courses = document.querySelectorAll('.course-item');
     const pageCount = Math.ceil(courses.length / itemsPerPage);
     const pagination = document.getElementById('pagination');
     pagination.innerHTML = '';
@@ -79,7 +64,7 @@ function setupPagination() {
         pageItem.addEventListener('click', function(event) {
             event.preventDefault();
             currentPage = page;
-            displayCourses(currentPage);
+            showPage(currentPage);
             setupPagination(); // Cập nhật lại phân trang
         });
         return pageItem;
@@ -93,7 +78,7 @@ function setupPagination() {
         event.preventDefault();
         if (currentPage > 1) {
             currentPage--;
-            displayCourses(currentPage);
+            showPage(currentPage);
             setupPagination();
         }
     });
@@ -134,7 +119,7 @@ function setupPagination() {
         event.preventDefault();
         if (currentPage < pageCount) {
             currentPage++;
-            displayCourses(currentPage);
+            showPage(currentPage);
             setupPagination();
         }
     });
@@ -199,7 +184,11 @@ function displayPromotions() {
 }
 
 // Khởi tạo hiển thị khóa học, khóa học nổi bật và chương trình khuyến mãi
-displayCourses(currentPage);
-setupPagination();
 displayFeaturedCourses();
 displayPromotions();
+
+// Hiển thị trang đầu tiên và thiết lập phân trang khi trang được tải
+document.addEventListener('DOMContentLoaded', function() {
+    showPage(currentPage);
+    setupPagination();
+});
