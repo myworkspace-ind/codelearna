@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="resources/css/home.css?v=1.1"> <!-- Cập nhật query string -->
 	<link rel="stylesheet" href="resources/css/fragments/courseItem.css?v=1.1"> <!-- Cập nhật query string   -->
+	<link rel="stylesheet" href="resources/css/fragments/courseDetailPopup.css?v=1.1"> <!-- Cập nhật query string   -->
+	
 </head>
 <body>
     <nav class="navbar">Header</nav>
@@ -69,10 +71,20 @@
             </div>
         </div>
         <div class="row mt-4 mb-4" id="coursesContainer"> <!-- Thêm khoảng cách trên và dưới -->
-            <div th:each="course, iterStat : ${courses}" th:id="'course-' + ${iterStat.index}" class="col-md-3 mb-4">
+            <div th:each="course, iterStat : ${courses}" th:id="'course-' + ${iterStat.index}" class="col-md-3 mb-4"
+                 th:data-name="${course.name}"
+                 th:data-image-url="${course.imageUrl}"
+                 th:data-description="${course.description}"
+                 th:data-difficulty-level="${course.difficultyLevel}"
+                 th:data-lesson-type="${course.lessonType}"
+                 th:data-original-price="${course.originalPrice}"
+                 th:data-discounted-price="${course.discountedPrice}">
                 <div th:replace="fragments/courseItem :: courseItem(${course})"></div>
             </div>
         </div>
+
+        <!-- Lớp phủ để làm mờ nền -->
+        <div id="blurOverlay" class="blur-overlay" style="display: none;"></div>
 
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center" id="pagination">
@@ -81,6 +93,8 @@
         </nav>
         <div>&copy; 2017 The MKS Group</div>
     </div>
+    <!-- Popup chi tiết khóa học -->
+    <th:block th:include="fragments/popupDetailCourse"></th:block>
 	<th:block th:include="fragments/javascript"></th:block>
 </body>
 </html>
