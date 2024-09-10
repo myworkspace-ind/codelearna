@@ -1,9 +1,9 @@
 package mks.myworkspace.learna.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import lombok.extern.slf4j.Slf4j;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.service.CourseService;
 
 @Controller
 @RequestMapping(value = {"/", "/home"})
+@Slf4j
 public class HomeController {
 
     @Autowired
@@ -37,7 +39,7 @@ public class HomeController {
 
         List<Course> courses = courseService.getAllCourses();
         mav.addObject("courses", courses);
-        System.out.println("Danh sách khóa học: " + courses);
+        log.debug("Danh sách khóa học: " + courses);
 
         return mav;
     }
