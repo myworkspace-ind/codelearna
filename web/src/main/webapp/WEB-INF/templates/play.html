@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Play Page</title>
-    <link rel="stylesheet" href="resources/css/play.css">
+    <link rel="stylesheet" th:href="@{/resources/css/play.css}">
 </head>
 <body>
     <div class="container">
@@ -15,8 +15,9 @@
         <!-- Video Section -->
         <div class="main-video" id="main-video">
             <div class="video">
-                <video id="main-video-player" src="http://media.w3.org/2010/05/sintel/trailer.mp4" controls muted autoplay></video>
-                <h3 class="title">Bài 1</h3>
+                <!-- Hiển thị video đầu tiên từ danh sách các bài học -->
+                <video id="main-video-player" th:src="${lessons[0].videoUrl}" controls muted autoplay></video>
+                <h3 class="title" th:text="${lessons[0].title}">Bài 1</h3>
             </div>
 
             <!-- Nút điều khiển video -->
@@ -34,21 +35,10 @@
                     <input type="text" placeholder="Tìm kiếm bài học" id="search">
                     <button>Tìm kiếm</button>
                 </div>
-                <div class="vid active">
-                    <video src="http://media.w3.org/2010/05/sintel/trailer.mp4" muted></video>
-                    <h3 class="title">Bài 1</h3>
-                </div>
-                <div class="vid">
-                    <video src="http://media.w3.org/2010/05/sintel/trailer.mp4" muted></video>
-                    <h3 class="title">Bài 2</h3>
-                </div>
-                <div class="vid">
-                    <video src="http://media.w3.org/2010/05/sintel/trailer.mp4" muted></video>
-                    <h3 class="title">Bài 3</h3>
-                </div>
-                <div class="vid">
-                    <video src="http://media.w3.org/2010/05/sintel/trailer.mp4" muted></video>
-                    <h3 class="title">Bài 4</h3>
+                <!-- Lặp qua các bài học và hiển thị từng video -->
+                <div th:each="lesson : ${lessons}" class="vid" th:classappend="${lessonStat.first} ? 'active'">
+                    <video th:src="${lesson.videoUrl}" muted></video>
+                    <h3 class="title" th:text="${lesson.title}">Bài học</h3>
                 </div>
             </div>
         </div>
@@ -69,6 +59,6 @@
         </div>
     </div>
 
-    <script src="resources/js/play.js"></script>
+    <script th:src="@{/resources/js/play.js}"></script>
 </body>
 </html>
