@@ -8,9 +8,11 @@
         <div class="course-item">
             <a href="javascript:void(0);" class="course-link" style="text-decoration: none; color: inherit;">
                 <img th:src="${course.imageUrl}" th:alt="${course.name}" style="height: 200px; width: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif';">
-                <h3 th:text="${course.name}" style="text-align: left;"></h3>
-                <p th:text="'VNĐ ' + ${#numbers.formatDecimal(course.originalPrice, 0, 0)}" style="text-decoration: line-through; text-align: right;"></p>
-                <h5 th:text="'VNĐ ' + ${#numbers.formatDecimal(course.discountedPrice, 0, 0)}" style="color: red; text-align: right;"></h5>
+                <h3 th:text="${course.name}" class="course-name" style="text-align: left;"></h3>
+                <p th:text="'for '+ ${#strings.capitalize(course.difficultyLevel.name().toLowerCase())}" class="course-difficulty" style="text-align: left;"></p>
+                <p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}" style="text-decoration: line-through;"></p>
+                <h5 th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
+
             </a>
         </div>
     </div>

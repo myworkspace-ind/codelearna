@@ -1,12 +1,12 @@
 .course-item {
     text-align: left;
-    border: none;
-    padding: 10px 20px;
+    padding: 10px; /* Đảm bảo khoảng cách đều cho 4 cạnh */
     margin-bottom: 20px;
-    border-radius: 10px;
+    border-radius: 20px; /* Điều chỉnh độ cong của các góc */
     background: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: background 0.3s, box-shadow 0.3s;
+    border: none; /* Loại bỏ viền */
 }
 
 .course-item:hover {
@@ -15,11 +15,13 @@
 }
 
 .course-item img {
-    width: 100%;
+    width: calc(100% - 40px); /* Trừ đi padding để đảm bảo khoảng cách đều */
     height: auto;
-    border-radius: 10px;
+    border-radius: 10px; /* Điều chỉnh độ cong của các góc ảnh =20-10*/ 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s;
+    margin: 0 auto 20px; /* Căn giữa ảnh và thêm khoảng cách dưới */
+    display: block; /* Đảm bảo ảnh là khối */
 }
 
 .course-item img:hover {
@@ -27,23 +29,38 @@
 }
 
 .course-item h3 {
-    font-size: 1em;
+    font-size: 1.3em;
     margin: 0;
     color: #333;
-    display: inline-block;
-    vertical-align: middle;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;         /* Hiển thị tối đa 2 dòng */
+    -webkit-box-orient: vertical;  /* Định hướng hộp theo chiều dọc */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5rem;           	/* Chiều cao của mỗi dòng */
+    max-height: 3rem;            	/* Chiều cao tối đa để hiển thị 2 dòng */
+    min-height: 3rem;              	/* Chiều cao tối thiểu bằng 2 dòng */
 }
+
 
 .course-item p {
     margin: 0;
     color: #666;
-    text-align: left;
+    text-align: right;
     font-size: 0.9em;
 }
 
 .course-item h5 {
-    color: #333;
-    text-align: left;
-    font-size: 0.9em;
+    color: #3864f6;
+    text-align: right;
+    font-size: 1.6em;
     margin-top: 5px;
+}
+
+.course-difficulty {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: 5px;
+    text-align: right; /* Căn phải */
+    text-transform: capitalize; /* Viết hoa chữ cái đầu */
 }
