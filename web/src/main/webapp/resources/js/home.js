@@ -27,16 +27,6 @@ const promotions = [
     // Thêm nhiều chương trình khuyến mãi hơn nếu cần
 ];
 
-
-function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
-
 function showPage(page) {
     const courses = document.querySelectorAll('.course-item');
     const start = (page - 1) * itemsPerPage;
@@ -191,4 +181,43 @@ displayPromotions();
 document.addEventListener('DOMContentLoaded', function() {
     showPage(currentPage);
     setupPagination();
+});
+
+document.querySelectorAll('#coursesContainer > div').forEach(item => {
+    item.addEventListener('click', function() {
+        const course = {
+            name: this.getAttribute('data-name'),
+            imageUrl: this.getAttribute('data-image-url'),
+            description: this.getAttribute('data-description'),
+            difficultyLevel: this.getAttribute('data-difficulty-level'),
+            lessonType: this.getAttribute('data-lesson-type'),
+            originalPrice: parseFloat(this.getAttribute('data-original-price')),
+            discountedPrice: parseFloat(this.getAttribute('data-discounted-price'))
+        };
+        openPopup(course);
+    });
+});
+
+function openPopup(course) {
+    document.getElementById('courseName').innerText = course.name;
+    document.getElementById('courseImage').src = course.imageUrl;
+    document.getElementById('courseDescription').innerText = course.description;
+    document.getElementById('courseDifficulty').innerText = course.difficultyLevel;
+    document.getElementById('courseLessonType').innerText = course.lessonType;
+    document.getElementById('courseOriginalPrice').innerText = '₫ ' + course.originalPrice.toLocaleString();
+    document.getElementById('courseDiscountedPrice').innerText = '₫ ' + course.discountedPrice.toLocaleString();
+    
+    document.getElementById('courseDetailPopup').style.display = 'flex';
+    document.getElementById('blurOverlay').style.display = 'block';
+}
+
+function closePopup() {
+    document.getElementById('courseDetailPopup').style.display = 'none';
+    document.getElementById('blurOverlay').style.display = 'none';
+}
+
+document.getElementById('courseDetailPopup').addEventListener('click', function(event) {
+    if (event.target === this) {
+        closePopup();
+    }
 });
