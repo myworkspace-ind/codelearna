@@ -11,5 +11,5 @@ import mks.myworkspace.learna.entity.Course;
 public interface SearchRepository extends JpaRepository<Course, Long> {
 	
 	// Tìm kiếm khoá học theo keyword
-	List<Course> findByNameContainingIgnoreCase(String keyword);
+	List<Course> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String keywordName, String keywordDes);
 }
