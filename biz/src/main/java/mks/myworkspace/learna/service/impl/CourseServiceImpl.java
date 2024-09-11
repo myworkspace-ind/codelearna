@@ -37,4 +37,9 @@ public class CourseServiceImpl implements CourseService {
     public List<Course> getAllCourses() {
         return repo.findAll();
     }
+
+    @Override
+    public List<Course> getRandomCourses() {
+        return repo.findRandomCourses();
+    }
 }

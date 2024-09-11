@@ -40,6 +40,10 @@ public class HomeController {
         mav.addObject("courses", courses);
         log.debug("Danh sách khóa học: {}", courses);
 
+        List<Course> featuredCourses = courseService.getRandomCourses();
+        mav.addObject("featuredCourses", featuredCourses);
+        log.debug("Khóa học nổi bật: {}", featuredCourses);
+
         return mav;
     }
 }

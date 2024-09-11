@@ -5,9 +5,8 @@
     <title>Trang chủ</title>
     <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="resources/css/home.css?v=1.1"> <!-- Cập nhật query string -->
-	<link rel="stylesheet" href="resources/css/fragments/courseItem.css?v=1.1"> <!-- Cập nhật query string   -->
-	<link rel="stylesheet" href="resources/css/fragments/courseDetailPopup.css?v=1.1"> <!-- Cập nhật query string   -->
-	
+    <link rel="stylesheet" href="resources/css/fragments/courseItem.css?v=1.1"> <!-- Cập nhật query string   -->
+    <link rel="stylesheet" href="resources/css/fragments/courseDetailPopup.css?v=1.1"> <!-- Cập nhật query string   -->
 </head>
 <body>
     <nav class="navbar">Header</nav>
@@ -17,11 +16,24 @@
                 <div id="featuredCoursesCarousel" class="carousel slide" data-bs-ride="carousel">
                     <!-- Indicators -->
                     <div class="carousel-indicators">
-                        <!-- Các nút chỉ báo sẽ được thêm vào đây bằng JavaScript -->
+                        <button type="button" data-bs-target="#featuredCoursesCarousel" th:each="featuredCourse, iterStat : ${featuredCourses}" th:data-bs-slide-to="${iterStat.index}" th:classappend="${iterStat.index == 0} ? 'active'" th:aria-current="${iterStat.index == 0} ? 'true' : 'false'" th:aria-label="'Slide ' + ${iterStat.index + 1}"></button>
                     </div>
                     <!-- Wrapper for slides -->
                     <div class="carousel-inner">
-                        <!-- Các khóa học nổi bật sẽ được thêm vào đây bằng JavaScript -->
+                        <div th:each="featuredCourse, iterStat : ${featuredCourses}" th:classappend="${iterStat.index == 0} ? 'active'" class="carousel-item" 
+                             th:data-name="${featuredCourse.name}"
+                             th:data-image-url="${featuredCourse.imageUrl}"
+                             th:data-description="${featuredCourse.description}"
+                             th:data-difficulty-level="${featuredCourse.difficultyLevel}"
+                             th:data-lesson-type="${featuredCourse.lessonType}"
+                             th:data-original-price="${featuredCourse.originalPrice}"
+                             th:data-discounted-price="${featuredCourse.discountedPrice}">
+                            <img th:src="${featuredCourse.imageUrl}" class="d-block w-100" alt="Course Image" style="height: 400px; object-fit: cover;">
+                            <div class="carousel-caption d-none d-md-block">
+                                <h3 th:text="${featuredCourse.name}"></h3>
+                                <p th:text="${featuredCourse.description}"></p>
+                            </div>
+                        </div>
                     </div>
                     <!-- Controls -->
                     <button class="carousel-control-prev" type="button" data-bs-target="#featuredCoursesCarousel" data-bs-slide="prev">
@@ -95,6 +107,6 @@
     </div>
     <!-- Popup chi tiết khóa học -->
     <th:block th:include="fragments/popupDetailCourse"></th:block>
-	<th:block th:include="fragments/javascript"></th:block>
+    <th:block th:include="fragments/javascript"></th:block>
 </body>
 </html>
