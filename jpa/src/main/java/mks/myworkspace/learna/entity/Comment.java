@@ -3,6 +3,8 @@ package mks.myworkspace.learna.entity;
 import java.util.Date;
 import javax.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import lombok.Data;
 
 @Entity
@@ -19,8 +21,14 @@ public class Comment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
-
+    
+//    @ManyToOne()
+    
     @CreationTimestamp
     @Column(name = "created_dte")
     private Date createdDate;
+    
+    @UpdateTimestamp
+    @Column(name = "modified_dte")
+    private Date modifiedDate;
 }
