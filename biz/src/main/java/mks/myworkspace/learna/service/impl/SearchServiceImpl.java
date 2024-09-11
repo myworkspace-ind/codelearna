@@ -27,7 +27,7 @@ public class SearchServiceImpl implements SearchService {
 	// Tìm kiếm khóa học theo từ khóa
 	@Override
 	public List<Course> searchCoursesByKeyword(String keyword) {
-		return searchRepository.findByNameContainingIgnoreCase(keyword);
+		return searchRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
 	}
 
 }
