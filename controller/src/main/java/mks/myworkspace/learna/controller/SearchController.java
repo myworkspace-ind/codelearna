@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +21,7 @@ public class SearchController extends BaseController {
     @Autowired
     private SearchService searchService;
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @GetMapping("/search")
     public ModelAndView searchCourses(@RequestParam(value = "keyword", required = false) String keyword, 
                                       HttpServletRequest request, HttpSession httpSession) {
         ModelAndView mav = new ModelAndView("search");
