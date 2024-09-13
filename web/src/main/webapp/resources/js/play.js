@@ -2,19 +2,27 @@ const toggleBtn = document.getElementById('toggle-btn');
 const videoList = document.getElementById('video-list');
 const container = document.querySelector('.container');
 const videoPlayer = document.getElementById('main-video-player');
+const videoTitle = document.querySelector('.title');  // Thêm dòng này để cập nhật tiêu đề
 
 const playPauseBtn = document.getElementById('play-pause-btn');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 
 const videos = [
-    "http://media.w3.org/2010/05/sintel/trailer.mp4",
-    "http://media.w3.org/2010/05/bunny/trailer.mp4",
-    "http://media.w3.org/2010/05/bunny/movie.mp4"
+    { url: "http://media.w3.org/2010/05/sintel/trailer.mp4", title: "Sintel Trailer" },
+    { url: "http://media.w3.org/2010/05/bunny/trailer.mp4", title: "Bunny Trailer" },
+    { url: "http://media.w3.org/2010/05/bunny/movie.mp4", title: "Bunny Movie" }
 ];
 let currentVideoIndex = 0;
 
-// Điều khiển video
+// Hiển thị video và tiêu đề của video hiện tại
+function loadVideo(index) {
+    videoPlayer.src = videos[index].url;
+    videoPlayer.play();
+    videoTitle.textContent = videos[index].title;  // Cập nhật tiêu đề video
+}
+
+// Điều khiển video toggle
 toggleBtn.addEventListener('click', function () {
     if (videoList.classList.contains('hidden')) {
         videoList.classList.remove('hidden');
@@ -38,16 +46,22 @@ playPauseBtn.addEventListener('click', function () {
 prevBtn.addEventListener('click', function () {
     if (currentVideoIndex > 0) {
         currentVideoIndex--;
-        videoPlayer.src = videos[currentVideoIndex];
-        videoPlayer.play();
+        loadVideo(currentVideoIndex);  // Cập nhật bằng hàm loadVideo
     }
 });
 
 nextBtn.addEventListener('click', function () {
     if (currentVideoIndex < videos.length - 1) {
         currentVideoIndex++;
-        videoPlayer.src = videos[currentVideoIndex];
-        videoPlayer.play();
+        loadVideo(currentVideoIndex);  // Cập nhật bằng hàm loadVideo
+    }
+});
+
+// Tự động phát video tiếp theo khi video hiện tại kết thúc
+videoPlayer.addEventListener('ended', function () {
+    if (currentVideoIndex < videos.length - 1) {
+        currentVideoIndex++;
+        loadVideo(currentVideoIndex);
     }
 });
 
@@ -72,6 +86,7 @@ window.onload = function() {
         // Tạo phần tử avatar
         const avatar = document.createElement('img');
         avatar.src = item.avatar;
+        avatar.classList.add('avatar'); // Thêm class avatar để dễ styling
         
         // Tạo phần tử nội dung bình luận
         const commentContent = document.createElement('div');
@@ -83,6 +98,9 @@ window.onload = function() {
         newComment.appendChild(commentContent);
         commentList.appendChild(newComment);
     });
+
+    // Tải video đầu tiên khi trang load
+    loadVideo(currentVideoIndex);
 };
 
 // Thêm bình luận mới từ người dùng
@@ -92,10 +110,11 @@ submitCommentBtn.addEventListener('click', function () {
     if (commentValue !== '') {
         const newComment = document.createElement('li');
         
-        // Avatar mặc định cho bình luận mới
+        // Avatar ngẫu nhiên cho bình luận mới từ 1-70
         const avatar = document.createElement('img');
-        avatar.src = 'https://i.pravatar.cc/40?img=5'; // Avatar mặc định
-
+        avatar.src = `https://i.pravatar.cc/40?img=${Math.floor(Math.random() * 70) + 1}`; 
+        avatar.classList.add('avatar'); // Thêm class avatar
+        
         // Nội dung bình luận mới
         const commentContent = document.createElement('div');
         commentContent.classList.add('comment-content');
@@ -106,9 +125,8 @@ submitCommentBtn.addEventListener('click', function () {
         newComment.appendChild(commentContent);
         commentList.appendChild(newComment);
 
-        commentText.value = '';
+        commentText.value = '';  // Reset nội dung bình luận
     } else {
         alert('Vui lòng nhập nội dung bình luận!');
     }
 });
-

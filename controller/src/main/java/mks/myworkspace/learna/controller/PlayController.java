@@ -25,34 +25,23 @@ public class PlayController {
     private CommentService commentService;  
 
     @GetMapping("/play/{courseId}")
-    public ModelAndView displayCourseLessons(@PathVariable Long courseId, HttpServletRequest request, HttpSession httpSession) {
+    public ModelAndView displayCourseLessons(@PathVariable Long courseId, HttpServletRequest request, HttpSession session) {
         ModelAndView mav = new ModelAndView("play");
         
-      
+        // Get lessons by course ID
         List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
         mav.addObject("lessons", lessons); 
 
- 
-        Map<Long, List<Comment>> commentsByLesson = lessons.stream()
-            .collect(Collectors.toMap(
-                Lesson::getId, 
-                lesson -> commentService.getCommentsByLessonId(lesson.getId())
-            ));
-        mav.addObject("commentsByLesson", commentsByLesson);
+        // Get the first lesson's comments as default
+        Lesson firstLesson = lessons.get(0);
+        List<Comment> commentsForFirstLesson = commentService.getCommentsByLessonId(firstLesson.getId());
+        mav.addObject("commentsForLesson", commentsForFirstLesson);
 
-        Object currentSiteId = request.getSession().getAttribute("currentSiteId");
-        if (currentSiteId != null) {
-            mav.addObject("currentSiteId", currentSiteId);
-        } else {
-            mav.addObject("currentSiteId", "Not Set");
-        }
-
-        if (request.getUserPrincipal() != null) {
-            mav.addObject("userDisplayName", request.getUserPrincipal().getName());
-        } else {
-            mav.addObject("userDisplayName", "Guest");
-        }
+        // Pass the first lesson as the currently playing lesson
+        mav.addObject("currentLesson", firstLesson);
 
         return mav;
     }
+
+
 }
