@@ -16,8 +16,8 @@
         <div class="main-video" id="main-video">
             <div class="video">
                 <!-- Hiển thị video đầu tiên từ danh sách các bài học -->
-                <video id="main-video-player" th:src="${lessons[0].videoUrl}" controls muted autoplay></video>
-                <h3 class="title" th:text="${lessons[0].title}">Bài 1</h3>
+                <video id="main-video-player" th:src="${currentLesson.videoUrl}" controls muted autoplay></video>
+                <h3 class="title" th:text="${currentLesson.title}">Bài 1</h3>
             </div>
 
             <!-- Nút điều khiển video -->
@@ -36,24 +36,32 @@
                     <button>Tìm kiếm</button>
                 </div>
                 <!-- Lặp qua các bài học và hiển thị từng video -->
-                <div th:each="lesson : ${lessons}" class="vid" th:classappend="${lessonStat.first} ? 'active'">
+                <div th:each="lesson, lessonStat : ${lessons}" class="vid" th:classappend="${lessonStat.first} ? 'active'">
                     <video th:src="${lesson.videoUrl}" muted></video>
                     <h3 class="title" th:text="${lesson.title}">Bài học</h3>
                 </div>
             </div>
         </div>
 
-        <!-- Phần bình luận -->
+        <!-- Bình luận -->
         <div class="comment-section">
             <h3>Bình luận</h3>
             <div class="comment-input">
                 <textarea id="comment-text" placeholder="Nhập bình luận của bạn..." rows="3"></textarea>
                 <button id="submit-comment-btn">Gửi bình luận</button>
             </div>
+
             <div class="comment-list">
                 <h4>Danh sách bình luận:</h4>
-                <ul id="comment-list">
-                    <!-- Các bình luận sẽ được thêm tại đây -->
+                <ul>
+                    <!-- Loop through comments of current lesson -->
+                    <li th:each="comment : ${commentsForLesson}">
+                        <div class="comment-item" th:style="${comment.parentComment == null} ? 'margin-left: 0;' : 'margin-left: 20px;'">
+                            <img th:src="${comment.user.avatarUrl}" alt="Avatar" class="avatar">
+                            <span class="username" th:text="${comment.user.name}">Tên người dùng</span>
+                            <p class="comment-content" th:text="${comment.content}">Nội dung bình luận</p>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
