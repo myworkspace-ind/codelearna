@@ -51,16 +51,42 @@
                     <div class="card-header">
                         <h5>Chương trình khuyến mãi đang diễn ra</h5>
                     </div>
-                    <div class="card-body">
-                        <div id="promotionCarousel" class="carousel slide" data-bs-ride="carousel">
-                            <div class="carousel-inner">
-                                <!-- Các chương trình khuyến mãi sẽ được thêm vào đây bằng JavaScript -->
+                    <div class="card-body" > <!-- Chiều cao cố định cho card-body -->
+                        <div id="campaignCarousel" class="carousel slidee" data-bs-ride="carousel" >
+                            <div class="carousel-inner" >
+                                <div th:each="campaignData, iterStat : ${campaigns}" th:classappend="${iterStat.index == 0} ? 'active'" class="carousel-item" 
+                                    th:data-name="${campaignData.campaign.name}"
+                                    th:data-start-time="${campaignData.campaign.startTime}"
+                                    th:data-end-time="${campaignData.campaign.endTime}"
+                                    th:data-description="${campaignData.campaign.description}"
+                                    style="height: 200px;">
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <div class="campaign-item">
+                                                <p th:text="${campaignData.campaign.name}"></p>
+                                                <p th:text="${#dates.format(campaignData.campaign.startTime, 'dd/MM/yyyy')} + ' - ' + ${#dates.format(campaignData.campaign.endTime, 'dd/MM/yyyy')}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="progress">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                        	 role="progressbar"
+                                        	 aria-valuenow="${campaignData.progress}"
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100" 
+                                             th:style="'width: ' + ${campaignData.progress} + '%'"> <!-- Sử dụng giá trị progress từ campaignDTO -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#promotionCarousel" data-bs-slide="prev">
+                            <div class="carousel-indicators" style="bottom: 0px;"> <!-- Điều chỉnh vị trí -->
+                                <button type="button" data-bs-target="#campaignCarousel" th:each="campaignData, iterStat : ${campaigns}" th:data-bs-slide-to="${iterStat.index}" th:classappend="${iterStat.index == 0} ? 'active'" th:aria-current="${iterStat.index == 0} ? 'true' : 'false'" th:aria-label="'Slide ' + ${iterStat.index + 1}"></button>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#campaignCarousel" data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Previous</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#promotionCarousel" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#campaignCarousel" data-bs-slide="next">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="visually-hidden">Next</span>
                             </button>

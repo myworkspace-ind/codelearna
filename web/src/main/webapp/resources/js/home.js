@@ -108,7 +108,7 @@ function setupPagination() {
     pagination.appendChild(nextItem);
 }
 
-function displayPromotions() {
+/*function displayPromotions() {
     const promotionsContainer = document.getElementById('promotionCarousel').querySelector('.carousel-inner');
     promotionsContainer.innerHTML = '';
 
@@ -133,10 +133,8 @@ function displayPromotions() {
         `;
         promotionsContainer.appendChild(promotionItem);
     }
-}
+}*/
 
-// Khởi tạo hiển thị khóa học, khóa học nổi bật và chương trình khuyến mãi
-displayPromotions();
 
 // Hiển thị trang đầu tiên và thiết lập phân trang khi trang được tải
 document.addEventListener('DOMContentLoaded', function() {
