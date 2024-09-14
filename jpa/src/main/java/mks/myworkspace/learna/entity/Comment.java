@@ -28,12 +28,13 @@ public class Comment {
     private User user;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) 
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;
 
-    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
-    private List<Comment> childComments; // Now using the List type
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, fetch = FetchType.EAGER) 
+    private List<Comment> childComments;
+
 
     @CreationTimestamp
     @Column(name = "created_dte")

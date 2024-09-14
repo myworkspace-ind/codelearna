@@ -57,7 +57,6 @@ nextBtn.addEventListener('click', function () {
     }
 });
 
-// Tự động phát video tiếp theo khi video hiện tại kết thúc
 videoPlayer.addEventListener('ended', function () {
     if (currentVideoIndex < videos.length - 1) {
         currentVideoIndex++;
@@ -65,68 +64,78 @@ videoPlayer.addEventListener('ended', function () {
     }
 });
 
-// Các bình luận mẫu với avatar
-const demoComments = [
-    { avatar: 'https://i.pravatar.cc/40?img=1', comment: "Video này rất hữu ích!" },
-    { avatar: 'https://i.pravatar.cc/40?img=2', comment: "Cảm ơn bạn đã chia sẻ!" },
-    { avatar: 'https://i.pravatar.cc/40?img=3', comment: "Có thể giải thích rõ hơn phần cuối video không?" },
-    { avatar: 'https://i.pravatar.cc/40?img=4', comment: "Video này rất hay, mong chờ video tiếp theo!" }
+// Bình luận mẫu
+const comments = [
+    { user: { avatarUrl: "avatar1.png", name: "User 1" }, content: "Bình luận 1" },
+    { user: { avatarUrl: "avatar2.png", name: "User 2" }, content: "Bình luận 2" },
+    { user: { avatarUrl: "avatar3.png", name: "User 3" }, content: "Bình luận 3" },
+    { user: { avatarUrl: "avatar4.png", name: "User 4" }, content: "Bình luận 4" },
+    { user: { avatarUrl: "avatar5.png", name: "User 5" }, content: "Bình luận 5" },
+    { user: { avatarUrl: "avatar6.png", name: "User 6" }, content: "Bình luận 6" },
+    { user: { avatarUrl: "avatar7.png", name: "User 7" }, content: "Bình luận 7" },
+    { user: { avatarUrl: "avatar8.png", name: "User 8" }, content: "Bình luận 8" },
+    { user: { avatarUrl: "avatar9.png", name: "User 9" }, content: "Bình luận 9" },
+    { user: { avatarUrl: "avatar10.png", name: "User 10" }, content: "Bình luận 10" },
+    { user: { avatarUrl: "avatar11.png", name: "User 11" }, content: "Bình luận 11" }
 ];
 
-// Xử lý phần bình luận
-const commentList = document.getElementById('comment-list');
-const submitCommentBtn = document.getElementById('submit-comment-btn');
-const commentText = document.getElementById('comment-text');
+let currentPage = 0; // Trang hiện tại
+const commentsPerPage = 10; // Số lượng bình luận mỗi trang
+const totalPages = Math.ceil(comments.length / commentsPerPage); // Tính tổng số trang
 
-// Hiển thị các bình luận mẫu khi trang tải
-window.onload = function() {
-    demoComments.forEach(function(item) {
+// Hàm để tải bình luận cho một trang cụ thể
+function loadComments(page) {
+    // Xóa các bình luận hiện tại
+    const commentList = document.getElementById('comment-list');
+    commentList.innerHTML = ''; 
+
+    // Xác định phạm vi bình luận sẽ hiển thị trên trang hiện tại
+    const start = page * commentsPerPage;
+    const end = Math.min(start + commentsPerPage, comments.length);
+
+    // Lặp qua từng bình luận và hiển thị
+    for (let i = start; i < end; i++) {
+        const comment = comments[i];
         const newComment = document.createElement('li');
         
-        // Tạo phần tử avatar
         const avatar = document.createElement('img');
-        avatar.src = item.avatar;
-        avatar.classList.add('avatar'); // Thêm class avatar để dễ styling
-        
-        // Tạo phần tử nội dung bình luận
+        avatar.src = comment.user.avatarUrl;
+        avatar.classList.add('avatar');
+
         const commentContent = document.createElement('div');
         commentContent.classList.add('comment-content');
-        commentContent.textContent = item.comment;
-        
-        // Thêm avatar và bình luận vào phần tử li
+        commentContent.textContent = comment.content;
+
         newComment.appendChild(avatar);
         newComment.appendChild(commentContent);
         commentList.appendChild(newComment);
-    });
+    }
 
-    // Tải video đầu tiên khi trang load
-    loadVideo(currentVideoIndex);
-};
+    // Cập nhật hiển thị chỉ số phân trang
+    document.getElementById('page-indicator').textContent = `Trang ${currentPage + 1} / ${totalPages}`;
 
-// Thêm bình luận mới từ người dùng
-submitCommentBtn.addEventListener('click', function () {
-    const commentValue = commentText.value.trim();
+    // Kiểm tra nếu đang ở trang đầu hoặc cuối để vô hiệu hóa nút
+    document.getElementById('prev-page-btn').disabled = currentPage === 0;
+    document.getElementById('next-page-btn').disabled = currentPage >= totalPages - 1;
+}
 
-    if (commentValue !== '') {
-        const newComment = document.createElement('li');
-        
-        // Avatar ngẫu nhiên cho bình luận mới từ 1-70
-        const avatar = document.createElement('img');
-        avatar.src = `https://i.pravatar.cc/40?img=${Math.floor(Math.random() * 70) + 1}`; 
-        avatar.classList.add('avatar'); // Thêm class avatar
-        
-        // Nội dung bình luận mới
-        const commentContent = document.createElement('div');
-        commentContent.classList.add('comment-content');
-        commentContent.textContent = commentValue;
-
-        // Thêm avatar và nội dung bình luận vào phần tử li
-        newComment.appendChild(avatar);
-        newComment.appendChild(commentContent);
-        commentList.appendChild(newComment);
-
-        commentText.value = '';  // Reset nội dung bình luận
-    } else {
-        alert('Vui lòng nhập nội dung bình luận!');
+// Xử lý sự kiện khi nhấn nút "Trang sau"
+document.getElementById('next-page-btn').addEventListener('click', function () {
+    if (currentPage < totalPages - 1) {
+        currentPage++;
+        loadComments(currentPage);
     }
 });
+
+// Xử lý sự kiện khi nhấn nút "Trang trước"
+document.getElementById('prev-page-btn').addEventListener('click', function () {
+    if (currentPage > 0) {
+        currentPage--;
+        loadComments(currentPage);
+    }
+});
+
+// Tải bình luận cho trang đầu tiên khi trang được tải
+window.onload = function () {
+    loadComments(currentPage);
+};

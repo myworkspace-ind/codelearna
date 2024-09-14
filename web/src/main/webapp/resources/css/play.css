@@ -91,7 +91,6 @@ body {
 .controls button:active {
     background-color: #1f6a91;
 }
-
 /* Phần bình luận */
 .comment-section {
     margin-top: 30px;
@@ -136,46 +135,80 @@ body {
 .comment-input button:hover {
     background-color: #3498db;
 }
+/* Comment section styles */
+.comment-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
 .comment-list {
-    margin-top: 20px;
-}
-
-.comment-list h4 {
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-.comment-list ul {
     list-style-type: none;
     padding: 0;
 }
 
+.comment-item {
+    margin-bottom: 15px;
+}
 
-.comment-list ul li {
+.comment-content {
     display: flex;
     align-items: flex-start;
-    padding: 10px;
-    margin-bottom: 10px;
     background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.comment-list ul li img {
-    width: 40px; 
+/* Explicitly set avatar size for both parent and child comments */
+.comment-content .avatar,
+.child-comment .comment-content .avatar {
+    width: 40px;
     height: 40px;
-    border-radius: 50%; 
-    margin-right: 15px; 
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
 }
 
-.comment-list ul li .comment-content {
+.comment-text {
     flex-grow: 1;
-    background-color: #f7f7f7;
-    padding: 10px;
-    border-radius: 5px;
 }
 
+.comment-username {
+    font-weight: bold;
+    font-size: 16px;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.comment-text p {
+    margin: 0;
+    font-size: 14px;
+    color: #34495e;
+    line-height: 1.6;
+}
+
+/* Increase indentation for child comments */
+.child-comments {
+    list-style-type: none;
+    padding-left: 55px; /* Increased indentation */
+    margin-top: 10px;
+}
+
+.child-comment > .comment-content {
+    background-color: #f8f9fa;
+    border-left: 3px solid #3498db;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .child-comments {
+        padding-left: 30px;
+    }
+}
 /* Danh sách video */
 .container .video-list {
     background: #fff;
@@ -187,7 +220,7 @@ body {
 }
 
 .container .video-list.hidden {
-    display: none; /* Loại bỏ hoàn toàn khi bị ẩn */
+    display: none;
 }
 
 .container .video-list::-webkit-scrollbar {
