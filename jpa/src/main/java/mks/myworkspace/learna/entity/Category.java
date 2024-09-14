@@ -1,5 +1,6 @@
 package mks.myworkspace.learna.entity;
 
+import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 import lombok.Data;
@@ -12,9 +13,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Course> courses;
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    private List<Subcategory> subcategories; 
 }

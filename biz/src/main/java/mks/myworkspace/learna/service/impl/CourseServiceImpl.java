@@ -42,4 +42,9 @@ public class CourseServiceImpl implements CourseService {
     public List<Course> getRandomCourses() {
         return repo.findRandomCourses();
     }
+    
+    @Override
+    public List<Course> getCoursesBySubcategory(Long subcategoryId) {
+        return repo.findBySubcategoryId(subcategoryId);
+    }
 }

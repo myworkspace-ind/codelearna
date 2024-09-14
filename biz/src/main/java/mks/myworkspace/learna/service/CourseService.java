@@ -10,5 +10,6 @@ public interface CourseService {
     Course getCourseById(Long id);
     void deleteCourse(Long id);
     List<Course> getAllCourses();
-    List<Course> getRandomCourses(); // Thêm phương thức này
+    List<Course> getRandomCourses(); 
+    List<Course> getCoursesBySubcategory(Long id);
 }
