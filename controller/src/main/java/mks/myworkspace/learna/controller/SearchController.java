@@ -18,31 +18,32 @@ import mks.myworkspace.learna.service.SearchService;
 @Controller
 public class SearchController extends BaseController {
 
-    @Autowired
-    private SearchService searchService;
-
-    @GetMapping("/search")
-    public ModelAndView searchCourses(@RequestParam(value = "keyword", required = false) String keyword, 
-                                      HttpServletRequest request, HttpSession httpSession) {
-        ModelAndView mav = new ModelAndView("search");
-
-//        initSession(request, httpSession);
-        
-        mav.addObject("currentSiteId", getCurrentSiteId());
-        mav.addObject("userDisplayName", getCurrentUserDisplayName());
+	@Autowired
+	private SearchService searchService;
 
         // Tìm kiếm khóa học theo từ khóa
-        List<Course> courses;
-        if (keyword != null && !keyword.isEmpty()) {
-            courses = searchService.searchCoursesByKeyword(keyword);
-        } else {
-            courses = searchService.getAllCourses();
-        }
+	@GetMapping("/search")
+	public ModelAndView searchCourses(
+	    @RequestParam(value = "keyword", required = false) String keyword,
+	    @RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder) {
 
-        
-        mav.addObject("courses", courses);
-        mav.addObject("keyword", keyword); 
+	    List<Course> courses;
 
-        return mav;
-    }
+	    // Tìm kiếm khóa học theo từ khóa và sắp xếp
+	    if (keyword != null && !keyword.isEmpty()) {
+	        courses = searchService.searchCoursesByKeywordAndSortFilter(keyword, sortOrder);
+	    } else {
+	        courses = searchService.getAllCoursesSortedBySortFilter(sortOrder);
+	    }
+
+	    // Truyền dữ liệu vào view
+	    ModelAndView mav = new ModelAndView("search");
+	    mav.addObject("courses", courses);
+	    mav.addObject("keyword", keyword);  // Đảm bảo giữ lại keyword trong view
+	    mav.addObject("sortOrder", sortOrder);  // Đảm bảo giữ lại sortOrder trong view
+
+	    return mav;
+	}
+
+
 }

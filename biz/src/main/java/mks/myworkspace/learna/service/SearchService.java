@@ -7,7 +7,11 @@ import mks.myworkspace.learna.repository.SearchRepository;
 
 
 public interface SearchService {
-    SearchRepository getRepo();
-    List<Course> getAllCourses();
-    List<Course> searchCoursesByKeyword(String keyword);
+//    SearchRepository getRepo();
+//    List<Course> getAllCourses();
+//    List<Course> searchCoursesByKeyword(String keyword);
+    List<Course> searchCoursesByKeywordAndSortFilter(String keyword, String sortOrder);
+    List<Course> getAllCoursesSortedBySortFilter(String sortOrder);
+    
+    
 }

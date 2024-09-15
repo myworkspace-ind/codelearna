@@ -12,10 +12,8 @@
 </head>
 <body>
 
-	
 	<div th:replace="fragments/nav :: header"></div>
 
-	
 	<div class="container mt-4">
 		<div class="row">
 			<!-- Filter Section -->
@@ -50,12 +48,32 @@
 			<!-- Courses Section -->
 			<div class="col-md-9">
 				<h4>Results for ...</h4>
-				<!-- <div class="row mt-4 mb-4" id="coursesContainer">
-					<div th:each="course, iterStat : ${courses}"
-						th:id="'course-' + ${iterStat.index}" class="col-md-3 mb-4">
-						<div th:replace="fragments/courseItem :: courseItem(${course})"></div>
+
+				<!-- Sort Dropdown -->
+				<div class="d-flex justify-content-end mb-3">
+					<div class="dropdown">
+						<button class="btn btn-outline-secondary dropdown-toggle"
+							type="button" id="sortDropdown" data-bs-toggle="dropdown"
+							aria-expanded="false">Sort by</button>
+						<ul class="dropdown-menu" aria-labelledby="sortDropdown">
+							<li><a class="dropdown-item"
+								th:href="@{/search(sortOrder='asc', keyword=${keyword})}">Created
+									Date Ascending</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/search(sortOrder='desc', keyword=${keyword})}">Created
+									Date Descending</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/search(sortOrder='priceAsc', keyword=${keyword})}">Price
+									Ascending</a></li>
+							<li><a class="dropdown-item"
+								th:href="@{/search(sortOrder='priceDesc', keyword=${keyword})}">Price
+									Descending</a></li>
+						</ul>
 					</div>
-				</div> -->
+
+				</div>
+
+				<!-- Courses List -->
 				<div class="row mt-4 mb-4" id="coursesContainer">
 					<div th:each="course, iterStat : ${courses}"
 						th:id="'course-' + ${iterStat.index}" class="col-md-3 mb-4"

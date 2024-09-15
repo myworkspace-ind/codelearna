@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.repository.SearchRepository;
 import mks.myworkspace.learna.service.SearchService;
 
@@ -14,20 +15,32 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private SearchRepository searchRepository;
 
+
 	@Override
-	public SearchRepository getRepo() {
-		return searchRepository;
+	public List<Course> searchCoursesByKeywordAndSortFilter(String keyword, String sortOrder) {
+		if ("asc".equals(sortOrder)) {
+	        return searchRepository.findByNameContainingOrDescriptionContainingOrderByCreatedDateAsc(keyword, keyword);
+	    } else if("desc".equals(sortOrder)){
+	        return searchRepository.findByNameContainingOrDescriptionContainingOrderByCreatedDateDesc(keyword, keyword);
+	    } else if("priceAsc".equals(sortOrder)) {
+	    	return searchRepository.findByNameContainingOrDescriptionContainingOrderByDiscountedPriceAsc(keyword, sortOrder);
+	    } else {
+	    	return searchRepository.findByNameContainingOrDescriptionContainingOrderByDiscountedPriceDesc(keyword, sortOrder); 
+	    }
 	}
 
-	// Hiển thị tất cả các khoá học (search empty)
+
 	@Override
-	public List<Course> getAllCourses(){
-		return searchRepository.findAll();
-	}
-	// Tìm kiếm khóa học theo từ khóa
-	@Override
-	public List<Course> searchCoursesByKeyword(String keyword) {
-		return searchRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword);
+	public List<Course> getAllCoursesSortedBySortFilter(String sortOrder) {
+		if ("asc".equals(sortOrder)) {
+			return searchRepository.findAllByOrderByCreatedDateAsc();
+		} else if("desc".equals(sortOrder)){
+			return searchRepository.findAllByOrderByCreatedDateDesc();
+		} else if("priceAsc".equals(sortOrder)) {
+			return searchRepository.findAllByOrderByDiscountedPriceAsc();
+		} else {
+			return searchRepository.findAllByOrderByDiscountedPriceDesc();
+		}
 	}
 
 }

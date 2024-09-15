@@ -17,7 +17,7 @@ public class SubcategoryServiceImpl implements SubcategoryService {
 //    private SubcategoryRepository subcategoryRepository;
 
 	@Autowired
-	private CourseRepository courseRepository; // Thêm khai báo cho CourseRepository
+	private CourseRepository courseRepository; 
 	@Autowired
 	private SubcategoryRepository subcategoryRepository;
 
