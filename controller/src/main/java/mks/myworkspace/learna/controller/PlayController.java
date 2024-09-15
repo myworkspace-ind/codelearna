@@ -1,6 +1,8 @@
 package mks.myworkspace.learna.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,59 +22,68 @@ import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.service.CommentService;
 import mks.myworkspace.learna.service.PlayService;
 
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+
 @Controller
 public class PlayController {
-
     @Autowired
     private PlayService playService;
-
     @Autowired
     private CommentService commentService;
 
     @GetMapping("/play/{courseId}")
     public ModelAndView displayCourseLessons(
-    		@PathVariable Long courseId, 
-    	    @RequestParam(name = "page", defaultValue = "0") int page,  // Chỉ định tên của tham số
-    	    HttpServletRequest request, 
-    	    HttpSession session
+            @PathVariable Long courseId,
+            @RequestParam(defaultValue = "0") int page,
+            HttpServletRequest request,
+            HttpSession session
     ) {
         ModelAndView mav = new ModelAndView("play");
 
-        // Lấy danh sách bài học theo courseId
+        // Đảm bảo page không nhỏ hơn 0
+        if (page < 0) {
+            page = 0;
+        }
+
         List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
         mav.addObject("lessons", lessons);
 
-        // Kiểm tra nếu danh sách bài học không trống
         if (lessons != null && !lessons.isEmpty()) {
-            // Lấy bài học đầu tiên và bình luận của nó
-            Lesson firstLesson = lessons.get(0);
+            Lesson currentLesson = lessons.get(0);  // Lấy bài học đầu tiên
 
-            // Sử dụng PageRequest để giới hạn số lượng comment trả về (10 bình luận/trang)
-            var commentsPage = commentService.getCommentsByLessonIdAndParentCommentIsNull(firstLesson.getId(), PageRequest.of(page, 10));
+            // Phân trang cho comments
+            Pageable pageable = PageRequest.of(page, 10);  // 10 comments mỗi trang
+            Page<Comment> commentsPage = commentService.getCommentsByLessonIdAndParentCommentIsNull(currentLesson.getId(), pageable);
+
+            mav.addObject("currentLesson", currentLesson);
             mav.addObject("commentsPage", commentsPage);
-
-            // Truyền bài học đầu tiên như bài học hiện tại
-            mav.addObject("currentLesson", firstLesson);
             mav.addObject("currentPage", commentsPage.getNumber());
             mav.addObject("totalPages", commentsPage.getTotalPages());
         } else {
-            // Trường hợp không có bài học
             mav.addObject("currentLesson", null);
             mav.addObject("commentsPage", null);
         }
 
         return mav;
     }
-    
-    @GetMapping("/comments")
-    @ResponseBody
-    public Page<Comment> getComments(
-        @RequestParam Long lessonId, 
-        @RequestParam int page, 
-        @RequestParam int size
-    ) {
-        // Trả về các bình luận phân trang
-        return commentService.getCommentsByLessonIdAndParentCommentIsNull(lessonId, PageRequest.of(page, size));
-    }
 
+    
+    @GetMapping("/play/{courseId}/comments")
+    @ResponseBody
+    public ResponseEntity<?> getComments(@PathVariable Long courseId,
+                                         @RequestParam(defaultValue = "0") int page,
+                                         @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Comment> commentsPage = commentService.getCommentsByLessonIdAndParentCommentIsNull(courseId, pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("comments", commentsPage.getContent());
+        response.put("currentPage", commentsPage.getNumber());
+        response.put("totalPages", commentsPage.getTotalPages());
+        response.put("totalItems", commentsPage.getTotalElements());
+
+        return ResponseEntity.ok(response);
+    }
 }
