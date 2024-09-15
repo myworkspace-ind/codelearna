@@ -9,7 +9,14 @@ public interface CourseService {
     Course saveCourse(Course course);
     Course getCourseById(Long id);
     void deleteCourse(Long id);
+    
+    // Search
+    List<Course> searchCoursesByKeywordAndSortFilter(String keyword, String sortOrder);
+    List<Course> getAllCoursesSortedBySortFilter(String sortOrder);
+    
     List<Course> getAllCourses();
     List<Course> getRandomCourses(); 
     List<Course> getCoursesBySubcategory(Long id);
+    
+    
 }
