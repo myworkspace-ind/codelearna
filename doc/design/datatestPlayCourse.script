@@ -1,0 +1,11 @@
+-- Tạo khóa học
+INSERT INTO learna_course (name, original_price, discounted_price, image_url, description, created_dte, modified_dte) 
+VALUES ('Java Course', 200.0, 150.0, 'https://example.com/java-course-image.jpg', 'A comprehensive Java course.', NOW(), NOW());
+
+
+-- Tạo bài học
+INSERT INTO learna_lesson (title, video_url, course_id, created_dte, modified_dte) 
+VALUES ('Introduction to Java', 'http://example.com/java-intro.mp4', (SELECT id FROM learna_course WHERE name = 'Java Course'), NOW(), NOW());
+
+INSERT INTO learna_lesson (title, video_url, course_id, created_dte, modified_dte) 
+VALUES ('Advanced Java', 'http://example.com/java-advanced.mp4', (SELECT id FROM learna_course WHERE name = 'Java Course'), NOW(), NOW());
