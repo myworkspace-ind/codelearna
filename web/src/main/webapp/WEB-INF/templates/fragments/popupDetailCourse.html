@@ -1,0 +1,35 @@
+<div id="courseDetailPopup" class="popup-overlay" style="display: none;">
+   <div class="popup-content">
+       <div class="course-header">
+           <h2 id="courseName"></h2>
+           <span class="close-btn" onclick="closePopup()">&times;</span>
+       </div>
+       <div class="course-body">
+           <div class="course-image">
+               <img id="courseImage" src="" alt="Course Image" />
+           </div>
+           <div class="course-screenshots">
+               <div class="screenshots-container">
+                   <img id="courseImage" src="" alt="Course Image" />
+                   <img src="https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif" alt="Screenshot 1" />
+                   <img src="https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif" alt="Screenshot 2" />
+                   <img src="https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif" alt="Screenshot 3" />
+               </div>
+           </div>
+           <div class="course-details-container">
+               <div class="course-description">
+                   <h3>Mô tả</h3>
+                   <p id="courseDescription">Đây là mô tả</p>
+               </div>
+               <div class="course-details">
+                   <h3>Tổng quan</h3>
+                   <p>Độ khó: <span id="courseDifficulty">BEGINNER</span></p>
+                   <p>Loại bài học: <span id="courseLessonType">Video</span></p>
+                   <p><del id="courseOriginalPrice">₫3.000.000</del></p>
+                   <h4 id="courseDiscountedPrice">₫2.500.000</h4>
+                   <button class="btn btn-primary">Thanh toán</button>
+               </div>
+           </div>
+       </div>
+   </div>
+</div>

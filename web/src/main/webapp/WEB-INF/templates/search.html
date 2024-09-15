@@ -6,31 +6,16 @@
 <link rel="stylesheet"
 	href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="resources/css/home.css?v=1.1">
+<link rel="stylesheet"
+	href="resources/css/fragments/courseItem.css?v=1.1">
+
 </head>
 <body>
 
-	<!-- Header Section -->
-	<div class="container">
-		<div class="row">
-			<div class="col-md-2">
-				<img src="logo-url" alt="Logo" class="img-responsive" />
-			</div>
-			<!-- Search -->
-			<div class="col-md-6">
-				<form th:action="@{/search}" method="get">
-					<input type="text" name="keyword" class="form-control"
-						placeholder="Find the course you want" />
-				</form>
-			</div>
+	
+	<div th:replace="fragments/header :: header"></div>
 
-			<div class="col-md-4 text-right">
-				<button class="btn btn-default">Search</button>
-				<button class="btn btn-default">My profile</button>
-			</div>
-		</div>
-	</div>
-
-<!-- 	Main Container with Filters and Courses -->
+	
 	<div class="container mt-4">
 		<div class="row">
 			<!-- Filter Section -->
@@ -65,26 +50,34 @@
 			<!-- Courses Section -->
 			<div class="col-md-9">
 				<h4>Results for ...</h4>
-				<!-- <div class="row">
-					Display course list using courseItem fragment
-					<div class="col-md-4" th:each="course : ${courses}">
-						Use courseItem fragment to display each course
-						<div th:replace="~{fragments/courseItem :: courseItem(course)}"></div>
-					</div>
-				</div> -->
-				<div class="row mt-4 mb-4" id="coursesContainer">
+				<!-- <div class="row mt-4 mb-4" id="coursesContainer">
 					<div th:each="course, iterStat : ${courses}"
 						th:id="'course-' + ${iterStat.index}" class="col-md-3 mb-4">
 						<div th:replace="fragments/courseItem :: courseItem(${course})"></div>
 					</div>
+				</div> -->
+				<div class="row mt-4 mb-4" id="coursesContainer">
+					<div th:each="course, iterStat : ${courses}"
+						th:id="'course-' + ${iterStat.index}" class="col-md-3 mb-4"
+						th:data-name="${course.name}"
+						th:data-image-url="${course.imageUrl}"
+						th:data-description="${course.description}"
+						th:data-difficulty-level="${course.difficultyLevel}"
+						th:data-lesson-type="${course.lessonType}"
+						th:data-original-price="${course.originalPrice}"
+						th:data-discounted-price="${course.discountedPrice}">
+						<div th:replace="fragments/courseItem :: courseItem(${course})"></div>
+					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>
 
-	<div class="container">
-		<div class="text-center">&copy; 2024 The MKS Group</div>
+	<div>&copy; 2017 The MKS Group</div>
 	</div>
+
+	<th:block th:include="fragments/javascript"></th:block>
 
 </body>
 </html>

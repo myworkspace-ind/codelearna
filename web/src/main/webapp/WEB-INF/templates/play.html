@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+<<<<<<< HEAD
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Play Page</title>
     <link rel="stylesheet" th:href="@{/resources/css/play.css}">
+=======
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Play Page</title>
+<link rel="stylesheet" th:href="@{/resources/css/play.css}">
+>>>>>>> f75007b29de5c8d9f1f51ce9bfb9efbd0e3721d1
 </head>
 <body>
-    <div class="container">
-        <!-- Nút Toggle -->
-        <button id="toggle-btn">☰</button>
+	<div class="container">
+		<!-- Nút Toggle -->
+		<button id="toggle-btn">☰</button>
 
+<<<<<<< HEAD
         <!-- Video Section -->
         <div class="main-video" id="main-video">
             <div class="video">
@@ -19,15 +28,29 @@
                 <video id="main-video-player" th:src="${lessons[0].videoUrl}" controls muted autoplay></video>
                 <h3 class="title" th:text="${lessons[0].title}">Bài 1</h3>
             </div>
+=======
+		<!-- Video Section -->
+		<div class="main-video" id="main-video">
+			<div class="video">
+				<!-- Hiển thị video đầu tiên từ danh sách các bài học -->
+				<video id="main-video-player"
+					th:src="${currentLesson != null ? currentLesson.videoUrl : ''}"
+					controls muted autoplay></video>
+				<h3 class="title"
+					th:text="${currentLesson != null ? currentLesson.title : 'No lesson available'}">Bài
+					1</h3>
+			</div>
+>>>>>>> f75007b29de5c8d9f1f51ce9bfb9efbd0e3721d1
 
-            <!-- Nút điều khiển video -->
-            <div class="controls">
-                <button id="prev-btn">Bài trước</button>
-                <button id="play-pause-btn">Tạm dừng</button>
-                <button id="next-btn">Bài tiếp theo</button>
-            </div>
-        </div>
+			<!-- Nút điều khiển video -->
+			<div class="controls">
+				<button id="prev-btn">Bài trước</button>
+				<button id="play-pause-btn">Tạm dừng</button>
+				<button id="next-btn">Bài tiếp theo</button>
+			</div>
+		</div>
 
+<<<<<<< HEAD
         <!-- Danh sách video -->
         <div class="video-list" id="video-list">
             <div class="video-list-content">
@@ -42,23 +65,97 @@
                 </div>
             </div>
         </div>
+=======
+		<!-- Danh sách video -->
+		<div class="video-list" id="video-list">
+			<div class="video-list-content">
+				<div class="video-list-header">
+					<input type="text" placeholder="Tìm kiếm bài học" id="search">
+					<button>Tìm kiếm</button>
+				</div>
+				<!-- Lặp qua các bài học và hiển thị từng video -->
+				<div th:each="lesson, lessonStat : ${lessons}" class="vid"
+					th:classappend="${lessonStat.first} ? 'active'">
+					<video th:src="${lesson.videoUrl}" muted></video>
+					<h3 class="title" th:text="${lesson.title}">Bài học</h3>
+				</div>
+			</div>
+		</div>
+>>>>>>> f75007b29de5c8d9f1f51ce9bfb9efbd0e3721d1
 
-        <!-- Phần bình luận -->
-        <div class="comment-section">
-            <h3>Bình luận</h3>
-            <div class="comment-input">
-                <textarea id="comment-text" placeholder="Nhập bình luận của bạn..." rows="3"></textarea>
-                <button id="submit-comment-btn">Gửi bình luận</button>
-            </div>
-            <div class="comment-list">
-                <h4>Danh sách bình luận:</h4>
-                <ul id="comment-list">
-                    <!-- Các bình luận sẽ được thêm tại đây -->
-                </ul>
-            </div>
-        </div>
-    </div>
+		<!-- Bình luận -->
+		<div class="comment-section">
+			<h3>Bình luận</h3>
+			<div class="comment-input">
+				<textarea id="comment-text" placeholder="Nhập bình luận của bạn..."
+					rows="3"></textarea>
+				<button id="submit-comment-btn">Gửi bình luận</button>
+			</div>
 
+<<<<<<< HEAD
     <script th:src="@{/resources/js/play.js}"></script>
+=======
+			<ul class="comment-list" id="comment-list">
+				<!-- Lặp qua các bình luận cha -->
+				<li th:each="comment : ${commentsPage.content}"
+					class="comment-item parent-comment">
+					<div class="comment-content">
+						<!-- Avatar bình luận cha -->
+						<img th:src="${comment.user.avatarUrl}" alt="Avatar"
+							class="avatar parent-avatar">
+						<div class="comment-text">
+							<span class="comment-username" th:text="${comment.user.name}"></span>
+							<p th:text="${comment.content}">Nội dung bình luận</p>
+						</div>
+					</div> <!-- Lặp qua các bình luận con (nếu có) -->
+					<ul th:if="${comment.childComments != null}" class="child-comments">
+						<li th:each="childComment : ${comment.childComments}"
+							class="comment-item child-comment">
+							<div class="comment-content">
+								<!-- Avatar bình luận con -->
+								<img th:src="${childComment.user.avatarUrl}" alt="Avatar"
+									class="avatar child-avatar">
+								<div class="comment-text">
+									<span class="comment-username"
+										th:text="${childComment.user.name}"></span>
+									<p th:text="${childComment.content}">Nội dung bình luận</p>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</li>
+			</ul>
+
+			<nav aria-label="Page navigation">
+				<ul class="pagination">
+					<!-- Nút Trang Trước -->
+					<li class="page-item"
+						th:classappend="${currentPage == 0} ? 'disabled'"><a
+						class="page-link"
+						th:href="@{'/play/' + ${currentLesson.course.id} + '?page=' + (${currentPage - 1})}"
+						aria-label="Trang trước"> <span aria-hidden="true">&laquo;</span>
+					</a></li>
+
+					<!-- Hiển thị số trang -->
+					<li class="page-item disabled"><span class="page-link"
+						th:text="'Trang ' + (${currentPage + 1}) + ' / ' + ${totalPages}"></span>
+					</li>
+
+					<!-- Nút Trang Sau -->
+					<li class="page-item"
+						th:classappend="${currentPage == (totalPages - 1)} ? 'disabled'">
+						<a class="page-link"
+						th:href="@{'/play/' + ${currentLesson.course.id} + '?page=' + (${currentPage + 1})}"
+						aria-label="Trang sau"> <span aria-hidden="true">&raquo;</span>
+					</a>
+					</li>
+				</ul>
+			</nav>
+
+		</div>
+	</div>
+
+	<script th:src="@{/resources/js/play.js}"></script>
+>>>>>>> f75007b29de5c8d9f1f51ce9bfb9efbd0e3721d1
 </body>
 </html>
