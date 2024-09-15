@@ -1,17 +1,5 @@
-
 const itemsPerPage = 8; // Số lượng khóa học trên mỗi trang
 let currentPage = 1;
-
-// Dữ liệu mẫu cho các chương trình khuyến mãi
-const promotions = [
-    { name: 'Tên chương trình 1', time: '11/10-22/12', progress: 60 },
-    { name: 'Tên chương trình 2', time: '11/10-22/12', progress: 70 },
-    { name: 'Tên chương trình 3', time: '11/10-22/12', progress: 40 },
-    { name: 'Tên chương trình 4', time: '11/10-22/12', progress: 50 },
-    { name: 'Tên chương trình 5', time: '11/10-22/12', progress: 80 },
-    { name: 'Tên chương trình 6', time: '11/10-22/12', progress: 90 },
-    // Thêm nhiều chương trình khuyến mãi hơn nếu cần
-];
 
 function showPage(page) {
     const courses = document.querySelectorAll('#coursesContainer > div');
@@ -101,34 +89,6 @@ function setupPagination() {
     });
     pagination.appendChild(nextItem);
 }
-
-/*function displayPromotions() {
-    const promotionsContainer = document.getElementById('promotionCarousel').querySelector('.carousel-inner');
-    promotionsContainer.innerHTML = '';
-
-    for (let i = 0; i < promotions.length; i += 3) {
-        const activeClass = i === 0 ? 'active' : '';
-        const promotionItem = document.createElement('div');
-        promotionItem.className = `carousel-item ${activeClass}`;
-        promotionItem.innerHTML = `
-            <div class="row">
-                ${promotions.slice(i, i + 3).map(promotion => `
-                    <div class="col-12 mb-3">
-                        <div class="promotion-item">
-                            <p>${promotion.name}</p>
-                            <p>Thời gian: ${promotion.time}</p>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: ${promotion.progress}%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-        promotionsContainer.appendChild(promotionItem);
-    }
-}*/
-
 
 // Hiển thị trang đầu tiên và thiết lập phân trang khi trang được tải
 document.addEventListener('DOMContentLoaded', function() {
