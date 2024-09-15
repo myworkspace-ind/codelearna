@@ -9,13 +9,13 @@
 </head>
 <body>
 	<div class="container">
-		<!-- Nút Toggle -->
+	
 		<button id="toggle-btn">☰</button>
 
 		<!-- Video Section -->
 		<div class="main-video" id="main-video">
 			<div class="video">
-				<!-- Hiển thị video đầu tiên từ danh sách các bài học -->
+			
 				<video id="main-video-player"
 					th:src="${currentLesson != null ? currentLesson.videoUrl : ''}"
 					controls muted autoplay></video>
@@ -24,7 +24,7 @@
 					1</h3>
 			</div>
 
-			<!-- Nút điều khiển video -->
+		
 			<div class="controls">
 				<button id="prev-btn">Bài trước</button>
 				<button id="play-pause-btn">Tạm dừng</button>
@@ -39,7 +39,7 @@
 					<input type="text" placeholder="Tìm kiếm bài học" id="search">
 					<button>Tìm kiếm</button>
 				</div>
-				<!-- Lặp qua các bài học và hiển thị từng video -->
+				
 				<div th:each="lesson, lessonStat : ${lessons}" class="vid"
 					th:classappend="${lessonStat.first} ? 'active'">
 					<video th:src="${lesson.videoUrl}" muted></video>
@@ -58,23 +58,23 @@
 			</div>
 
 			<ul class="comment-list" id="comment-list">
-				<!-- Lặp qua các bình luận cha -->
+			
 				<li th:each="comment : ${commentsPage.content}"
 					class="comment-item parent-comment">
 					<div class="comment-content">
-						<!-- Avatar bình luận cha -->
+					
 						<img th:src="${comment.user.avatarUrl}" alt="Avatar"
 							class="avatar parent-avatar">
 						<div class="comment-text">
 							<span class="comment-username" th:text="${comment.user.name}"></span>
 							<p th:text="${comment.content}">Nội dung bình luận</p>
 						</div>
-					</div> <!-- Lặp qua các bình luận con (nếu có) -->
+					</div> 
 					<ul th:if="${comment.childComments != null}" class="child-comments">
 						<li th:each="childComment : ${comment.childComments}"
 							class="comment-item child-comment">
 							<div class="comment-content">
-								<!-- Avatar bình luận con -->
+								
 								<img th:src="${childComment.user.avatarUrl}" alt="Avatar"
 									class="avatar child-avatar">
 								<div class="comment-text">
@@ -89,25 +89,25 @@
 			</ul>
 
 			<nav aria-label="Page navigation">
-				<ul class="pagination">
-					<!-- Nút Trang Trước -->
+				<ul class="pagination" id="comment-pagination">
+				
 					<li class="page-item"
 						th:classappend="${currentPage == 0} ? 'disabled'"><a
 						class="page-link"
-						th:href="@{'/play/' + ${currentLesson.course.id} + '?page=' + (${currentPage - 1})}"
+						th:href="@{/play/{courseId}(courseId=${currentLesson.course.id}, page=${currentPage - 1})}"
 						aria-label="Trang trước"> <span aria-hidden="true">&laquo;</span>
 					</a></li>
 
-					<!-- Hiển thị số trang -->
+				
 					<li class="page-item disabled"><span class="page-link"
-						th:text="'Trang ' + (${currentPage + 1}) + ' / ' + ${totalPages}"></span>
+						th:text="'Trang ' + ${currentPage + 1} + ' / ' + ${totalPages}"></span>
 					</li>
 
-					<!-- Nút Trang Sau -->
+					
 					<li class="page-item"
-						th:classappend="${currentPage == (totalPages - 1)} ? 'disabled'">
+						th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
 						<a class="page-link"
-						th:href="@{'/play/' + ${currentLesson.course.id} + '?page=' + (${currentPage + 1})}"
+						th:href="@{/play/{courseId}(courseId=${currentLesson.course.id}, page=${currentPage + 1})}"
 						aria-label="Trang sau"> <span aria-hidden="true">&raquo;</span>
 					</a>
 					</li>
