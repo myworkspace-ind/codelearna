@@ -29,9 +29,15 @@ public class Campaign {
     @Column(name = "end_time", nullable = false)
     private Date endTime;
 
-    @Column(name = "description", length = 1000)
-    private String description;
+    @Column(name = "short_description", length = 1000)
+    private String shortDescription;
 
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+    
+    @Column(name = "cover_imageUrl", columnDefinition = "TEXT")
+    private String coverImageUrl;
+    
     @CreationTimestamp
     @Column(name = "created_dte")
     private Date createdDate;
