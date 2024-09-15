@@ -17,4 +17,23 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
 	List<Course> findBySubcategoryId(Long subcategoryId);
 	
+	
+	// Search feature
+	List<Course> findByNameContainingOrDescriptionContainingOrderByCreatedDateAsc(String name, String description);
+
+	List<Course> findByNameContainingOrDescriptionContainingOrderByCreatedDateDesc(String name, String description);
+
+	List<Course> findAllByOrderByCreatedDateAsc();
+
+	List<Course> findAllByOrderByCreatedDateDesc();
+	
+
+	List<Course> findByNameContainingOrDescriptionContainingOrderByDiscountedPriceAsc(String name, String description);
+
+	List<Course> findByNameContainingOrDescriptionContainingOrderByDiscountedPriceDesc(String name, String description);
+
+	List<Course> findAllByOrderByDiscountedPriceAsc();
+
+	List<Course> findAllByOrderByDiscountedPriceDesc();
+	
 }

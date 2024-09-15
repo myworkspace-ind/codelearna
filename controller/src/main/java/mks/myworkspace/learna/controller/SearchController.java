@@ -13,37 +13,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.service.CourseService;
-import mks.myworkspace.learna.service.SearchService;
 
 @Controller
 public class SearchController extends BaseController {
 
 	@Autowired
-	private SearchService searchService;
+	private CourseService courseService;
 
-        // Tìm kiếm khóa học theo từ khóa
+	// Tìm kiếm khóa học theo từ khóa
 	@GetMapping("/search")
-	public ModelAndView searchCourses(
-	    @RequestParam(value = "keyword", required = false) String keyword,
-	    @RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder) {
+	public ModelAndView searchCourses(@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder) {
 
-	    List<Course> courses;
+		List<Course> courses;
 
-	    // Tìm kiếm khóa học theo từ khóa và sắp xếp
-	    if (keyword != null && !keyword.isEmpty()) {
-	        courses = searchService.searchCoursesByKeywordAndSortFilter(keyword, sortOrder);
-	    } else {
-	        courses = searchService.getAllCoursesSortedBySortFilter(sortOrder);
-	    }
+		// Tìm kiếm khóa học theo từ khóa và sắp xếp
+		if (keyword != null && !keyword.isEmpty()) {
+			courses = courseService.searchCoursesByKeywordAndSortFilter(keyword, sortOrder);
+		} else {
+			courses = courseService.getAllCoursesSortedBySortFilter(sortOrder);
+		}
 
-	    // Truyền dữ liệu vào view
-	    ModelAndView mav = new ModelAndView("search");
-	    mav.addObject("courses", courses);
-	    mav.addObject("keyword", keyword);  // Đảm bảo giữ lại keyword trong view
-	    mav.addObject("sortOrder", sortOrder);  // Đảm bảo giữ lại sortOrder trong view
+		ModelAndView mav = new ModelAndView("search");
+		mav.addObject("courses", courses);
+		mav.addObject("keyword", keyword); 
+		mav.addObject("sortOrder", sortOrder); 
 
-	    return mav;
+		return mav;
 	}
-
 
 }
