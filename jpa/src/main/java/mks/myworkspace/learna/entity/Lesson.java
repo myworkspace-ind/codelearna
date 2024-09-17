@@ -1,6 +1,7 @@
 package mks.myworkspace.learna.entity;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -8,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.Data;
-
 
 @Entity
 @Table(name="learna_lesson", uniqueConstraints =@UniqueConstraint(columnNames = "id"))
@@ -36,4 +36,7 @@ public class Lesson {
     @UpdateTimestamp
     @Column(name = "modified_dte")
     private Date modifiedDate;
+
+    @ManyToMany(mappedBy = "lessons")
+    private Set<Course> courses;
 }
