@@ -55,9 +55,9 @@ public class Course {
     @Enumerated(EnumType.STRING)
     private LessonType lessonType;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @ManyToOne
+    @JoinColumn(name = "subcategory_id")
+    private Subcategory subcategory;
 
     @ElementCollection
     @MapKeyColumn(name = "star")

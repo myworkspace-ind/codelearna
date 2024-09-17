@@ -42,4 +42,36 @@ public class CourseServiceImpl implements CourseService {
     public List<Course> getRandomCourses() {
         return repo.findRandomCourses();
     }
+    
+    @Override
+    public List<Course> getCoursesBySubcategory(Long subcategoryId) {
+        return repo.findBySubcategoryId(subcategoryId);
+    }
+    
+    @Override
+	public List<Course> searchCoursesByKeywordAndSortFilter(String keyword, String sortOrder) {
+		if ("asc".equals(sortOrder)) {
+	        return repo.findByNameContainingOrDescriptionContainingOrderByCreatedDateAsc(keyword, keyword);
+	    } else if("desc".equals(sortOrder)){
+	        return repo.findByNameContainingOrDescriptionContainingOrderByCreatedDateDesc(keyword, keyword);
+	    } else if("priceAsc".equals(sortOrder)) {
+	    	return repo.findByNameContainingOrDescriptionContainingOrderByDiscountedPriceAsc(keyword, sortOrder);
+	    } else {
+	    	return repo.findByNameContainingOrDescriptionContainingOrderByDiscountedPriceDesc(keyword, sortOrder); 
+	    }
+	}
+
+
+	@Override
+	public List<Course> getAllCoursesSortedBySortFilter(String sortOrder) {
+		if ("asc".equals(sortOrder)) {
+			return repo.findAllByOrderByCreatedDateAsc();
+		} else if("desc".equals(sortOrder)){
+			return repo.findAllByOrderByCreatedDateDesc();
+		} else if("priceAsc".equals(sortOrder)) {
+			return repo.findAllByOrderByDiscountedPriceAsc();
+		} else {
+			return repo.findAllByOrderByDiscountedPriceDesc();
+		}
+	}
 }

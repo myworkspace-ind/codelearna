@@ -13,36 +13,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.service.CourseService;
-import mks.myworkspace.learna.service.SearchService;
 
 @Controller
 public class SearchController extends BaseController {
 
-    @Autowired
-    private SearchService searchService;
+	@Autowired
+	private CourseService courseService;
 
-    @GetMapping("/search")
-    public ModelAndView searchCourses(@RequestParam(value = "keyword", required = false) String keyword, 
-                                      HttpServletRequest request, HttpSession httpSession) {
-        ModelAndView mav = new ModelAndView("search");
+	// Tìm kiếm khóa học theo từ khóa
+	@GetMapping("/search")
+	public ModelAndView searchCourses(@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder) {
 
-//        initSession(request, httpSession);
-        
-        mav.addObject("currentSiteId", getCurrentSiteId());
-        mav.addObject("userDisplayName", getCurrentUserDisplayName());
+		List<Course> courses;
 
-        // Tìm kiếm khóa học theo từ khóa
-        List<Course> courses;
-        if (keyword != null && !keyword.isEmpty()) {
-            courses = searchService.searchCoursesByKeyword(keyword);
-        } else {
-            courses = searchService.getAllCourses();
-        }
+		// Tìm kiếm khóa học theo từ khóa và sắp xếp
+		if (keyword != null && !keyword.isEmpty()) {
+			courses = courseService.searchCoursesByKeywordAndSortFilter(keyword, sortOrder);
+		} else {
+			courses = courseService.getAllCoursesSortedBySortFilter(sortOrder);
+		}
 
-        
-        mav.addObject("courses", courses);
-        mav.addObject("keyword", keyword); 
+		ModelAndView mav = new ModelAndView("search");
+		mav.addObject("courses", courses);
+		mav.addObject("keyword", keyword); 
+		mav.addObject("sortOrder", sortOrder); 
 
-        return mav;
-    }
+		return mav;
+	}
+
 }
