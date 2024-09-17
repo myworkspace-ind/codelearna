@@ -1,0 +1,15 @@
+.campaign-carousel {
+  margin-bottom: 4rem;
+}
+/* Since positioning the image, we need to help out the caption */
+.campaign-caption {
+	background: rgba(0, 0, 0, 0.5);
+  	bottom: 3rem;
+  	z-index: 10;
+  	padding: 10px;
+}
+
+/* Declare heights because of positioning of img element */
+.campaign-carousel-item {
+  height: 25rem;
+}

@@ -54,8 +54,8 @@
                     <div class="card-header">
                         <h5>Chương trình khuyến mãi đang diễn ra</h5>
                     </div>
-                    <div class="card-body" > <!-- Chiều cao cố định cho card-body -->
-                        <div id="campaignCarousel" class="carousel slidee" data-bs-ride="carousel" >
+                    <!-- <div class="card-body" > Chiều cao cố định cho card-body
+                        <div id="campaignCarousel" class="carousel slide" data-bs-ride="carousel" >
                             <div class="carousel-inner" >
                                 <div th:each="campaignData, iterStat : ${campaigns}" th:classappend="${iterStat.index == 0} ? 'active'" class="carousel-item" 
                                     th:data-name="${campaignData.campaign.name}"
@@ -77,12 +77,12 @@
                                         	 aria-valuenow="${campaignData.progress}"
                                              aria-valuemin="0" 
                                              aria-valuemax="100" 
-                                             th:style="'width: ' + ${campaignData.progress} + '%'"> <!-- Sử dụng giá trị progress từ campaignDTO -->
+                                             th:style="'width: ' + ${campaignData.progress} + '%'"> Sử dụng giá trị progress từ campaignDTO
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="carousel-indicators" style="bottom: 0px;"> <!-- Điều chỉnh vị trí -->
+                            <div class="carousel-indicators" style="bottom: 0px;"> Điều chỉnh vị trí
                                 <button type="button" data-bs-target="#campaignCarousel" th:each="campaignData, iterStat : ${campaigns}" th:data-bs-slide-to="${iterStat.index}" th:classappend="${iterStat.index == 0} ? 'active'" th:aria-current="${iterStat.index == 0} ? 'true' : 'false'" th:aria-label="'Slide ' + ${iterStat.index + 1}"></button>
                             </div>
                             <button class="carousel-control-prev" type="button" data-bs-target="#campaignCarousel" data-bs-slide="prev">
@@ -94,7 +94,7 @@
                                 <span class="visually-hidden">Next</span>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
