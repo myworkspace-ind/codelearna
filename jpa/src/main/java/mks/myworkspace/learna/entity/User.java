@@ -49,10 +49,7 @@ public class User {
 
     @Column(name = "verified", nullable = false)
     private Boolean verified = false;
-
-    @Column(name = "reset_token")
-    private String resetToken;
-
+    
     @CreationTimestamp
     @Column(name = "created_dte")
     private Date createdDate;
