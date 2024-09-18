@@ -7,10 +7,11 @@
     <div th:fragment="courseItem(course)">
         <div class="course-item">
                 <img th:src="${course.imageUrl}" th:alt="${course.name}" style="height: 200px; width: 100%; object-fit: cover;" onerror="this.onerror=null;this.src='https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif';">
-<h3 th:text="${course.name}" class="course-name" style="text-align: left;"></h3>
+                <h3 th:text="${course.name}" class="course-name" style="text-align: left;"></h3>
                 <p th:text="'for '+ ${#strings.capitalize(course.difficultyLevel.name().toLowerCase())}" class="course-difficulty" style="text-align: left;"></p>
                 <p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}" style="text-decoration: line-through;"></p>
-                <h5 th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
+                <h5 th:if="${course.discountedPrice == 0}" th:text="'Free'"></h5>
+                <h5 th:if="${course.discountedPrice != 0}" th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
         </div>
     </div>
 </body>

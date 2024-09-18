@@ -21,7 +21,9 @@
 					th:data-difficulty-level="${featuredCourse.difficultyLevel}"
 					th:data-lesson-type="${featuredCourse.lessonType}"
 					th:data-original-price="${featuredCourse.originalPrice}"
-					th:data-discounted-price="${featuredCourse.discountedPrice}">
+					th:data-discounted-price="${featuredCourse.discountedPrice}"
+					th:data-is-free="${featuredCourse.isFree}"
+					th:data-course-id="${featuredCourse.id}">
 					<img th:src="${featuredCourse.imageUrl}" class="d-block w-100"
 						alt="Course Image" style="height: 400px; object-fit: cover;">
 					<div class="outstand-carousel-caption carousel-caption d-none d-md-block">
