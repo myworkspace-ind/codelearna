@@ -2,6 +2,7 @@ package mks.myworkspace.learna.entity;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -17,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import lombok.Data;
@@ -68,6 +71,14 @@ public class Course {
     @UpdateTimestamp
     @Column(name = "modified_dte")
     private Date modifiedDate;
+
+    @ManyToMany
+    @JoinTable(
+        name = "course_lesson",
+        joinColumns = @JoinColumn(name = "course_id"),
+        inverseJoinColumns = @JoinColumn(name = "lesson_id")
+    )
+    private Set<Lesson> lessons;
 
     public enum DifficultyLevel {
         BEGINNER,
