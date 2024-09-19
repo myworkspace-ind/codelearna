@@ -1,62 +1,62 @@
+// Get references to DOM elements
 const toggleBtn = document.getElementById('toggle-btn');
 const videoList = document.getElementById('video-list');
 const container = document.querySelector('.container');
-const videoPlayer = document.getElementById('main-video-player');
+const videoPlayer = document.getElementById('embedded-content');
 const videoTitle = document.querySelector('.title');
-
-const playPauseBtn = document.getElementById('play-pause-btn');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 
-const videos = [
-	{ url: "http://media.w3.org/2010/05/sintel/trailer.mp4", title: "Sintel Trailer" },
-	{ url: "http://media.w3.org/2010/05/bunny/trailer.mp4", title: "Bunny Trailer" },
-	{ url: "http://media.w3.org/2010/05/bunny/movie.mp4", title: "Bunny Movie" }
-];
-let currentVideoIndex = 0;
+// Get the list of lessons from the server-rendered data
+const lessons = Array.from(document.querySelectorAll('.video-list-content .vid'));
+let currentLessonIndex = 0;
 
-function loadVideo(index) {
-	videoPlayer.src = videos[index].url;
-	videoPlayer.play();
-	videoTitle.textContent = videos[index].title;
+function loadLesson(index) {
+    const lesson = lessons[index];
+    if (lesson) {
+        const videoUrl = lesson.querySelector('video').src;
+        const title = lesson.querySelector('.title').textContent;
+        
+        videoPlayer.src = videoUrl;
+        videoTitle.textContent = title;
+        
+        // Update active class
+        lessons.forEach(l => l.classList.remove('active'));
+        lesson.classList.add('active');
+		
+		// Scroll the active lesson into view
+		lesson.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 }
 
 toggleBtn.addEventListener('click', function() {
-	videoList.classList.toggle('hidden');
-	container.classList.toggle('expanded');
-});
-
-playPauseBtn.addEventListener('click', function() {
-	if (videoPlayer.paused) {
-		videoPlayer.play();
-		playPauseBtn.textContent = "Tạm dừng";
-	} else {
-		videoPlayer.pause();
-		playPauseBtn.textContent = "Tiếp tục";
-	}
+    videoList.classList.toggle('hidden');
+    container.classList.toggle('expanded');
 });
 
 prevBtn.addEventListener('click', function() {
-	if (currentVideoIndex > 0) {
-		currentVideoIndex--;
-		loadVideo(currentVideoIndex);
-	}
+    if (currentLessonIndex > 0) {
+        currentLessonIndex--;
+        loadLesson(currentLessonIndex);
+    }
 });
 
 nextBtn.addEventListener('click', function() {
-	if (currentVideoIndex < videos.length - 1) {
-		currentVideoIndex++;
-		loadVideo(currentVideoIndex);
-	}
+    if (currentLessonIndex < lessons.length - 1) {
+        currentLessonIndex++;
+        loadLesson(currentLessonIndex);
+    }
 });
 
-videoPlayer.addEventListener('ended', function() {
-	if (currentVideoIndex < videos.length - 1) {
-		currentVideoIndex++;
-		loadVideo(currentVideoIndex);
-	}
+// Add click event listeners to each lesson in the list
+lessons.forEach((lesson, index) => {
+    lesson.addEventListener('click', function() {
+        currentLessonIndex = index;
+        loadLesson(currentLessonIndex);
+    });
 });
 
+// Comment system
 let currentPage = 0;
 let totalPages = 0;
 
@@ -78,18 +78,18 @@ function loadComments(page) {
         })
         .catch(error => {
             console.error('Error loading comments:', error);
-           
         });
 }
+
 function displayComments(comments) {
-	const commentList = document.getElementById('comment-list');
-	commentList.innerHTML = '';
+    const commentList = document.getElementById('comment-list');
+    commentList.innerHTML = '';
 
-	comments.forEach(comment => {
-		const commentItem = document.createElement('li');
-		commentItem.classList.add('comment-item', 'parent-comment');
+    comments.forEach(comment => {
+        const commentItem = document.createElement('li');
+        commentItem.classList.add('comment-item', 'parent-comment');
 
-		commentItem.innerHTML = `
+        commentItem.innerHTML = `
             <div class="comment-content">
                 <img src="${comment.user.avatarUrl}" alt="Avatar" class="avatar parent-avatar">
                 <div class="comment-text">
@@ -100,16 +100,16 @@ function displayComments(comments) {
             ${renderChildComments(comment.childComments)}
         `;
 
-		commentList.appendChild(commentItem);
-	});
+        commentList.appendChild(commentItem);
+    });
 }
 
 function renderChildComments(childComments) {
-	if (!childComments || childComments.length === 0) return '';
+    if (!childComments || childComments.length === 0) return '';
 
-	let childHtml = '<ul class="child-comments">';
-	childComments.forEach(child => {
-		childHtml += `
+    let childHtml = '<ul class="child-comments">';
+    childComments.forEach(child => {
+        childHtml += `
             <li class="comment-item child-comment">
                 <div class="comment-content">
                     <img src="${child.user.avatarUrl}" alt="Avatar" class="avatar child-avatar">
@@ -120,9 +120,9 @@ function renderChildComments(childComments) {
                 </div>
             </li>
         `;
-	});
-	childHtml += '</ul>';
-	return childHtml;
+    });
+    childHtml += '</ul>';
+    return childHtml;
 }
 
 function updatePagination(currentPage, totalPages) {
@@ -155,9 +155,36 @@ function updatePagination(currentPage, totalPages) {
     });
 }
 
-
-
-
+// Initialize the page
 window.addEventListener('load', function() {
-	loadComments(0);
+    loadComments(0);
 });
+
+// Add event listener for submitting new comments
+const submitCommentBtn = document.getElementById('submit-comment-btn');
+const commentText = document.getElementById('comment-text');
+
+submitCommentBtn.addEventListener('click', function() {
+    const content = commentText.value.trim();
+    if (content) {
+        // You'll need to implement this function to send the comment to the server
+        submitComment(content);
+    }
+});
+
+function submitComment(content) {
+    // Implement the logic to send the comment to the server
+    // After successful submission, reload the comments
+    // For example:
+    // fetch('/submit-comment', {
+    //     method: 'POST',
+    //     body: JSON.stringify({ content: content }),
+    //     headers: { 'Content-Type': 'application/json' }
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //     commentText.value = '';
+    //     loadComments(0);
+    // })
+    // .catch(error => console.error('Error submitting comment:', error));
+}
