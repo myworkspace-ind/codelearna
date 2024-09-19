@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>mks.assistant.codelearna</groupId>
 	<artifactId>codelearna</artifactId>
-	<version>23.0</version>
+	<version>23.2</version>
 	<packaging>pom</packaging>
 	<name>sakai-spring-maven-archetype</name>
 	<description>Archetype to generate a project with sakai and spring</description>
@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.sakaiproject</groupId>
         <artifactId>master</artifactId>
-        <version>23.0</version>
+        <version>23.2</version>
         <relativePath>../master/pom.xml</relativePath>
     </parent>
 
@@ -24,14 +24,14 @@
 			<dependency>
 				<groupId>mks.assistant.codelearna</groupId>
 				<artifactId>codelearna-api</artifactId>
-				<version>23.0</version>
+				<version>23.2</version>
 				<scope>provided</scope>
 			</dependency>
 
 			<dependency>
 				<groupId>mks.assistant.codelearna</groupId>
 				<artifactId>codelearna-impl</artifactId>
-				<version>23.0</version>
+				<version>23.2</version>
 				<scope>runtime</scope>
 			</dependency>
 
