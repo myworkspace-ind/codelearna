@@ -44,24 +44,37 @@ body {
     grid-template-columns: 1fr; 
 }
 
-.container .main-video {
-    background: #fff;
-    border-radius: 5px;
-    padding: 10px;
-    transition: width 0.3s ease;
+.main-video {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh; /* Set height to 90% of viewport height */
+    width: 100%; /* Set width to occupy full width */
 }
 
-.container .main-video video {
-    width: 100%;
+.main-video .video iframe {
+    width: 100%; /* Ensures iframe uses the full width of the parent */
+    height: 100%; /* Ensures iframe uses the full height of the parent */
+    border: none;
     border-radius: 5px;
 }
+
+/* Adjust the body and container to ensure they do not restrict the video size */
+body, .container {
+    height: 100vh; /* Ensure the body and container are full height */
+    margin: 0;
+    padding: 0;
+}
+
 
 .container .main-video .title {
     color: #333;
     font-size: 23px;
     padding-top: 15px;
     padding-bottom: 15px;
+    text-align: center;
 }
+
 
 /* CSS cho các nút điều khiển video */
 .controls {

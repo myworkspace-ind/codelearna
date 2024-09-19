@@ -17,6 +17,7 @@
             <groupId>mks.assistant.codelearna</groupId>
             <artifactId>codelearna-api</artifactId>
 <!--             <version>${module.version}</version> -->
+        	<version>23.0</version>
         </dependency>
 		<dependency>
             <groupId>mks.assistant.codelearna</groupId>
@@ -103,6 +104,11 @@
 		    <groupId>org.springframework.data</groupId>
 		    <artifactId>spring-data-jpa</artifactId>
 		    <version>2.5.2</version> <!-- hoặc phiên bản khác mà bạn đang sử dụng -->
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.13.5</version> <!-- Sử dụng phiên bản mới nhất nếu có -->
 		</dependency>
 
 
