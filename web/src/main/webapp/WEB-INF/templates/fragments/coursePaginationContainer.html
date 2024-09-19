@@ -9,7 +9,9 @@
          th:data-difficulty-level="${course.difficultyLevel}"
          th:data-lesson-type="${course.lessonType}"
          th:data-original-price="${course.originalPrice}"
-         th:data-discounted-price="${course.discountedPrice}">
+         th:data-discounted-price="${course.discountedPrice}"
+         th:data-is-free="${course.isFree}"
+         th:data-course-id="${course.id}">
         <div th:replace="fragments/courseItem :: courseItem(${course})"></div>
     </div>
 </div>

@@ -10,16 +10,21 @@
 	<link rel="stylesheet" href="resources/css/fragments/courseDetailPopup.css?v=1.1">
 </head>
 <body>
-	<!-- Campaign fragment placeholder -->
+
+	<!-- Navigation Bar fragment -->
+	<th:block th:include="fragments/nav"></th:block>
+	<!-- Navigation Bar fragment -->
+	
+	<!-- Campaign fragment -->
 	<th:block th:include="fragments/campaign"></th:block>
-	<!-- /Campaign fragment placeholder -->
+	<!-- /Campaign fragment -->
 
 	<div class="container">
-		<!-- Outstanding Course -->
+		<!-- Outstanding Course fragment-->
 		<th:block th:include="fragments/outstandingCourse"></th:block>
 		<!-- /Outstanding Course -->
 
-		<!-- Course Pagination -->
+		<!-- Course Pagination Fragment-->
 		<th:block th:include="fragments/coursePaginationContainer"></th:block>
 		<!-- /Course Pagination -->
 	</div>
