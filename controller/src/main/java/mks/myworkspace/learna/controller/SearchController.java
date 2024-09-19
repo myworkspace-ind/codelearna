@@ -19,27 +19,27 @@ public class SearchController extends BaseController {
 
 	@Autowired
 	private CourseService courseService;
+	
+	 @GetMapping("/search")
+	    public ModelAndView searchCourses(
+	            @RequestParam(value = "keyword", required = false) String keyword,
+	            @RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
+	            @RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
+	            @RequestParam(value = "level", required = false) String level) {
 
-	// Tìm kiếm khóa học theo từ khóa
-	@GetMapping("/search")
-	public ModelAndView searchCourses(@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder) {
+	        ModelAndView mav = new ModelAndView("search");
 
-		List<Course> courses;
+	        
+	        List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level);
 
-		// Tìm kiếm khóa học theo từ khóa và sắp xếp
-		if (keyword != null && !keyword.isEmpty()) {
-			courses = courseService.searchCoursesByKeywordAndSortFilter(keyword, sortOrder);
-		} else {
-			courses = courseService.getAllCoursesSortedBySortFilter(sortOrder);
-		}
+	    
+	        mav.addObject("courses", courses);
+	        mav.addObject("keyword", keyword);
+	        mav.addObject("sortOrder", sortOrder);
+	        mav.addObject("sortField", sortField);
+	        mav.addObject("level", level);
 
-		ModelAndView mav = new ModelAndView("search");
-		mav.addObject("courses", courses);
-		mav.addObject("keyword", keyword); 
-		mav.addObject("sortOrder", sortOrder); 
-
-		return mav;
-	}
+	        return mav;
+	    }
 
 }

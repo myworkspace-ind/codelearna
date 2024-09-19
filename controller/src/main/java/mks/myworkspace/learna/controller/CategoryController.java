@@ -31,7 +31,7 @@ public class CategoryController {
 
     @GetMapping("/categories")
     public ModelAndView getCategories() {
-        ModelAndView mav = new ModelAndView("home"); 
+        ModelAndView mav = new ModelAndView("fragments/nav"); 
         List<Category> categories = categoryService.getAllCategories();
         
         log.debug("Categories size: " + categories.size());
@@ -42,7 +42,7 @@ public class CategoryController {
  
     @GetMapping("/category/{id}")
     public ModelAndView getSubcategoriesByCategory(@PathVariable Long id) {
-        ModelAndView mav = new ModelAndView("home");
+        ModelAndView mav = new ModelAndView("fragments/nav");
         List<Subcategory> subcategories = categoryService.findByCategoryId(id);
         log.debug("Subcategories size: " + subcategories.size());
         List<Category> categories = categoryService.getAllCategories();
