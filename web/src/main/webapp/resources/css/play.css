@@ -271,6 +271,29 @@ body {
     font-size: 18px;
 }
 
+.video-list-content .vid {
+    transition: all 0.3s ease;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.video-list-content .vid.active {
+    background-color: #007bff; /* Màu nền đậm */
+    color: white; /* Màu chữ trắng để tương phản với nền */
+    font-weight: bold; /* Chữ đậm */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Thêm bóng đổ nhẹ */
+}
+
+.video-list-content .vid:hover {
+    background-color: #f8f9fa; /* Màu nền nhẹ khi hover */
+    cursor: pointer;
+}
+
+.video-list-content .vid.active:hover {
+    background-color: #0056b3; /* Màu nền đậm hơn khi hover vào item đang active */
+}
+
 @media (max-width: 991px) {
     .container {
         grid-template-columns: 2fr 1fr;
