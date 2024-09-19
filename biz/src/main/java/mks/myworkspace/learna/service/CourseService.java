@@ -10,13 +10,15 @@ public interface CourseService {
     Course getCourseById(Long id);
     void deleteCourse(Long id);
     
-    // Search
-    List<Course> searchCoursesByKeywordAndSortFilter(String keyword, String sortOrder);
-    List<Course> getAllCoursesSortedBySortFilter(String sortOrder);
+    
     
     List<Course> getAllCourses();
     List<Course> getRandomCourses(); 
     List<Course> getCoursesBySubcategory(Long id);
+    
+    //Search filter
+    List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level);
+    
     
     
 }
