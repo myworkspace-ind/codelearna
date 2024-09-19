@@ -124,7 +124,7 @@ document.querySelectorAll('#featuredCoursesCarousel .carousel-item').forEach(ite
         const courseId = this.getAttribute('data-course-id');
         
         if (isFree) {
-            window.location.href = _ctx + `/play/${courseId}`;
+            window.location.href = _ctx + `play/${courseId}`;
         } else {
             const course = {
                 name: this.getAttribute('data-name'),
