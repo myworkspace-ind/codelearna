@@ -58,10 +58,10 @@ public class Course {
     @JoinColumn(name = "subcategory_id")
     private Subcategory subcategory;
 
-    @ElementCollection
-    @MapKeyColumn(name = "star")
-    @Column(name = "rating_count")
-    private Map<Integer, Integer> ratings; 
+//    @ElementCollection
+//    @MapKeyColumn(name = "star")
+//    @Column(name = "rating_count")
+//    private Map<Integer, Integer> ratings; 
 
     @Column(name = "is_free")
     private Boolean isFree ;
