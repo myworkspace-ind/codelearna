@@ -13,23 +13,22 @@
 		<button id="toggle-btn">☰</button>
 
 		<div class="main-video" id="main-video">
-			<div class="video">
-				<!-- Thay thế video hiện tại bằng iframe -->
+    <div class="video">
+        <!-- Updated iframe to display the video URL from the database -->
 				<iframe id="embedded-content"
-					src="https://myworkspace.vn/access/content/group/c5c14b70-efaa-4d9f-b474-17ed8c795830/Guidelines/DEV/Course_DevAppOnMWS/DevMWS_Lesson01_Prepare_development_environment/res/index.html"
-					width="100%" height="600px" frameborder="0" allowfullscreen>
+					th:src="${currentLesson != null ? currentLesson.videoUrl : ''}"
+					width="100%" height="900px" frameborder="0" allowfullscreen>
 				</iframe>
 				<h3 class="title"
-					th:text="${currentLesson != null ? currentLesson.title : 'No lesson available'}">Bài
-					1</h3>
-			</div>
+            th:text="${currentLesson != null ? currentLesson.title : 'No lesson available'}">Bài 1</h3>
+    </div>
 
-			<div class="controls">
-				<button id="prev-btn">Bài trước</button>
-				<button id="play-pause-btn">Tạm dừng</button>
-				<button id="next-btn">Bài tiếp theo</button>
-			</div>
-		</div>
+    <div class="controls">
+        <button id="prev-btn">Bài trước</button>
+
+        <button id="next-btn">Bài tiếp theo</button>
+    </div>
+</div>
 
 
 		<!-- Danh sách video -->
