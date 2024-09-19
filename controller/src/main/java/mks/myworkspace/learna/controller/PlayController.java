@@ -26,9 +26,6 @@ import mks.myworkspace.learna.service.PlayService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-
 @Controller
 public class PlayController {
     @Autowired
@@ -44,6 +41,7 @@ public class PlayController {
             HttpSession session
     ) {
         ModelAndView mav = new ModelAndView("play");
+        // Đảm bảo page không nhỏ hơn 0
         if (page < 0) {
             page = 0;
         }
@@ -52,8 +50,9 @@ public class PlayController {
         mav.addObject("lessons", lessons);
 
         if (lessons != null && !lessons.isEmpty()) {
-            Lesson currentLesson = lessons.get(0);
-            Pageable pageable = PageRequest.of(page, 10);
+            Lesson currentLesson = lessons.get(0);  // Lấy bài học đầu tiên
+            // Phân trang cho comments
+            Pageable pageable = PageRequest.of(page, 10);  // 10 comments mỗi trang
             Page<Comment> commentsPage = commentService.getCommentsByLessonIdAndParentCommentIsNull(currentLesson.getId(), pageable);
 
             mav.addObject("currentLesson", currentLesson);
@@ -69,7 +68,6 @@ public class PlayController {
     }
 
 
-    
     @GetMapping("/play/{courseId}/comments")
     @ResponseBody
     public ResponseEntity<?> getComments(@PathVariable Long courseId,
