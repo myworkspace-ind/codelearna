@@ -40,7 +40,6 @@ import org.sakaiproject.user.api.UserDirectoryService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import mks.myworkspace.learna.logic.SakaiProxy;
 
 /**
  * Implementation of {@link SakaiProxy}
@@ -169,13 +168,7 @@ public class SakaiProxyImpl implements SakaiProxy {
     
 	@Override
 	public boolean isUserRoleSwapped() {
-		try {
-			return securityService.isUserRoleSwapped();
-		} catch (IdUnusedException e) {
-			log.error("Could not call method isUserRoleSwapped()", e);
-		}
-		
-		return false;
+		return securityService.isUserRoleSwapped();
 	}
 
 	/**
