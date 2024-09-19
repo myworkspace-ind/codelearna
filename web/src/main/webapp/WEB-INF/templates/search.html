@@ -1,83 +1,76 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<title>Search Courses</title>
-<link rel="stylesheet"
-	href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="resources/css/home.css?v=1.1">
-<link rel="stylesheet"
-	href="resources/css/fragments/courseItem.css?v=1.1">
-
+    <meta charset="UTF-8">
+    <title>Search Courses</title>
+    <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="resources/css/fragments/courseItem.css">
+    <link rel="stylesheet" href="resources/css/fragments/courseDetailPopup.css?v=1.1">
+    <link rel="stylesheet" href="resources/css/search.css?v=1.1">
 </head>
 <body>
 
-	
-	<div th:replace="fragments/header :: header"></div>
+    <div th:replace="fragments/nav :: header"></div>
 
-	
-	<div class="container mt-4">
-		<div class="row">
-			<!-- Filter Section -->
-			<div class="col-md-3 filter-section">
-				<h4>Filter by</h4>
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Filter Section -->
+            <div class="col-md-3 filter-section">
+                <h4>Filter by</h4>
 
-				<!-- Filter by Ratings -->
-				<h5>Ratings</h5>
-				<ul class="filters">
-					<li><input type="radio" name="rating" /> 5 stars</li>
-					<li><input type="radio" name="rating" /> 4 stars</li>
-					<li><input type="radio" name="rating" /> 3 stars</li>
-				</ul>
+                <!-- Filter by Level -->
+                <h5>Level</h5>
+                <ul class="filters">
+                    <li>
+                        <input type="radio" name="level" value="BEGINNER"
+                               th:checked="${level == 'BEGINNER'}"
+                               onchange="applyFilter()"> For beginner
+                    </li>
+                    <li>
+                        <input type="radio" name="level" value="INTERMEDIATE"
+                               th:checked="${level == 'INTERMEDIATE'}"
+                               onchange="applyFilter()"> For intermediate
+                    </li>
+                    <li>
+                        <input type="radio" name="level" value="ADVANCED"
+                               th:checked="${level == 'ADVANCED'}"
+                               onchange="applyFilter()"> For advanced
+                    </li>
+                </ul>
+            </div>
 
-				<!-- Filter by Price -->
-				<h5>Price</h5>
-				<ul class="filters">
-					<li><input type="radio" name="price" /> Under 50$</li>
-					<li><input type="radio" name="price" /> Between 50-100$</li>
-					<li><input type="radio" name="price" /> Over 100$</li>
-				</ul>
+            <!-- Courses Section -->
+            <div class="col-md-9">
+                <h4>
+                    Results for <span th:text="${keyword}"></span>
+                </h4>
 
-				<!-- Filter by Duration -->
-				<h5>Duration</h5>
-				<ul class="filters">
-					<li><input type="radio" name="duration" /> Under 1 month</li>
-					<li><input type="radio" name="duration" /> 1-3 months</li>
-					<li><input type="radio" name="duration" /> Over 3 months</li>
-				</ul>
-			</div>
+                <!-- Sort Dropdown -->
+                <div class="d-flex justify-content-end mb-3">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle"
+                                type="button" id="sortDropdown" data-bs-toggle="dropdown"
+                                aria-expanded="false">Sort by</button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li><a class="dropdown-item" href="#" data-sort-order="asc" data-sort-field="createdDate" onclick="setSortOrder(this)">Created Date Ascending</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort-order="desc" data-sort-field="createdDate" onclick="setSortOrder(this)">Created Date Descending</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort-order="asc" data-sort-field="discountedPrice" onclick="setSortOrder(this)">Price Ascending</a></li>
+                            <li><a class="dropdown-item" href="#" data-sort-order="desc" data-sort-field="discountedPrice" onclick="setSortOrder(this)">Price Descending</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <input type="hidden" id="hiddenKeyword" th:value="${keyword}" />
 
-			<!-- Courses Section -->
-			<div class="col-md-9">
-				<h4>Results for ...</h4>
-				<!-- <div class="row mt-4 mb-4" id="coursesContainer">
-					<div th:each="course, iterStat : ${courses}"
-						th:id="'course-' + ${iterStat.index}" class="col-md-3 mb-4">
-						<div th:replace="fragments/courseItem :: courseItem(${course})"></div>
-					</div>
-				</div> -->
-				<div class="row mt-4 mb-4" id="coursesContainer">
-					<div th:each="course, iterStat : ${courses}"
-						th:id="'course-' + ${iterStat.index}" class="col-md-3 mb-4"
-						th:data-name="${course.name}"
-						th:data-image-url="${course.imageUrl}"
-						th:data-description="${course.description}"
-						th:data-difficulty-level="${course.difficultyLevel}"
-						th:data-lesson-type="${course.lessonType}"
-						th:data-original-price="${course.originalPrice}"
-						th:data-discounted-price="${course.discountedPrice}">
-						<div th:replace="fragments/courseItem :: courseItem(${course})"></div>
-					</div>
-				</div>
+                <th:block th:include="fragments/coursePaginationContainer"></th:block>
+            </div>
+        </div>
+    </div>
 
-			</div>
-		</div>
-	</div>
+    <div>&copy; 2017 The MKS Group</div>
 
-	<div>&copy; 2017 The MKS Group</div>
-	</div>
-
-	<th:block th:include="fragments/javascript"></th:block>
+    <th:block th:include="fragments/popupDetailCourse"></th:block>
+    <th:block th:include="fragments/javascript"></th:block>
 
 </body>
 </html>

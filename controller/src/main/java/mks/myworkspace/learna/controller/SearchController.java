@@ -6,42 +6,40 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.service.CourseService;
-import mks.myworkspace.learna.service.SearchService;
 
 @Controller
 public class SearchController extends BaseController {
 
-    @Autowired
-    private SearchService searchService;
+	@Autowired
+	private CourseService courseService;
+	
+	 @GetMapping("/search")
+	    public ModelAndView searchCourses(
+	            @RequestParam(value = "keyword", required = false) String keyword,
+	            @RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
+	            @RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
+	            @RequestParam(value = "level", required = false) String level) {
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public ModelAndView searchCourses(@RequestParam(value = "keyword", required = false) String keyword, 
-                                      HttpServletRequest request, HttpSession httpSession) {
-        ModelAndView mav = new ModelAndView("search");
+	        ModelAndView mav = new ModelAndView("search");
 
-//        initSession(request, httpSession);
-        
-        mav.addObject("currentSiteId", getCurrentSiteId());
-        mav.addObject("userDisplayName", getCurrentUserDisplayName());
+	        
+	        List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level);
 
-        // Tìm kiếm khóa học theo từ khóa
-        List<Course> courses;
-        if (keyword != null && !keyword.isEmpty()) {
-            courses = searchService.searchCoursesByKeyword(keyword);
-        } else {
-            courses = searchService.getAllCourses();
-        }
+	    
+	        mav.addObject("courses", courses);
+	        mav.addObject("keyword", keyword);
+	        mav.addObject("sortOrder", sortOrder);
+	        mav.addObject("sortField", sortField);
+	        mav.addObject("level", level);
 
-        
-        mav.addObject("courses", courses);
-        mav.addObject("keyword", keyword); 
+	        return mav;
+	    }
 
-        return mav;
-    }
 }

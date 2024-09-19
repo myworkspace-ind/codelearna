@@ -1,0 +1,48 @@
+<div class="d-flex justify-content-center">
+	<div class="col-6">
+		<div id="featuredCoursesCarousel" class="carousel slide carousel-fade"
+			data-bs-ride="carousel">
+			<!-- Indicators -->
+			<div class="carousel-indicators">
+				<button type="button" data-bs-target="#featuredCoursesCarousel"
+					th:each="featuredCourse, iterStat : ${featuredCourses}"
+					th:data-bs-slide-to="${iterStat.index}"
+					th:classappend="${iterStat.index == 0} ? 'active'"
+					th:aria-current="${iterStat.index == 0} ? 'true' : 'false'"
+					th:aria-label="'Slide ' + ${iterStat.index + 1}"></button>
+			</div>
+			<!-- Wrapper for slides -->
+			<div class="outstand-carousel-inner carousel-inner">
+				<div th:each="featuredCourse, iterStat : ${featuredCourses}"
+					th:classappend="${iterStat.index == 0} ? 'active'"
+					class="carousel-item" th:data-name="${featuredCourse.name}"
+					th:data-image-url="${featuredCourse.imageUrl}"
+					th:data-description="${featuredCourse.description}"
+					th:data-difficulty-level="${featuredCourse.difficultyLevel}"
+					th:data-lesson-type="${featuredCourse.lessonType}"
+					th:data-original-price="${featuredCourse.originalPrice}"
+					th:data-discounted-price="${featuredCourse.discountedPrice}"
+					th:data-is-free="${featuredCourse.isFree}"
+					th:data-course-id="${featuredCourse.id}">
+					<img th:src="${featuredCourse.imageUrl}" class="d-block w-100"
+						alt="Course Image" style="height: 400px; object-fit: cover;">
+					<div class="outstand-carousel-caption carousel-caption d-none d-md-block">
+						<h3 th:text="${featuredCourse.name}"></h3>
+						<p th:text="${featuredCourse.description}"></p>
+					</div>
+				</div>
+			</div>
+			<!-- Controls -->
+			<button class="carousel-control-prev" type="button"
+				data-bs-target="#featuredCoursesCarousel" data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Previous</span>
+			</button>
+			<button class="carousel-control-next" type="button"
+				data-bs-target="#featuredCoursesCarousel" data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden">Next</span>
+			</button>
+		</div>
+	</div>
+</div>

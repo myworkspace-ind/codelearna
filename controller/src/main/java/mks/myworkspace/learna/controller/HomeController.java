@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Campaign;
+import mks.myworkspace.learna.service.CampaignService;
 import mks.myworkspace.learna.service.CourseService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,9 @@ public class HomeController {
     @Autowired
     private CourseService courseService;
     
+    @Autowired
+    private CampaignService campaignService;
+    
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         // Sample init of Custom Editor
@@ -33,12 +38,20 @@ public class HomeController {
     }
 
     @GetMapping
-    public ModelAndView getAllCourses( ) {
-		ModelAndView mav = new ModelAndView("home");
+    public ModelAndView getAllCourses() {
+		ModelAndView mav = new ModelAndView("homePage");
 
         List<Course> courses = courseService.getAllCourses();
         mav.addObject("courses", courses);
         log.debug("Danh sách khóa học: {}", courses);
+
+        List<Course> featuredCourses = courseService.getRandomCourses();
+        mav.addObject("featuredCourses", featuredCourses);
+        log.debug("Khóa học nổi bật: {}", featuredCourses);
+        
+        List<Campaign> campaigns = campaignService.getAllCampaigns();
+        mav.addObject("campaigns", campaigns);
+        log.debug("Khuyến mãi đang chạy: {}", campaigns);
 
         return mav;
     }

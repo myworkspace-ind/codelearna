@@ -1,15 +1,24 @@
 package mks.myworkspace.learna.entity;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
+
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.persistence.ManyToMany;
+import javax.persistence.JoinTable;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import lombok.Data;
@@ -44,7 +53,19 @@ public class Course {
     @Column(name = "lesson_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private LessonType lessonType;
+    
+    @ManyToOne
+    @JoinColumn(name = "subcategory_id")
+    private Subcategory subcategory;
 
+//    @ElementCollection
+//    @MapKeyColumn(name = "star")
+//    @Column(name = "rating_count")
+//    private Map<Integer, Integer> ratings; 
+
+    @Column(name = "is_free")
+    private Boolean isFree ;
+    
     @CreationTimestamp
     @Column(name = "created_dte")
     private Date createdDate;
@@ -52,6 +73,14 @@ public class Course {
     @UpdateTimestamp
     @Column(name = "modified_dte")
     private Date modifiedDate;
+
+    @ManyToMany
+    @JoinTable(
+        name = "course_lesson",
+        joinColumns = @JoinColumn(name = "course_id"),
+        inverseJoinColumns = @JoinColumn(name = "lesson_id")
+    )
+    private Set<Lesson> lessons;
 
     public enum DifficultyLevel {
         BEGINNER,
