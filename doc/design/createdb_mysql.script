@@ -1,3 +1,7 @@
 CREATE database sakai default character set utf8;
 CREATE user 'sakai_user'@'%' identified by 'Sakai!123';
 GRANT ALL PRIVILEGES ON sakai.* TO 'sakai_user'@'%';
+
+CREATE database learna default character set utf8;
+CREATE user 'learna_user'@'%' identified by 'LearnA!123';
+GRANT ALL PRIVILEGES ON learna.* TO 'learna_user'@'%';

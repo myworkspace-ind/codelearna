@@ -1,10 +1,14 @@
 <!-- Determine the root context of the application. -->
 <script th:inline="javascript">
-        var _ctx = /*[[@{/}]]*/ '';
+    var _ctx = /*[[@{/}]]*/ '';
 </script>
-<script src="/library/webjars/jquery/1.12.4/jquery.min.js"></script>
+<script src="/library/webjars/jquery/dist/jquery.min.js"></script>
 <script src="/library/webjars/popper.js/2.9.3/umd/popper.min.js"></script>
 <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- For Sakai only -->
+<script type="text/javascript" src="/library/js/headscripts.js"></script>
+    
 <script src="resources/js/homePage.js"></script> 
 <script src="resources/js/home.js"></script>
 <script src="resources/js/search.js"></script>
