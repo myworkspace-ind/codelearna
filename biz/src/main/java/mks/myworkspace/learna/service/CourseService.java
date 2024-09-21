@@ -18,6 +18,7 @@ public interface CourseService {
     
     //Search filter
     List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level);
+    List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId);
     
     
     

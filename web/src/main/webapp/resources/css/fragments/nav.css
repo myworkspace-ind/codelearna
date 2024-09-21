@@ -1,0 +1,31 @@
+.navbar-logo {
+    max-height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+@media (max-width: 576px) {
+    .dropdown-item::before {
+        transform: rotate(-90deg);
+    }
+}
+
+.dropdown:hover > .dropdown-menu {
+    display: block;
+    margin-top: .125rem;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+    display: none;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}

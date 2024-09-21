@@ -70,4 +70,28 @@ public class CourseServiceImpl implements CourseService {
 
 		return repo.findCoursesByFilters(keyword, difficultyLevel, pageable);
 	}
+	@Override
+    public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId) {
+        // Define sorting based on sortField
+        Sort sort = Sort.by(sortField);
+        sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
+        Pageable pageable = PageRequest.of(0, 20, sort); // Adjust page size if needed
+
+        // Convert level from String to Enum DifficultyLevel
+        Course.DifficultyLevel difficultyLevel = null;
+        if (level != null) {
+            try {
+                difficultyLevel = Course.DifficultyLevel.valueOf(level.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Handle error if level doesn't match any value in enum
+            }
+        }
+
+        // Call repository with filters, including subcategoryId if available
+        if (subcategoryId != null) {
+            return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevel, pageable);
+        } else {
+            return repo.findCoursesByFilters(keyword, difficultyLevel, pageable);
+        }
+    }
 }

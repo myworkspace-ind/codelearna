@@ -43,5 +43,16 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 			+ "AND (:level IS NULL OR c.difficultyLevel = :level)")
 	List<Course> findCoursesByFilters(@Param("keyword") String keyword, @Param("level") Course.DifficultyLevel level,
 			Pageable pageable);
+	
+	
+	// Phương thức tìm kiếm với subcategoryId
+    @Query("SELECT c FROM Course c JOIN c.subcategory s "
+            + "WHERE s.id = :subcategoryId "
+            + "AND (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
+            + "AND (:level IS NULL OR c.difficultyLevel = :level)")
+    List<Course> findCoursesBySubcategoryAndFilters(@Param("subcategoryId") Long subcategoryId,
+                                                    @Param("keyword") String keyword,
+                                                    @Param("level") Course.DifficultyLevel level,
+                                                    Pageable pageable);
 
 }
