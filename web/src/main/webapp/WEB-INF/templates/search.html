@@ -8,7 +8,9 @@
 <link rel="stylesheet" href="resources/css/fragments/courseItem.css">
 <link rel="stylesheet"
 	href="resources/css/fragments/courseDetailPopup.css?v=1.1">
-<link rel="stylesheet" href="resources/css/search.css?v=1.1">
+<link rel="stylesheet" th:href="@{/resources/css/search.css?v=1.1}">
+
+
 </head>
 <body>
 
@@ -65,6 +67,10 @@
 				</div>
 
 				<input type="hidden" id="hiddenKeyword" th:value="${keyword}" />
+				
+				<input type="hidden" id="hiddenSubcategory"
+					th:value="${subcategoryId}" />
+
 
 				<th:block th:include="fragments/coursePaginationContainer"></th:block>
 			</div>

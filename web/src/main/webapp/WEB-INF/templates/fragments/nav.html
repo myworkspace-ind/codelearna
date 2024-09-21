@@ -1,45 +1,57 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" th:href="@{/resources/css/fragments/nav.css}">
+<link rel="stylesheet"
+	href="https://mksol.vn/themes/robust-admin/app-assets/fonts/font-awesome/css/font-awesome.min.css">
+</head>
+
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center pt-3 pb-4 row">
-        <div class="col-2">
-            <a th:href="@{/}" class="d-flex align-items-center">
-                <img th:src="${logoUrl}" alt="Site Logo" class="navbar-logo">
-            </a>
-        </div>
+	<div
+		class="d-flex justify-content-between align-items-center pt-3 pb-4 row">
+		<div class="col-2">
+			<a th:href="@{/}" class="d-flex align-items-center"> <img
+				th:src="${logoUrl}" alt="Site Logo" class="navbar-logo">
+			</a>
+		</div>
 
-        <div class="col-6 d-flex justify-content-between align-items-center">
-            <div class="dropdown">
-                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">Categories</button>
-                <ul class="dropdown-menu" id="categoryList" aria-labelledby="categoriesDropdown">
-                    <li th:each="category : ${categories}">
-                        <a class="dropdown-item" th:href="@{/category/{id}(id=${category.id})}" th:text="${category.name}"></a>
-                    </li>
-                </ul>
-            </div>
+		<div class="col-6 d-flex justify-content-between align-items-center">
+			<div class="dropdown">
+				<button class="btn btn-outline-primary dropdown-toggle"
+					data-bs-auto-close="outside" type="button" id="categoriesDropdown"
+					data-bs-toggle="dropdown" aria-expanded="false">Categories</button>
+				<ul class="dropdown-menu dropend" id="categoryList"
+					aria-labelledby="categoriesDropdown">
+					<li class="dropdown-submenu" th:each="category : ${categories}">
+						<a class="dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
+						href="#" th:text="${category.name}"></a>
+						<ul class="dropdown-menu">
+							<li th:each="subcategory : ${category.subcategories}"><a
+								class="dropdown-item"
+								th:href="@{/subcategory/{id}(id=${subcategory.id})}"
+								th:text="${subcategory.name}"></a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
 
-            <form th:action="@{/search}" method="get" class="d-flex flex-grow-1 mx-3 search-form">
-                <input type="text" name="keyword" class="form-control" placeholder="Find the course you want" />
-                <button type="submit" class="ms-3 btn btn-outline-primary">Search</button>
-            </form>
-        </div>
+			<form th:action="@{/search}" method="get"
+				class="d-flex flex-grow-1 mx-3 search-form">
+				<input type="text" name="keyword" class="form-control"
+					placeholder="Find the course you want" />
+				<button type="submit" class="ms-3 btn btn-outline-primary">Search</button>
+			</form>
+		</div>
 
-        <div class="col-4 d-flex justify-content-end align-items-center">
-            <div class="mx-2">
-                <h>Cart icon</h>
-            </div>
-            <div class="mx-2">
-                <h>Noti icon</h>
-            </div>
-            <div>
-                <button class="btn btn-outline-secondary">My profile</button>
-            </div>
-        </div>
-    </div>
+		<div class="col-4 d-flex justify-content-end align-items-center">
+			<div class="mx-2">
+				<h>Cart icon</h>
+			</div>
+			<div class="mx-2">
+				<h>Noti icon</h>
+			</div>
+			<div>
+				<button class="btn btn-outline-secondary">My profile</button>
+			</div>
+		</div>
+	</div>
 </div>
-
-<style>
-    .navbar-logo {
-        max-height: 50px; 
-            width: auto; 
-            object-fit: contain
-    }
-</style>
