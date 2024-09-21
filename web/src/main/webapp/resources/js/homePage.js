@@ -140,6 +140,25 @@ document.querySelectorAll('#featuredCoursesCarousel .carousel-item').forEach(ite
     });
 });
 
+document.querySelectorAll('#campaignCarousel .carousel-item').forEach(item => {
+    item.addEventListener('click', function() {
+        const startDate = new Date(this.getAttribute('data-start-time'));
+        const endDate = new Date(this.getAttribute('data-end-time'));
+        const today = new Date();
+        const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+
+        const campaign = {
+            name: this.getAttribute('data-name'),
+            description: this.getAttribute('data-description'),
+            startDate: this.getAttribute('data-start-time'),
+            endDate: this.getAttribute('data-end-time'),
+            daysLeft: daysLeft,
+            imageUrl: this.getAttribute('data-image-url')
+        };
+        openCampaignPopup(campaign);
+    });
+});
+
 function openPopup(course) {
     document.getElementById('courseName').innerText = course.name || 'N/A';
     document.getElementById('courseImage').src = course.imageUrl || '';
@@ -161,5 +180,35 @@ function closePopup() {
 document.getElementById('courseDetailPopup').addEventListener('click', function(event) {
     if (event.target === this) {
         closePopup();
+    }
+});
+
+function openCampaignPopup(campaign) {
+    document.getElementById('campaignName').innerText = campaign.name || 'N/A';
+    document.getElementById('campaignDescription').innerText = campaign.description || 'N/A';
+    document.getElementById('campaignImage').src = campaign.imageUrl || '';
+
+    const startDate = new Date(campaign.startDate);
+    const endDate = new Date(campaign.endDate);
+    const startDateString = `${startDate.getDate().toString().padStart(2, '0')}/${(startDate.getMonth() + 1).toString().padStart(2, '0')}`;
+    const endDateString = `${endDate.getDate().toString().padStart(2, '0')}/${(endDate.getMonth() + 1).toString().padStart(2, '0')}`;
+    const timeRangeString = `${startDateString} - ${endDateString}`;
+    const daysLeftString = `còn ${campaign.daysLeft} ngày`;
+
+    document.getElementById('campaignTimeRange').innerText = timeRangeString;
+    document.getElementById('campaignDaysLeft').innerText = daysLeftString;
+
+    document.getElementById('campaignDetailPopup').style.display = 'flex';
+    document.getElementById('blurOverlay').style.display = 'block';
+}
+
+function closeCampaignPopup() {
+    document.getElementById('campaignDetailPopup').style.display = 'none';
+    document.getElementById('blurOverlay').style.display = 'none';
+}
+
+document.getElementById('campaignDetailPopup').addEventListener('click', function(event) {
+    if (event.target === this) {
+        closeCampaignPopup();
     }
 });
