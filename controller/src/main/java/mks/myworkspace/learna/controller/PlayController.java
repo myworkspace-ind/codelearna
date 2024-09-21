@@ -1,88 +1,79 @@
 package mks.myworkspace.learna.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
 import mks.myworkspace.learna.entity.Comment;
 import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.service.CommentService;
 import mks.myworkspace.learna.service.PlayService;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
-
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-
-
+import java.util.List;
 
 @Controller
 public class PlayController {
+
     @Autowired
     private PlayService playService;
+
     @Autowired
     private CommentService commentService;
 
     @GetMapping("/play/{courseId}")
     public ModelAndView displayCourseLessons(
             @PathVariable Long courseId,
-            @RequestParam(defaultValue = "0") int page,
-            HttpServletRequest request,
-            HttpSession session
-    ) {
+            @RequestParam(required = false) Long lessonId) {
         ModelAndView mav = new ModelAndView("play");
-        if (page < 0) {
-            page = 0;
-        }
 
+        // Lấy danh sách các bài học thuộc khóa học
         List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
         mav.addObject("lessons", lessons);
 
-        if (lessons != null && !lessons.isEmpty()) {
-            Lesson currentLesson = lessons.get(0);
-            Pageable pageable = PageRequest.of(page, 10);
-            Page<Comment> commentsPage = commentService.getCommentsByLessonIdAndParentCommentIsNull(currentLesson.getId(), pageable);
+        // Xác định bài học hiện tại dựa vào lessonId từ URL
+        Lesson currentLesson = lessons.stream()
+                .filter(l -> lessonId == null || l.getId().equals(lessonId))
+                .findFirst()
+                .orElse(lessons.isEmpty() ? null : lessons.get(0));
 
-            mav.addObject("currentLesson", currentLesson);
-            mav.addObject("commentsPage", commentsPage);
-            mav.addObject("currentPage", commentsPage.getNumber());
-            mav.addObject("totalPages", commentsPage.getTotalPages());
-        } else {
-            mav.addObject("currentLesson", null);
-            mav.addObject("commentsPage", null);
+        // Khởi tạo các thuộc tính của bài học để tránh lỗi proxy
+        if (currentLesson != null) {
+            Hibernate.initialize(currentLesson.getComments());
+            currentLesson.getComments().forEach(comment -> {
+                Hibernate.initialize(comment.getUser());
+                initializeChildComments(comment);
+            });
+
+            // Lấy bình luận đúng theo bài học hiện tại
+            List<Comment> comments = commentService.getCommentsByLessonIdAndParentCommentIsNull(currentLesson.getId());
+            mav.addObject("comments", comments);
         }
 
+        mav.addObject("currentLesson", currentLesson);
+        return mav;
+    }
+
+    // Hàm khởi tạo các bình luận con (child comments)
+    private void initializeChildComments(Comment comment) {
+        Hibernate.initialize(comment.getChildComments());
+        comment.getChildComments().forEach(this::initializeChildComments);
+    }
+    
+    @GetMapping("/play/{courseId}/{lessonId}/comments")
+    public ModelAndView loadCommentsForLesson(
+            @PathVariable Long courseId,
+            @PathVariable Long lessonId) {
+        ModelAndView mav = new ModelAndView("fragments/commentList :: commentList");
+        
+        // Lấy danh sách bình luận theo lessonId
+        List<Comment> comments = commentService.getCommentsByLessonIdAndParentCommentIsNull(lessonId);
+        mav.addObject("comments", comments);
+        
         return mav;
     }
 
 
-    
-    @GetMapping("/play/{courseId}/comments")
-    @ResponseBody
-    public ResponseEntity<?> getComments(@PathVariable Long courseId,
-                                         @RequestParam(defaultValue = "0") int page,
-                                         @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Comment> commentsPage = commentService.getCommentsByLessonIdAndParentCommentIsNull(courseId, pageable);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("comments", commentsPage.getContent());
-        response.put("currentPage", commentsPage.getNumber());
-        response.put("totalPages", commentsPage.getTotalPages());
-        response.put("totalItems", commentsPage.getTotalElements());
-
-        return ResponseEntity.ok(response);
-    }
 }

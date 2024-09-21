@@ -1,6 +1,7 @@
 package mks.myworkspace.learna.entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -28,7 +29,11 @@ public class Lesson {
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
+    
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Comment> comments;
 
+    
     @CreationTimestamp
     @Column(name = "created_dte")
     private Date createdDate;
@@ -37,6 +42,12 @@ public class Lesson {
     @Column(name = "modified_dte")
     private Date modifiedDate;
 
-    @ManyToMany(mappedBy = "lessons")
-    private Set<Course> courses;
+	/*
+	 * @ManyToMany(mappedBy = "lessons") private Set<Course> courses;
+	 */
+    
+ 
+    public List<Comment> getComments() {
+        return comments;
+    }
 }
