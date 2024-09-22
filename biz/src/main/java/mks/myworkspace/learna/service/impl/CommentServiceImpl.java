@@ -36,7 +36,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public List<Comment> getCommentsByLessonIdAndParentCommentIsNull(Long lessonId) {
         try {
-            List<Comment> comments = commentRepository.findByLessonIdAndParentCommentIsNull(lessonId);
+            List<Comment> comments = commentRepository.findByLessonIdAndParentCommentIsNullOrderByCreatedDateAsc(lessonId);
             comments.forEach(this::initializeChildComments);
             logger.info("Loaded comments: {}", comments.size());
             return comments;
@@ -46,25 +46,7 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    @Override
-    @Transactional
-    public Comment createComment(Long lessonId, Long userId, String content) {
-        Optional<Lesson> lessonOpt = lessonRepository.findById(lessonId);
-        Optional<User> userOpt = userRepository.findById(userId);
-
-        if (lessonOpt.isEmpty() || userOpt.isEmpty()) {
-            return null; 
-        }
-
-        Comment comment = new Comment();
-        comment.setContent(content);
-        comment.setLesson(lessonOpt.get());
-        comment.setUser(userOpt.get());
-        comment.setCreatedDate(new Date());
-
-        return commentRepository.save(comment);
-    }
-
+  
     private void initializeChildComments(Comment comment) {
         if (comment.getChildComments() != null) {
             Hibernate.initialize(comment.getChildComments());
@@ -72,6 +54,11 @@ public class CommentServiceImpl implements CommentService {
         }
         // Khởi tạo trước thông tin user để tránh lỗi LazyInitializationException
         Hibernate.initialize(comment.getUser());
+    }
+    
+    @Override
+    public void saveComment(Comment comment) {
+        commentRepository.save(comment);
     }
 
 }

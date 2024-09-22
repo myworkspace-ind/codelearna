@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 public class PlayController {
 
@@ -66,14 +68,16 @@ public class PlayController {
     public ModelAndView loadCommentsForLesson(
             @PathVariable Long courseId,
             @PathVariable Long lessonId) {
-        ModelAndView mav = new ModelAndView("fragments/commentList :: commentList");
-        
-        // Lấy danh sách bình luận theo lessonId
+        ModelAndView mav = new ModelAndView("fragments/commentList");
+
         List<Comment> comments = commentService.getCommentsByLessonIdAndParentCommentIsNull(lessonId);
+        log.info("Đang trả về {} bình luận cho bài học {}", comments.size(), lessonId);
         mav.addObject("comments", comments);
         
-        return mav;
+        return mav; // Trả về fragment
     }
 
+    
+    
 
 }
