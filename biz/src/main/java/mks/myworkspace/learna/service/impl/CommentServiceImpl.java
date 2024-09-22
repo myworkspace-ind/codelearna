@@ -36,7 +36,8 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public List<Comment> getCommentsByLessonIdAndParentCommentIsNull(Long lessonId) {
         try {
-            List<Comment> comments = commentRepository.findByLessonIdAndParentCommentIsNullOrderByCreatedDateAsc(lessonId);
+            // Lấy danh sách bình luận sắp xếp theo thời gian mới nhất trước
+            List<Comment> comments = commentRepository.findByLessonIdAndParentCommentIsNullOrderByCreatedDateDesc(lessonId);
             comments.forEach(this::initializeChildComments);
             logger.info("Loaded comments: {}", comments.size());
             return comments;
@@ -61,4 +62,15 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.save(comment);
     }
 
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Comment findById(Long id) {
+        Optional<Comment> optionalComment = commentRepository.findById(id);
+        if (optionalComment.isPresent()) {
+            return optionalComment.get();
+        } else {
+            throw new RuntimeException("Comment not found with id: " + id);
+        }
+    }
 }

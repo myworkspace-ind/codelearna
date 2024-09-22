@@ -10,6 +10,7 @@ import mks.myworkspace.learna.repository.UserRepository;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 /*import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;*/
 import org.springframework.stereotype.Controller;
@@ -68,4 +69,42 @@ public class CommentController {
             return "Lỗi khi gửi bình luận: " + e.getMessage();
         }
     }
+    
+    
+    @PostMapping("/play/comments/{commentId}/reply")
+    public ResponseEntity<String> saveReply(@PathVariable Long commentId, @RequestParam String content) {
+        try {
+            // Tìm bình luận cha theo commentId
+            Comment parentComment = commentService.findById(commentId);
+            if (parentComment == null) {
+                return ResponseEntity.badRequest().body("Comment not found");
+            }
+
+            // Tìm user có user_id là 1
+            Optional<User> optionalUser = userRepository.findById(1L);
+            if (!optionalUser.isPresent()) {
+                return ResponseEntity.badRequest().body("User not found");
+            }
+            User currentUser = optionalUser.get();
+
+            // Tạo bình luận con
+            Comment reply = new Comment();
+            reply.setContent(content);
+            reply.setParentComment(parentComment); // Liên kết bình luận con với bình luận cha
+            reply.setLesson(parentComment.getLesson()); // Liên kết với bài học tương ứng
+            reply.setUser(currentUser); // Thiết lập user hiện tại
+
+            // Lưu bình luận con vào cơ sở dữ liệu
+            commentService.saveComment(reply);
+
+            return ResponseEntity.ok("Reply saved successfully");
+        } catch (Exception e) {
+            // Ghi log lỗi để kiểm tra vấn đề nếu xảy ra
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error processing reply: " + e.getMessage());
+        }
+    }
+
+
+
 }

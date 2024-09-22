@@ -67,14 +67,27 @@ public class PlayController {
     @GetMapping("/play/{courseId}/{lessonId}/comments")
     public ModelAndView loadCommentsForLesson(
             @PathVariable Long courseId,
-            @PathVariable Long lessonId) {
+            @PathVariable Long lessonId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         ModelAndView mav = new ModelAndView("fragments/commentList");
 
-        List<Comment> comments = commentService.getCommentsByLessonIdAndParentCommentIsNull(lessonId);
-        log.info("Đang trả về {} bình luận cho bài học {}", comments.size(), lessonId);
-        mav.addObject("comments", comments);
-        
-        return mav; // Trả về fragment
+        List<Comment> allComments = commentService.getCommentsByLessonIdAndParentCommentIsNull(lessonId);
+        int totalComments = allComments.size();
+        int totalPages = (int) Math.ceil((double) totalComments / size);
+
+        int start = page * size;
+        int end = Math.min((page + 1) * size, totalComments);
+        List<Comment> paginatedComments = allComments.subList(start, end);
+
+        log.info("Đang trả về {} bình luận cho bài học {} (trang {} / {})", 
+                 paginatedComments.size(), lessonId, page + 1, totalPages);
+
+        mav.addObject("comments", paginatedComments);
+        mav.addObject("currentPage", page);
+        mav.addObject("totalPages", totalPages);
+
+        return mav;
     }
 
     

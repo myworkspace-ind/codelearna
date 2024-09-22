@@ -47,17 +47,13 @@
 		</div>
 
 		<!-- Bình luận -->
-		<div class="comment-section" style="border: 2px solid red;">
-			<h3>Bình luận</h3>
-			<div class="comment-input">
-				<textarea id="comment-text" placeholder="Nhập bình luận của bạn..."
-					rows="3"></textarea>
-				<button id="submit-comment-btn">Gửi bình luận</button>
-			</div>
+<div class="comment-section">
+    
 
-			<!-- Nhúng fragment bình luận -->
-			<div th:replace="fragments/commentList"></div>
-		</div>
+    <!-- Nhúng fragment bình luận -->
+    <div th:replace="fragments/commentList"></div>
+</div>
+
 
 
 	</div>
