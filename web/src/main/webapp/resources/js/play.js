@@ -1,7 +1,3 @@
-// Lấy các tham chiếu đến các phần tử DOM
-console.log('Script đang chạy');
-
-
 const toggleBtn = document.getElementById('toggle-btn');
 const videoList = document.getElementById('video-list');
 const container = document.querySelector('.container');
@@ -9,14 +5,10 @@ const videoPlayer = document.getElementById('embedded-content');
 const videoTitle = document.querySelector('.title');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
-const submitCommentBtn = document.querySelector('#submit-comment-btn');
+const submitCommentBtn = document.getElementById('submit-comment-btn');
 const commentTextArea = document.getElementById('comment-text');
 
-console.log('Nút gửi bình luận:', submitCommentBtn);
-submitCommentBtn.onclick = function(event) {
-    event.preventDefault();
-    console.log('Nút gửi bình luận được nhấn');
-};
+
 // Lấy danh sách bài học từ dữ liệu server-rendered
 const lessons = Array.from(document.querySelectorAll('.video-list-content .vid'));
 let currentLessonIndex = 0;
@@ -53,7 +45,6 @@ function loadLesson(index, updateUrl = true) {
 }
 
 function loadComments(courseId, lessonId, page = 0) {
-    console.log(`Đang tải bình luận cho khóa học ${courseId}, bài học ${lessonId}, trang ${page}`);
     fetch(`/codelearna-web/play/${courseId}/${lessonId}/comments?page=${page}`)
         .then(response => {
             if (!response.ok) {
@@ -62,19 +53,51 @@ function loadComments(courseId, lessonId, page = 0) {
             return response.text();
         })
         .then(html => {
-            const commentSection = document.querySelector('.comment-section');
-            if (commentSection) {
-                commentSection.innerHTML = html;
-                attachPaginationListeners();
-                attachReplyListeners();
-            } else {
-                console.error('Comment section element not found');
+            // Tạo một DOM tạm để phân tích nội dung trả về từ server
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            // Lấy danh sách bình luận và pagination từ nội dung trả về
+            const newCommentList = tempDiv.querySelector('#comment-list');
+            const newPagination = tempDiv.querySelector('.pagination');
+
+            // Lấy phần tử hiện tại từ trang
+            const commentListContainer = document.querySelector('#comment-list');
+            const paginationContainer = document.querySelector('.pagination');
+
+            // Kiểm tra và thay thế nội dung danh sách bình luận
+            if (commentListContainer && newCommentList) {
+                commentListContainer.innerHTML = newCommentList.innerHTML;
             }
+
+            // Kiểm tra và thay thế nội dung pagination
+            if (paginationContainer && newPagination) {
+                paginationContainer.innerHTML = newPagination.innerHTML;
+
+                // Gắn lại sự kiện sau khi thay thế nội dung
+                attachPaginationListeners();
+            } else {
+                // Nếu không tìm thấy pagination trên trang, thử thêm lại từ DOM tạm
+                if (newPagination) {
+                    // Thêm pagination nếu chưa tồn tại
+                    const commentSection = document.querySelector('.comment-section');
+                    if (commentSection) {
+                        commentSection.appendChild(newPagination);
+                        attachPaginationListeners();
+                    }
+                } else {
+                    console.warn('Pagination element not found in the loaded content.');
+                }
+            }
+
+            // Gắn lại sự kiện cho các nút trả lời
+            attachReplyListeners();
         })
         .catch(error => {
             console.error('Error loading comments:', error);
         });
 }
+
 
 function attachPaginationListeners() {
     const paginationButtons = document.querySelectorAll('.pagination .page-btn');

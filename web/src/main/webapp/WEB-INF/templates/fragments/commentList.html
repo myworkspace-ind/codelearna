@@ -1,9 +1,5 @@
 <!-- Fragment for comment list with pagination -->
-<h3>Bình luận</h3>
-    <div class="comment-input">
-        <textarea id="comment-text" placeholder="Nhập bình luận của bạn..." rows="3"></textarea>
-        <button id="submit-comment-btn">Gửi bình luận</button>
-    </div>
+
 <div th:fragment="commentList">
     <ul class="comment-list" id="comment-list">
         <li th:each="comment : ${comments}" class="comment-item parent-comment">
