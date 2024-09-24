@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Play Page</title>
 <link rel="stylesheet" th:href="@{/resources/css/play.css}">
-
 </head>
 <body>
 	<div class="container">
@@ -32,9 +31,12 @@
 		<!-- Danh sách video -->
 		<div class="video-list" id="video-list">
 			<div class="video-list-content">
-				<div class="video-list-header">
-					<input type="text" placeholder="Tìm kiếm bài học" id="search">
-					<button>Tìm kiếm</button>
+				<!-- Ô tìm kiếm bài học -->
+				<div class="search-container">
+					<input type="text" placeholder="Tìm kiếm bài học..." id="search"
+						onkeyup="searchLessons(this.value)"> <span
+						class="search-icon">&#128269;</span>
+					<!-- Icon tìm kiếm -->
 				</div>
 
 				<div th:each="lesson, lessonStat : ${lessons}" class="vid"
@@ -47,19 +49,16 @@
 		</div>
 
 		<!-- Bình luận -->
-<div class="comment-section">
-    
-<h3>Bình luận</h3>
-    <div class="comment-input">
-        <textarea id="comment-text" placeholder="Nhập bình luận của bạn..." rows="3"></textarea>
-        <button id="submit-comment-btn">Gửi bình luận</button>
-    </div>
-    <!-- Nhúng fragment bình luận -->
-    <div th:replace="fragments/commentList"></div>
-</div>
-
-
-
+		<div class="comment-section">
+			<h3>Bình luận</h3>
+			<div class="comment-input">
+				<textarea id="comment-text" placeholder="Nhập bình luận của bạn..."
+					rows="3"></textarea>
+				<button id="submit-comment-btn">Gửi bình luận</button>
+			</div>
+			<!-- Nhúng fragment bình luận -->
+			<div th:replace="fragments/commentList"></div>
+		</div>
 	</div>
 
 	<script th:src="@{/resources/js/play.js}"></script>
