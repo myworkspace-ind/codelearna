@@ -15,6 +15,50 @@ let currentLessonIndex = 0;
 
 let initialLoad = true;
 
+
+// Thêm sự kiện click cho nút toggle-btn
+toggleBtn.addEventListener('click', () => {
+    // Kiểm tra xem danh sách video có đang hiển thị hay không
+    if (videoList.style.display === 'none' || !videoList.style.display) {
+        // Nếu không hiển thị, thì hiển thị danh sách video
+        videoList.style.display = 'block';
+        container.classList.remove('expanded'); // Bỏ lớp 'expanded' nếu có
+        toggleBtn.textContent = '☰'; // Đổi lại biểu tượng nút nếu cần
+    } else {
+        // Nếu đang hiển thị, thì ẩn danh sách video
+        videoList.style.display = 'none';
+        container.classList.add('expanded'); // Thêm lớp 'expanded' để mở rộng khu vực video chính
+        toggleBtn.textContent = '✖'; // Đổi biểu tượng nút để chỉ trạng thái đã ẩn
+    }
+});
+
+// Hàm tìm kiếm bài học theo tên trong danh sách hiện tại
+function searchLessons(searchTerm) {
+    lessons.forEach(lesson => {
+        const title = lesson.querySelector('.title').textContent.toLowerCase();
+        if (title.includes(searchTerm.toLowerCase())) {
+            lesson.style.visibility = 'visible'; // Hiển thị bài học mà không thay đổi bố cục
+            lesson.style.height = ''; // Đảm bảo chiều cao được giữ nguyên
+            lesson.style.opacity = '1'; // Đảm bảo độ mờ trở lại bình thường
+            lesson.style.pointerEvents = 'auto'; // Cho phép tương tác
+        } else {
+            lesson.style.visibility = 'hidden'; // Ẩn bài học mà không ảnh hưởng đến bố cục
+            lesson.style.height = '0'; // Điều chỉnh chiều cao về 0 khi ẩn
+            lesson.style.opacity = '0'; // Đặt độ mờ thành 0
+            lesson.style.pointerEvents = 'none'; // Ngăn tương tác khi ẩn
+        }
+    });
+}
+
+// Xử lý sự kiện click cho bài học
+lessons.forEach((lesson, index) => {
+    lesson.addEventListener('click', function () {
+        currentLessonIndex = index;
+        loadLesson(currentLessonIndex);
+    });
+});
+
+
 function loadLesson(index, updateUrl = true) {
     const lesson = lessons[index];
     if (lesson) {

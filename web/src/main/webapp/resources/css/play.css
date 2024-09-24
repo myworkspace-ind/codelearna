@@ -381,3 +381,61 @@ body {
     background-color: #e9ecef;
 }
 
+/* Container của ô tìm kiếm */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    padding: 0 10px; 
+    background-color: #fff;
+    border: 1px solid #ddd; 
+    border-radius: 25px; /
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+    transition: all 0.3s ease; 
+}
+
+/* Input của ô tìm kiếm */
+#search {
+    border: none; 
+    outline: none;
+    flex-grow: 1; 
+    padding: 10px 15px; 
+    font-size: 16px;
+    border-radius: 25px; 
+}
+
+/* Icon tìm kiếm */
+.search-icon {
+    position: absolute;
+    right: 15px;
+    font-size: 18px; 
+    color: #2980b9;
+    pointer-events: none;
+}
+
+/* Hiệu ứng khi người dùng nhập vào ô tìm kiếm */
+#search:focus {
+    box-shadow: 0 0 5px rgba(41, 128, 185, 0.5); 
+}
+
+#search::placeholder {
+    color: #aaa; /* Màu placeholder */
+}
+
+/* Hiệu ứng khi hover vào ô tìm kiếm */
+.search-container:hover {
+    border-color: #3498db; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+}
+
+
+/* Khi nút toggle bật trạng thái mở rộng, chỉ hiện video chính */
+.container.expanded .main-video {
+    grid-column: span 2; 
+}
+
+.container.expanded .video-list {
+    display: none; 
+}
+
