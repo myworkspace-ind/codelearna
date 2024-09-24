@@ -1,0 +1,44 @@
+<!-- Fragment for comment list with pagination -->
+
+<div th:fragment="commentList">
+    <ul class="comment-list" id="comment-list">
+        <li th:each="comment : ${comments}" class="comment-item parent-comment">
+            <div class="comment-content">
+                <img th:src="${comment.user.avatarUrl}" alt="Avatar" class="avatar parent-avatar">
+                <div class="comment-text">
+                    <span class="comment-username" th:text="${comment.user.name}">Username</span>
+                    <p th:text="${comment.content}">Nội dung bình luận</p>
+                </div>
+                <button class="reply-btn" th:attr="data-comment-id=${comment.id}">Trả lời</button>
+            </div>
+
+            <!-- Khu vực nhập bình luận trả lời -->
+            <div class="reply-section" style="display: none;" th:attr="data-comment-id=${comment.id}">
+                <textarea class="reply-textarea" placeholder="Nhập trả lời của bạn..." rows="2"></textarea>
+                <button class="submit-reply-btn">Gửi trả lời</button>
+            </div>
+
+            <!-- Danh sách bình luận con -->
+            <ul class="child-comments" th:if="${comment.childComments}">
+                <li th:each="childComment : ${comment.childComments}" class="comment-item child-comment">
+                    <div class="comment-content">
+                        <img th:src="${childComment.user.avatarUrl}" alt="Avatar" class="avatar child-avatar">
+                        <div class="comment-text">
+                            <span class="comment-username" th:text="${childComment.user.name}">Username</span>
+                            <p th:text="${childComment.content}">Nội dung bình luận</p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <!-- Pagination controls -->
+    <div class="pagination" th:if="${totalPages > 1}">
+        <button th:if="${currentPage > 0}" class="page-btn" th:attr="data-page=${currentPage - 1}">Previous</button>
+        <span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+            <button class="page-btn" th:text="${pageNum + 1}" th:attr="data-page=${pageNum}" th:classappend="${pageNum == currentPage} ? 'active'"></button>
+        </span>
+        <button th:if="${currentPage < totalPages - 1}" class="page-btn" th:attr="data-page=${currentPage + 1}">Next</button>
+    </div>
+</div>

@@ -1,4 +1,3 @@
-// Get references to DOM elements
 const toggleBtn = document.getElementById('toggle-btn');
 const videoList = document.getElementById('video-list');
 const container = document.querySelector('.container');
@@ -6,185 +5,308 @@ const videoPlayer = document.getElementById('embedded-content');
 const videoTitle = document.querySelector('.title');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
+const submitCommentBtn = document.getElementById('submit-comment-btn');
+const commentTextArea = document.getElementById('comment-text');
 
-// Get the list of lessons from the server-rendered data
+
+// Lấy danh sách bài học từ dữ liệu server-rendered
 const lessons = Array.from(document.querySelectorAll('.video-list-content .vid'));
 let currentLessonIndex = 0;
 
-function loadLesson(index) {
-    const lesson = lessons[index];
-    if (lesson) {
-        const videoUrl = lesson.querySelector('video').src;
-        const title = lesson.querySelector('.title').textContent;
-        
-        videoPlayer.src = videoUrl;
-        videoTitle.textContent = title;
-        
-        // Update active class
-        lessons.forEach(l => l.classList.remove('active'));
-        lesson.classList.add('active');
-		
-		// Scroll the active lesson into view
-		lesson.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+let initialLoad = true;
+
+
+// Thêm sự kiện click cho nút toggle-btn
+toggleBtn.addEventListener('click', () => {
+    // Kiểm tra xem danh sách video có đang hiển thị hay không
+    if (videoList.style.display === 'none' || !videoList.style.display) {
+        // Nếu không hiển thị, thì hiển thị danh sách video
+        videoList.style.display = 'block';
+        container.classList.remove('expanded'); // Bỏ lớp 'expanded' nếu có
+        toggleBtn.textContent = '☰'; // Đổi lại biểu tượng nút nếu cần
+    } else {
+        // Nếu đang hiển thị, thì ẩn danh sách video
+        videoList.style.display = 'none';
+        container.classList.add('expanded'); // Thêm lớp 'expanded' để mở rộng khu vực video chính
+        toggleBtn.textContent = '✖'; // Đổi biểu tượng nút để chỉ trạng thái đã ẩn
     }
+});
+
+// Hàm tìm kiếm bài học theo tên trong danh sách hiện tại
+function searchLessons(searchTerm) {
+    lessons.forEach(lesson => {
+        const title = lesson.querySelector('.title').textContent.toLowerCase();
+        if (title.includes(searchTerm.toLowerCase())) {
+            lesson.style.visibility = 'visible'; // Hiển thị bài học mà không thay đổi bố cục
+            lesson.style.height = ''; // Đảm bảo chiều cao được giữ nguyên
+            lesson.style.opacity = '1'; // Đảm bảo độ mờ trở lại bình thường
+            lesson.style.pointerEvents = 'auto'; // Cho phép tương tác
+        } else {
+            lesson.style.visibility = 'hidden'; // Ẩn bài học mà không ảnh hưởng đến bố cục
+            lesson.style.height = '0'; // Điều chỉnh chiều cao về 0 khi ẩn
+            lesson.style.opacity = '0'; // Đặt độ mờ thành 0
+            lesson.style.pointerEvents = 'none'; // Ngăn tương tác khi ẩn
+        }
+    });
 }
 
-toggleBtn.addEventListener('click', function() {
-    videoList.classList.toggle('hidden');
-    container.classList.toggle('expanded');
-});
-
-prevBtn.addEventListener('click', function() {
-    if (currentLessonIndex > 0) {
-        currentLessonIndex--;
-        loadLesson(currentLessonIndex);
-    }
-});
-
-nextBtn.addEventListener('click', function() {
-    if (currentLessonIndex < lessons.length - 1) {
-        currentLessonIndex++;
-        loadLesson(currentLessonIndex);
-    }
-});
-
-// Add click event listeners to each lesson in the list
+// Xử lý sự kiện click cho bài học
 lessons.forEach((lesson, index) => {
-    lesson.addEventListener('click', function() {
+    lesson.addEventListener('click', function () {
         currentLessonIndex = index;
         loadLesson(currentLessonIndex);
     });
 });
 
-// Comment system
-let currentPage = 0;
-let totalPages = 0;
 
-function loadComments(page) {
-    const courseId = document.querySelector('#course-id').value;
+function loadLesson(index, updateUrl = true) {
+    const lesson = lessons[index];
+    if (lesson) {
+        const videoUrl = lesson.querySelector('video').src;
+        const title = lesson.querySelector('.title').textContent;
+        const courseId = lesson.getAttribute('data-course-id');
+        const lessonId = lesson.getAttribute('data-lesson-id');
 
-    fetch(`/play/${courseId}/comments?page=${page}`)
+        // Cập nhật video và tiêu đề
+        videoPlayer.src = videoUrl;
+        videoTitle.textContent = title;
+
+        // Cập nhật class 'active' cho bài học
+        lessons.forEach(l => l.classList.remove('active'));
+        lesson.classList.add('active');
+
+        // Cuộn bài học đang active vào tầm nhìn
+        lesson.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Cập nhật URL nếu cần
+        if (updateUrl) {
+            history.replaceState(null, '', `/codelearna-web/play/${courseId}?lessonId=${lessonId}`);
+        }
+        
+        // Tải bình luận cho bài học mới
+        loadComments(courseId, lessonId);
+    }
+}
+
+function loadComments(courseId, lessonId, page = 0) {
+    fetch(`/codelearna-web/play/${courseId}/${lessonId}/comments?page=${page}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error('Invalid page');
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return response.json();
+            return response.text();
         })
-        .then(data => {
-            displayComments(data.comments);
-            updatePagination(data.currentPage, data.totalPages);
-            currentPage = data.currentPage;
-            totalPages = data.totalPages;
+        .then(html => {
+            // Tạo một DOM tạm để phân tích nội dung trả về từ server
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+
+            // Lấy danh sách bình luận và pagination từ nội dung trả về
+            const newCommentList = tempDiv.querySelector('#comment-list');
+            const newPagination = tempDiv.querySelector('.pagination');
+
+            // Lấy phần tử hiện tại từ trang
+            const commentListContainer = document.querySelector('#comment-list');
+            const paginationContainer = document.querySelector('.pagination');
+
+            // Kiểm tra và thay thế nội dung danh sách bình luận
+            if (commentListContainer && newCommentList) {
+                commentListContainer.innerHTML = newCommentList.innerHTML;
+            }
+
+            // Kiểm tra và thay thế nội dung pagination
+            if (paginationContainer && newPagination) {
+                paginationContainer.innerHTML = newPagination.innerHTML;
+
+                // Gắn lại sự kiện sau khi thay thế nội dung
+                attachPaginationListeners();
+            } else {
+                // Nếu không tìm thấy pagination trên trang, thử thêm lại từ DOM tạm
+                if (newPagination) {
+                    // Thêm pagination nếu chưa tồn tại
+                    const commentSection = document.querySelector('.comment-section');
+                    if (commentSection) {
+                        commentSection.appendChild(newPagination);
+                        attachPaginationListeners();
+                    }
+                } else {
+                    console.warn('Pagination element not found in the loaded content.');
+                }
+            }
+
+            // Gắn lại sự kiện cho các nút trả lời
+            attachReplyListeners();
         })
         .catch(error => {
             console.error('Error loading comments:', error);
         });
 }
 
-function displayComments(comments) {
-    const commentList = document.getElementById('comment-list');
-    commentList.innerHTML = '';
 
-    comments.forEach(comment => {
-        const commentItem = document.createElement('li');
-        commentItem.classList.add('comment-item', 'parent-comment');
-
-        commentItem.innerHTML = `
-            <div class="comment-content">
-                <img src="${comment.user.avatarUrl}" alt="Avatar" class="avatar parent-avatar">
-                <div class="comment-text">
-                    <span class="comment-username">${comment.user.name}</span>
-                    <p>${comment.content}</p>
-                </div>
-            </div>
-            ${renderChildComments(comment.childComments)}
-        `;
-
-        commentList.appendChild(commentItem);
-    });
-}
-
-function renderChildComments(childComments) {
-    if (!childComments || childComments.length === 0) return '';
-
-    let childHtml = '<ul class="child-comments">';
-    childComments.forEach(child => {
-        childHtml += `
-            <li class="comment-item child-comment">
-                <div class="comment-content">
-                    <img src="${child.user.avatarUrl}" alt="Avatar" class="avatar child-avatar">
-                    <div class="comment-text">
-                        <span class="comment-username">${child.user.name}</span>
-                        <p>${child.content}</p>
-                    </div>
-                </div>
-            </li>
-        `;
-    });
-    childHtml += '</ul>';
-    return childHtml;
-}
-
-function updatePagination(currentPage, totalPages) {
-    const pagination = document.querySelector('.pagination');
-
-    pagination.innerHTML = `
-        <li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
-            <a class="page-link" href="#" data-page="${currentPage > 0 ? currentPage - 1 : 0}" aria-label="Trang trước" ${currentPage === 0 ? 'tabindex="-1"' : ''}>
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        <li class="page-item disabled">
-            <span class="page-link">Trang ${currentPage + 1} / ${totalPages}</span>
-        </li>
-        <li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
-            <a class="page-link" href="#" data-page="${currentPage < totalPages - 1 ? currentPage + 1 : totalPages - 1}" aria-label="Trang sau" ${currentPage === totalPages - 1 ? 'tabindex="-1"' : ''}>
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    `;
-
-    pagination.querySelectorAll('.page-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (!this.parentElement.classList.contains('disabled')) {
-                const pageNumber = parseInt(this.getAttribute('data-page'));
-                loadComments(pageNumber);
-            }
+function attachPaginationListeners() {
+    const paginationButtons = document.querySelectorAll('.pagination .page-btn');
+    paginationButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const page = this.getAttribute('data-page');
+            const courseId = getCurrentCourseId();
+            const lessonId = getCurrentLessonId();
+            loadComments(courseId, lessonId, page);
         });
     });
 }
 
-// Initialize the page
-window.addEventListener('load', function() {
-    loadComments(0);
-});
+function attachReplyListeners() {
+    const replyButtons = document.querySelectorAll('.reply-btn');
+    replyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            const replySection = document.querySelector(`.reply-section[data-comment-id="${commentId}"]`);
+            replySection.style.display = replySection.style.display === 'none' ? 'block' : 'none';
+        });
+    });
 
-// Add event listener for submitting new comments
-const submitCommentBtn = document.getElementById('submit-comment-btn');
-const commentText = document.getElementById('comment-text');
+    const submitReplyButtons = document.querySelectorAll('.submit-reply-btn');
+    submitReplyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const replySection = this.closest('.reply-section');
+            const commentId = replySection.getAttribute('data-comment-id');
+            const replyContent = replySection.querySelector('.reply-textarea').value.trim();
+            submitReply(commentId, replyContent);
+        });
+    });
+}
 
-submitCommentBtn.addEventListener('click', function() {
-    const content = commentText.value.trim();
+function submitReply(commentId, content) {
     if (content) {
-        // You'll need to implement this function to send the comment to the server
-        submitComment(content);
+        const courseId = getCurrentCourseId();
+        const lessonId = getCurrentLessonId();
+        fetch(`/codelearna-web/play/comments/${commentId}/reply`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                content: content
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error(`Server returned error: ${response.status}`);
+            }
+        })
+        .then(data => {
+            console.log('Reply sent:', data);
+            loadComments(courseId, lessonId);
+        })
+        .catch(error => {
+            console.error('Error submitting reply:', error);
+        });
+    } else {
+        alert('Please enter a reply before submitting.');
+    }
+}
+
+function getCurrentCourseId() {
+    return window.location.pathname.split('/')[3]; // Adjust based on your URL structure
+}
+
+function getCurrentLessonId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('lessonId');
+}
+
+// Hàm để lấy lessonId từ URL
+function getLessonIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('lessonId');
+}
+
+// Hàm để tìm index của bài học dựa trên lessonId
+function findLessonIndex(lessonId) {
+    return lessons.findIndex(lesson => lesson.getAttribute('data-lesson-id') === lessonId);
+}
+
+prevBtn.addEventListener('click', function () {
+    if (currentLessonIndex > 0) {
+        currentLessonIndex--;
+        loadLesson(currentLessonIndex);
     }
 });
 
-function submitComment(content) {
-    // Implement the logic to send the comment to the server
-    // After successful submission, reload the comments
-    // For example:
-    // fetch('/submit-comment', {
-    //     method: 'POST',
-    //     body: JSON.stringify({ content: content }),
-    //     headers: { 'Content-Type': 'application/json' }
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //     commentText.value = '';
-    //     loadComments(0);
-    // })
-    // .catch(error => console.error('Error submitting comment:', error));
-}
+nextBtn.addEventListener('click', function () {
+    console.log('Next button clicked');
+    if (currentLessonIndex < lessons.length - 1) {
+        currentLessonIndex++;
+        loadLesson(currentLessonIndex);
+    } else {
+        console.log('Already at the last lesson');
+    }
+});
+
+// Cập nhật sự kiện click cho bài học
+lessons.forEach((lesson, index) => {
+    lesson.addEventListener('click', function () {
+        currentLessonIndex = index;
+        loadLesson(currentLessonIndex);
+    });
+});
+
+// Xử lý nút back/forward của trình duyệt
+window.addEventListener('popstate', function(event) {
+    const lessonId = getLessonIdFromUrl();
+    if (lessonId) {
+        const lessonIndex = findLessonIndex(lessonId);
+        if (lessonIndex !== -1) {
+            currentLessonIndex = lessonIndex;
+            loadLesson(currentLessonIndex, false);
+        }
+    }
+});
+
+// Hàm gửi bình luận
+submitCommentBtn.addEventListener('click', function () {
+	console.log('Submit button clicked');
+    const commentContent = commentTextArea.value.trim();
+    const courseId = lessons[currentLessonIndex].getAttribute('data-course-id');
+    const lessonId = lessons[currentLessonIndex].getAttribute('data-lesson-id');
+
+    if (commentContent) {
+        // Gửi bình luận đến server
+        fetch(`/codelearna-web/play/${courseId}/${lessonId}/comments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                content: commentContent
+            })
+        })
+        .then(response => response.text())
+        .then(message => {
+            console.log(message);
+            commentTextArea.value = '';
+            loadComments(courseId, lessonId, 0); // Luôn tải trang đầu tiên sau khi gửi bình luận mới
+        })
+        .catch(error => {
+            console.error('Lỗi:', error);
+        });
+    } else {
+        alert('Vui lòng nhập bình luận trước khi gửi.');
+    }
+});
+
+// Tải bài học ban đầu
+window.addEventListener('load', function() {
+    const lessonId = getLessonIdFromUrl();
+    if (lessonId) {
+        const lessonIndex = findLessonIndex(lessonId);
+        if (lessonIndex !== -1) {
+            currentLessonIndex = lessonIndex;
+        }
+    }
+    if (lessons.length > 0) {
+        loadLesson(currentLessonIndex, false);
+    }
+});
