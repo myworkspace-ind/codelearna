@@ -390,7 +390,7 @@ body {
     padding: 0 10px; 
     background-color: #fff;
     border: 1px solid #ddd; 
-    border-radius: 25px; /
+    border-radius: 25px; 
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
     transition: all 0.3s ease; 
 }
