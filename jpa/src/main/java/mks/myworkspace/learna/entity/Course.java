@@ -1,9 +1,12 @@
 package mks.myworkspace.learna.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -15,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.ManyToMany;
@@ -58,10 +62,8 @@ public class Course {
     @JoinColumn(name = "subcategory_id")
     private Subcategory subcategory;
 
-//    @ElementCollection
-//    @MapKeyColumn(name = "star")
-//    @Column(name = "rating_count")
-//    private Map<Integer, Integer> ratings; 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 
     @Column(name = "is_free")
     private Boolean isFree ;

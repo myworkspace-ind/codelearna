@@ -1,6 +1,8 @@
 package mks.myworkspace.learna.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -57,4 +59,8 @@ public class User {
     @UpdateTimestamp
     @Column(name = "modified_dte")
     private Date modifiedDate;
+    
+    //ref reviews
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
 }

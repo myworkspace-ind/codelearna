@@ -66,12 +66,12 @@
 					</div>
 				</div>
 
-				<input type="hidden" id="hiddenKeyword" th:value="${keyword}" />
-				
-				<input type="hidden" id="hiddenSubcategory"
-					th:value="${subcategoryId}" />
+				<input type="hidden" id="hiddenKeyword" th:value="${keyword}" /> <input
+					type="hidden" id="hiddenSubcategory" th:value="${subcategoryId}" />
 
-
+				<div th:if="${#lists.isEmpty(courses)}" class="col-12 text-center">
+					<p>Không có khóa học nào được tìm thấy.</p>
+				</div>
 				<th:block th:include="fragments/coursePaginationContainer"></th:block>
 			</div>
 		</div>

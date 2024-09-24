@@ -15,9 +15,9 @@ function applyFilter() {
     const subcategoryId = document.getElementById('hiddenSubcategory').value;
 
     if (subcategoryId) {
-        form.action = `/${contextRoot}/subcategory/${subcategoryId}`;
+        form.action = _ctx + `/${contextRoot}/subcategory/${subcategoryId}`;
     } else {
-        form.action = `/${contextRoot}/search`;
+        form.action = _ctx + `/${contextRoot}/search`;
     }
 
     // Input cho keyword
