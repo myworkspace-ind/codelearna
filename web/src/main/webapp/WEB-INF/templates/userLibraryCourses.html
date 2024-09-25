@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thư viện khóa học của bạn</title>
+    <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/resources/css/fragments/courseItem.css}">
+    <link rel="stylesheet" th:href="@{/resources/css/fragments/courseDetailPopup.css}">
+</head>
+<body>
+    <!-- Navigation Bar fragment -->
+    <th:block th:include="fragments/nav"></th:block>
+    <!-- Navigation Bar fragment -->
+
+    <div class="container mt-4">
+        <ul class="nav nav-tabs" id="courseTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="all-courses-tab" data-bs-toggle="tab" data-bs-target="#all-courses" type="button" role="tab" aria-controls="all-courses" aria-selected="true">Tất cả</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="purchased-courses-tab" data-bs-toggle="tab" data-bs-target="#purchased-courses" type="button" role="tab" aria-controls="purchased-courses" aria-selected="false">Đã mua</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="trial-courses-tab" data-bs-toggle="tab" data-bs-target="#trial-courses" type="button" role="tab" aria-controls="trial-courses" aria-selected="false">Dùng thử</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="in-progress-courses-tab" data-bs-toggle="tab" data-bs-target="#in-progress-courses" type="button" role="tab" aria-controls="in-progress-courses" aria-selected="false">Đang học</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="completed-courses-tab" data-bs-toggle="tab" data-bs-target="#completed-courses" type="button" role="tab" aria-controls="completed-courses" aria-selected="false">Hoàn thành</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="courseTabsContent">
+            <div class="tab-pane fade show active" id="all-courses" role="tabpanel" aria-labelledby="all-courses-tab">
+                <th:block th:replace="fragments/libraryPaginationContainer :: libraryPaginationContainer(${userLibraryCourses}, 'all-courses')"></th:block>
+            </div>
+            <div class="tab-pane fade" id="purchased-courses" role="tabpanel" aria-labelledby="purchased-courses-tab">
+                <th:block th:replace="fragments/libraryPaginationContainer :: libraryPaginationContainer(${purchasedCourses}, 'purchased-courses')"></th:block>
+            </div>
+            <div class="tab-pane fade" id="trial-courses" role="tabpanel" aria-labelledby="trial-courses-tab">
+                <th:block th:replace="fragments/libraryPaginationContainer :: libraryPaginationContainer(${trialCourses}, 'trial-courses')"></th:block>
+            </div>
+            <div class="tab-pane fade" id="in-progress-courses" role="tabpanel" aria-labelledby="in-progress-courses-tab">
+                <th:block th:replace="fragments/libraryPaginationContainer :: libraryPaginationContainer(${inProgressCourses}, 'in-progress-courses')"></th:block>
+            </div>
+            <div class="tab-pane fade" id="completed-courses" role="tabpanel" aria-labelledby="completed-courses-tab">
+                <th:block th:replace="fragments/libraryPaginationContainer :: libraryPaginationContainer(${completedCourses}, 'completed-courses')"></th:block>
+            </div>
+        </div>
+    </div>
+
+    <div id="blurOverlay" class="blur-overlay" style="display: none;"></div>
+
+    <!-- FOOTER -->
+    <footer class="container">
+        <p class="float-end">
+            <a href="#">Back to top</a>
+        </p>
+        <p>
+            &copy; 2017 The MKS Group &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a>
+        </p>
+    </footer>
+    <!-- Popup chi tiết khóa học -->
+    <th:block th:include="fragments/popupDetailCourse"></th:block>
+    
+
+    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/resources/js/library.js}"></script>
+    <!-- Determine the root context of the application. -->
+	<script th:inline="javascript">
+	    var _ctx = /*[[@{/}]]*/ '';
+	</script>
+	<script src="/library/webjars/jquery/dist/jquery.min.js"></script>
+	<script src="/library/webjars/popper.js/2.9.3/umd/popper.min.js"></script>
+	<script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+	
+	<!-- For Sakai only -->
+	<script type="text/javascript" src="/library/js/headscripts.js"></script>
+	    
+	<script th:src="@{/resources/js/search.js}"></script>
+</body>
+</html>
