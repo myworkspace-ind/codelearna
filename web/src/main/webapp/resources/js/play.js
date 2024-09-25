@@ -87,6 +87,32 @@ function loadLesson(index, updateUrl = true) {
         loadComments(courseId, lessonId);
     }
 }
+window.addEventListener('load', function() {
+    const lessonId = getLessonIdFromUrl();
+    const courseId = getCurrentCourseId();
+    
+    // Kiểm tra xem URL có chứa lessonId không
+    if (!lessonId && lessons.length > 0) {
+        const firstLessonId = lessons[0].getAttribute('data-lesson-id'); // Lấy lessonId của bài học đầu tiên
+        const newUrl = `${_ctx}play/${courseId}?lessonId=${firstLessonId}`;
+        
+        // Chuyển hướng đến URL mới có lessonId của bài học đầu tiên
+        history.replaceState(null, '', newUrl);
+    }
+
+    // Nếu có lessonId, tìm bài học tương ứng
+    if (lessonId) {
+        const lessonIndex = findLessonIndex(lessonId);
+        if (lessonIndex !== -1) {
+            currentLessonIndex = lessonIndex;
+        }
+    }
+    
+    // Tải bài học
+    if (lessons.length > 0) {
+        loadLesson(currentLessonIndex, false);
+    }
+});
 
 function loadComments(courseId, lessonId, page = 0) {
     fetch(`${_ctx}play/${courseId}/${lessonId}/comments?page=${page}`)
