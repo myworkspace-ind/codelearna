@@ -1,7 +1,4 @@
 <div class="row mt-4 mb-4" id="coursesContainer">
-    <div th:if="${#lists.isEmpty(courses)}" class="col-12 text-center">
-        <p>Không có khóa học nào được tìm thấy.</p>
-    </div>
     <div th:each="course, iterStat : ${courses}"
          th:id="'course-' + ${iterStat.index}" class="col-md-3"
          th:data-name="${course.name}" th:data-image-url="${course.imageUrl}"
