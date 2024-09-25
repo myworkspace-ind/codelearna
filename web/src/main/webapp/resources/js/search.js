@@ -11,13 +11,13 @@ function applyFilter() {
 	form.method = 'GET';
 
 
-	/*const contextRoot = window.location.pathname.split('/')[1];*/
+	
 	const subcategoryId = document.getElementById('hiddenSubcategory').value;
 
 	if (subcategoryId) {
-		form.action = _ctx + `/subcategory/${subcategoryId}`;
+		form.action = _ctx + `subcategory/${subcategoryId}`;
 	} else {
-		form.action = _ctx + `/search`;
+		form.action = _ctx + `search`;
 	}
 
 	// Input cho keyword
