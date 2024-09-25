@@ -18,17 +18,17 @@ let initialLoad = true;
 
 // Thêm sự kiện click cho nút toggle-btn
 toggleBtn.addEventListener('click', () => {
-    // Kiểm tra xem danh sách video có đang hiển thị hay không
+
     if (videoList.style.display === 'none' || !videoList.style.display) {
-        // Nếu không hiển thị, thì hiển thị danh sách video
+ 
         videoList.style.display = 'block';
-        container.classList.remove('expanded'); // Bỏ lớp 'expanded' nếu có
-        toggleBtn.textContent = '☰'; // Đổi lại biểu tượng nút nếu cần
+        container.classList.remove('expanded'); 
+        toggleBtn.textContent = '☰'; 
     } else {
-        // Nếu đang hiển thị, thì ẩn danh sách video
+       
         videoList.style.display = 'none';
-        container.classList.add('expanded'); // Thêm lớp 'expanded' để mở rộng khu vực video chính
-        toggleBtn.textContent = '✖'; // Đổi biểu tượng nút để chỉ trạng thái đã ẩn
+        container.classList.add('expanded');
+        toggleBtn.textContent = '✖';
     }
 });
 
@@ -37,15 +37,15 @@ function searchLessons(searchTerm) {
     lessons.forEach(lesson => {
         const title = lesson.querySelector('.title').textContent.toLowerCase();
         if (title.includes(searchTerm.toLowerCase())) {
-            lesson.style.visibility = 'visible'; // Hiển thị bài học mà không thay đổi bố cục
-            lesson.style.height = ''; // Đảm bảo chiều cao được giữ nguyên
-            lesson.style.opacity = '1'; // Đảm bảo độ mờ trở lại bình thường
-            lesson.style.pointerEvents = 'auto'; // Cho phép tương tác
+            lesson.style.visibility = 'visible';
+            lesson.style.height = ''; 
+            lesson.style.opacity = '1'; 
+            lesson.style.pointerEvents = 'auto';
         } else {
-            lesson.style.visibility = 'hidden'; // Ẩn bài học mà không ảnh hưởng đến bố cục
-            lesson.style.height = '0'; // Điều chỉnh chiều cao về 0 khi ẩn
-            lesson.style.opacity = '0'; // Đặt độ mờ thành 0
-            lesson.style.pointerEvents = 'none'; // Ngăn tương tác khi ẩn
+            lesson.style.visibility = 'hidden'; 
+            lesson.style.height = '0'; 
+            lesson.style.opacity = '0'; 
+            lesson.style.pointerEvents = 'none';
         }
     });
 }
@@ -80,16 +80,42 @@ function loadLesson(index, updateUrl = true) {
 
         // Cập nhật URL nếu cần
         if (updateUrl) {
-            history.replaceState(null, '', `/codelearna-web/play/${courseId}?lessonId=${lessonId}`);
+            history.replaceState(null, '', `${_ctx}play/${courseId}?lessonId=${lessonId}`);
         }
         
         // Tải bình luận cho bài học mới
         loadComments(courseId, lessonId);
     }
 }
+window.addEventListener('load', function() {
+    const lessonId = getLessonIdFromUrl();
+    const courseId = getCurrentCourseId();
+    
+    // Kiểm tra xem URL có chứa lessonId không
+    if (!lessonId && lessons.length > 0) {
+        const firstLessonId = lessons[0].getAttribute('data-lesson-id'); // Lấy lessonId của bài học đầu tiên
+        const newUrl = `${_ctx}play/${courseId}?lessonId=${firstLessonId}`;
+        
+        // Chuyển hướng đến URL mới có lessonId của bài học đầu tiên
+        history.replaceState(null, '', newUrl);
+    }
+
+    // Nếu có lessonId, tìm bài học tương ứng
+    if (lessonId) {
+        const lessonIndex = findLessonIndex(lessonId);
+        if (lessonIndex !== -1) {
+            currentLessonIndex = lessonIndex;
+        }
+    }
+    
+    // Tải bài học
+    if (lessons.length > 0) {
+        loadLesson(currentLessonIndex, false);
+    }
+});
 
 function loadComments(courseId, lessonId, page = 0) {
-    fetch(`/codelearna-web/play/${courseId}/${lessonId}/comments?page=${page}`)
+    fetch(`${_ctx}play/${courseId}/${lessonId}/comments?page=${page}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -180,7 +206,7 @@ function submitReply(commentId, content) {
     if (content) {
         const courseId = getCurrentCourseId();
         const lessonId = getCurrentLessonId();
-        fetch(`/codelearna-web/play/comments/${commentId}/reply`, {
+        fetch(`${_ctx}play/comments/${commentId}/reply`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -274,7 +300,7 @@ submitCommentBtn.addEventListener('click', function () {
 
     if (commentContent) {
         // Gửi bình luận đến server
-        fetch(`/codelearna-web/play/${courseId}/${lessonId}/comments`, {
+        fetch(`${_ctx}play/${courseId}/${lessonId}/comments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
