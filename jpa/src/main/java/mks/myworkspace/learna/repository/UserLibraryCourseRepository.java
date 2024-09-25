@@ -1,6 +1,6 @@
 package mks.myworkspace.learna.repository;
 
-import mks.myworkspace.learna.entity.Library;
+import mks.myworkspace.learna.entity.UserLibraryCourse;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface LibraryRepository extends JpaRepository<Library, Long> {
+public interface UserLibraryCourseRepository extends JpaRepository<UserLibraryCourse, Long> {
 
     @EntityGraph(attributePaths = {"user", "course"})
-    List<Library> findByUserId(Long userId);
+    List<UserLibraryCourse> findByUserId(Long userId);
 }

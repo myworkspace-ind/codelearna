@@ -4,13 +4,12 @@ import javax.persistence.*;
 import java.util.Date;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "learna_library", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
-public class Library {
+@Table(name = "learna_user_library_course", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
+public class UserLibraryCourse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

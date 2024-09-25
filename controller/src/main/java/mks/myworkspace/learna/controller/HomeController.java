@@ -1,6 +1,9 @@
 package mks.myworkspace.learna.controller;
 
 import java.util.List;
+
+/*import org.sakaiproject.user.api.User;
+import org.sakaiproject.user.api.UserDirectoryService;*/
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -27,6 +30,10 @@ public class HomeController {
     @Autowired
     private CampaignService campaignService;
     
+	/*
+	 * @Autowired private UserDirectoryService userDirectoryService;
+	 */
+    
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
         // Sample init of Custom Editor
@@ -40,7 +47,9 @@ public class HomeController {
     @GetMapping
     public ModelAndView getAllCourses() {
 		ModelAndView mav = new ModelAndView("homePage");
-
+//        User currentUser = userDirectoryService.getCurrentUser();
+//		log.info("Thông tin người dùng: {}", currentUser);
+//		
         List<Course> courses = courseService.getAllCourses();
         mav.addObject("courses", courses);
         log.debug("Danh sách khóa học: {}", courses);

@@ -21,6 +21,6 @@ public class Subcategory {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "subcategory", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subcategory", fetch = FetchType.EAGER)
     private List<Course> courses;
 }
