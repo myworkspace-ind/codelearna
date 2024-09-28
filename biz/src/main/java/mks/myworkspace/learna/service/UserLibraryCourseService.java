@@ -8,4 +8,5 @@ public interface UserLibraryCourseService {
     UserLibraryCourse getUserLibraryCourseById(Long id);
     void deleteUserLibraryCourse(Long id);
     List<UserLibraryCourse> getUserLibraryCoursesByUserId(Long userId);
+    void addCourseToLibrary(Long userId, Long courseId, UserLibraryCourse.PaymentStatus paymentStatus, UserLibraryCourse.ProgressStatus progressStatus);
 }
