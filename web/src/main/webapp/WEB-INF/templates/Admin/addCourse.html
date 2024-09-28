@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm khóa học</title>
+</head>
+<body>
+    <h1>Thêm khóa học mới</h1>
+    <form th:action="@{/admin/save-course}" th:object="${course}" method="post">
+        <label for="name">Tên khóa học:</label>
+        <input type="text" id="name" th:field="*{name}" required><br>
+
+        <label for="originalPrice">Giá gốc:</label>
+        <input type="number" id="originalPrice" th:field="*{originalPrice}" required><br>
+
+        <label for="discountedPrice">Giá đã giảm:</label>
+        <input type="number" id="discountedPrice" th:field="*{discountedPrice}" required><br>
+
+        <label for="description">Mô tả:</label>
+        <textarea id="description" th:field="*{description}"></textarea><br>
+
+        <label for="difficultyLevel">Cấp độ khó:</label>
+        <select id="difficultyLevel" th:field="*{difficultyLevel}">
+            <option value="BEGINNER">Dễ</option>
+            <option value="INTERMEDIATE">Trung bình</option>
+            <option value="ADVANCED">Khó</option>
+            <option value="EXPERT">Chuyên gia</option>
+            <option value="MASTER">Bậc thầy</option>
+        </select><br>
+
+        <label for="lessonType">Loại bài học:</label>
+        <select id="lessonType" th:field="*{lessonType}">
+            <option value="VIDEO">Video</option>
+            <option value="INTERACTIVE">Tương tác</option>
+        </select><br>
+
+        <label for="imageUrl">URL ảnh:</label>
+        <input type="text" id="imageUrl" th:field="*{imageUrl}"><br>
+
+        <input type="submit" value="Lưu khóa học">
+    </form>
+</body>
+</html>
