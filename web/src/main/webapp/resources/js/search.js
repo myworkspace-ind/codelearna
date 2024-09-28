@@ -1,4 +1,4 @@
-function setSortOrder(element) {
+ function setSortOrder(element) {
 	const sortOrder = element.getAttribute('data-sort-order');
 	const sortField = element.getAttribute('data-sort-field');
 	document.querySelector('button#sortDropdown').setAttribute('data-sort-order', sortOrder);

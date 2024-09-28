@@ -24,7 +24,12 @@ public class ReviewServiceImpl implements ReviewService {
 	public Review addReview(Review review) {
 		return repo.save(review);
 	}
-
+	
+	@Override
+	public void deleteById(Long reviewId) {
+		repo.deleteById(reviewId);
+	}
+	
 	@Override
 	public double getAverageRating(Long courseId) {
 		List<Review> reviews = repo.findByCourseId(courseId);

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +26,6 @@ public class ReviewController {
 
 	@Autowired
 	private CourseService courseService;
-	
 
 	@Autowired
 	private UserService userService;
@@ -45,16 +45,23 @@ public class ReviewController {
 	@PostMapping("/course/{id}/review")
 	public String addReview(@PathVariable Long id, @ModelAttribute Review review, Principal principal) {
 //        User user = userService.findByUsername(principal.getName()); // Lấy user đang đăng nhập
-		User user = new User();
+		String email = "tai@gmail.com"; 
+	    User user = userService.findByEmail(email);
 
-		user.setName("HuuTai");
-		user.setUsername("Tai");
-		user.setPassword("123");
-		user.setEmail("tai@example.com");
-		user.setPhone("1234567890");
-		user.setRole("student");
+
+	    if (user == null) {
+	        user = new User();
+	        user.setName("HuuTai");
+	        user.setUsername("Tai");
+	        user.setPassword("123"); 
+	        user.setEmail(email);
+	        user.setPhone("1234567890");
+	        user.setRole("student");
+	        
+	        user = userService.save(user); 
+	    }
+
 		
-		user = userService.save(user);
 
 		review.setCourse(courseService.getCourseById(id));
 		review.setUser(user);
@@ -62,4 +69,15 @@ public class ReviewController {
 		return "redirect:/course/" + id;
 	}
 
+	@PostMapping("/course/{courseId}/review/{reviewId}/delete")
+    public String deleteReview(@PathVariable Long reviewId, @PathVariable Long courseId) {
+		
+		reviewService.deleteById(reviewId);
+		//Authentication sau
+		
+		
+        return "redirect:/course/" + courseId;
+    }
+
 }
+
