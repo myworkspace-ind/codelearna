@@ -100,9 +100,27 @@ document.querySelectorAll('#coursesContainer > div').forEach(item => {
     item.addEventListener('click', function() {
         const isFree = this.getAttribute('data-is-free') === 'true';
         const courseId = this.getAttribute('data-course-id');
-        
+        const userId = 1; // Giả sử userId là 1, bạn có thể thay đổi theo logic của bạn
+
         if (isFree) {
-            window.location.href = _ctx + `/play/${courseId}`;
+            // Gửi yêu cầu AJAX để thêm khóa học vào thư viện
+            $.ajax({
+                url: _ctx + `library/add`,
+                type: 'POST',
+                data: {
+                    userId: userId,
+                    courseId: courseId
+                },
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Lỗi:', error);
+                }
+            });
+
+            // Chuyển hướng đến trang play
+            window.location.href = _ctx + `play/${courseId}`;
         } else {
             const course = {
                 name: this.getAttribute('data-name'),

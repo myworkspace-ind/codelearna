@@ -1,0 +1,29 @@
+<div th:fragment="libraryPaginationContainer(courses, tabId)">
+	<div class="row mt-4 mb-4 course-container" th:id="${tabId}">
+		<div th:if="${#lists.isEmpty(courses)}" class="col-12 text-center">
+			<p>Không có khóa học nào được tìm thấy.</p>
+		</div>
+		<div th:each="course, iterStat : ${courses}"
+			th:id="'course-' + ${iterStat.index}" class="col-md-3 course-data"
+			th:data-name="${course.course.name}"
+			th:data-image-url="${course.course.imageUrl}"
+			th:data-description="${course.course.description}"
+			th:data-difficulty-level="${course.course.difficultyLevel}"
+			th:data-lesson-type="${course.course.lessonType}"
+			th:data-original-price="${course.course.originalPrice}"
+			th:data-discounted-price="${course.course.discountedPrice}"
+			th:data-is-free="${course.course.isFree}"
+			th:data-course-id="${course.course.id}">
+			<div
+				th:replace="fragments/courseItem :: courseItem(${course.course})"></div>
+		</div>
+	</div>
+
+	<nav aria-label="Page navigation"
+		th:if="${not #lists.isEmpty(courses)}">
+		<ul class="pagination justify-content-center"
+			th:id="'pagination-' + ${tabId}">
+			<!-- Pagination items will be dynamically added here -->
+		</ul>
+	</nav>
+</div>
