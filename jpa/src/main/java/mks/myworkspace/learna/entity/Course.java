@@ -69,7 +69,7 @@ public class Course {
     private Boolean isFree ;
     
     @CreationTimestamp
-    @Column(name = "created_dte")
+    @Column(name = "created_dte")                                            
     private Date createdDate;
 
     @UpdateTimestamp
