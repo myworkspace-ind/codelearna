@@ -120,7 +120,7 @@ document.querySelectorAll('#coursesContainer > div').forEach(item => {
             });
 
             // Chuyển hướng đến trang play
-            //window.location.href = _ctx + `play/${courseId}`;
+            window.location.href = _ctx + `play/${courseId}`;
         } else {
             const course = {
                 name: this.getAttribute('data-name'),
