@@ -9,7 +9,9 @@ public interface ReviewService {
 	
 	List<Review> getReviewsByCourseId(Long courseId);
 	Review addReview(Review review);
-	void deleteById(Long reviewId);
+	void deleteReviewById(Long reviewId);
+	void updateReviewById(Long reviewId, Review review);
 	double getAverageRating(Long courseId);
+	
 	
 }

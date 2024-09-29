@@ -26,8 +26,19 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 	
 	@Override
-	public void deleteById(Long reviewId) {
+	public void deleteReviewById(Long reviewId) {
 		repo.deleteById(reviewId);
+	}
+	
+	@Override
+	public void updateReviewById(Long reviewId, Review review) {
+		 
+        Review existingReview = repo.findById(reviewId).orElseThrow(() -> new RuntimeException("Review not found"));
+        
+        existingReview.setRatingStar(review.getRatingStar());
+        existingReview.setContent(review.getContent());
+
+        repo.save(existingReview);
 	}
 	
 	@Override
