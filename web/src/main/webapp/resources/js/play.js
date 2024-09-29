@@ -9,7 +9,6 @@ const submitCommentBtn = document.getElementById('submit-comment-btn');
 const commentTextArea = document.getElementById('comment-text');
 
 
-// Lấy danh sách bài học từ dữ liệu server-rendered
 const lessons = Array.from(document.querySelectorAll('.video-list-content .vid'));
 let currentLessonIndex = 0;
 
@@ -160,7 +159,6 @@ function loadComments(courseId, lessonId, page = 0) {
                 }
             }
 
-            // Gắn lại sự kiện cho các nút trả lời
             attachReplyListeners();
         })
         .catch(error => {
@@ -235,7 +233,7 @@ function submitReply(commentId, content) {
 }
 
 function getCurrentCourseId() {
-    return window.location.pathname.split('/')[3]; // Adjust based on your URL structure
+    return window.location.pathname.split('/')[3]; 
 }
 
 function getCurrentLessonId() {
@@ -243,7 +241,6 @@ function getCurrentLessonId() {
     return urlParams.get('lessonId');
 }
 
-// Hàm để lấy lessonId từ URL
 function getLessonIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('lessonId');
@@ -299,7 +296,6 @@ submitCommentBtn.addEventListener('click', function () {
     const lessonId = lessons[currentLessonIndex].getAttribute('data-lesson-id');
 
     if (commentContent) {
-        // Gửi bình luận đến server
         fetch(`${_ctx}play/${courseId}/${lessonId}/comments`, {
             method: 'POST',
             headers: {

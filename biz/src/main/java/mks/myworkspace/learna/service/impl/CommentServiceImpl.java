@@ -36,13 +36,10 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(readOnly = true)
     public List<Comment> getCommentsByLessonIdAndParentCommentIsNull(Long lessonId) {
         try {
-            // Lấy danh sách bình luận sắp xếp theo thời gian mới nhất trước
             List<Comment> comments = commentRepository.findByLessonIdAndParentCommentIsNullOrderByCreatedDateDesc(lessonId);
             comments.forEach(this::initializeChildComments);
-            logger.info("Loaded comments: {}", comments.size());
             return comments;
         } catch (Exception e) {
-            logger.error("Error loading comments for lessonId {}: {}", lessonId, e.getMessage(), e);
             throw e;
         }
     }
@@ -53,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
             Hibernate.initialize(comment.getChildComments());
             comment.getChildComments().forEach(this::initializeChildComments);
         }
-        // Khởi tạo trước thông tin user để tránh lỗi LazyInitializationException
+       
         Hibernate.initialize(comment.getUser());
     }
     
