@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+.review-item {
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+        .review-item:last-child {
+            border-bottom: none;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .rating-star {
+            color: #ffc107;
+        }
+        .modal .form-label {
+            font-weight: bold;
+        }
+        .modal .btn-close {
+            margin-left: auto;
+        }
