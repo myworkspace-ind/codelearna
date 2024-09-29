@@ -36,7 +36,6 @@
 					<input type="text" placeholder="Tìm kiếm bài học..." id="search"
 						onkeyup="searchLessons(this.value)"> <span
 						class="search-icon">&#128269;</span>
-					<!-- Icon tìm kiếm -->
 				</div>
 
 				<div th:each="lesson, lessonStat : ${lessons}" class="vid"
@@ -56,7 +55,7 @@
 					rows="3"></textarea>
 				<button id="submit-comment-btn">Gửi bình luận</button>
 			</div>
-			<!-- Nhúng fragment bình luận -->
+			<!-- fragment bình luận -->
 			<div th:replace="fragments/commentList"></div>
 		</div>
 	</div>

@@ -231,23 +231,56 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.reply-btn:hover {
-    background-color: #3498db;
+/* Reply Textarea Styles */
+.reply-section {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Styling cho nút gửi trả lời */
+.reply-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    min-height: 60px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reply-textarea:focus {
+    border-color: #2980b9;
+    box-shadow: 0 0 0 2px rgba(41, 128, 185, 0.25);
+    outline: none;
+}
+
+.reply-textarea::placeholder {
+    color: #adb5bd;
+}
+
 .submit-reply-btn {
+    display: block;
+    margin-top: 10px;
     padding: 8px 16px;
     background-color: #2980b9;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
+    font-size: 14px;
     cursor: pointer;
-    margin-top: 5px;
+    transition: background-color 0.3s ease;
 }
 
 .submit-reply-btn:hover {
     background-color: #3498db;
+}
+
+.submit-reply-btn:active {
+    background-color: #2471a3;
 }
 
 

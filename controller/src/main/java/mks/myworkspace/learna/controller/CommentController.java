@@ -61,7 +61,7 @@ public class CommentController {
             newComment.setLesson(lesson);
             newComment.setUser(user);
 
-            // Lưu comment vào database
+         
             commentService.saveComment(newComment);
 
             return "Đã gửi bình luận thành công!";
@@ -90,16 +90,16 @@ public class CommentController {
             // Tạo bình luận con
             Comment reply = new Comment();
             reply.setContent(content);
-            reply.setParentComment(parentComment); // Liên kết bình luận con với bình luận cha
-            reply.setLesson(parentComment.getLesson()); // Liên kết với bài học tương ứng
-            reply.setUser(currentUser); // Thiết lập user hiện tại
+            reply.setParentComment(parentComment); 
+            reply.setLesson(parentComment.getLesson()); 
+            reply.setUser(currentUser); 
 
-            // Lưu bình luận con vào cơ sở dữ liệu
+           
             commentService.saveComment(reply);
 
             return ResponseEntity.ok("Reply saved successfully");
         } catch (Exception e) {
-            // Ghi log lỗi để kiểm tra vấn đề nếu xảy ra
+           
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error processing reply: " + e.getMessage());
         }

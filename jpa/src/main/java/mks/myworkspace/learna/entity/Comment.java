@@ -37,7 +37,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id")
-    @JsonIgnore  // Bỏ qua Parent Comment để tránh vòng lặp và lỗi LazyInitializationException
+    @JsonIgnore 
     private Comment parentComment;
 
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
