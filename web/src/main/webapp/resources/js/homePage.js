@@ -122,6 +122,7 @@ document.querySelectorAll('#coursesContainer > div').forEach(item => {
             // Chuyển hướng đến trang play
             window.location.href = _ctx + `play/${courseId}`;
         } else {
+			/*
             const course = {
                 name: this.getAttribute('data-name'),
                 imageUrl: this.getAttribute('data-image-url'),
@@ -130,8 +131,9 @@ document.querySelectorAll('#coursesContainer > div').forEach(item => {
                 lessonType: this.getAttribute('data-lesson-type'),
                 originalPrice: parseFloat(this.getAttribute('data-original-price')),
                 discountedPrice: parseFloat(this.getAttribute('data-discounted-price'))
-            };
-            openPopup(course);
+            };*/
+			window.location.href = _ctx + `course/${courseId}`;
+            /*openPopup(course);*/
         }
     });
 });
