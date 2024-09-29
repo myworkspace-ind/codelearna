@@ -22,6 +22,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public Review addReview(Review review) {
+		review.setId(null);
 		return repo.save(review);
 	}
 	
@@ -43,8 +44,10 @@ public class ReviewServiceImpl implements ReviewService {
 	
 	@Override
 	public double getAverageRating(Long courseId) {
-		List<Review> reviews = repo.findByCourseId(courseId);
-		return reviews.stream().mapToInt(Review::getRatingStar).average().orElse(0);
+	    List<Review> reviews = repo.findByCourseId(courseId);
+	    double average = reviews.stream().mapToInt(Review::getRatingStar).average().orElse(0);
+	    return Math.round(average * 10.0) / 10.0;
 	}
+
 
 }

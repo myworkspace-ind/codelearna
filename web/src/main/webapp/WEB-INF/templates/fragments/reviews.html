@@ -1,114 +1,112 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
 <meta charset="UTF-8">
-<title>Search Courses</title>
+<title>Fragment - Reviews</title>
 <link rel="stylesheet"
 	href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="/resources/css/fragments/courseItem.css">
-<link rel="stylesheet"
-	href="/resources/css/fragments/courseDetailPopup.css?v=1.1">
-<link rel="stylesheet" th:href="@{/resources/css/search.css?v=1.1}">
-<link rel="stylesheet" href="@{/resources/css/fragments/review.css}">
+<link rel="stylesheet" href="/resources/css/fragments/review.css">
 </head>
+
 <body>
-	<div class="container mt-4">
-		<h3 class="mb-4">Reviews</h3>
+	<div th:fragment="reviews">
 
-		<p class="text-muted mb-3">
-			Average Rating: <strong th:text="${averageRating}"></strong> stars
-		</p>
+		<div class="reviews-section mt-5">
+			<h4>Learner Reviews</h4>
+			<p class="text-muted mb-3">
+				Average Rating: <strong th:text="${averageRating}"></strong> stars
+			</p>
 
-		<!-- Reviews List -->
-		<ul class="list-group mb-4">
-			<li class="review-item list-group-item" th:each="review : ${reviews}">
-				<div
-					class="review-header d-flex justify-content-between align-items-center">
-					<h5 class="mb-1">
-						<i class="fa fa-star rating-star"></i> <span
-							th:text="'Rating: ' + ${review.ratingStar} + ' stars'"></span>
-					</h5>
-					<small class="text-muted" th:text="'By: ' + ${review.user.name}"></small>
-				</div>
-				<p class="mb-0" th:text="${review.content}"></p>
-
-				<div th:if="${review.user.email} == 'tai@gmail.com'">
-					<div class="d-flex gap-2 mt-2">
-						<!-- Delete Button -->
-						<form
-							th:action="@{/course/{id}/review/{reviewId}/delete(id=${course.id}, reviewId=${review.id})}"
-							method="post">
-							<input type="hidden" name="_method" value="delete">
-							<button type="submit" class="btn btn-danger btn-sm">Delete</button>
-						</form>
-
-						<!-- Edit Button -->
-						<button type="button" class="btn btn-secondary btn-sm"
-							th:data-bs-toggle="'modal'"
-							th:data-bs-target="'#editModal-' + ${review.id}">Edit</button>
+			<!-- Reviews List -->
+			<ul class="list-group mb-4">
+				<li class="review-item list-group-item"
+					th:each="review : ${reviews}">
+					<div
+						class="review-header d-flex justify-content-between align-items-center">
+						<h5 class="mb-1">
+							<i class="fa fa-star rating-star"></i> <span
+								th:text="'Rating: ' + ${review.ratingStar} + ' stars'"></span>
+						</h5>
 					</div>
-
-					<!-- Modal for Editing Review -->
-					<div class="modal fade" th:id="'editModal-' + ${review.id}"
-						tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-						<div class="modal-dialog">
+					<div class="review-item">
+						<h6 class="text-muted" th:text="'By: ' + ${review.user.name}"></h6>
+						<p class="mb-0" th:text="${review.content}"></p>
+					</div>
+					<div th:if="${review.user.email} == 'tai@gmail.com'">
+						<div class="d-flex gap-2 mt-2">
+							<!-- Delete Button -->
 							<form
-								th:action="@{/course/{courseId}/review/{reviewId}/edit(courseId=${course.id}, reviewId=${review.id})}"
-								th:object="${review}" method="post">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="editModalLabel">Edit Review</h5>
-										<button type="button" class="btn-close"
-											data-bs-dismiss="modal" aria-label="Close"></button>
-									</div>
-									<div class="modal-body">
-										<div class="mb-3">
-											<label for="ratingStar" class="form-label">Rating
-												(1-5):</label> <input type="number" class="form-control"
-												id="ratingStar" name="ratingStar" th:value="*{ratingStar}"
-												min="1" max="5" required>
-										</div>
-										<div class="mb-3">
-											<label for="content" class="form-label">Review:</label>
-											<textarea class="form-control" id="content" name="content"
-												rows="4" th:text="*{content}" required></textarea>
-										</div>
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-secondary"
-											data-bs-dismiss="modal">Close</button>
-										<button type="submit" class="btn btn-primary">Update
-											Review</button>
-									</div>
-								</div>
+								th:action="@{/course/{id}/review/{reviewId}/delete(id=${course.id}, reviewId=${review.id})}"
+								method="post">
+								<input type="hidden" name="_method" value="delete">
+								<button type="submit" class="btn btn-danger btn-sm">Delete</button>
 							</form>
+
+							<!-- Edit Button -->
+							<button type="button" class="btn btn-secondary btn-sm"
+								th:data-bs-toggle="'modal'"
+								th:data-bs-target="'#editModal-' + ${review.id}">Edit</button>
+						</div>
+
+						<!-- Modal for Editing Review -->
+						<div class="modal fade" th:id="'editModal-' + ${review.id}"
+							tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<form
+									th:action="@{/course/{courseId}/review/{reviewId}/edit(courseId=${course.id}, reviewId=${review.id})}"
+									th:object="${review}" method="post">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="editModalLabel">Edit Review</h5>
+											<button type="button" class="btn-close"
+												data-bs-dismiss="modal" aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<div class="mb-3">
+												<label for="ratingStar" class="form-label">Rating
+													(1-5):</label> <input type="number" class="form-control"
+													id="ratingStar" name="ratingStar" th:value="*{ratingStar}"
+													min="1" max="5" required>
+											</div>
+											<div class="mb-3">
+												<label for="content" class="form-label">Review:</label>
+												<textarea class="form-control" id="content" name="content"
+													rows="4" th:text="*{content}" required></textarea>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary"
+												data-bs-dismiss="modal">Close</button>
+											<button type="submit" class="btn btn-primary">Update
+												Review</button>
+										</div>
+									</div>
+								</form>
+							</div>
 						</div>
 					</div>
+				</li>
+			</ul>
+
+			<!-- Add review form -->
+			<h5 class="mb-3">Add your review</h5>
+			<form th:action="@{/course/{id}/review(id=${course.id})}"
+				method="post">
+				<div class="mb-3">
+					<label for="ratingStar" class="form-label">Rating (1-5):</label> <input
+						type="number" class="form-control" id="ratingStar"
+						name="ratingStar" min="1" max="5" required>
 				</div>
-			</li>
-		</ul>
-
-		<!-- Add New Review Section -->
-		<h3 class="mb-4">Add a Review</h3>
-		<form th:action="@{/course/{id}/review(id=${course.id})}"
-			method="post">
-			<div class="mb-3">
-				<label for="ratingStar" class="form-label">Rating (1-5):</label> <input
-					type="number" class="form-control" id="ratingStar"
-					name="ratingStar" min="1" max="5" required>
-			</div>
-			<div class="mb-3">
-				<label for="content" class="form-label">Review:</label>
-				<textarea class="form-control" id="content" name="content" rows="4"
-					required></textarea>
-			</div>
-			<button type="submit" class="btn btn-primary">Submit Review</button>
-		</form>
+				<div class="mb-3">
+					<label for="content" class="form-label">Review:</label>
+					<textarea class="form-control" id="content" name="content" rows="4"
+						required></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit Review</button>
+			</form>
+		</div>
 	</div>
-
-	<!-- Scripts -->
-	<th:block th:include="fragments/javascript"></th:block>
-	<script
-		src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

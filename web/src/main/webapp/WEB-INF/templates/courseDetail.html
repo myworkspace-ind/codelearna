@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chi tiết khóa học</title>
+<link rel="stylesheet"
+	href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+<link rel="stylesheet"
+	th:href="@{/resources/css/fragments/courseDetail.css}">
+</head>
+
+<body>
+	<div class="container mt-5">
+		<!-- Course Header -->
+		<div class="course-header">
+			<h2 th:text="${course.name}">Tên khóa học</h2>
+		</div>
+
+		<!-- Course Body -->
+		<div class="course-body row mt-4">
+			<div class="col-md-6">
+				<!-- Course Image -->
+				<div class="course-image mb-4">
+					<img th:src="@{${course.imageUrl}}" alt="Course Image">
+				</div>
+
+				<!-- Course Screenshots -->
+				<div class="course-screenshots">
+					<div class="screenshots-container">
+						<img th:src="@{${course.imageUrl}}" alt="Course Image"> <img
+							src="https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif"
+							alt="Screenshot 1"> <img
+							src="https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif"
+							alt="Screenshot 2"> <img
+							src="https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif"
+							alt="Screenshot 3">
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<!-- Course Description -->
+				<div class="course-description">
+					<h4>Mô tả khóa học</h4>
+					<p th:text="${course.description}">Đây là mô tả khóa học.</p>
+				</div>
+
+				<!-- Course Details -->
+				<div class="course-details mt-4">
+					<h4>Tổng quan</h4>
+					<p>
+						Độ khó: <span th:text="${course.difficultyLevel}">BEGINNER</span>
+					</p>
+					<p>
+						Loại bài học: <span th:text="${course.lessonType}">Video</span>
+					</p>
+					<p>
+						<del th:text="'₫' + ${course.originalPrice}"></del>
+					</p>
+					<h4 th:text="'₫' + ${course.discountedPrice}"></h4>
+					<button class="btn btn-primary mt-3">Thanh toán</button>
+				</div>
+			</div>
+		</div>
+
+		<div th:include="fragments/reviews :: reviews"></div>
+
+	</div>
+
+
+	<th:block th:include="fragments/javascript"></th:block>
+</body>
+
+</html>

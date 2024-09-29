@@ -34,7 +34,7 @@ public class ReviewController {
 	// Open a course details
 	@GetMapping("/course/{id}")
 	public ModelAndView getCourseDetail(@PathVariable Long id) {
-		ModelAndView mav = new ModelAndView("fragments/reviews");
+		ModelAndView mav = new ModelAndView("courseDetail");
 		Course course = courseService.getCourseById(id);
 		List<Review> reviews = reviewService.getReviewsByCourseId(id);
 		double averageRating = reviewService.getAverageRating(id);
