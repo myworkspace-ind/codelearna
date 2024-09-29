@@ -17,10 +17,16 @@ public class AdminCourseController {
     @Autowired
     private CourseService courseService;
 
+    // Hiển thị trang admin home
+    @GetMapping
+    public String showAdminHomePage() {
+        return "adminHome"; // Trả về trang adminHome.html
+    }
+
     // Hiển thị trang thêm khóa học
     @GetMapping("/save-course")
     public ModelAndView showSaveCoursePage() {
-    	ModelAndView mav = new ModelAndView("Admin/addCourse");
+        ModelAndView mav = new ModelAndView("Admin/addCourse");
         mav.addObject("course", new Course()); 
         return mav;
     }

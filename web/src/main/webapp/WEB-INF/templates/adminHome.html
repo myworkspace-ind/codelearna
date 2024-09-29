@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/resources/css/adminHome.css}">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2>WebLoGo</h2>
+            </div>
+            <nav>
+                <a href="#" class="active" data-section="dashboard">
+                    <span class="icon">📊</span> <span class="text">Dashboard</span>
+                </a>
+                <a href="#" data-section="users">
+                    <span class="icon">👥</span> <span class="text">Quản lý người dùng</span>
+                </a>
+                <a href="#" data-section="courses">
+                    <span class="icon">📚</span> <span class="text">Quản lý khóa học</span>
+                </a>
+                <a href="#" data-section="revenue">
+                    <span class="icon">💰</span> <span class="text">Thống kê doanh thu</span>
+                </a>
+            </nav>
+            <a href="#" class="logout">
+                <span class="icon">🚪</span> <span class="text">Đăng xuất</span>
+            </a>
+        </div>
+
+        <!-- Main Content -->
+        <div id="main-content" class="main-content">
+            <header>
+                <button id="sidebarToggle">☰</button>
+                <h1>Admin Dashboard</h1>
+            </header>
+
+            <main>
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <span class="icon">👥</span>
+                        <h2 th:text="${userCount}">1,234</h2>
+                        <p>Người dùng</p>
+                    </div>
+                    <div class="card">
+                        <span class="icon">📚</span>
+                        <h2 th:text="${courseCount}">56</h2>
+                        <p>Khóa học</p>
+                    </div>
+                    <div class="card">
+                        <span class="icon">💰</span>
+                        <h2 th:text="${revenue}">$12,345</h2>
+                        <p>Doanh thu</p>
+                    </div>
+                    <div class="card">
+                        <span class="icon">⭐</span>
+                        <h2 th:text="${averageRating}">4.8</h2>
+                        <p>Đánh giá trung bình</p>
+                    </div>
+                </div>
+
+                
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:src="@{/resources/js/adminHome.js}"></script>
+</body>
+</html>
