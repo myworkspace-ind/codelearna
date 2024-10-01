@@ -24,27 +24,26 @@ public class SubcategoryController {
 
 	@Autowired
 	private SubcategoryService subcategoryService;
-	
+
 	@Autowired
 	private CourseService courseService;
 
 	@GetMapping("/subcategory/{id}")
-	public ModelAndView getCoursesBySubcategory(
-	        @PathVariable Long id,
-	        @RequestParam(value = "keyword", required = false) String keyword,
-	        @RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
-	        @RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
-	        @RequestParam(value = "level", required = false) String level) {
+	public ModelAndView getCoursesBySubcategory(@PathVariable Long id,
+			@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
+			@RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
+			@RequestParam(value = "level", required = false) String level) {
 
-	    ModelAndView mav = new ModelAndView("search");
-	    List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, id);
-	    mav.addObject("courses", courses);
-	    mav.addObject("keyword", keyword);
-	    mav.addObject("sortOrder", sortOrder);
-	    mav.addObject("sortField", sortField);
-	    mav.addObject("level", level);
-	    mav.addObject("subcategoryId", id);
-	    return mav;
+		ModelAndView mav = new ModelAndView("search");
+		List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, id);
+		mav.addObject("courses", courses);
+		mav.addObject("keyword", keyword);
+		mav.addObject("sortOrder", sortOrder);
+		mav.addObject("sortField", sortField);
+		mav.addObject("level", level);
+		mav.addObject("subcategoryId", id);
+		return mav;
 	}
 
 }
