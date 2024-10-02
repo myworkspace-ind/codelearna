@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="resources/css/fragments/courseItem.css">
 <link rel="stylesheet" href="resources/css/fragments/courseDetailPopup.css?v=1.1">
-<link rel="stylesheet" th:href="@{/resources/css/search.css?v=1.1}">
+<link rel="stylesheet" th:href="@{/resources/css/search.css}">
 
 
 </head>
@@ -21,14 +21,21 @@
 				<h4>Filter by</h4>
 
 				<!-- Filter by Level -->
-				<h5>Level</h5>
+				<h5 class="custom-h5">Level</h5>
 				<ul class="filters">
-					<li><input type="radio" name="level" value="BEGINNER" th:checked="${level == 'BEGINNER'}"
-						onchange="applyFilter()"> For beginner</li>
-					<li><input type="radio" name="level" value="INTERMEDIATE" th:checked="${level == 'INTERMEDIATE'}"
-						onchange="applyFilter()"> For intermediate</li>
-					<li><input type="radio" name="level" value="ADVANCED" th:checked="${level == 'ADVANCED'}"
-						onchange="applyFilter()"> For advanced</li>
+					<li><input type="radio" name="level" value="BEGINNER" th:checked="${level == 'BEGINNER'}" onchange="applyFilter()"> For beginner</li>
+					<li><input type="radio" name="level" value="INTERMEDIATE" th:checked="${level == 'INTERMEDIATE'}" onchange="applyFilter()"> For
+						intermediate</li>
+					<li><input type="radio" name="level" value="ADVANCED" th:checked="${level == 'ADVANCED'}" onchange="applyFilter()"> For advanced</li>
+				</ul>
+				
+				<!-- Filter by Rating -->
+				<h5 class="custom-h5">Ratings</h5>
+				<ul class="filters">
+					<li><input type="radio" name="rating" value="4.5" th:checked="${rating == '4.5'}" onchange="applyFilter()"> 4.5 & up</li>
+					<li><input type="radio" name="rating" value="4.0" th:checked="${rating == '4.0'}" onchange="applyFilter()"> 4.0 & up</li>
+					<li><input type="radio" name="rating" value="3.5" th:checked="${rating == '3.5'}" onchange="applyFilter()"> 3.5 & up</li>
+					<li><input type="radio" name="rating" value="3.0" th:checked="${rating == '3.0'}" onchange="applyFilter()"> 3.0 & up</li>
 				</ul>
 			</div>
 
@@ -41,17 +48,17 @@
 				<!-- Sort Dropdown -->
 				<div class="d-flex justify-content-end mb-3">
 					<div class="dropdown">
-						<button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown"
-							data-bs-toggle="dropdown" aria-expanded="false">Sort by</button>
+						<button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">Sort
+							by</button>
 						<ul class="dropdown-menu" aria-labelledby="sortDropdown">
-							<li><a class="dropdown-item" href="#" data-sort-order="asc" data-sort-field="createdDate"
-								onclick="setSortOrder(this)">Created Date Ascending</a></li>
-							<li><a class="dropdown-item" href="#" data-sort-order="desc" data-sort-field="createdDate"
-								onclick="setSortOrder(this)">Created Date Descending</a></li>
-							<li><a class="dropdown-item" href="#" data-sort-order="asc" data-sort-field="discountedPrice"
-								onclick="setSortOrder(this)">Price Ascending</a></li>
-							<li><a class="dropdown-item" href="#" data-sort-order="desc" data-sort-field="discountedPrice"
-								onclick="setSortOrder(this)">Price Descending</a></li>
+							<li><a class="dropdown-item" href="#" data-sort-order="asc" data-sort-field="createdDate" onclick="setSortOrder(this)">Created Date
+									Ascending</a></li>
+							<li><a class="dropdown-item" href="#" data-sort-order="desc" data-sort-field="createdDate" onclick="setSortOrder(this)">Created Date
+									Descending</a></li>
+							<li><a class="dropdown-item" href="#" data-sort-order="asc" data-sort-field="discountedPrice" onclick="setSortOrder(this)">Price
+									Ascending</a></li>
+							<li><a class="dropdown-item" href="#" data-sort-order="desc" data-sort-field="discountedPrice" onclick="setSortOrder(this)">Price
+									Descending</a></li>
 						</ul>
 					</div>
 				</div>
@@ -62,8 +69,7 @@
 				<th:block th:include="fragments/coursePaginationContainer"></th:block>
 
 
-				<input type="hidden" id="hiddenKeyword" th:value="${keyword}" /> <input type="hidden" id="hiddenSubcategory"
-					th:value="${subcategoryId}" />
+				<input type="hidden" id="hiddenKeyword" th:value="${keyword}" /> <input type="hidden" id="hiddenSubcategory" th:value="${subcategoryId}" />
 			</div>
 		</div>
 	</div>

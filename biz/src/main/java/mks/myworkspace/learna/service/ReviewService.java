@@ -8,10 +8,12 @@ import mks.myworkspace.learna.repository.ReviewRepository;
 public interface ReviewService {
 	
 	List<Review> getReviewsByCourseId(Long courseId);
-	Review addReview(Review review);
-	void deleteReviewById(Long reviewId);
+	void addReview(Review review, Long courseId);
+	void deleteReviewById(Long reviewId, Long courseId);
 	void updateReviewById(Long reviewId, Review review);
 	double getAverageRating(Long courseId);
+	void updateAverageRating(Long courseId);
+	
 	
 	
 }

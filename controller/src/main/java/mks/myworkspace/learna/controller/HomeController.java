@@ -16,7 +16,7 @@ import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Campaign;
 import mks.myworkspace.learna.service.CampaignService;
 import mks.myworkspace.learna.service.CourseService;
-
+import mks.myworkspace.learna.service.ReviewService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -26,6 +26,9 @@ public class HomeController {
 
     @Autowired
     private CourseService courseService;
+    
+    @Autowired
+    private ReviewService reviewService;
     
     @Autowired
     private CampaignService campaignService;
@@ -61,6 +64,7 @@ public class HomeController {
         List<Campaign> campaigns = campaignService.getAllCampaigns();
         mav.addObject("campaigns", campaigns);
         log.debug("Khuyến mãi đang chạy: {}", campaigns);
+        
 
         return mav;
     }

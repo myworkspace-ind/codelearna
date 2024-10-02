@@ -9,12 +9,16 @@ import org.springframework.stereotype.Service;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.service.CourseService;
+import mks.myworkspace.learna.service.ReviewService;
 
 @Service
 public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private CourseRepository repo;
+
+	@Autowired
+	private ReviewService reviewService;
 
 	@Override
 	public CourseRepository getRepo() {
@@ -28,7 +32,10 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	public Course getCourseById(Long id) {
-		return repo.findById(id).orElse(null);
+		Course course = repo.findById(id).orElse(null);
+		Double averageRating = reviewService.getAverageRating(course.getId());
+		course.setAverageRating(averageRating);
+		return course;
 	}
 
 	@Override
@@ -38,7 +45,11 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	public List<Course> getAllCourses() {
-		return repo.findAll();
+		List<Course> courses = repo.findAll();
+		for(Course course : courses) {
+			reviewService.updateAverageRating(course.getId());
+		}
+		return courses;
 	}
 
 	@Override
@@ -51,10 +62,9 @@ public class CourseServiceImpl implements CourseService {
 		return repo.findBySubcategoryId(subcategoryId);
 	}
 
-
 	@Override
 	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField,
-			String level) {
+			String level, String averageRating) {
 		Sort sort = Sort.by(sortField);
 		sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
 		Pageable pageable = PageRequest.of(0, 20, sort);
@@ -68,27 +78,49 @@ public class CourseServiceImpl implements CourseService {
 			}
 		}
 
-		return repo.findCoursesByFilters(keyword, difficultyLevel, pageable);
+		Double ratingValue = null;
+		if (averageRating != null) {
+			try {
+				ratingValue = Double.valueOf(averageRating);
+			} catch (NumberFormatException e) {
+
+			}
+		}
+
+		return repo.findCoursesByFilters(keyword, difficultyLevel, ratingValue, pageable);
 	}
+
 	@Override
-    public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId) {
-        Sort sort = Sort.by(sortField);
-        sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
-        Pageable pageable = PageRequest.of(0, 20, sort);
+	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField,
+			String level, Long subcategoryId, String rating) {
+		Sort sort = Sort.by(sortField);
+		sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
+		Pageable pageable = PageRequest.of(0, 20, sort);
 
-        Course.DifficultyLevel difficultyLevel = null;
-        if (level != null) {
-            try {
-                difficultyLevel = Course.DifficultyLevel.valueOf(level.toUpperCase());
-            } catch (IllegalArgumentException e) {
-            }
-        }
+		Course.DifficultyLevel difficultyLevel = null;
+		if (level != null) {
+			try {
+				difficultyLevel = Course.DifficultyLevel.valueOf(level.toUpperCase());
+			} catch (IllegalArgumentException e) {
 
-        
-        if (subcategoryId != null) {
-            return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevel, pageable);
-        } else {
-            return repo.findCoursesByFilters(keyword, difficultyLevel, pageable);
-        }
-    }
+			}
+		}
+
+		Double ratingValue = null;
+		if (rating != null) {
+			try {
+				ratingValue = Double.valueOf(rating);
+			} catch (NumberFormatException e) {
+
+			}
+		}
+
+		if (subcategoryId != null) {
+			return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevel, ratingValue,
+					pageable);
+		} else {
+			return repo.findCoursesByFilters(keyword, difficultyLevel, ratingValue, pageable);
+		}
+	}
+
 }

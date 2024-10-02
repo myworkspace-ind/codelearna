@@ -20,39 +20,20 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
 	List<Course> findBySubcategoryId(Long subcategoryId);
 
-//	// Search feature
-//	List<Course> findByNameContainingOrDescriptionContainingOrderByCreatedDateAsc(String name, String description);
-//
-//	List<Course> findByNameContainingOrDescriptionContainingOrderByCreatedDateDesc(String name, String description);
-//
-//	List<Course> findAllByOrderByCreatedDateAsc();
-//
-//	List<Course> findAllByOrderByCreatedDateDesc();
-//
-//	List<Course> findByNameContainingOrDescriptionContainingOrderByDiscountedPriceAsc(String name, String description);
-//
-//	List<Course> findByNameContainingOrDescriptionContainingOrderByDiscountedPriceDesc(String name, String description);
-//
-//	List<Course> findAllByOrderByDiscountedPriceAsc();
-//
-//	List<Course> findAllByOrderByDiscountedPriceDesc();
-
-	// Search Optimization
+	// Normal search
 	@Query("SELECT c FROM Course c "
 			+ "WHERE (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
-			+ "AND (:level IS NULL OR c.difficultyLevel = :level)")
+			+ "AND (:level IS NULL OR c.difficultyLevel = :level) " + "AND (:averageRating IS NULL OR c.averageRating >= :averageRating)")
 	List<Course> findCoursesByFilters(@Param("keyword") String keyword, @Param("level") Course.DifficultyLevel level,
+			@Param("averageRating") Double averageRating, Pageable pageable);
+
+	// Search in sub category
+	@Query("SELECT c FROM Course c JOIN c.subcategory s " + "WHERE s.id = :subcategoryId "
+			+ "AND (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
+			+ "AND (:level IS NULL OR c.difficultyLevel = :level) " + "AND (:averageRating IS NULL OR c.averageRating >= :averageRating)")
+	List<Course> findCoursesBySubcategoryAndFilters(@Param("subcategoryId") Long subcategoryId,
+			@Param("keyword") String keyword, @Param("level") Course.DifficultyLevel level,
+			@Param("averageRating") Double averageRating,
 			Pageable pageable);
-	
-	
-	// Phương thức tìm kiếm với subcategoryId
-    @Query("SELECT c FROM Course c JOIN c.subcategory s "
-            + "WHERE s.id = :subcategoryId "
-            + "AND (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
-            + "AND (:level IS NULL OR c.difficultyLevel = :level)")
-    List<Course> findCoursesBySubcategoryAndFilters(@Param("subcategoryId") Long subcategoryId,
-                                                    @Param("keyword") String keyword,
-                                                    @Param("level") Course.DifficultyLevel level,
-                                                    Pageable pageable);
 
 }

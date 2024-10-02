@@ -16,7 +16,7 @@
 		<div class="reviews-section mt-5">
 			<h4>Learner Reviews</h4>
 			<p class="text-muted mb-3">
-				Average Rating: <strong th:text="${averageRating}"></strong> stars
+				Average Rating: <strong th:text="${course.averageRating}"></strong> stars
 			</p>
 
 			<!-- Reviews List -->
@@ -59,7 +59,7 @@
 													name="ratingStar" th:value="*{ratingStar}" min="1" max="5" required>
 											</div>
 											<div class="mb-3">
-												<textarea class="form-control" id="content" name="content" rows="4" maxlength="200" required oninput="updateCharacterCount()"></textarea>
+												<textarea class="form-control" id="content" name="content" th:text="*{content}" rows="4" maxlength="200" required oninput="updateCharacterCount()"></textarea>
 												<small id="charCount" class="form-text text-muted">200 ký tự còn lại</small>
 											</div>
 										</div>

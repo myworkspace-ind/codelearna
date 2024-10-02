@@ -22,21 +22,24 @@ public class SearchController extends BaseController {
 
 	@GetMapping("/search")
 	public ModelAndView searchCourses(@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
-			@RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
-			@RequestParam(value = "level", required = false) String level) {
+	                                   @RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
+	                                   @RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
+	                                   @RequestParam(value = "level", required = false) String level,
+	                                   @RequestParam(value = "rating", required = false) String averageRating) { 
 
-		ModelAndView mav = new ModelAndView("search");
+	    ModelAndView mav = new ModelAndView("search");
 
-		List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level);
+	    List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, averageRating);
 
-		mav.addObject("courses", courses);
-		mav.addObject("keyword", keyword);
-		mav.addObject("sortOrder", sortOrder);
-		mav.addObject("sortField", sortField);
-		mav.addObject("level", level);
+	    mav.addObject("courses", courses);
+	    mav.addObject("keyword", keyword);
+	    mav.addObject("sortOrder", sortOrder);
+	    mav.addObject("sortField", sortField);
+	    mav.addObject("level", level);
+	    mav.addObject("rating", averageRating);
 
-		return mav;
+	    return mav;
 	}
+
 
 }

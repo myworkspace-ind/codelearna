@@ -20,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.ManyToMany;
 import javax.persistence.JoinTable;
@@ -83,6 +84,9 @@ public class Course {
         inverseJoinColumns = @JoinColumn(name = "lesson_id")
     )
     private Set<Lesson> lessons;
+    
+    private Double averageRating;
+    
 
     public enum DifficultyLevel {
         BEGINNER,
