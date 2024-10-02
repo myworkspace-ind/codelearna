@@ -17,8 +17,8 @@ public interface CourseService {
     List<Course> getCoursesBySubcategory(Long id);
     
     //Search filter
-    List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level);
-    List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId);
+    List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, String averageRating);
+    List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId, String averageRating);
     
     
     

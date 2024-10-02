@@ -40,4 +40,3 @@ function updateCharacterCount() {
 	document.getElementById("charCount").innerText = (maxChars - currentLength) + " ký tự còn lại";
 }
 
-

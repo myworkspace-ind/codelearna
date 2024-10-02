@@ -33,16 +33,22 @@ public class SubcategoryController {
 			@RequestParam(value = "keyword", required = false) String keyword,
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
 			@RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
-			@RequestParam(value = "level", required = false) String level) {
+			@RequestParam(value = "level", required = false) String level,
+			@RequestParam(value = "rating", required = false) String rating) { // Added rating parameter
 
 		ModelAndView mav = new ModelAndView("search");
-		List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, id);
+
+		List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, id,
+				rating);
+
 		mav.addObject("courses", courses);
 		mav.addObject("keyword", keyword);
 		mav.addObject("sortOrder", sortOrder);
 		mav.addObject("sortField", sortField);
 		mav.addObject("level", level);
 		mav.addObject("subcategoryId", id);
+		mav.addObject("rating", rating);
+
 		return mav;
 	}
 

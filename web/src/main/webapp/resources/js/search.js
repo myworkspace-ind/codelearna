@@ -1,4 +1,4 @@
- function setSortOrder(element) {
+function setSortOrder(element) {
 	const sortOrder = element.getAttribute('data-sort-order');
 	const sortField = element.getAttribute('data-sort-field');
 	document.querySelector('button#sortDropdown').setAttribute('data-sort-order', sortOrder);
@@ -11,7 +11,7 @@ function applyFilter() {
 	form.method = 'GET';
 
 
-	
+
 	const subcategoryId = document.getElementById('hiddenSubcategory').value;
 
 	if (subcategoryId) {
@@ -49,6 +49,16 @@ function applyFilter() {
 		levelInput.name = 'level';
 		levelInput.value = level.value;
 		form.appendChild(levelInput);
+	}
+
+	// Input for rating
+	const rating = document.querySelector('input[name="rating"]:checked');
+	if (rating) {
+		const ratingInput = document.createElement('input');
+		ratingInput.type = 'hidden';
+		ratingInput.name = 'rating';
+		ratingInput.value = rating.value;
+		form.appendChild(ratingInput);
 	}
 
 	document.body.appendChild(form);

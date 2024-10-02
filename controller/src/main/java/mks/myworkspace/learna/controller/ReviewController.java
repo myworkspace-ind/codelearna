@@ -3,6 +3,7 @@ package mks.myworkspace.learna.controller;
 import java.security.Principal;
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +20,9 @@ import mks.myworkspace.learna.entity.User;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ReviewService;
 import mks.myworkspace.learna.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 public class ReviewController {
 	@Autowired
@@ -37,10 +40,9 @@ public class ReviewController {
 		ModelAndView mav = new ModelAndView("courseDetail");
 		Course course = courseService.getCourseById(id);
 		List<Review> reviews = reviewService.getReviewsByCourseId(id);
-		double averageRating = reviewService.getAverageRating(id);
 		mav.addObject("course", course);
 		mav.addObject("reviews", reviews);
-		mav.addObject("averageRating", averageRating);
+		log.debug("So sao trung binh: {}", course.getAverageRating());
 		return mav;
 	}
 
@@ -65,7 +67,7 @@ public class ReviewController {
 
 		review.setCourse(courseService.getCourseById(id));
 		review.setUser(user);
-		reviewService.addReview(review);
+		reviewService.addReview(review, id);
 		return "redirect:/course/" + id;
 	}
 
@@ -73,7 +75,7 @@ public class ReviewController {
 	@PostMapping("/course/{courseId}/review/{reviewId}/delete")
 	public String deleteReview(@PathVariable Long reviewId, @PathVariable Long courseId) {
 
-		reviewService.deleteReviewById(reviewId);
+		reviewService.deleteReviewById(reviewId, courseId);
 		// Authentication sau
 
 		return "redirect:/course/" + courseId;
@@ -85,9 +87,6 @@ public class ReviewController {
 			Model model) {
 
 		reviewService.updateReviewById(reviewId, review);
-
-		model.addAttribute("reviews", reviewService.getReviewsByCourseId(courseId));
-		model.addAttribute("averageRating", reviewService.getAverageRating(courseId));
 
 		return "redirect:/course/" + courseId;
 	}
