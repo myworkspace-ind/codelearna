@@ -38,13 +38,13 @@
 		</dependencies>
 	</dependencyManagement>
 	<properties>
-        <sakai.kernel.version>23.0</sakai.kernel.version>
+        <sakai.kernel.version>23.2</sakai.kernel.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>5.3.27</spring.version>
         <spring.security.version>5.5.7</spring.security.version>
         <spring.data.commons.version>2.5.3</spring.data.commons.version>
         <spring.data.jpa.version>2.5.3</spring.data.jpa.version>
-        <module.version>23.0</module.version>
+        <module.version>23.2</module.version>
         <thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
         
         <!-- More -->
