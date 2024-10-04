@@ -34,8 +34,7 @@ public class SubcategoryController {
 			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
 			@RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
 			@RequestParam(value = "level", required = false) String level,
-			@RequestParam(value = "rating", required = false) String rating) { // Added rating parameter
-
+			@RequestParam(value = "rating", required = false) String rating) { 
 		ModelAndView mav = new ModelAndView("search");
 
 		List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, id,
