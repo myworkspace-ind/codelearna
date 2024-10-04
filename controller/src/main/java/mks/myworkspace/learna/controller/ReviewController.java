@@ -42,7 +42,6 @@ public class ReviewController {
 		List<Review> reviews = reviewService.getReviewsByCourseId(id);
 		mav.addObject("course", course);
 		mav.addObject("reviews", reviews);
-		log.debug("So sao trung binh: {}", course.getAverageRating());
 		return mav;
 	}
 
