@@ -55,6 +55,11 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
 
+        // Kiểm tra xem UserLibraryCourse đã tồn tại chưa
+        if (userLibraryCourseRepository.findByUserIdAndCourseId(userId, courseId) != null) {
+            throw new RuntimeException("Course already added to user's library");
+        }
+
         UserLibraryCourse userLibraryCourse = new UserLibraryCourse();
         userLibraryCourse.setUser(user);
         userLibraryCourse.setCourse(course);

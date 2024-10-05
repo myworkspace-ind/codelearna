@@ -84,13 +84,10 @@
 						class="fa fa-star" data-rating="4"></i> <i class="fa fa-star" data-rating="5"></i> <input type="hidden" name="ratingStar" id="ratingStar"
 						value="0" required> <small id="rating-error" class="text-danger" style="display: none;">Vui lòng chọn số sao</small>
 				</div>
-
-
-				<div class="mb-3">
-					<label for="content" class="form-label">Review:</label>
-					<textarea class="form-control" id="content" name="content" rows="4" maxlength="200" required oninput="updateCharacterCount()"></textarea>
-					<small id="charCount" class="form-text text-muted">200 ký tự còn lại</small>
-				</div>
+					<div class="mb-3">
+						<textarea class="form-control" id="content" name="content" th:text="*{content}" rows="4" maxlength="200" required oninput="updateCharacterCount()"></textarea>
+						<small id="charCount" class="form-text text-muted">200 ký tự còn lại</small>
+					</div>
 				<button type="submit" class="btn btn-primary">Submit Review</button>
 			</form>
 		</div>

@@ -1,6 +1,8 @@
 package mks.myworkspace.learna.controller;
 
 import java.util.List;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 /*import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;*/
@@ -62,6 +64,13 @@ public class HomeController {
         log.debug("Khóa học nổi bật: {}", featuredCourses);
         
         List<Campaign> campaigns = campaignService.getAllCampaigns();
+        
+        // Lọc các campaign theo ngày bắt đầu và ngày kết thúc
+        Date today = new Date();
+        campaigns = campaigns.stream()
+            .filter(campaign -> !campaign.getEndTime().before(today) && !campaign.getStartTime().after(today))
+            .collect(Collectors.toList());
+        
         mav.addObject("campaigns", campaigns);
         log.debug("Khuyến mãi đang chạy: {}", campaigns);
         

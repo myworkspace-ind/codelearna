@@ -12,4 +12,6 @@ public interface UserLibraryCourseRepository extends JpaRepository<UserLibraryCo
 
     @EntityGraph(attributePaths = {"user", "course"})
     List<UserLibraryCourse> findByUserId(Long userId);
+
+    UserLibraryCourse findByUserIdAndCourseId(Long userId, Long courseId);
 }
