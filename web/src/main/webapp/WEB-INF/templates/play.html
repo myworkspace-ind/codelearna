@@ -5,20 +5,20 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Play Page</title>
+<link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" th:href="@{/resources/css/play.css}">
+
 </head>
 <body>
-	<div class="container">
+	<th:block th:include="fragments/nav"></th:block>
+	<div class="container-play">
 		<button id="toggle-btn">☰</button>
 
 		<div class="main-video" id="main-video">
 			<div class="video">
-				<iframe id="embedded-content"
-					th:src="${currentLesson != null && currentLesson.videoUrl != null ? currentLesson.videoUrl : ''}"
-					width="100%" height="900px" frameborder="0" allowfullscreen>
-				</iframe>
-				<h3 class="title"
-					th:text="${currentLesson != null && currentLesson.title != null ? currentLesson.title : 'No lesson available'}">Lesson
+				<iframe id="embedded-content" th:src="${currentLesson != null && currentLesson.videoUrl != null ? currentLesson.videoUrl : ''}" width="100%"
+					height="900px" frameborder="0" allowfullscreen> </iframe>
+				<h3 class="title" th:text="${currentLesson != null && currentLesson.title != null ? currentLesson.title : 'No lesson available'}">Lesson
 					title</h3>
 			</div>
 
@@ -33,13 +33,10 @@
 			<div class="video-list-content">
 				<!-- Lesson search box -->
 				<div class="search-container">
-					<input type="text" placeholder="Search lessons..." id="search"
-						onkeyup="searchLessons(this.value)"> <span
-						class="search-icon">&#128269;</span>
+					<input type="text" placeholder="Search lessons..." id="search" onkeyup="searchLessons(this.value)"> <span class="search-icon">&#128269;</span>
 				</div>
 
-				<div th:each="lesson, lessonStat : ${lessons}" class="vid"
-					th:classappend="${lessonStat.first} ? 'active'"
+				<div th:each="lesson, lessonStat : ${lessons}" class="vid" th:classappend="${lessonStat.first} ? 'active'"
 					th:attr="data-lesson-id=${lesson.id}, data-course-id=${lesson.course != null ? lesson.course.id : 0}">
 					<video th:src="${lesson.videoUrl}" muted></video>
 					<h3 class="title" th:text="${lesson.title}">Lesson</h3>
@@ -51,14 +48,14 @@
 		<div class="comment-section">
 			<h3>Comments</h3>
 			<div class="comment-input">
-				<textarea id="comment-text" placeholder="Enter your comment..."
-					rows="3"></textarea>
+				<textarea id="comment-text" placeholder="Enter your comment..." rows="3"></textarea>
 				<button id="submit-comment-btn">Submit Comment</button>
 			</div>
 			<!-- Comment list fragment -->
 			<div th:replace="fragments/commentList"></div>
 		</div>
 	</div>
+
 
 	<script th:src="@{/resources/js/play.js}"></script>
 	<th:block th:include="fragments/javascript.html"></th:block>
