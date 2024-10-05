@@ -320,9 +320,9 @@ body {
 }
 
 .container .video-list .vid video {
-    width: 120px;
-    border-radius: 5px;
+    display: none; /* This will remove the video element completely */
 }
+
 
 .container .video-list .vid {
     display: flex;
@@ -331,10 +331,12 @@ body {
     background: #f7f7f7;
     border-radius: 5px;
     margin: 10px;
-    padding: 15px;
+    padding: 30px; /* Increase this value for a larger box */
     border: 1px solid rgba(0, 0, 0, .1);
     cursor: pointer;
 }
+
+
 
 .container .video-list .vid:hover {
     background: #eee;

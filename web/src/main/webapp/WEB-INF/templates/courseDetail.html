@@ -25,33 +25,23 @@
 				<div class="course-image mb-4">
 					<img th:src="@{${course.imageUrl}}" alt="Course Image">
 				</div>
-
-				<!-- Course Screenshots -->
-				<div class="course-screenshots">
-					<div class="screenshots-container">
-						<img th:src="@{${course.imageUrl}}" alt="Course Image"> <img
-							src="https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif" alt="Screenshot 1">
-						<img src="https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif" alt="Screenshot 2">
-						<img src="https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif" alt="Screenshot 3">
-					</div>
-				</div>
 			</div>
 
 			<div class="col-md-4">
 				<!-- Course Description -->
 				<div class="course-description">
-					<h4>Mô tả khóa học</h4>
+					<h4>About this course</h4>
 					<p th:text="${course.description}">Đây là mô tả khóa học.</p>
 				</div>
 
 				<!-- Course Details -->
 				<div class="course-details mt-4">
-					<h4>Tổng quan</h4>
+					<h4>Overview</h4>
 					<p>
-						Độ khó: <span th:text="${course.difficultyLevel}">BEGINNER</span>
+						Level Requirement: <span th:text="${course.difficultyLevel}">BEGINNER</span>
 					</p>
 					<p>
-						Loại bài học: <span th:text="${course.lessonType}">Video</span>
+						Lesson type: <span th:text="${course.lessonType}">Video</span>
 					</p>
 
 					<p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"
