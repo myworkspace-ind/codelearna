@@ -18,22 +18,22 @@
 					width="100%" height="900px" frameborder="0" allowfullscreen>
 				</iframe>
 				<h3 class="title"
-					th:text="${currentLesson != null && currentLesson.title != null ? currentLesson.title : 'No lesson available'}">Bài
-					1</h3>
+					th:text="${currentLesson != null && currentLesson.title != null ? currentLesson.title : 'No lesson available'}">Lesson
+					title</h3>
 			</div>
 
 			<div class="controls">
-				<button id="prev-btn">Bài trước</button>
-				<button id="next-btn">Bài tiếp theo</button>
+				<button id="prev-btn">Previous Lesson</button>
+				<button id="next-btn">Next Lesson</button>
 			</div>
 		</div>
 
-		<!-- Danh sách video -->
+		<!-- Video list -->
 		<div class="video-list" id="video-list">
 			<div class="video-list-content">
-				<!-- Ô tìm kiếm bài học -->
+				<!-- Lesson search box -->
 				<div class="search-container">
-					<input type="text" placeholder="Tìm kiếm bài học..." id="search"
+					<input type="text" placeholder="Search lessons..." id="search"
 						onkeyup="searchLessons(this.value)"> <span
 						class="search-icon">&#128269;</span>
 				</div>
@@ -42,20 +42,20 @@
 					th:classappend="${lessonStat.first} ? 'active'"
 					th:attr="data-lesson-id=${lesson.id}, data-course-id=${lesson.course != null ? lesson.course.id : 0}">
 					<video th:src="${lesson.videoUrl}" muted></video>
-					<h3 class="title" th:text="${lesson.title}">Bài học</h3>
+					<h3 class="title" th:text="${lesson.title}">Lesson</h3>
 				</div>
 			</div>
 		</div>
 
-		<!-- Bình luận -->
+		<!-- Comment section -->
 		<div class="comment-section">
-			<h3>Bình luận</h3>
+			<h3>Comments</h3>
 			<div class="comment-input">
-				<textarea id="comment-text" placeholder="Nhập bình luận của bạn..."
+				<textarea id="comment-text" placeholder="Enter your comment..."
 					rows="3"></textarea>
-				<button id="submit-comment-btn">Gửi bình luận</button>
+				<button id="submit-comment-btn">Submit Comment</button>
 			</div>
-			<!-- fragment bình luận -->
+			<!-- Comment list fragment -->
 			<div th:replace="fragments/commentList"></div>
 		</div>
 	</div>
