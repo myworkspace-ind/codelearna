@@ -5,9 +5,6 @@
 <meta charset="UTF-8">
 <title>Fragment - Reviews</title>
 <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="/resources/css/fragments/review.css">
-<link rel="stylesheet" href="https://mksol.vn/themes/robust-admin/app-assets/fonts/font-awesome/css/font-awesome.min.css">
-
 </head>
 
 <body>
@@ -22,17 +19,30 @@
 			<!-- Reviews List -->
 			<ul class="list-group mb-4">
 				<li class="review-item list-group-item" th:each="review : ${reviews}">
-					<div class="review-header d-flex justify-content-between align-items-center">
-						<h5 class="mb-1">
-							<span th:text="${review.ratingStar} + ' stars'"></span>
-						</h5>
+					<div class="review-header d-flex align-items-center gap-3 mb-3">
+
+						<img th:src="${review.user.avatarUrl}" class="rounded-circle" alt="User Avatar" width="50" height="50">
+
+						<div>
+
+							<h6 class="mb-0" th:text="${review.user.name}">User Name</h6>
+							<small class="text-muted" th:text="'By: ' + ${review.user.email}"></small>
+						</div>
+
+
+						<div class="ms-auto">
+							<div class="rating-stars-review">
+								<span th:each="i : ${#numbers.sequence(1, 5)}"> <span th:class="${i <= review.ratingStar ? '' : 'empty-star'}"
+									th:text="${i <= review.ratingStar ? '★' : '☆'}"></span>
+								</span>
+							</div>
+						</div>
+
 					</div>
-					<div class="review-item">
-						<h6 class="text-muted" th:text="'By: ' + ${review.user.name}"></h6>
-						<p class="mb-0" th:text="${review.content}"></p>
-					</div>
-					<div th:if="${review.user.email} == 'tai@gmail.com'">
-						<div class="d-flex gap-2 mt-2">
+					<div class="review-body">
+						<p class="mb-2" th:text="${review.content}">This is a sample review content.</p>
+
+						<div th:if="${review.user.email} == 'tai@gmail.com'" class="d-flex gap-2">
 							<!-- Delete Button -->
 							<form th:action="@{/course/{id}/review/{reviewId}/delete(id=${course.id}, reviewId=${review.id})}" method="post">
 								<input type="hidden" name="_method" value="delete">
@@ -44,23 +54,21 @@
 						</div>
 
 						<!-- Modal for Editing Review -->
-						<div class="modal fade" th:id="'editModal-' + ${review.id}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+						<div class="modal fade" th:id="'editModal-' + ${review.id}">
 							<div class="modal-dialog">
 								<form th:action="@{/course/{courseId}/review/{reviewId}/edit(courseId=${course.id}, reviewId=${review.id})}" th:object="${review}"
 									method="post">
 									<div class="modal-content">
-										<div class="modal-header">
-											<h5 class="modal-title" id="editModalLabel">Edit Review</h5>
-											<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-										</div>
+										<h5 class="m-3">Edit your review</h5>
 										<div class="modal-body">
-											<div class="mb-3">
-												<label for="ratingStar" class="form-label">Rating (1-5):</label> <input type="number" class="form-control" id="ratingStar"
-													name="ratingStar" th:value="*{ratingStar}" min="1" max="5" required>
+											<div class="rating-stars mb-3">
+												<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
+													class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0"
+													required> <small class="rating-error text-danger" style="display: none;">Please select number of stars</small>
 											</div>
 											<div class="mb-3">
-												<textarea class="form-control" id="content" name="content" th:text="*{content}" rows="4" maxlength="200" required oninput="updateCharacterCount()"></textarea>
-												<small id="charCount" class="form-text text-muted">200 ký tự còn lại</small>
+												<textarea class="form-control review-content" name="content" th:text="*{content}" rows="4" maxlength="200" required></textarea>
+												<small class="form-text text-muted char-count">200 characters remaining</small>
 											</div>
 										</div>
 										<div class="modal-footer">
@@ -71,6 +79,7 @@
 								</form>
 							</div>
 						</div>
+
 					</div>
 				</li>
 			</ul>
@@ -78,16 +87,15 @@
 			<!-- Add review form -->
 			<h5 class="mb-3">Add your review</h5>
 			<form class="review-form" th:action="@{/course/{id}/review(id=${course.id})}" method="post">
-				<!-- Rating Stars -->
 				<div class="rating-stars mb-3">
-					<i class="fa fa-star" data-rating="1"></i> <i class="fa fa-star" data-rating="2"></i> <i class="fa fa-star" data-rating="3"></i> <i
-						class="fa fa-star" data-rating="4"></i> <i class="fa fa-star" data-rating="5"></i> <input type="hidden" name="ratingStar" id="ratingStar"
-						value="0" required> <small id="rating-error" class="text-danger" style="display: none;">Vui lòng chọn số sao</small>
+					<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
+						class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0" required>
+					<small class="rating-error text-danger" style="display: none;">Please select number of stars</small>
 				</div>
-					<div class="mb-3">
-						<textarea class="form-control" id="content" name="content" th:text="*{content}" rows="4" maxlength="200" required oninput="updateCharacterCount()"></textarea>
-						<small id="charCount" class="form-text text-muted">200 ký tự còn lại</small>
-					</div>
+				<div class="mb-3">
+					<textarea class="form-control review-content" name="content" rows="4" maxlength="200" required></textarea>
+					<small class="form-text text-muted char-count">200 characters remaining</small>
+				</div>
 				<button type="submit" class="btn btn-primary">Submit Review</button>
 			</form>
 		</div>

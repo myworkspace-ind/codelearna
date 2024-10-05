@@ -7,6 +7,7 @@
 <title>Chi tiết khóa học</title>
 <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" th:href="@{/resources/css/fragments/courseDetail.css}">
+<link rel="stylesheet" th:href="@{/resources/css/fragments/review.css}">
 </head>
 
 <body>
@@ -47,7 +48,7 @@
 					<p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"
 						style="text-decoration: line-through;"></p>
 					<h5 class="text-danger" th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
-					<button class="btn btn-primary mt-3">Thanh toán</button>
+					<button class="btn btn-primary mt-3">Buy now</button>
 				</div>
 			</div>
 		</div>
