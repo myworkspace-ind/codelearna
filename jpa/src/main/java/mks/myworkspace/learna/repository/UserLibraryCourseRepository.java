@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface UserLibraryCourseRepository extends JpaRepository<UserLibraryCourse, Long> {
 
-    @EntityGraph(attributePaths = {"user", "course"})
-    List<UserLibraryCourse> findByUserId(Long userId);
+    @EntityGraph(attributePaths = {"course"})
+    List<UserLibraryCourse> findByUserEid(String userId);
 
-    UserLibraryCourse findByUserIdAndCourseId(Long userId, Long courseId);
+    UserLibraryCourse findByUserEidAndCourseId(String userEid, Long courseId);
 }

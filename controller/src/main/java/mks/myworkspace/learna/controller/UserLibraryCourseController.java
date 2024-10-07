@@ -2,6 +2,7 @@ package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.UserLibraryCourse;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller
 @RequestMapping("/library")
-public class UserLibraryCourseController {
+public class UserLibraryCourseController extends BaseController{
 
     @Autowired
     private UserLibraryCourseService userLibraryCourseService;
@@ -27,9 +28,9 @@ public class UserLibraryCourseController {
     public ModelAndView getUserLibraryCoursesForDefaultUser() {
         ModelAndView mav = new ModelAndView("userLibraryCourses");
 
-        Long userId = (long) 1; // Mặc định userId là 1
+        String userId = getCurrentUserEid();
 
-        List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserId(userId);
+        List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userId);
         mav.addObject("userLibraryCourses", userLibraryCourses);
 
         List<UserLibraryCourse> purchasedCourses = userLibraryCourses.stream()
@@ -60,7 +61,7 @@ public class UserLibraryCourseController {
 
     @PostMapping("/add")
     @ResponseBody
-    public String addCourseToLibrary(@RequestParam Long userId, @RequestParam Long courseId) {
+    public String addCourseToLibrary(@RequestParam String userId, @RequestParam Long courseId) {
         try {
             userLibraryCourseService.addCourseToLibrary(userId, courseId, UserLibraryCourse.PaymentStatus.PURCHASED, UserLibraryCourse.ProgressStatus.IN_PROGRESS);
             return "Khóa học đã được thêm vào thư viện.";

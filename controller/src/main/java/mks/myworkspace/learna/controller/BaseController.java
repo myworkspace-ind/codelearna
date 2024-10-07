@@ -94,7 +94,7 @@ public class BaseController {
             // Demo for Web App
             httpSession.setAttribute("currentSiteId", "Default");
             httpSession.setAttribute("userDisplayName", "Le Ngoc Thach");
-            httpSession.setAttribute("userEid", "ThachLN");
+            httpSession.setAttribute("userEid", "1");
             httpSession.setAttribute("userEmail", "LNThach@gmail.com");
             httpSession.setAttribute("userFirstName", "Thach");
             httpSession.setAttribute("userLastName", "Le Ngoc Thach");            
