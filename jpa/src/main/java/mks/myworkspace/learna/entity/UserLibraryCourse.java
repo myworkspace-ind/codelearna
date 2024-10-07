@@ -15,7 +15,7 @@ public class UserLibraryCourse {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(name = "user_eid", nullable = false)
+    @Column(name = "user_eid", nullable = false)
     private String userEid;
 
     @ManyToOne

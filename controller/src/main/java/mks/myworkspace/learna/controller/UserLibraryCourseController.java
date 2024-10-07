@@ -29,7 +29,6 @@ public class UserLibraryCourseController extends BaseController{
         ModelAndView mav = new ModelAndView("userLibraryCourses");
 
         String userId = getCurrentUserEid();
-
         List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userId);
         mav.addObject("userLibraryCourses", userLibraryCourses);
 
@@ -61,12 +60,12 @@ public class UserLibraryCourseController extends BaseController{
 
     @PostMapping("/add")
     @ResponseBody
-    public String addCourseToLibrary(@RequestParam String userId, @RequestParam Long courseId) {
+    public String addCourseToLibrary(@RequestParam Long courseId) {
         try {
-            userLibraryCourseService.addCourseToLibrary(userId, courseId, UserLibraryCourse.PaymentStatus.PURCHASED, UserLibraryCourse.ProgressStatus.IN_PROGRESS);
+        	String userEid = getCurrentUserEid();
+            userLibraryCourseService.addCourseToLibrary(userEid, courseId, UserLibraryCourse.PaymentStatus.PURCHASED, UserLibraryCourse.ProgressStatus.IN_PROGRESS);
             return "Khóa học đã được thêm vào thư viện.";
         } catch (Exception e) {
-            log.error("Lỗi khi thêm khóa học vào thư viện", e);
             return "Lỗi khi thêm khóa học vào thư viện.";
         }
     }
