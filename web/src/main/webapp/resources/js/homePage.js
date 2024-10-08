@@ -100,7 +100,6 @@ document.querySelectorAll('#coursesContainer > div').forEach(item => {
     item.addEventListener('click', function() {
         const isFree = this.getAttribute('data-is-free') === 'true';
         const courseId = this.getAttribute('data-course-id');
-        const userId = 1; // Giả sử userId là 1, bạn có thể thay đổi theo logic của bạn
 
         if (isFree) {
             // Gửi yêu cầu AJAX để thêm khóa học vào thư viện
@@ -108,7 +107,6 @@ document.querySelectorAll('#coursesContainer > div').forEach(item => {
                 url: _ctx + `library/add`,
                 type: 'POST',
                 data: {
-                    userId: userId,
                     courseId: courseId
                 },
                 success: function(response) {
@@ -142,7 +140,6 @@ document.querySelectorAll('#featuredCoursesCarousel .carousel-item').forEach(ite
 	item.addEventListener('click', function() {
 	        const isFree = this.getAttribute('data-is-free') === 'true';
 	        const courseId = this.getAttribute('data-course-id');
-	        const userId = 1; // Giả sử userId là 1, bạn có thể thay đổi theo logic của bạn
 
 	        if (isFree) {
 	            // Gửi yêu cầu AJAX để thêm khóa học vào thư viện
@@ -150,7 +147,6 @@ document.querySelectorAll('#featuredCoursesCarousel .carousel-item').forEach(ite
 	                url: _ctx + `library/add`,
 	                type: 'POST',
 	                data: {
-	                    userId: userId,
 	                    courseId: courseId
 	                },
 	                success: function(response) {

@@ -7,6 +7,6 @@ public interface UserLibraryCourseService {
     UserLibraryCourse saveUserLibraryCourse(UserLibraryCourse userLibraryCourse);
     UserLibraryCourse getUserLibraryCourseById(Long id);
     void deleteUserLibraryCourse(Long id);
-    List<UserLibraryCourse> getUserLibraryCoursesByUserId(Long userId);
-    void addCourseToLibrary(Long userId, Long courseId, UserLibraryCourse.PaymentStatus paymentStatus, UserLibraryCourse.ProgressStatus progressStatus);
+    List<UserLibraryCourse> getUserLibraryCoursesByUserEid(String userEId);
+    void addCourseToLibrary(String userId, Long courseId, UserLibraryCourse.PaymentStatus paymentStatus, UserLibraryCourse.ProgressStatus progressStatus);
 }

@@ -1,6 +1,5 @@
 package mks.myworkspace.learna.service.impl;
 
-import mks.myworkspace.learna.entity.User;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.UserLibraryCourse;
 import mks.myworkspace.learna.repository.UserRepository;
@@ -17,7 +16,6 @@ import java.util.List;
 public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
 
     private final UserLibraryCourseRepository userLibraryCourseRepository;
-    private final UserRepository userRepository;
     private final CourseRepository courseRepository;
 
     @Autowired
@@ -25,7 +23,6 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
                                         UserRepository userRepository,
                                         CourseRepository courseRepository) {
         this.userLibraryCourseRepository = userLibraryCourseRepository;
-        this.userRepository = userRepository;
         this.courseRepository = courseRepository;
     }
 
@@ -46,22 +43,21 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserLibraryCourse> getUserLibraryCoursesByUserId(Long userId) {
-        return userLibraryCourseRepository.findByUserId(userId);
+    public List<UserLibraryCourse> getUserLibraryCoursesByUserEid(String userEid) {
+        return userLibraryCourseRepository.findByUserEid(userEid);
     }
 
     @Override
-    public void addCourseToLibrary(Long userId, Long courseId, UserLibraryCourse.PaymentStatus paymentStatus, UserLibraryCourse.ProgressStatus progressStatus) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    public void addCourseToLibrary(String userEid, Long courseId, UserLibraryCourse.PaymentStatus paymentStatus, UserLibraryCourse.ProgressStatus progressStatus) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
 
         // Kiểm tra xem UserLibraryCourse đã tồn tại chưa
-        if (userLibraryCourseRepository.findByUserIdAndCourseId(userId, courseId) != null) {
+        if (userLibraryCourseRepository.findByUserEidAndCourseId(userEid, courseId) != null) {
             throw new RuntimeException("Course already added to user's library");
         }
 
         UserLibraryCourse userLibraryCourse = new UserLibraryCourse();
-        userLibraryCourse.setUser(user);
+        userLibraryCourse.setUserEid(userEid);
         userLibraryCourse.setCourse(course);
         userLibraryCourse.setPaymentStatus(paymentStatus);
         userLibraryCourse.setProgressStatus(progressStatus);
