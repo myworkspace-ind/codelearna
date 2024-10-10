@@ -1,6 +1,7 @@
 package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,29 +13,31 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminCourseController {
+public class AdminController {
 
     @Autowired
     private CourseService courseService;
+    @Autowired
+    private CategoryService categoryService;
 
     // Hiển thị trang admin home
     @GetMapping
     public String showAdminHomePage() {
         return "adminHome"; // Trả về trang adminHome.html
     }
-
-    // Hiển thị trang thêm khóa học
-    @GetMapping("/save-course")
-    public ModelAndView showSaveCoursePage() {
-        ModelAndView mav = new ModelAndView("Admin/addCourse");
-        mav.addObject("course", new Course()); 
+    @GetMapping("/listCourse")
+    public ModelAndView loadCoursesFragment() {
+        ModelAndView mav = new ModelAndView("fragments/adminListCourse :: coursesContent");
+        mav.addObject("courses", courseService.getAllCourses());
         return mav;
     }
+    
 
-    // Xử lý lưu khóa học
-    @PostMapping("/save-course")
-    public String saveCourse(@ModelAttribute("course") Course course) {
-        courseService.saveCourse(course);
-        return "redirect:/admin/save-course"; // Sau khi lưu, quay lại trang form
+    @GetMapping("/add-course")
+    public ModelAndView showAddCoursePage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourse");
+        mav.addObject("categories", categoryService.getAllCategories()); // Lấy danh sách Category
+        return mav;
     }
+  
 }
