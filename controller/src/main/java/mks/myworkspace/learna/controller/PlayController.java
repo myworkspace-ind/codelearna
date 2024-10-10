@@ -1,71 +1,69 @@
-/**
- * Licensed to MKS Group under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * MKS Group licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a
- * copy of the License at:
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package mks.myworkspace.learna.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import mks.myworkspace.learna.entity.Comment;
+import mks.myworkspace.learna.entity.Lesson;
+import mks.myworkspace.learna.service.CommentService;
+import mks.myworkspace.learna.service.PlayService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * Handles requests for the application home page.
- */
+import java.util.List;
+
+@Slf4j
 @Controller
-public class PlayController extends BaseController {
- 
-	   /**
-     * This method is called when binding the HTTP parameter to bean (or model).
-     * 
-     * @param binder
-     */
-    @InitBinder
-    protected void initBinder(WebDataBinder binder) {
-        // Sample init of Custom Editor
+public class PlayController {
 
-//        Class<List<ItemKine>> collectionType = (Class<List<ItemKine>>)(Class<?>)List.class;
-//        PropertyEditor orderNoteEditor = new MotionRuleEditor(collectionType);
-//        binder.registerCustomEditor((Class<List<ItemKine>>)(Class<?>)List.class, orderNoteEditor);
+    @Autowired
+    private PlayService playService;
 
+    @Autowired
+    private CommentService commentService;
+
+    @GetMapping("/play/{courseId}")
+    public ModelAndView displayCourseLessons(
+            @PathVariable Long courseId,
+            @RequestParam(required = false) Long lessonId) {
+        ModelAndView mav = new ModelAndView("play");
+
+        // Lấy danh sách các bài học thuộc khóa học
+        List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
+        mav.addObject("lessons", lessons);
+
+        return mav;
     }
+
+    @GetMapping("/play/{courseId}/{lessonId}/comments")
+    public ModelAndView loadCommentsForLesson(
+            @PathVariable Long courseId,
+            @PathVariable Long lessonId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        ModelAndView mav = new ModelAndView("fragments/commentList");
+
+        List<Comment> allComments = commentService.getCommentsByLessonIdAndParentCommentIsNull(lessonId);
+        int totalComments = allComments.size();
+        int totalPages = (int) Math.ceil((double) totalComments / size);
+
+        int start = page * size;
+        int end = Math.min((page + 1) * size, totalComments);
+        List<Comment> paginatedComments = allComments.subList(start, end);
+
+        log.info("Đang trả về {} bình luận cho bài học {} (trang {} / {})", 
+                 paginatedComments.size(), lessonId, page + 1, totalPages);
+
+        mav.addObject("comments", paginatedComments);
+        mav.addObject("currentPage", page);
+        mav.addObject("totalPages", totalPages);
+
+        return mav;
+    }
+
     
-	/**
-	 * Simply selects the home view to render by returning its name.
-     * @return 
-	 */
-	@GetMapping(value = "/play")
-	public ModelAndView displayHome(HttpServletRequest request, HttpSession httpSession) {
-		ModelAndView mav = new ModelAndView("play");
+    
 
-		initSession(request, httpSession);
-		
-		mav.addObject("currentSiteId", getCurrentSiteId());
-		mav.addObject("userDisplayName", getCurrentUserDisplayName());
-
-		return mav;
-	}
 }

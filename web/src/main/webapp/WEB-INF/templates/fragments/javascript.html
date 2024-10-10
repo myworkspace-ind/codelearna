@@ -1,0 +1,15 @@
+<!-- Determine the root context of the application. -->
+<script th:inline="javascript">
+    var _ctx = /*[[@{/}]]*/ '';
+</script>
+<script src="/library/webjars/jquery/dist/jquery.min.js"></script>
+<script src="/library/webjars/popper.js/2.9.3/umd/popper.min.js"></script>
+<script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+
+<!-- For Sakai only -->
+<script type="text/javascript" src="/library/js/headscripts.js"></script>
+    
+<script th:src="@{/resources/js/homePage.js}"></script> 
+<script th:src="@{/resources/js/search.js}"></script>
+<script th:src="@{/resources/js/review.js}"></script>
+

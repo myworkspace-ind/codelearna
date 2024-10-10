@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chi tiết khóa học</title>
+<link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" th:href="@{/resources/css/fragments/courseDetail.css}">
+<link rel="stylesheet" th:href="@{/resources/css/fragments/review.css}">
+</head>
+
+<body>
+	<th:block th:include="fragments/nav"></th:block>
+
+	<div class="container mt-5">
+		<!-- Course Header -->
+		<div class="course-header">
+			<h2 th:text="${course.name}">Tên khóa học</h2>
+		</div>
+
+		<!-- Course Body -->
+		<div class="course-body row mt-4">
+			<div class="col-md-8">
+				<!-- Course Image -->
+				<div class="course-image mb-4">
+					<img th:src="@{${course.imageUrl}}" alt="Course Image">
+				</div>
+			</div>
+
+			<div class="col-md-4">
+				<!-- Course Description -->
+				<div class="course-description">
+					<h4>About this course</h4>
+					<p th:text="${course.description}">Đây là mô tả khóa học.</p>
+				</div>
+
+				<!-- Course Details -->
+				<div class="course-details mt-4">
+					<h4>Overview</h4>
+					<p>
+						Level Requirement: <span th:text="${course.difficultyLevel}">BEGINNER</span>
+					</p>
+					<p>
+						Lesson type: <span th:text="${course.lessonType}">Video</span>
+					</p>
+
+					<p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"
+						style="text-decoration: line-through;"></p>
+					<h5 class="text-danger" th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
+					<button class="btn btn-primary mt-3">Buy now</button>
+				</div>
+			</div>
+		</div>
+
+		<div th:include="fragments/reviews :: reviews"></div>
+
+	</div>
+
+
+	<th:block th:include="fragments/javascript"></th:block>
+</body>
+
+</html>

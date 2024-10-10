@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="resources/css/home.css?v=1.1">
+	<link rel="stylesheet" href="resources/css/fragments/courseItem.css">
+	<link rel="stylesheet" href="resources/css/fragments/campaign.css">
+	<link rel="stylesheet" href="resources/css/fragments/outstandingCourse.css">
+	<link rel="stylesheet" href="resources/css/fragments/courseDetailPopup.css?v=1.1">
+</head>
+<body>
+
+	<!-- Navigation Bar fragment -->
+	<th:block th:include="fragments/nav"></th:block>
+	<!-- Navigation Bar fragment -->
+	
+	<!-- Campaign fragment -->
+	<th:block th:include="fragments/campaign"></th:block>
+	<!-- /Campaign fragment -->
+
+	<div class="container">
+		<!-- Outstanding Course fragment-->
+		<th:block th:include="fragments/outstandingCourse"></th:block>
+		<!-- /Outstanding Course -->
+
+		<!-- Course Pagination Fragment-->
+		<th:block th:include="fragments/coursePaginationContainer"></th:block>
+		<!-- /Course Pagination -->
+	</div>
+
+	<div id="blurOverlay" class="blur-overlay" style="display: none;"></div>
+
+    <th:block th:include="fragments/footer"></th:block>
+	<!-- Popup chi tiết khóa học -->
+	<th:block th:include="fragments/popupDetailCourse"></th:block>
+	<th:block th:include="fragments/detailCampaign"></th:block>
+	<th:block th:include="fragments/javascript"></th:block>
+	<th:block th:include="fragments/detailCampaign"></th:block>
+</body>
+</html>

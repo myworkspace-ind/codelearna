@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Fragment - Reviews</title>
+<link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+</head>
+
+<body>
+	<div th:fragment="reviews">
+
+		<div class="reviews-section mt-5">
+			<h4>Learner Reviews</h4>
+			<p class="text-muted mb-3">
+				Average Rating: <strong th:text="${course.averageRating}"></strong> stars
+			</p>
+
+			<!-- Reviews List -->
+			<ul class="list-group mb-4">
+				<li class="review-item list-group-item" th:each="review : ${reviews}">
+					<div class="review-header d-flex align-items-center gap-3 mb-3">
+
+						<img th:src="${review.user.avatarUrl}" class="rounded-circle" alt="User Avatar" width="50" height="50">
+
+						<div>
+
+							<h6 class="mb-0" th:text="${review.user.name}">User Name</h6>
+							<small class="text-muted" th:text="'By: ' + ${review.user.email}"></small>
+						</div>
+
+
+						<div class="ms-auto">
+							<div class="rating-stars-review">
+								<span th:each="i : ${#numbers.sequence(1, 5)}"> <span th:class="${i <= review.ratingStar ? '' : 'empty-star'}"
+									th:text="${i <= review.ratingStar ? '★' : '☆'}"></span>
+								</span>
+							</div>
+						</div>
+
+					</div>
+					<div class="review-body">
+						<p class="mb-2" th:text="${review.content}">This is a sample review content.</p>
+
+						<div th:if="${review.user.email} == 'tai@gmail.com'" class="d-flex gap-2">
+							<!-- Delete Button -->
+							<form th:action="@{/course/{id}/review/{reviewId}/delete(id=${course.id}, reviewId=${review.id})}" method="post">
+								<input type="hidden" name="_method" value="delete">
+								<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+							</form>
+
+							<!-- Edit Button -->
+							<button type="button" class="btn btn-secondary btn-sm" th:data-bs-toggle="'modal'" th:data-bs-target="'#editModal-' + ${review.id}">Edit</button>
+						</div>
+
+						<!-- Modal for Editing Review -->
+						<div class="modal fade" th:id="'editModal-' + ${review.id}">
+							<div class="modal-dialog">
+								<form th:action="@{/course/{courseId}/review/{reviewId}/edit(courseId=${course.id}, reviewId=${review.id})}" th:object="${review}"
+									method="post">
+									<div class="modal-content">
+										<h5 class="m-3">Edit your review</h5>
+										<div class="modal-body">
+											<div class="rating-stars mb-3">
+												<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
+													class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0"
+													required> <small class="rating-error text-danger" style="display: none;">Please select number of stars</small>
+											</div>
+											<div class="mb-3">
+												<textarea class="form-control review-content" name="content" th:text="*{content}" rows="4" maxlength="200" required></textarea>
+												<small class="form-text text-muted char-count">200 characters remaining</small>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+											<button type="submit" class="btn btn-primary">Update Review</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+
+					</div>
+				</li>
+			</ul>
+
+			<!-- Add review form -->
+			<h5 class="mb-3">Add your review</h5>
+			<form class="review-form" th:action="@{/course/{id}/review(id=${course.id})}" method="post">
+				<div class="rating-stars mb-3">
+					<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
+						class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0" required>
+					<small class="rating-error text-danger" style="display: none;">Please select number of stars</small>
+				</div>
+				<div class="mb-3">
+					<textarea class="form-control review-content" name="content" rows="4" maxlength="200" required></textarea>
+					<small class="form-text text-muted char-count">200 characters remaining</small>
+				</div>
+				<button type="submit" class="btn btn-primary">Submit Review</button>
+			</form>
+		</div>
+	</div>
+
+	<th:block th:include="fragments/javascript"></th:block>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+<div class="row mt-4 mb-4" id="coursesContainer">
+    <div th:each="course, iterStat : ${courses}"
+         th:id="'course-' + ${iterStat.index}" class="col-md-3"
+         th:data-name="${course.name}" th:data-image-url="${course.imageUrl}"
+         th:data-description="${course.description}"
+         th:data-difficulty-level="${course.difficultyLevel}"
+         th:data-lesson-type="${course.lessonType}"
+         th:data-original-price="${course.originalPrice}"
+         th:data-discounted-price="${course.discountedPrice}"
+         th:data-is-free="${course.isFree}"
+         th:data-course-id="${course.id}"
+         th:data-average-rating="${course.averageRating}">
+        <div th:replace="fragments/courseItem :: courseItem(${course})"></div>
+    </div>
+</div>
+
+
+<nav aria-label="Page navigation" th:if="${not #lists.isEmpty(courses)}">
+    <ul class="pagination justify-content-center" id="pagination">
+
+    </ul>
+</nav>

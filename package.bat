@@ -19,9 +19,9 @@ mkdir .\tool\src\main\webapp\WEB-INF\templates\fragments
 xcopy .\web\src\main\webapp\WEB-INF\templates\fragments .\tool\src\main\webapp\WEB-INF\templates\fragments /S /Y
 xcopy .\web\src\main\webapp\WEB-INF\templates\*.* .\tool\src\main\webapp\WEB-INF\templates\ /Y
 
-REM mkdir .\tool\src\main\webapp\resources
-REM xcopy .\web\src\main\webapp\resources .\tool\src\main\webapp\resources /S /Y
+mkdir .\tool\src\main\webapp\resources
+xcopy .\web\src\main\webapp\resources .\tool\src\main\webapp\resources /S /Y
 
-CALL mvn clean package sakai:deploy -Dmaven.tomcat.home=%TOMCAT_HOME% -Dmaven.test.skip=true -f pom-sakai.xml
+CALL mvn clean package sakai:deploy -Dmaven.tomcat.home=%TOMCAT_HOME% -Dsakai.cleanup=true -Dmaven.test.skip=true -f pom-sakai.xml
 
 @PAUSE

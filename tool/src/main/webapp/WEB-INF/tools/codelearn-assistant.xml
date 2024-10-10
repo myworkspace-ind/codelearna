@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <registration>
 	<tool id="sakai.codelearna" 
-		title="codelearna" 
-		description="This description is set in the codelearna-tool registration file, found in the webapp/tools directory">
+		title="CodeLearn Assistant" 
+		description="Help you learn IT better.">
 
 		<category name="course" />
       	<category name="project" />
