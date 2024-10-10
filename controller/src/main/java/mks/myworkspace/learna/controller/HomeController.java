@@ -57,11 +57,9 @@ public class HomeController {
 //		
         List<Course> courses = courseService.getAllCourses();
         mav.addObject("courses", courses);
-        log.debug("Danh sách khóa học: {}", courses);
 
         List<Course> featuredCourses = courseService.getRandomCourses();
         mav.addObject("featuredCourses", featuredCourses);
-        log.debug("Khóa học nổi bật: {}", featuredCourses);
         
         List<Campaign> campaigns = campaignService.getAllCampaigns();
         
@@ -72,7 +70,6 @@ public class HomeController {
             .collect(Collectors.toList());
         
         mav.addObject("campaigns", campaigns);
-        log.debug("Khuyến mãi đang chạy: {}", campaigns);
         
 
         return mav;

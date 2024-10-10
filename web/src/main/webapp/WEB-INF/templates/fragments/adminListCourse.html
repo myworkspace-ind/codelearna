@@ -1,0 +1,52 @@
+<div th:fragment="coursesContent">
+    <div class="container mt-5">
+        <h1 class="mb-4">Course Management</h1>
+
+        <!-- Add Course Button -->
+        <div class="d-flex justify-content-end mb-3">
+            <!-- Nút này sẽ mở modal để thêm khóa học -->
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCourseModal">
+                Add Course
+            </button>
+        </div>
+
+        <div id="coursesContainer">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Image</th>
+                            <th>Course Name</th>
+                            <th>Description</th>
+                            <th>Original Price</th>
+                            <th>Discounted Price</th>
+                            <th>Level</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="course, iterStat : ${courses}">
+                            <th th:text="${iterStat.count}"></th>
+                            <td><img th:src="${course.imageUrl}" alt="course image" style="max-width: 100px;" /></td>
+                            <td th:text="${course.name}"></td>
+                            <td th:text="${course.description}"></td>
+                            <td th:text="${course.originalPrice}"></td>
+                            <td th:text="${course.discountedPrice}"></td>
+                            <td th:text="${course.difficultyLevel}"></td>
+                            <td><a href="#" class="btn btn-primary">View</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav>
+            <ul class="pagination justify-content-center" id="pagination"></ul>
+        </nav>
+    </div>
+
+    <!-- Include the addCourse fragment -->
+    <th:block th:replace="fragments/adminAddCourse"></th:block>
+</div>
