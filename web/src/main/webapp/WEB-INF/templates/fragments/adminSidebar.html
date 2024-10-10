@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="sidebar">
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <h2>WebLoGo</h2>
+            </div>
+            <nav>
+                <a href="#" class="active" data-section="dashboard">
+                    <span class="icon">📊</span>
+                    <span class="text">Dashboard</span>
+                </a>
+                <a href="#" data-section="users">
+                    <span class="icon">👥</span>
+                    <span class="text">User Management</span>
+                </a>
+                <a href="#" data-section="courses" onclick="loadCoursesSection(event)">
+                    <span class="icon">📚</span>
+                    <span class="text">Course Management</span>
+                </a>
+                <a href="#" data-section="revenue">
+                    <span class="icon">💰</span>
+                    <span class="text">Revenue Statistics</span>
+                </a>
+            </nav>
+            <a href="/logout" class="logout">
+                <span class="icon">🚪</span>
+                <span class="text">Log Out</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
