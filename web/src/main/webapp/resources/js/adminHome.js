@@ -1,7 +1,5 @@
 function loadCoursesSection(event) {
-	event.preventDefault();  // Ngăn chặn hành vi mặc định của liên kết
-
-	// Sử dụng fetch để gọi API và tải nội dung "Quản lý khóa học"
+	event.preventDefault();
 	fetch(`${_ctx}admin/listCourse`)
 		.then(response => response.text())
 		.then(html => {
@@ -10,32 +8,63 @@ function loadCoursesSection(event) {
 		.catch(error => console.error('Error loading courses section:', error));
 }
 
+function fetchAddCoursePage(event) {
+	event.preventDefault();
+	fetch(`${_ctx}admin/addCourse`)
+		.then(response => response.text())
+		.then(html => {
+			document.getElementById('dynamic-content').innerHTML = html;
+		})
+		.catch(error => console.error('Error loading add course page:', error));
+}
+
+function submitCourseForm(event) {
+	event.preventDefault();
+
+	const form = document.querySelector('#courseForm');
+	const formData = new FormData(form);
+
+	fetch(`${_ctx}admin/addCourse`, {
+		method: 'POST',
+		body: formData
+	})
+		.then(response => {
+			if (response.ok) {
+				return response.text().then(html => {
+					document.getElementById('dynamic-content').innerHTML = html;
+					loadCoursesSection(event);
+				});
+			} else {
+				return response.text().then(html => {
+					document.getElementById('dynamic-content').innerHTML = html;
+					fetchAddCoursePage(event);
+				});
+			}
+		})
+		.catch(error => console.error('Error adding course:', error));
+}
 
 function filterSubcategories(categoryId) {
-    const subcategorySelect = document.getElementById('subcategory');
-    
-    // Nếu người dùng chọn một category, enable subcategory
-    if (categoryId) {
-        subcategorySelect.disabled = false;
-        
-        // Lọc và hiển thị các subcategory phù hợp
-        const allSubcategories = subcategorySelect.querySelectorAll('option');
-        
-        allSubcategories.forEach(option => {
-            if (option.value === "" || option.getAttribute('data-category-id') === categoryId) {
-                option.style.display = '';  // Hiển thị subcategory phù hợp
-            } else {
-                option.style.display = 'none';  // Ẩn các subcategory không phù hợp
-            }
-        });
+	const subcategorySelect = document.getElementById('subcategory');
 
-        // Reset lại lựa chọn subcategory
-        subcategorySelect.value = "";
-    } else {
-        // Nếu không có category nào được chọn, disable subcategory
-        subcategorySelect.disabled = true;
-        subcategorySelect.value = "";
-    }
+	if (categoryId) {
+		subcategorySelect.disabled = false;
+
+		const allSubcategories = subcategorySelect.querySelectorAll('option');
+
+		allSubcategories.forEach(option => {
+			if (option.value === "" || option.getAttribute('data-category-id') === categoryId) {
+				option.style.display = '';
+			} else {
+				option.style.display = 'none';
+			}
+		});
+
+		subcategorySelect.value = "";
+	} else {
+		subcategorySelect.disabled = true;
+		subcategorySelect.value = "";
+	}
 }
 
 
