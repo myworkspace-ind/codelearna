@@ -8,6 +8,15 @@
 <body>
 	<div class="container mt-5">
 		<h1 class="mb-4">Add New Course</h1>
+
+		<div id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+			<strong>Error!</strong> <span id="error-text"></span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+
 		<form id="courseForm" method="post" enctype="multipart/form-data" class="needs-validation" onsubmit="submitCourseForm(event)" novalidate>
 			<div class="mb-3">
 				<label for="name" class="form-label">Course Name</label> <input type="text" class="form-control" id="name" name="name" required>
@@ -41,25 +50,29 @@
 						<option value="BEGINNER">Beginner</option>
 						<option value="INTERMEDIATE">Intermediate</option>
 						<option value="ADVANCED">Advanced</option>
+						<option value="EXPERT">Expert</option>
+						<option value="MASTER">Master</option>
+
 					</select>
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="lessonType" class="form-label">Lesson Type</label> <select class="form-select" id="lessonType" name="lessonType" required>
 						<option value="VIDEO">Video</option>
-						<option value="DOCUMENT">Document</option>
+						<option value="INTERACTIVE">Interactive</option>
 					</select>
 				</div>
 			</div>
 
 			<div class="mb-3">
-				<label for="category" class="form-label">Category</label> <select class="form-select" id="category"
-					onchange="filterSubcategories(this.value)" required>
+				<label for="category" class="form-label">Category</label> <select class="form-select" id="category" onchange="filterSubcategories(this.value)"
+					required>
 					<option value="">Choose a category...</option>
 					<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
 				</select>
 			</div>
 			<div class="mb-3">
-				<label for="subcategory" class="form-label">Subcategory</label> <select class="form-select" id="subcategory" name="subcategory" disabled required>
+				<label for="subcategory" class="form-label">Subcategory</label> <select class="form-select" id="subcategory" name="subcategory.id" disabled
+					required>
 					<option value="">Choose a subcategory...</option>
 					<option th:each="subcategory : ${subcategories}" th:value="${subcategory.id}" th:data-category-id="${subcategory.category.id}"
 						th:text="${subcategory.name}"></option>
@@ -75,8 +88,7 @@
 			<button type="button" class="btn btn-secondary" onclick="loadCoursesSection(event)">Cancel</button>
 		</form>
 
-	</div>
 
-	<script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+	</div>
 </body>
 </html>

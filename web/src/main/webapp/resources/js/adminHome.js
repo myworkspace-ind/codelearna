@@ -19,30 +19,29 @@ function fetchAddCoursePage(event) {
 }
 
 function submitCourseForm(event) {
-	event.preventDefault();
+    event.preventDefault();
 
-	const form = document.querySelector('#courseForm');
-	const formData = new FormData(form);
+    const form = document.querySelector('#courseForm');
+    const formData = new FormData(form);
 
-	fetch(`${_ctx}admin/addCourse`, {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => {
-			if (response.ok) {
-				return response.text().then(html => {
-					document.getElementById('dynamic-content').innerHTML = html;
-					loadCoursesSection(event);
-				});
-			} else {
-				return response.text().then(html => {
-					document.getElementById('dynamic-content').innerHTML = html;
-					fetchAddCoursePage(event);
-				});
-			}
-		})
-		.catch(error => console.error('Error adding course:', error));
+    fetch(`${_ctx}admin/addCourse`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())  
+    .then(data => {
+		const errorMessageDiv = document.getElementById('error-message');
+        if (data.status === "success") {
+            loadCoursesSection(event);
+			errorMessageDiv.style.display = 'none';
+        } else {
+            errorMessageDiv.innerText = data.message;
+			errorMessageDiv.style.display = 'block';
+        }
+    })
+    .catch(error => console.error('Error adding course:', error));
 }
+
 
 function filterSubcategories(categoryId) {
 	const subcategorySelect = document.getElementById('subcategory');
