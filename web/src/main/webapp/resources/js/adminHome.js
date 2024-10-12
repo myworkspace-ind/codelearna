@@ -1,26 +1,4 @@
 function loadCoursesSection(event) {
-<<<<<<< HEAD
-    event.preventDefault();  // Ngăn chặn hành vi mặc định của liên kết
-
-    // Sử dụng fetch để gọi API và tải nội dung "Quản lý khóa học"
-    fetch(`${_ctx}admin/listCourse`)
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('dynamic-content').innerHTML = html;
-            setupPagination(); // Gọi setupPagination chỉ khi tải danh sách khóa học
-        })
-        .catch(error => console.error('Error loading courses section:', error));
-}
-
-function loadEditCourseForm(courseId) {
-    fetch(`${_ctx}admin/courses/edit/${courseId}`)
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('dynamic-content').innerHTML = html;
-            // Không gọi setupPagination ở đây vì fragment editCourse không cần phân trang
-        })
-        .catch(error => console.error('Error loading edit course form:', error));
-=======
 	event.preventDefault();
 	fetch(`${_ctx}admin/listCourse`)
 		.then(response => response.text())
@@ -28,7 +6,6 @@ function loadEditCourseForm(courseId) {
 			document.getElementById('dynamic-content').innerHTML = html;
 		})
 		.catch(error => console.error('Error loading courses section:', error));
->>>>>>> develop
 }
 
 function fetchAddCoursePage(event) {
@@ -73,6 +50,112 @@ function submitCourseForm(event) {
 			}
 		})
 		.catch(error => console.error('Error adding course:', error));
+}
+
+function deleteCourse(courseId) {
+    if (confirm('Are you sure you want to delete this course?')) {
+        fetch(`${_ctx}admin/courses/delete/${courseId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Course deleted successfully');
+                // Reload or update the course list
+                loadCoursesSection(); 
+            } else {
+                alert('Failed to delete course');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting course:', error);
+        });
+    }
+}
+
+
+function loadCourseLessons(courseId) {
+    fetch(`${_ctx}admin/courses/${courseId}/lessons`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('dynamic-content').innerHTML = html;
+        })
+        .catch(error => console.error('Error loading course lessons:', error));
+}
+
+
+function loadEditCourseForm(courseId) {
+	fetch(`${_ctx}admin/courses/edit/${courseId}`)
+		.then(response => response.text())
+		.then(html => {
+			document.getElementById('dynamic-content').innerHTML = html;
+			var editCourseModal = new bootstrap.Modal(document.getElementById('editCourseModal'));
+			editCourseModal.show(); 
+		})
+		.catch(error => console.error('Error loading edit course form:', error));
+}
+
+function loadAddLessonForm(courseId) {
+    fetch(`${_ctx}admin/courses/${courseId}/lessons/add`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('dynamic-content').innerHTML = html;
+        })
+        .catch(error => console.error('Error loading add lesson form:', error));
+}
+
+function submitLessonForm(event) {
+    event.preventDefault();
+
+    const form = document.querySelector('#lessonForm');
+    const formData = new FormData(form);
+
+    // Sử dụng courseId đã được gán từ backend
+    fetch(`${_ctx}admin/courses/${courseId}/lessons/add`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+            // Nếu thành công, điều hướng về trang danh sách bài học
+            loadCourseLessons(courseId);  // Cập nhật lại danh sách bài học sau khi thêm
+        } else {
+            // Xử lý lỗi
+            return response.json().then(data => {
+                const errorMessageDiv = document.getElementById('error-message');
+                errorMessageDiv.innerText = data.message;
+                errorMessageDiv.style.display = 'block';
+            });
+        }
+    })
+    .catch(error => console.error('Error adding lesson:', error));
+}
+
+
+
+function loadEditLessonForm(lessonId) {
+    fetch(`${_ctx}admin/lessons/edit/${lessonId}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('dynamic-content').innerHTML = html; 
+        })
+        .catch(error => console.error('Error loading edit lesson form:', error));
+}
+
+
+function deleteLesson(lessonId) {
+    if (confirm('Are you sure you want to delete this lesson?')) {
+        fetch(`${_ctx}admin/lessons/delete/${lessonId}`, { method: 'DELETE' })
+            .then(response => {
+                if (response.ok) {
+                    alert('Lesson deleted successfully');
+                   
+                    loadCourseLessons(courseId);
+                } else {
+                    alert('Failed to delete lesson');
+                }
+            })
+            .catch(error => console.error('Error deleting lesson:', error));
+    }
 }
 
 
@@ -186,8 +269,6 @@ function submitCourseData(event) {
 }
 
 
-<<<<<<< HEAD
-=======
 
 
 
@@ -265,4 +346,3 @@ document.addEventListener('DOMContentLoaded', function() {
 	showPage(currentPageAdmin);
 	setupPagination();
 });
->>>>>>> develop
