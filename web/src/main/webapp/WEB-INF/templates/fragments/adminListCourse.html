@@ -4,9 +4,14 @@
 
 		<!-- Add Course Button -->
 		<div class="d-flex justify-content-end mb-3">
+<<<<<<< HEAD
 			<!-- Nút này sẽ mở modal để thêm khóa học -->
 			<button type="button" class="btn btn-success" data-bs-toggle="modal"
 				data-bs-target="#addCourseModal">Add Course</button>
+=======
+			<button type="button" class="btn btn-success mx-3" onclick="fetchAddCoursePage(event)">Add Course</button>
+			<a class="btn btn-success" th:href="@{/admin/addCourseHandsontable}">Add Courses with Handsontable</a>
+>>>>>>> develop
 		</div>
 
 		<div id="coursesContainer">
@@ -21,19 +26,28 @@
 							<th>Original Price</th>
 							<th>Discounted Price</th>
 							<th>Level</th>
+<<<<<<< HEAD
 							<th>Action</th>
+=======
+							<th>Details</th>
+>>>>>>> develop
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each="course, iterStat : ${courses}">
 							<th th:text="${iterStat.count}"></th>
+<<<<<<< HEAD
 							<td><img th:src="${course.imageUrl}" alt="course image"
 								style="max-width: 100px;" /></td>
+=======
+							<td><img th:src="${course.imageUrl}" alt="course image" style="max-width: 100px;" /></td>
+>>>>>>> develop
 							<td th:text="${course.name}"></td>
 							<td th:text="${course.description}"></td>
 							<td th:text="${course.originalPrice}"></td>
 							<td th:text="${course.discountedPrice}"></td>
 							<td th:text="${course.difficultyLevel}"></td>
+<<<<<<< HEAD
 							<td><a href="#" class="btn btn-primary">View</a> <a href="#"
 								class="btn btn-warning"
 								th:attr="onclick='loadEditCourseForm(' + ${course.id} + '); return false;'">Edit</a>
@@ -49,12 +63,25 @@
 			</div>
 		</div>
 
+=======
+							<td><a href="#" class="btn btn-primary">View</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+>>>>>>> develop
 		<!-- Pagination -->
 		<nav>
 			<ul class="pagination justify-content-center" id="pagination"></ul>
 		</nav>
 	</div>
 
+<<<<<<< HEAD
 	<!-- Include the addCourse fragment -->
 	<th:block th:replace="fragments/adminAddCourse"></th:block>
+=======
+>>>>>>> develop
 </div>
