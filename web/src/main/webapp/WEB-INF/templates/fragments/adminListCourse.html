@@ -4,9 +4,8 @@
 
 		<!-- Add Course Button -->
 		<div class="d-flex justify-content-end mb-3">
-			<button type="button" class="btn btn-success" onclick="fetchAddCoursePage(event)">Add Course</button>
-
-
+			<button type="button" class="btn btn-success mx-3" onclick="fetchAddCoursePage(event)">Add Course</button>
+			<a class="btn btn-success" th:href="@{/admin/addCourseHandsontable}">Add Courses with Handsontable</a>
 		</div>
 
 		<div id="coursesContainer">
@@ -39,6 +38,7 @@
 				</table>
 			</div>
 		</div>
+
 
 		<!-- Pagination -->
 		<nav>

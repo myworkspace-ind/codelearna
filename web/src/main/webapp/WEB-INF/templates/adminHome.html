@@ -6,22 +6,21 @@
 <title>Admin Dashboard</title>
 <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" th:href="@{/resources/css/adminHome.css}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.css">
+
 </head>
 <body>
 	<div class="dashboard">
 		<div th:replace="fragments/adminSidebar"></div>
 
 		<div id="main-content" class="main-content">
-			<div th:replace="fragments/adminHeader"></div>
-
 			<main>
 				<div id="dynamic-content"></div>
+				<th:block th:include="fragments/javascript.html"></th:block>
 			</main>
 		</div>
 	</div>
-
-
-	<script th:src="@{/resources/js/adminHome.js}"></script>
-	<th:block th:include="fragments/javascript.html"></th:block>
+	
+	
 </body>
 </html>

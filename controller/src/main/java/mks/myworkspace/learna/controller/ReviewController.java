@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-public class ReviewController {
+public class ReviewController extends BaseController{
 	@Autowired
 	private ReviewService reviewService;
 
@@ -49,23 +49,26 @@ public class ReviewController {
 	@PostMapping("/course/{id}/review")
 	public String addReview(@PathVariable Long id, @ModelAttribute Review review, Principal principal) {
 //        User user = userService.findByUsername(principal.getName()); // Lấy user đang đăng nhập
-		String email = "tai@gmail.com";
-		User user = userService.findByEmail(email);
-
-		if (user == null) {
-			user = new User();
-			user.setName("HuuTai");
-			user.setUsername("Tai");
-			user.setPassword("123");
-			user.setEmail(email);
-			user.setPhone("1234567890");
-			user.setRole("student");
-
-			user = userService.save(user);
-		}
-
+//		String email = "tai@gmail.com";
+//		User user = userService.findByEmail(email);
+//
+//		if (user == null) {
+//			user = new User();
+//			user.setName("HuuTai");
+//			user.setUsername("Tai");
+//			user.setPassword("123");
+//			user.setEmail(email);
+//			user.setPhone("1234567890");
+//			user.setRole("student");
+//
+//			user = userService.save(user);
+//		}
+		
+		String userId = getCurrentUserEid();
+		User newUser = userService.findById(userId);
+		
 		review.setCourse(courseService.getCourseById(id));
-		review.setUser(user);
+		review.setUser(newUser);
 		reviewService.addReview(review, id);
 		return "redirect:/course/" + id;
 	}
