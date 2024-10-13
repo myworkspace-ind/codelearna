@@ -109,15 +109,15 @@ function submitLessonForm(event) {
     const form = document.querySelector('#lessonForm');
     const formData = new FormData(form);
 
-    // Sử dụng courseId đã được gán từ backend
+
     fetch(`${_ctx}admin/courses/${courseId}/lessons/add`, {
         method: 'POST',
         body: formData
     })
     .then(response => {
         if (response.ok) {
-            // Nếu thành công, điều hướng về trang danh sách bài học
-            loadCourseLessons(courseId);  // Cập nhật lại danh sách bài học sau khi thêm
+           
+            loadCourseLessons(courseId);  
         } else {
             // Xử lý lỗi
             return response.json().then(data => {
@@ -270,6 +270,76 @@ function submitCourseData(event) {
 
 
 
+let hotLessons;
+function fetchAddLessonHandsontablePage(event, courseId) {
+    event.preventDefault();
+    fetch(`${_ctx}admin/addLessonsHandsontable/${courseId}`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('dynamic-content').innerHTML = html;
+            const container = document.getElementById('handsontable-container-lessons');
+            if (container) {
+                hotLessons = new Handsontable(container, {
+					data: [], 
+                    colHeaders: ['Lesson Title', 'Video URL'],
+                    columns: [
+                        { data: 'title', type: 'text' },
+                        { data: 'videoUrl', type: 'text' }
+                    ],
+                    minRows: 1,
+                    rowHeaders: true,
+                    contextMenu: true,
+                    licenseKey: 'non-commercial-and-evaluation' 
+                });
+                console.log('Handsontable for lessons initialized.');
+            } else {
+                console.error('Error: Cannot find Handsontable container for lessons.');
+            }
+        })
+        .catch(error => console.error('Error loading add lessons with Handsontable page:', error));
+}
+
+
+function submitLessonData(event, courseId) {
+    event.preventDefault();
+
+    const rawData = hotLessons.getData();
+    const lessonData = rawData.filter(row => row.some(cell => cell !== null && cell !== '')).map(row => ({
+        title: row[0],
+        videoUrl: row[1]
+    }));
+
+    console.log('Lesson data to be sent:', lessonData);
+
+    fetch(`${_ctx}admin/saveLessonsHandsontable/${courseId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(lessonData)
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Unknown error occurred');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === "success") {
+                alert(data.message);
+                loadCourseLessons(courseId); 
+            } else {
+                throw new Error(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error adding lessons:', error);
+            document.getElementById('error-text').innerText = error.message;
+            document.getElementById('error-message').style.display = 'block';
+        });
+}
 
 
 const itemsPerPageAdmin = 8; // Số lượng khóa học trên mỗi trang

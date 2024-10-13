@@ -1,41 +1,47 @@
 <div th:fragment="lessonsContent">
-    <div class="container mt-5">
-        <h1 class="mb-4">Lessons for Course</h1>
+	<div class="container mt-5">
+		<h1 class="mb-4">Lessons for Course</h1>
 
-        <!-- Nút Add Lesson -->
-        <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="btn btn-success" th:attr="onclick='loadAddLessonForm(' + ${course.id} + '); return false;'">
-                Add Lesson
-            </button>
-        </div>
+		<!-- Nút Add Lesson -->
+		<div class="d-flex justify-content-end mb-3">
+			<button type="button" class="btn btn-success"
+				th:attr="onclick='loadAddLessonForm(' + ${course.id} + '); return false;'">
+				Add Lesson</button>
+			<button type="button" class="btn btn-success"
+				th:attr="onclick='fetchAddLessonHandsontablePage(event, ' + ${course.id} + '); return false;'">
+				Add Lessons with Handsontable</button>
 
-        <!-- Bảng danh sách bài học -->
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Lesson Title</th>
-                    <th>Video URL</th>
-                    <th>Created Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="lesson, iterStat : ${lessons}">
-                    <th th:text="${iterStat.count}"></th>
-                    <td th:text="${lesson.title}"></td>
-                    <td>
-                        <a th:href="${lesson.videoUrl}" target="_blank" th:text="${lesson.videoUrl}"></a>
-                    </td>
-                    <td th:text="${#dates.format(lesson.createdDate, 'dd-MM-yyyy HH:mm')}"></td>
-                    <td>
-                        <button type="button" class="btn btn-warning"
-                                th:attr="onclick='loadEditLessonForm(' + ${lesson.id} + '); return false;'">Edit</button>
-                        <button type="button" class="btn btn-danger"
-                                th:attr="onclick='deleteLesson(' + ${lesson.id} + '); return false;'">Delete</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+
+
+		</div>
+
+		<!-- Bảng danh sách bài học -->
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Lesson Title</th>
+					<th>Video URL</th>
+					<th>Created Date</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="lesson, iterStat : ${lessons}">
+					<th th:text="${iterStat.count}"></th>
+					<td th:text="${lesson.title}"></td>
+					<td><a th:href="${lesson.videoUrl}" target="_blank"
+						th:text="${lesson.videoUrl}"></a></td>
+					<td
+						th:text="${#dates.format(lesson.createdDate, 'dd-MM-yyyy HH:mm')}"></td>
+					<td>
+						<button type="button" class="btn btn-warning"
+							th:attr="onclick='loadEditLessonForm(' + ${lesson.id} + '); return false;'">Edit</button>
+						<button type="button" class="btn btn-danger"
+							th:attr="onclick='deleteLesson(' + ${lesson.id} + '); return false;'">Delete</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
