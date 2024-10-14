@@ -20,16 +20,20 @@ public class Review {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(name = "user_eid", nullable = false)
+    private String userEid;
+	
 	@Column(name = "rating_star", nullable = false)
 	private int ratingStar;
 	
 	@Column(name = "content", columnDefinition = "TEXT")
 	private String content;
 	
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "course_id", nullable = false)
 	private Course course;
-	
+		
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id", nullable = false)
