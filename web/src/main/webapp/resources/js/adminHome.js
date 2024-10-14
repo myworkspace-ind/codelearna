@@ -1,11 +1,35 @@
-function loadCoursesSection(event) {
-	event.preventDefault();
+/*function loadCoursesSection(event) {
+	
+	if (event) {
+		event.preventDefault();
+	}
+	
 	fetch(`${_ctx}admin/listCourse`)
 		.then(response => response.text())
 		.then(html => {
 			document.getElementById('dynamic-content').innerHTML = html;
 		})
 		.catch(error => console.error('Error loading courses section:', error));
+}
+*/
+function loadCoursesSection(event) {
+    if (event) {
+        event.preventDefault();
+    }
+
+    // Kiểm tra xem phần tử `dynamic-content` có tồn tại không
+    const dynamicContent = document.getElementById('dynamic-content');
+    if (!dynamicContent) {
+        console.error("Phần tử 'dynamic-content' không tồn tại trên trang.");
+        return;
+    }
+
+    fetch(`${_ctx}admin/listCourse`)
+        .then(response => response.text())
+        .then(html => {
+            dynamicContent.innerHTML = html;  // Thay đổi nội dung
+        })
+        .catch(error => console.error('Error loading courses section:', error));
 }
 
 function fetchAddCoursePage(event) {
@@ -19,14 +43,43 @@ function fetchAddCoursePage(event) {
 }
 
 function fetchAddCourseHandsontablePage(event) {
-	event.preventDefault();
-	fetch(`${_ctx}admin/addCourseHandsontable`)
-		.then(response => response.text())
-		.then(html => {
-			document.getElementById('dynamic-content').innerHTML = html;
-		})
-		.catch(error => console.error('Error loading add course page:', error));
+    event.preventDefault(); 
+    
+    fetch(`${_ctx}admin/addCourseHandsontable`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('dynamic-content').innerHTML = html;
+
+            
+            initializeCourseHandsontable();
+        })
+        .catch(error => console.error('Error loading add course page:', error));
 }
+
+function initializeCourseHandsontable() {
+    const containerHandsontable = document.getElementById('handsontable-container');
+    
+    if (containerHandsontable) {
+        hot = new Handsontable(containerHandsontable, {
+            data: [],
+            colHeaders: ['Course Name', 'Original Price', 'Discounted Price', 'Description'],
+            columns: [
+                { data: 'name', type: 'text' },
+                { data: 'originalPrice', type: 'numeric' },
+                { data: 'discountedPrice', type: 'numeric' },
+                { data: 'description', type: 'text' }
+            ],
+            minRows: 1,
+            rowHeaders: true,
+            contextMenu: true,
+            licenseKey: 'non-commercial-and-evaluation'
+        });
+        console.log('Handsontable initialized');
+    } else {
+        console.error('Error: Handsontable container not found.');
+    }
+}
+
 
 function submitCourseForm(event) {
 	event.preventDefault();
@@ -53,54 +106,94 @@ function submitCourseForm(event) {
 }
 
 function deleteCourse(courseId) {
-    if (confirm('Are you sure you want to delete this course?')) {
-        fetch(`${_ctx}admin/courses/delete/${courseId}`, {
-            method: 'DELETE'
-        })
-        .then(response => {
-            if (response.ok) {
-                alert('Course deleted successfully');
-                // Reload or update the course list
-                loadCoursesSection(); 
-            } else {
-                alert('Failed to delete course');
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting course:', error);
-        });
-    }
+	if (confirm('Are you sure you want to delete this course?')) {
+		fetch(`${_ctx}admin/courses/delete/${courseId}`, {
+			method: 'DELETE'
+		})
+			.then(response => {
+				if (response.ok) {
+					alert('Course deleted successfully');
+					// Reload the course list without event
+					loadCoursesSection(null);  // Không truyền event vào, vì không cần thiết
+				} else {
+					alert('Failed to delete course');
+				}
+			})
+			.catch(error => {
+				console.error('Error deleting course:', error);
+			});
+	}
 }
 
 
 function loadCourseLessons(courseId) {
     fetch(`${_ctx}admin/courses/${courseId}/lessons`)
-        .then(response => response.text())
+        .then(response => response.text())  // Nhận HTML từ server
         .then(html => {
-            document.getElementById('dynamic-content').innerHTML = html;
+            document.getElementById('dynamic-content').innerHTML = html;  // Thay thế nội dung danh sách bài học
+            const scripts = document.getElementById('dynamic-content').getElementsByTagName('script');
+            for (let script of scripts) {
+                eval(script.innerHTML);  // Chạy lại các script để đảm bảo trang hoạt động
+            }
         })
-        .catch(error => console.error('Error loading course lessons:', error));
+        .catch(error => console.error('Lỗi khi tải danh sách bài học:', error));
 }
 
 
 function loadEditCourseForm(courseId) {
-	fetch(`${_ctx}admin/courses/edit/${courseId}`)
-		.then(response => response.text())
-		.then(html => {
-			document.getElementById('dynamic-content').innerHTML = html;
-			var editCourseModal = new bootstrap.Modal(document.getElementById('editCourseModal'));
-			editCourseModal.show(); 
-		})
-		.catch(error => console.error('Error loading edit course form:', error));
+    fetch(`${_ctx}admin/courses/edit/${courseId}`)
+        .then(response => response.text())
+        .then(html => {
+            // Thêm modal vào body nếu chưa tồn tại
+            if (!document.getElementById('editCourseModal')) {
+                document.body.insertAdjacentHTML('beforeend', html);
+            } else {
+                document.getElementById('editCourseModal').outerHTML = html;
+            }
+            
+            // Khởi tạo và hiển thị modal
+            var editCourseModal = new bootstrap.Modal(document.getElementById('editCourseModal'));
+            editCourseModal.show();
+            
+            // Thiết lập xử lý form submission
+            document.getElementById('editCourseForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                submitEditCourseForm(event, courseId);
+            });
+        })
+        .catch(error => console.error('Error loading edit course form:', error));
+}
+
+function submitEditCourseForm(event, courseId) {
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            bootstrap.Modal.getInstance(document.getElementById('editCourseModal')).hide();
+            loadCoursesSection();
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error updating course:', error);
+        alert("An error occurred while updating the course.");
+    });
 }
 
 function loadAddLessonForm(courseId) {
-    fetch(`${_ctx}admin/courses/${courseId}/lessons/add`)
-        .then(response => response.text())
-        .then(html => {
-            document.getElementById('dynamic-content').innerHTML = html;
-        })
-        .catch(error => console.error('Error loading add lesson form:', error));
+	fetch(`${_ctx}admin/courses/${courseId}/lessons/add`)
+		.then(response => response.text())
+		.then(html => {
+			document.getElementById('dynamic-content').innerHTML = html;
+		})
+		.catch(error => console.error('Error loading add lesson form:', error));
 }
 
 function submitLessonForm(event) {
@@ -108,26 +201,36 @@ function submitLessonForm(event) {
 
     const form = document.querySelector('#lessonForm');
     const formData = new FormData(form);
-
+    const courseId = form.getAttribute('data-course-id');
 
     fetch(`${_ctx}admin/courses/${courseId}/lessons/add`, {
         method: 'POST',
         body: formData
     })
-    .then(response => {
-        if (response.ok) {
-           
-            loadCourseLessons(courseId);  
-        } else {
-            // Xử lý lỗi
-            return response.json().then(data => {
-                const errorMessageDiv = document.getElementById('error-message');
-                errorMessageDiv.innerText = data.message;
-                errorMessageDiv.style.display = 'block';
-            });
+    .then(response => response.json())  
+    .then(data => {
+		if (data.status === "success") {
+		    // Hiển thị thông báo thành công trên trang
+		    const successMessageDiv = document.getElementById('success-message');
+		    successMessageDiv.innerText = data.message;
+		    successMessageDiv.style.display = 'block';
+
+		    // Tải lại danh sách bài học
+		    loadCourseLessons(courseId);
+		} else {
+       
+            const errorMessageDiv = document.getElementById('error-message');
+            errorMessageDiv.innerText = data.message;
+            errorMessageDiv.style.display = 'block';
         }
     })
-    .catch(error => console.error('Error adding lesson:', error));
+    .catch(error => {
+        // Xử lý lỗi khi gửi yêu cầu
+        console.error('Lỗi khi thêm bài học:', error);
+        const errorMessageDiv = document.getElementById('error-message');
+        errorMessageDiv.innerText = "Có lỗi xảy ra khi thêm bài học.";
+        errorMessageDiv.style.display = 'block';
+    });
 }
 
 
@@ -136,25 +239,69 @@ function loadEditLessonForm(lessonId) {
     fetch(`${_ctx}admin/lessons/edit/${lessonId}`)
         .then(response => response.text())
         .then(html => {
-            document.getElementById('dynamic-content').innerHTML = html; 
+            // Add modal to body if it doesn't exist
+            if (!document.getElementById('editLessonModal')) {
+                document.body.insertAdjacentHTML('beforeend', html);
+            } else {
+                document.getElementById('editLessonModal').outerHTML = html;
+            }
+            
+            // Initialize and show modal
+            var editLessonModal = new bootstrap.Modal(document.getElementById('editLessonModal'));
+            editLessonModal.show();
+            
+            // Set up form submission
+            document.getElementById('editLessonForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+                submitEditLessonForm(event, lessonId);
+            });
         })
         .catch(error => console.error('Error loading edit lesson form:', error));
 }
 
+function submitEditLessonForm(event, lessonId) {
+    const form = event.target;
+    const formData = new FormData(form);
 
-function deleteLesson(lessonId) {
+    fetch(form.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            bootstrap.Modal.getInstance(document.getElementById('editLessonModal')).hide();
+            loadCourseLessons(data.courseId);
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error updating lesson:', error);
+        alert("An error occurred while updating the lesson.");
+    });
+}
+
+
+function deleteLesson(lessonId, courseId) {
     if (confirm('Are you sure you want to delete this lesson?')) {
-        fetch(`${_ctx}admin/lessons/delete/${lessonId}`, { method: 'DELETE' })
-            .then(response => {
-                if (response.ok) {
-                    alert('Lesson deleted successfully');
-                   
-                    loadCourseLessons(courseId);
-                } else {
-                    alert('Failed to delete lesson');
-                }
-            })
-            .catch(error => console.error('Error deleting lesson:', error));
+        fetch(`${_ctx}admin/lessons/delete/${lessonId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert('Lesson deleted successfully');
+              
+                loadCourseLessons(courseId);
+            } else {
+                alert('Failed to delete lesson: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting lesson:', error);
+            alert('An error occurred while deleting the lesson.');
+        });
     }
 }
 
@@ -220,96 +367,213 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 });
 
+function handleFileCourse(event) {
+    const input = event.target;
+    const file = input.files[0];
 
+    if (!file) {
+        console.error('No file selected');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            console.log('Excel Data:', jsonData);
+
+          
+            const handsontableData = jsonData
+                .filter(row => row.length >= 4) 
+                .map(row => ({
+                    name: row[0].toString(),                 
+                    originalPrice: parseFloat(row[1]),       
+                    discountedPrice: parseFloat(row[2]),      
+                    description: row[3].toString()           
+                }));
+
+            if (hot) {
+                hot.loadData(handsontableData);
+                hot.render();
+                console.log('Data loaded into Handsontable');
+            } else {
+                console.error('Handsontable instance not initialized');
+            }
+        } catch (error) {
+            console.error('Error processing Excel file:', error);
+        }
+    };
+
+    reader.onerror = function(ex) {
+        console.error('Error reading file:', ex);
+    };
+
+    reader.readAsArrayBuffer(file);
+}
 
 function submitCourseData(event) {
-	event.preventDefault();
-	const rawData = hot.getData();
-	const courseData = rawData.filter(row => row.some(cell => cell !== null && cell !== '')).map(row => ({
-		name: row[0],
-		originalPrice: parseFloat(row[1]),
-		discountedPrice: parseFloat(row[2]),
-		description: row[3],
-		difficultyLevel: row[4] || 'BEGINNER',
-		lessonType: row[5] || 'VIDEO'
-		
-	}));
+    event.preventDefault(); // Ngăn chặn hành vi mặc định của form
 
-	console.log('Course data to be sent:', courseData);
+    const rawData = hot.getData();
+    
+    // Lọc và chuyển đổi dữ liệu trước khi gửi
+    const courseData = rawData
+        .filter(row => row[0] && row[1] && row[2] && row[3]) // Lọc ra các hàng không rỗng
+        .map(row => ({
+            name: row[0].toString(),      // Chuyển đổi tên khóa học thành chuỗi
+            originalPrice: parseFloat(row[1]),  // Giá gốc
+            discountedPrice: parseFloat(row[2]), // Giá giảm
+            description: row[3].toString()  // Mô tả
+        }));
 
-	fetch(`${_ctx}admin/saveCoursesHandsontable`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(courseData)
-	})
-		.then(response => {
-			console.log('Response status:', response.status);
-			if (!response.ok) {
-				return response.json().then(data => {
-					throw new Error(data.message || 'Unknown error occurred');
-				});
-			}
-			return response.json();
-		})
-		.then(data => {
-			if (data.status === "success") {
-				alert(data.message);
-				loadCoursesSection(event);
-			} else {
-				throw new Error(data.message);
-			}
-		})
-		.catch(error => {
-			console.error('Error adding courses:', error);
-			document.getElementById('error-text').innerText = error.message;
-			document.getElementById('error-message').style.display = 'block';
-		});
+    console.log('Course data to be sent:', courseData);
+
+    // Gửi dữ liệu đến server
+    fetch(`${_ctx}admin/saveCoursesHandsontable`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(courseData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Unknown error occurred');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === "success") {
+            // Hiển thị thông báo thành công
+            alert(data.message);
+            
+            loadCoursesSection();
+        } else {
+            throw new Error(data.message);
+        }
+    })
+    .catch(error => {
+        // Hiển thị lỗi nếu có
+        console.error('Error adding courses:', error);
+        document.getElementById('error-text').innerText = error.message;
+        document.getElementById('error-message').style.display = 'block';
+    });
 }
 
 
 
 let hotLessons;
+
 function fetchAddLessonHandsontablePage(event, courseId) {
     event.preventDefault();
     fetch(`${_ctx}admin/addLessonsHandsontable/${courseId}`)
         .then(response => response.text())
         .then(html => {
             document.getElementById('dynamic-content').innerHTML = html;
-            const container = document.getElementById('handsontable-container-lessons');
-            if (container) {
-                hotLessons = new Handsontable(container, {
-					data: [], 
-                    colHeaders: ['Lesson Title', 'Video URL'],
-                    columns: [
-                        { data: 'title', type: 'text' },
-                        { data: 'videoUrl', type: 'text' }
-                    ],
-                    minRows: 1,
-                    rowHeaders: true,
-                    contextMenu: true,
-                    licenseKey: 'non-commercial-and-evaluation' 
-                });
-                console.log('Handsontable for lessons initialized.');
-            } else {
-                console.error('Error: Cannot find Handsontable container for lessons.');
-            }
+            initializeHandsontable();
         })
         .catch(error => console.error('Error loading add lessons with Handsontable page:', error));
+}
+
+function initializeHandsontable() {
+    const container = document.getElementById('handsontable-container-lessons');
+    if (container) {
+        hotLessons = new Handsontable(container, {
+            data: [],
+            colHeaders: ['Lesson Title', 'Video URL'],
+            columns: [
+                { data: 'title', type: 'text' },
+                { data: 'videoUrl', type: 'text' }
+            ],
+            minRows: 1,
+            rowHeaders: true,
+            contextMenu: true,
+            licenseKey: 'non-commercial-and-evaluation'
+        });
+        console.log('Handsontable for lessons initialized.');
+    } else {
+        console.error('Error: Cannot find Handsontable container for lessons.');
+    }
+}
+
+function handleFile(event) {
+    const input = event.target;
+    const file = input.files[0];
+
+    if (!file) {
+        console.error('No file selected');
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, range: 3 });
+
+            console.log('Raw Excel data:', jsonData);
+
+            const handsontableData = jsonData
+                .filter(row => row.length >= 2 && row[0] && row[1])
+                .map(row => ({
+                    title: row[0].toString(),      // Đảm bảo title là chuỗi
+                    videoUrl: row[1].toString()    // Đảm bảo videoUrl là chuỗi
+                }));
+
+            console.log('Processed Handsontable data:', handsontableData);
+
+            if (hotLessons) {
+                hotLessons.loadData(handsontableData);
+                hotLessons.render(); // Đảm bảo bảng được hiển thị lại
+                console.log('Data loaded into Handsontable');
+            } else {
+                console.error('Handsontable instance not initialized');
+            }
+        } catch (error) {
+            console.error('Error processing Excel file:', error);
+        }
+    };
+
+    reader.onerror = function(ex) {
+        console.error('Error reading file:', ex);
+    };
+
+    reader.readAsArrayBuffer(file);
 }
 
 
 function submitLessonData(event, courseId) {
     event.preventDefault();
 
-    const rawData = hotLessons.getData();
-    const lessonData = rawData.filter(row => row.some(cell => cell !== null && cell !== '')).map(row => ({
-        title: row[0],
-        videoUrl: row[1]
-    }));
+    if (!hotLessons) {
+        console.error('Handsontable not initialized');
+        return;
+    }
 
-    console.log('Lesson data to be sent:', lessonData);
+    const rawData = hotLessons.getData();
+    const lessonData = rawData
+        .filter(row => row[0] && row[1]) // Lọc ra các hàng không rỗng
+        .map(row => ({
+            title: row[0].toString(),      // Chuyển đổi title thành chuỗi
+            videoUrl: row[1].toString()    // Chuyển đổi videoUrl thành chuỗi
+        }));
+
+    console.log('Lesson data to be submitted:', lessonData);
 
     fetch(`${_ctx}admin/saveLessonsHandsontable/${courseId}`, {
         method: 'POST',
@@ -318,27 +582,27 @@ function submitLessonData(event, courseId) {
         },
         body: JSON.stringify(lessonData)
     })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(data => {
-                    throw new Error(data.message || 'Unknown error occurred');
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === "success") {
-                alert(data.message);
-                loadCourseLessons(courseId); 
-            } else {
-                throw new Error(data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error adding lessons:', error);
-            document.getElementById('error-text').innerText = error.message;
-            document.getElementById('error-message').style.display = 'block';
-        });
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Unknown error occurred');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === "success") {
+            alert(data.message);
+            loadCourseLessons(courseId);
+        } else {
+            throw new Error(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error submitting lesson data:', error);
+        document.getElementById('error-text').innerText = error.message;
+        document.getElementById('error-message').style.display = 'block';
+    });
 }
 
 
