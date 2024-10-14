@@ -49,26 +49,27 @@ public class ReviewController extends BaseController{
 	@PostMapping("/course/{id}/review")
 	public String addReview(@PathVariable Long id, @ModelAttribute Review review, Principal principal) {
 //        User user = userService.findByUsername(principal.getName()); // Lấy user đang đăng nhập
-//		String email = "tai@gmail.com";
-//		User user = userService.findByEmail(email);
-//
-//		if (user == null) {
-//			user = new User();
-//			user.setName("HuuTai");
-//			user.setUsername("Tai");
-//			user.setPassword("123");
-//			user.setEmail(email);
-//			user.setPhone("1234567890");
-//			user.setRole("student");
-//
-//			user = userService.save(user);
-//		}
+		String email = "tai@gmail.com";
+		User user = userService.findByEmail(email);
+
+		if (user == null) {
+			user = new User();
+			user.setName("HuuTai");
+			user.setUsername("Tai");
+			user.setPassword("123");
+			user.setEmail(email);
+			user.setPhone("1234567890");
+			user.setRole("student");
+
+			user = userService.save(user);
+		}
 		
 		String userId = getCurrentUserEid();
-		User newUser = userService.findById(userId);
+//		User newUser = userService.findById(userId);
 		
 		review.setCourse(courseService.getCourseById(id));
-		review.setUser(newUser);
+		review.setUser(user);
+		review.setUserEid(userId);
 		reviewService.addReview(review, id);
 		return "redirect:/course/" + id;
 	}

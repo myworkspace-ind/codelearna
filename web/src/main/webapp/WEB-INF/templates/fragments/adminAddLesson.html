@@ -1,0 +1,28 @@
+<div th:fragment="addLessonForm">
+	<div class="container mt-5">
+		<h1 class="mb-4">Add Lesson</h1>
+		<!-- Thêm phần hiển thị lỗi -->
+		<div id="error-message" style="display: none;"
+			class="alert alert-danger" role="alert"></div>
+
+		<form
+			th:action="@{/admin/courses/{courseId}/lessons/add(courseId=${course.id})}"
+			method="post" th:object="${lesson}">
+			<div class="mb-3">
+				<label for="title" class="form-label">Tiêu đề bài học</label> <input
+					type="text" class="form-control" id="title" th:field="*{title}"
+					required>
+			</div>
+			<div class="mb-3">
+				<label for="videoUrl" class="form-label">URL Video</label> <input
+					type="text" class="form-control" id="videoUrl"
+					th:field="*{videoUrl}">
+			</div>
+			<button type="submit" class="btn btn-primary">Thêm bài học</button>
+			<button type="button" class="btn btn-secondary"
+				onclick="window.history.back()">Hủy</button>
+		</form>
+
+
+	</div>
+</div>
