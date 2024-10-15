@@ -208,7 +208,7 @@ public class AdminController {
 	            return new ModelAndView("redirect:/admin/listCourse");
 	        }
 
-	        ModelAndView mav = new ModelAndView("fragments/adminEditCourse :: editCourse");
+	        ModelAndView mav = new ModelAndView("fragments/adminEditCourse :: editCourseModal");
 	        mav.addObject("course", course);
 	        mav.addObject("categories", categoryService.getAllCategories());
 	        return mav;
@@ -216,12 +216,13 @@ public class AdminController {
 
 
 	   
-	    @PostMapping("/courses/edit/{id}")
-	    public ModelAndView editCourse(@PathVariable("id") Long id, @ModelAttribute("course") Course course) {
-	        Course existingCourse = courseService.getCourseById(id);
-	        if (existingCourse == null) {
-	            return new ModelAndView("redirect:/admin/listCourse");
-	        }
+	 @PostMapping("/courses/edit/{id}")
+	 @ResponseBody
+	 public ResponseEntity<Map<String, String>> editCourse(@PathVariable("id") Long id, @ModelAttribute("course") Course course) {
+	     Course existingCourse = courseService.getCourseById(id);
+	     if (existingCourse == null) {
+	         return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Course not found"));
+	     }
 
 	        existingCourse.setName(course.getName());
 	        existingCourse.setOriginalPrice(course.getOriginalPrice());
@@ -233,7 +234,7 @@ public class AdminController {
 	      
 	        courseService.saveCourse(existingCourse);
 
-	        return new ModelAndView("redirect:/admin/listCourse");
+	        return ResponseEntity.ok(Map.of("status", "success", "message", "Course updated successfully"));
 	    }
 
 	    @GetMapping("/courses/{id}/lessons")
@@ -242,7 +243,7 @@ public class AdminController {
 	        List<Lesson> lessons = playService.getLessonsByCourseId(courseId); 
 
 	        if (lessons == null || lessons.isEmpty()) {
-	            return new ModelAndView("redirect:/admin/list-course");
+	            return new ModelAndView("redirect:/admin/listCourse");
 	        }
 
 	        ModelAndView mav = new ModelAndView("fragments/adminCourseLessons :: lessonsContent");
@@ -254,8 +255,6 @@ public class AdminController {
 	    @GetMapping("/courses/{id}/lessons/add")
 	    public ModelAndView showAddLessonForm(@PathVariable("id") Long courseId) {
 	        ModelAndView mav = new ModelAndView("fragments/adminAddLesson :: addLessonForm");
-
-	        // Lấy khóa học từ courseId
 	        Course course = courseService.getCourseById(courseId);
 	        if (course == null) {
 	          
@@ -272,55 +271,34 @@ public class AdminController {
 	        return mav;
 	    }
 
-	    
 	    @PostMapping("/courses/{courseId}/lessons/add")
-	    public String addLesson(@PathVariable("courseId") Long courseId,
-	                            @ModelAttribute("lesson") Lesson lesson,
-	                            BindingResult bindingResult,
-	                            RedirectAttributes redirectAttributes) {
+	    @ResponseBody
+	    public ResponseEntity<Map<String, String>> addLesson(@PathVariable("courseId") Long courseId,
+	                                                         @ModelAttribute("lesson") Lesson lesson) {
+	        Map<String, String> response = new HashMap<>();
+	        try {
+	            Course course = courseService.getCourseById(courseId);
+	            if (course == null) {
+	                response.put("status", "error");
+	                response.put("message", "Không tìm thấy khóa học.");
+	                return ResponseEntity.badRequest().body(response);
+	            }
+
+	            lesson.setCourse(course);
+	            lessonService.saveLesson(lesson);
 
 	      
-	        if (bindingResult.hasErrors()) {
-	            redirectAttributes.addFlashAttribute("status", "error");
-	            redirectAttributes.addFlashAttribute("message", "Thông tin bài học không hợp lệ.");
-	            return "redirect:/admin/courses/" + courseId + "/lessons/add";
-	        }
+	            response.put("status", "success");
+	            response.put("message", "Bài học đã được thêm thành công.");
+	            response.put("redirectUrl", "/admin/courses/" + courseId + "/lessons"); // URL của CourseLesson
 
-	       
-	        Course course = courseService.getCourseById(courseId);
-	        if (course == null) {
-	            redirectAttributes.addFlashAttribute("status", "error");
-	            redirectAttributes.addFlashAttribute("message", "Khóa học không tồn tại.");
-	            return "redirect:/admin/courses";
-	        }
-
-	       
-	        if (lesson.getTitle() == null || lesson.getTitle().isEmpty()) {
-	            redirectAttributes.addFlashAttribute("status", "error");
-	            redirectAttributes.addFlashAttribute("message", "Vui lòng điền tiêu đề bài học.");
-	            return "redirect:/admin/courses/" + courseId + "/lessons/add";
-	        }
-
-	       
-	        lesson.setCourse(course);
-
-	        try {
-	          
-	            lessonService.saveLesson(lesson);
-	            redirectAttributes.addFlashAttribute("status", "success");
-	            redirectAttributes.addFlashAttribute("message", "Bài học đã được thêm thành công!");
-
-	           
-	            return "redirect:/admin/courses/" + courseId + "/lessons";
+	            return ResponseEntity.ok(response);
 	        } catch (Exception e) {
-	          
-	            redirectAttributes.addFlashAttribute("status", "error");
-	            redirectAttributes.addFlashAttribute("message", "Có lỗi khi lưu bài học: " + e.getMessage());
-	            return "redirect:/admin/courses/" + courseId + "/lessons/add";
+	            response.put("status", "error");
+	            response.put("message", "Lỗi khi thêm bài học: " + e.getMessage());
+	            return ResponseEntity.badRequest().body(response);
 	        }
 	    }
-
-
 
 
 	    @GetMapping("/lessons/edit/{id}")
@@ -330,37 +308,29 @@ public class AdminController {
 	            return new ModelAndView("redirect:/admin/listCourse");
 	        }
 
-	        ModelAndView mav = new ModelAndView("fragments/adminEditLesson :: editLessonForm");
+	        ModelAndView mav = new ModelAndView("fragments/adminEditLesson :: editLessonModal");
 	        mav.addObject("lesson", lesson);
 	        return mav;
 	    }
 
 	    @PostMapping("/lessons/edit/{id}")
-	    public ModelAndView editLesson(@PathVariable("id") Long lessonId, @ModelAttribute("lesson") Lesson lesson, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-	        if (bindingResult.hasErrors()) {
-	            redirectAttributes.addFlashAttribute("status", "error");
-	            redirectAttributes.addFlashAttribute("message", "Form contains errors. Please check again.");
-	            return new ModelAndView("redirect:/admin/lessons/edit/" + lessonId);
-	        }
-
-	   
+	    @ResponseBody
+	    public ResponseEntity<Map<String, String>> editLesson(@PathVariable("id") Long lessonId, @ModelAttribute("lesson") Lesson lesson) {
 	        Lesson existingLesson = playService.getLessonById(lessonId);
 	        if (existingLesson == null) {
-	            redirectAttributes.addFlashAttribute("status", "error");
-	            redirectAttributes.addFlashAttribute("message", "Lesson not found.");
-	            return new ModelAndView("redirect:/admin/listCourse");
+	            return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Lesson not found"));
 	        }
 
-	      
 	        existingLesson.setTitle(lesson.getTitle());
 	        existingLesson.setVideoUrl(lesson.getVideoUrl());
 
-	       
 	        lessonService.saveLesson(existingLesson);
-	        redirectAttributes.addFlashAttribute("status", "success");
-	        redirectAttributes.addFlashAttribute("message", "Lesson updated successfully!");
 
-	        return new ModelAndView("redirect:/admin/courses/" + existingLesson.getCourse().getId() + "/lessons");
+	        Map<String, String> response = new HashMap<>();
+	        response.put("status", "success");
+	        response.put("message", "Lesson updated successfully");
+	        response.put("courseId", existingLesson.getCourse().getId().toString());
+	        return ResponseEntity.ok(response);
 	    }
 	    @GetMapping("/addLessonsHandsontable/{courseId}")
 	    public ModelAndView showAddLessonsHandsontablePage(@PathVariable("courseId") Long courseId) {
@@ -370,7 +340,6 @@ public class AdminController {
 	            return new ModelAndView("redirect:/admin/listCourse");
 	        }
 
-	        // Create a ModelAndView and pass the course object
 	        ModelAndView mav = new ModelAndView("fragments/adminAddLessonsHandsontable");
 	        mav.addObject("course", course); 
 	        return mav;
@@ -421,9 +390,29 @@ public class AdminController {
 
 	   
 	    @DeleteMapping("/lessons/delete/{id}")
-	    public ResponseEntity<Void> deleteLesson(@PathVariable("id") Long lessonId) {
-	        lessonService.deleteLessonById(lessonId); 
-	        return ResponseEntity.ok().build();
+	    @ResponseBody
+	    public ResponseEntity<Map<String, String>> deleteLesson(@PathVariable("id") Long lessonId) {
+	        Map<String, String> response = new HashMap<>();
+	        try {
+	            Lesson lesson = playService.getLessonById(lessonId);
+	            if (lesson == null) {
+	                response.put("status", "error");
+	                response.put("message", "Lesson not found");
+	                return ResponseEntity.badRequest().body(response);
+	            }
+
+	            Long courseId = lesson.getCourse().getId();
+	            lessonService.deleteLessonById(lessonId);
+
+	            response.put("status", "success");
+	            response.put("message", "Lesson has been deleted successfully");
+	            response.put("courseId", courseId.toString());
+	            return ResponseEntity.ok(response);
+	        } catch (Exception e) {
+	            response.put("status", "error");
+	            response.put("message", "An error occurred while trying to delete the lesson: " + e.getMessage());
+	            return ResponseEntity.badRequest().body(response);
+	        }
 	    }
 
 }

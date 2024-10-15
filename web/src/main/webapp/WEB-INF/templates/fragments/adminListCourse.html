@@ -4,8 +4,12 @@
 
 		<!-- Add Course Button -->
 		<div class="d-flex justify-content-end mb-3">
-			<button type="button" class="btn btn-success mx-3" onclick="fetchAddCoursePage(event)">Add Course</button>
-			<a class="btn btn-success" th:href="@{/admin/addCourseHandsontable}">Add Courses with Handsontable</a>
+			<button type="button" class="btn btn-success mx-3"
+				onclick="fetchAddCoursePage(event)">Add Course</button>
+			<a class="btn btn-success" href="#"
+				th:onclick="'fetchAddCourseHandsontablePage(event)'"> Add
+				Courses with Handsontable </a>
+
 		</div>
 
 		<div id="coursesContainer">
@@ -26,7 +30,8 @@
 					<tbody>
 						<tr th:each="course, iterStat : ${courses}">
 							<th th:text="${iterStat.count}"></th>
-							<td><img th:src="${course.imageUrl}" alt="course image" style="max-width: 100px;" /></td>
+							<td><img th:src="${course.imageUrl}" alt="course image"
+								style="max-width: 100px;" /></td>
 							<td th:text="${course.name}"></td>
 							<td th:text="${course.description}"></td>
 							<td th:text="${course.originalPrice}"></td>
@@ -36,8 +41,8 @@
 								th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View</a>
 								<a href="#" class="btn btn-warning"
 								th:attr="onclick='loadEditCourseForm(' + ${course.id} + '); return false;'">Edit</a>
-								<a href="#" class="btn btn-danger" th:onclick="|deleteCourse(${course.id})|">Delete</a>
-							</td>
+								<a href="#" class="btn btn-danger"
+								th:onclick="|deleteCourse(${course.id})|">Delete</a></td>
 
 						</tr>
 					</tbody>
