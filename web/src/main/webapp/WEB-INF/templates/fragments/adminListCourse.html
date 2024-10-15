@@ -9,7 +9,6 @@
 			<a class="btn btn-success" href="#"
 				th:onclick="'fetchAddCourseHandsontablePage(event)'"> Add
 				Courses with Handsontable </a>
-
 		</div>
 
 		<div id="coursesContainer">
@@ -37,24 +36,25 @@
 							<td th:text="${course.originalPrice}"></td>
 							<td th:text="${course.discountedPrice}"></td>
 							<td th:text="${course.difficultyLevel}"></td>
-							<td><a href="#" class="btn btn-primary"
-								th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View</a>
-								<a href="#" class="btn btn-warning"
-								th:attr="onclick='loadEditCourseForm(' + ${course.id} + '); return false;'">Edit</a>
-								<a href="#" class="btn btn-danger"
-								th:onclick="|deleteCourse(${course.id})|">Delete</a></td>
-
+							<td>
+								<div class="btn-group" role="group">
+									<a href="#" class="btn btn-primary btn-sm"
+										th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View</a>
+									<a href="#" class="btn btn-warning btn-sm"
+										th:attr="onclick='loadEditCourseForm(' + ${course.id} + '); return false;'">Edit</a>
+									<a href="#" class="btn btn-danger btn-sm"
+										th:onclick="|deleteCourse(${course.id})|">Delete</a>
+								</div>
+							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
 
-
 		<!-- Pagination -->
 		<nav>
 			<ul class="pagination justify-content-center" id="pagination"></ul>
 		</nav>
 	</div>
-
 </div>

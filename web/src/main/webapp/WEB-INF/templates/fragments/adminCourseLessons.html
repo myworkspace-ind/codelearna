@@ -1,28 +1,28 @@
 <div th:fragment="lessonsContent">
-    <div class="container mt-5">
-        <h1 class="mb-4">Lessons for Course</h1>
+<div class="container-fluid mt-5">
+    <h1 class="mb-4">Lessons for Course</h1>
 
-        <!-- Add Lesson buttons -->
-        <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="btn btn-success me-2"
+    <!-- Add Lesson buttons -->
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-success btn-sm me-2"
                 th:onclick="'loadAddLessonForm(' + ${course.id} + ')'">
-                Add Lesson
-            </button>
-            <button type="button" class="btn btn-success"
+            Add Lesson
+        </button>
+        <button type="button" class="btn btn-success btn-sm"
                 th:onclick="'fetchAddLessonHandsontablePage(event, ' + ${course.id} + ')'">
-                Add Lessons with Handsontable
-            </button>
-        </div>
+            Add Lessons with Handsontable
+        </button>
+    </div>
 
-        <!-- Lessons table -->
-        <table class="table table-bordered">
-            <thead>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-dark">
                 <tr>
-                    <th>#</th>
-                    <th>Lesson Title</th>
-                    <th>Video URL</th>
-                    <th>Created Date</th>
-                    <th>Action</th>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 25%;">Lesson Title</th>
+                    <th style="width: 35%;">Video URL</th>
+                    <th style="width: 15%;">Created Date</th>
+                    <th style="width: 20%;">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,13 +32,16 @@
                     <td><a th:href="${lesson.videoUrl}" target="_blank" th:text="${lesson.videoUrl}"></a></td>
                     <td th:text="${#dates.format(lesson.createdDate, 'dd-MM-yyyy HH:mm')}"></td>
                     <td>
-                        <button type="button" class="btn btn-warning btn-sm"
-                            th:onclick="'loadEditLessonForm(' + ${lesson.id} + ')'">Edit</button>
-                        <button type="button" class="btn btn-danger btn-sm"
-                            th:onclick="'deleteLesson(' + ${lesson.id} + ',' + ${course.id} + ')'">Delete</button>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-warning btn-sm"
+                                    th:onclick="'loadEditLessonForm(' + ${lesson.id} + ')'">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    th:onclick="'deleteLesson(' + ${lesson.id} + ',' + ${course.id} + ')'">Delete</button>
+                        </div>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+</div>
 </div>

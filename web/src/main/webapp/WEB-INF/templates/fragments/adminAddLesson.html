@@ -1,30 +1,39 @@
 <div th:fragment="addLessonForm">
-	<div class="container mt-5">
-		<h1 class="mb-4">Add Lesson</h1>
-		<!-- Thêm phần hiển thị lỗi -->
-		<div id="error-message" style="display: none;"
-			class="alert alert-danger" role="alert"></div>
-		<div id="success-message" class="alert alert-success"
-			style="display: none;"></div>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Thêm Bài Học Mới</h1>
 
-		<form id="lessonForm"
-			th:action="@{/admin/courses/{courseId}/lessons/add(courseId=${course.id})}"
-			method="post" th:object="${lesson}" th:data-course-id="${course.id}">
-			<div class="mb-3">
-				<label for="title" class="form-label">Tiêu đề bài học</label> <input
-					type="text" class="form-control" id="title" th:field="*{title}"
-					required>
-			</div>
-			<div class="mb-3">
-				<label for="videoUrl" class="form-label">URL Video</label> <input
-					type="text" class="form-control" id="videoUrl"
-					th:field="*{videoUrl}">
-			</div>
-			<button type="submit" class="btn btn-primary">Thêm bài học</button>
-			<button type="button" class="btn btn-secondary"
-				onclick="window.history.back()">Hủy</button>
-		</form>
+        <!-- Thêm phần hiển thị lỗi và thành công -->
+        <div id="error-message" class="alert alert-danger d-none" role="alert">
+            Đã có lỗi xảy ra. Vui lòng kiểm tra lại thông tin.
+        </div>
+        <div id="success-message" class="alert alert-success d-none" role="alert">
+            Bài học đã được thêm thành công!
+        </div>
 
+        <form id="lessonForm" data-course-id="1" onsubmit="submitLessonForm(event)" method="post" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="title" class="form-label">Tiêu đề bài học:</label>
+                <input type="text" class="form-control" id="title" name="title" required placeholder="Nhập tiêu đề bài học">
+                <div class="invalid-feedback">
+                    Vui lòng nhập tiêu đề bài học.
+                </div>
+            </div>
 
-	</div>
+            <div class="mb-3">
+                <label for="videoUrl" class="form-label">URL Video:</label>
+                <input type="url" class="form-control" id="videoUrl" name="videoUrl" required placeholder="Nhập URL của video">
+                <div class="invalid-feedback">
+                    Vui lòng nhập URL video hợp lệ.
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md">
+                <button type="submit" class="btn btn-primary">Thêm Bài Học</button>
+
+                <!-- Nút hủy gọi hàm loadCourseLessons -->
+                <button type="button" class="btn btn-secondary"
+                    onclick="loadCourseLessons(document.getElementById('lessonForm').getAttribute('data-course-id'));">Hủy</button>
+            </div>
+        </form>
+    </div>
 </div>

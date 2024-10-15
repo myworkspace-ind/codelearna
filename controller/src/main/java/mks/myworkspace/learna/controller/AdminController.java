@@ -287,19 +287,21 @@ public class AdminController {
 	            lesson.setCourse(course);
 	            lessonService.saveLesson(lesson);
 
-	      
 	            response.put("status", "success");
 	            response.put("message", "Bài học đã được thêm thành công.");
-	            response.put("redirectUrl", "/admin/courses/" + courseId + "/lessons"); // URL của CourseLesson
+
+	            ModelAndView mav = new ModelAndView("fragments/adminCourseLessons :: lessonsContent");
+	            mav.addObject("course", course);
+	            mav.addObject("lessons", playService.getLessonsByCourseId(courseId));
 
 	            return ResponseEntity.ok(response);
+
 	        } catch (Exception e) {
 	            response.put("status", "error");
 	            response.put("message", "Lỗi khi thêm bài học: " + e.getMessage());
 	            return ResponseEntity.badRequest().body(response);
 	        }
 	    }
-
 
 	    @GetMapping("/lessons/edit/{id}")
 	    public ModelAndView showEditLessonForm(@PathVariable("id") Long lessonId) {
