@@ -124,7 +124,7 @@ function deleteCourse(courseId) {
 }
 
 
-function loadCourseLessons(courseId) {
+/*function loadCourseLessons(courseId) {
     fetch(`${_ctx}admin/courses/${courseId}/lessons`)
         .then(response => response.text())  
         .then(html => {
@@ -136,8 +136,16 @@ function loadCourseLessons(courseId) {
         })
         .catch(error => console.error('Lỗi khi tải danh sách bài học:', error));
 }
-
-
+*/
+function loadCourseLessons(courseId) {
+    fetch(`${_ctx}admin/courses/${courseId}/lessons`)
+        .then(response => response.text())
+        .then(html => {
+            
+            document.getElementById('dynamic-content').innerHTML = html;
+        })
+        .catch(error => console.error('Lỗi khi tải danh sách bài học:', error));
+}
 function loadEditCourseForm(courseId) {
     fetch(`${_ctx}admin/courses/edit/${courseId}`)
         .then(response => response.text())
@@ -192,7 +200,7 @@ function loadAddLessonForm(courseId) {
 }
 
 function submitLessonForm(event) {
-    event.preventDefault(); 
+    event.preventDefault();
 
     const form = document.querySelector('#lessonForm');
     const formData = new FormData(form);
@@ -205,8 +213,8 @@ function submitLessonForm(event) {
     .then(response => response.json())
     .then(data => {
         if (data.status === "success") {
-           
-            window.location.href = data.redirectUrl;
+        
+            loadCourseLessons(courseId);
         } else {
             const errorMessageDiv = document.getElementById('error-message');
             errorMessageDiv.innerText = data.message;
