@@ -255,8 +255,6 @@ public class AdminController {
 	    @GetMapping("/courses/{id}/lessons/add")
 	    public ModelAndView showAddLessonForm(@PathVariable("id") Long courseId) {
 	        ModelAndView mav = new ModelAndView("fragments/adminAddLesson :: addLessonForm");
-
-	        // Lấy khóa học từ courseId
 	        Course course = courseService.getCourseById(courseId);
 	        if (course == null) {
 	          
@@ -273,7 +271,6 @@ public class AdminController {
 	        return mav;
 	    }
 
-	    
 	    @PostMapping("/courses/{courseId}/lessons/add")
 	    @ResponseBody
 	    public ResponseEntity<Map<String, String>> addLesson(@PathVariable("courseId") Long courseId,
@@ -290,8 +287,11 @@ public class AdminController {
 	            lesson.setCourse(course);
 	            lessonService.saveLesson(lesson);
 
+	      
 	            response.put("status", "success");
 	            response.put("message", "Bài học đã được thêm thành công.");
+	            response.put("redirectUrl", "/admin/courses/" + courseId + "/lessons"); // URL của CourseLesson
+
 	            return ResponseEntity.ok(response);
 	        } catch (Exception e) {
 	            response.put("status", "error");
@@ -299,11 +299,6 @@ public class AdminController {
 	            return ResponseEntity.badRequest().body(response);
 	        }
 	    }
-
-
-
-
-
 
 
 	    @GetMapping("/lessons/edit/{id}")
@@ -345,7 +340,6 @@ public class AdminController {
 	            return new ModelAndView("redirect:/admin/listCourse");
 	        }
 
-	        // Create a ModelAndView and pass the course object
 	        ModelAndView mav = new ModelAndView("fragments/adminAddLessonsHandsontable");
 	        mav.addObject("course", course); 
 	        return mav;

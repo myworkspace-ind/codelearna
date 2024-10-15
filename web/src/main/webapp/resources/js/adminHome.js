@@ -16,8 +16,6 @@ function loadCoursesSection(event) {
     if (event) {
         event.preventDefault();
     }
-
-    // Kiểm tra xem phần tử `dynamic-content` có tồn tại không
     const dynamicContent = document.getElementById('dynamic-content');
     if (!dynamicContent) {
         console.error("Phần tử 'dynamic-content' không tồn tại trên trang.");
@@ -27,7 +25,7 @@ function loadCoursesSection(event) {
     fetch(`${_ctx}admin/listCourse`)
         .then(response => response.text())
         .then(html => {
-            dynamicContent.innerHTML = html;  // Thay đổi nội dung
+            dynamicContent.innerHTML = html;  
         })
         .catch(error => console.error('Error loading courses section:', error));
 }
@@ -113,8 +111,8 @@ function deleteCourse(courseId) {
 			.then(response => {
 				if (response.ok) {
 					alert('Course deleted successfully');
-					// Reload the course list without event
-					loadCoursesSection(null);  // Không truyền event vào, vì không cần thiết
+					
+					loadCoursesSection(null); 
 				} else {
 					alert('Failed to delete course');
 				}
@@ -128,12 +126,12 @@ function deleteCourse(courseId) {
 
 function loadCourseLessons(courseId) {
     fetch(`${_ctx}admin/courses/${courseId}/lessons`)
-        .then(response => response.text())  // Nhận HTML từ server
+        .then(response => response.text())  
         .then(html => {
-            document.getElementById('dynamic-content').innerHTML = html;  // Thay thế nội dung danh sách bài học
+            document.getElementById('dynamic-content').innerHTML = html; 
             const scripts = document.getElementById('dynamic-content').getElementsByTagName('script');
             for (let script of scripts) {
-                eval(script.innerHTML);  // Chạy lại các script để đảm bảo trang hoạt động
+                eval(script.innerHTML);  
             }
         })
         .catch(error => console.error('Lỗi khi tải danh sách bài học:', error));
@@ -144,18 +142,15 @@ function loadEditCourseForm(courseId) {
     fetch(`${_ctx}admin/courses/edit/${courseId}`)
         .then(response => response.text())
         .then(html => {
-            // Thêm modal vào body nếu chưa tồn tại
             if (!document.getElementById('editCourseModal')) {
                 document.body.insertAdjacentHTML('beforeend', html);
             } else {
                 document.getElementById('editCourseModal').outerHTML = html;
             }
-            
-            // Khởi tạo và hiển thị modal
+
             var editCourseModal = new bootstrap.Modal(document.getElementById('editCourseModal'));
             editCourseModal.show();
-            
-            // Thiết lập xử lý form submission
+
             document.getElementById('editCourseForm').addEventListener('submit', function(event) {
                 event.preventDefault();
                 submitEditCourseForm(event, courseId);
@@ -197,7 +192,7 @@ function loadAddLessonForm(courseId) {
 }
 
 function submitLessonForm(event) {
-    event.preventDefault();
+    event.preventDefault(); 
 
     const form = document.querySelector('#lessonForm');
     const formData = new FormData(form);
@@ -207,25 +202,18 @@ function submitLessonForm(event) {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())  
+    .then(response => response.json())
     .then(data => {
-		if (data.status === "success") {
-		    // Hiển thị thông báo thành công trên trang
-		    const successMessageDiv = document.getElementById('success-message');
-		    successMessageDiv.innerText = data.message;
-		    successMessageDiv.style.display = 'block';
-
-		    // Tải lại danh sách bài học
-		    loadCourseLessons(courseId);
-		} else {
-       
+        if (data.status === "success") {
+           
+            window.location.href = data.redirectUrl;
+        } else {
             const errorMessageDiv = document.getElementById('error-message');
             errorMessageDiv.innerText = data.message;
             errorMessageDiv.style.display = 'block';
         }
     })
     .catch(error => {
-        // Xử lý lỗi khi gửi yêu cầu
         console.error('Lỗi khi thêm bài học:', error);
         const errorMessageDiv = document.getElementById('error-message');
         errorMessageDiv.innerText = "Có lỗi xảy ra khi thêm bài học.";
@@ -233,24 +221,17 @@ function submitLessonForm(event) {
     });
 }
 
-
-
 function loadEditLessonForm(lessonId) {
     fetch(`${_ctx}admin/lessons/edit/${lessonId}`)
         .then(response => response.text())
         .then(html => {
-            // Add modal to body if it doesn't exist
             if (!document.getElementById('editLessonModal')) {
                 document.body.insertAdjacentHTML('beforeend', html);
             } else {
                 document.getElementById('editLessonModal').outerHTML = html;
             }
-            
-            // Initialize and show modal
             var editLessonModal = new bootstrap.Modal(document.getElementById('editLessonModal'));
             editLessonModal.show();
-            
-            // Set up form submission
             document.getElementById('editLessonForm').addEventListener('submit', function(event) {
                 event.preventDefault();
                 submitEditLessonForm(event, lessonId);
@@ -419,23 +400,21 @@ function handleFileCourse(event) {
 }
 
 function submitCourseData(event) {
-    event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+    event.preventDefault();
 
     const rawData = hot.getData();
-    
-    // Lọc và chuyển đổi dữ liệu trước khi gửi
+
     const courseData = rawData
-        .filter(row => row[0] && row[1] && row[2] && row[3]) // Lọc ra các hàng không rỗng
+        .filter(row => row[0] && row[1] && row[2] && row[3]) 
         .map(row => ({
-            name: row[0].toString(),      // Chuyển đổi tên khóa học thành chuỗi
-            originalPrice: parseFloat(row[1]),  // Giá gốc
-            discountedPrice: parseFloat(row[2]), // Giá giảm
-            description: row[3].toString()  // Mô tả
+            name: row[0].toString(),  
+            originalPrice: parseFloat(row[1]),  
+            discountedPrice: parseFloat(row[2]),
+            description: row[3].toString()  
         }));
 
     console.log('Course data to be sent:', courseData);
 
-    // Gửi dữ liệu đến server
     fetch(`${_ctx}admin/saveCoursesHandsontable`, {
         method: 'POST',
         headers: {
@@ -453,7 +432,6 @@ function submitCourseData(event) {
     })
     .then(data => {
         if (data.status === "success") {
-            // Hiển thị thông báo thành công
             alert(data.message);
             
             loadCoursesSection();
@@ -462,7 +440,6 @@ function submitCourseData(event) {
         }
     })
     .catch(error => {
-        // Hiển thị lỗi nếu có
         console.error('Error adding courses:', error);
         document.getElementById('error-text').innerText = error.message;
         document.getElementById('error-message').style.display = 'block';
@@ -531,15 +508,15 @@ function handleFile(event) {
             const handsontableData = jsonData
                 .filter(row => row.length >= 2 && row[0] && row[1])
                 .map(row => ({
-                    title: row[0].toString(),      // Đảm bảo title là chuỗi
-                    videoUrl: row[1].toString()    // Đảm bảo videoUrl là chuỗi
+                    title: row[0].toString(),      
+                    videoUrl: row[1].toString()    
                 }));
 
             console.log('Processed Handsontable data:', handsontableData);
 
             if (hotLessons) {
                 hotLessons.loadData(handsontableData);
-                hotLessons.render(); // Đảm bảo bảng được hiển thị lại
+                hotLessons.render();
                 console.log('Data loaded into Handsontable');
             } else {
                 console.error('Handsontable instance not initialized');
@@ -567,10 +544,10 @@ function submitLessonData(event, courseId) {
 
     const rawData = hotLessons.getData();
     const lessonData = rawData
-        .filter(row => row[0] && row[1]) // Lọc ra các hàng không rỗng
+        .filter(row => row[0] && row[1])
         .map(row => ({
-            title: row[0].toString(),      // Chuyển đổi title thành chuỗi
-            videoUrl: row[1].toString()    // Chuyển đổi videoUrl thành chuỗi
+            title: row[0].toString(),      
+            videoUrl: row[1].toString()    
         }));
 
     console.log('Lesson data to be submitted:', lessonData);
@@ -606,27 +583,27 @@ function submitLessonData(event, courseId) {
 }
 
 
-const itemsPerPageAdmin = 8; // Số lượng khóa học trên mỗi trang
+const itemsPerPageAdmin = 8; 
 let currentPageAdmin = 1;
 
 function showPage(page) {
-	const courses = document.querySelectorAll('tbody tr');  // Chọn các hàng trong bảng
+	const courses = document.querySelectorAll('tbody tr'); 
 	const start = (page - 1) * itemsPerPageAdmin;
 	const end = start + itemsPerPageAdmin;
 
 	courses.forEach((course, index) => {
 		if (index >= start && index < end) {
-			course.style.display = '';  // Hiển thị hàng
+			course.style.display = '';  
 		} else {
-			course.style.display = 'none';  // Ẩn hàng
+			course.style.display = 'none'; 
 		}
 	});
 }
 
 
 function setupPagination() {
-	const courses = document.querySelectorAll('tbody tr');  // Chọn các hàng trong bảng
-	const pageCount = Math.ceil(courses.length / itemsPerPageAdmin);  // Tính số trang
+	const courses = document.querySelectorAll('tbody tr'); 
+	const pageCount = Math.ceil(courses.length / itemsPerPageAdmin);  
 	const pagination = document.getElementById('pagination');
 	pagination.innerHTML = '';
 
@@ -638,7 +615,7 @@ function setupPagination() {
 			event.preventDefault();
 			currentPageAdmin = page;
 			showPage(currentPageAdmin);
-			setupPagination(); // Cập nhật lại phân trang
+			setupPagination();
 		});
 		return pageItem;
 	}
