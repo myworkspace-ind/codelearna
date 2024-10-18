@@ -1,3 +1,5 @@
+const IS_SAKAI_ENVIRONMENT = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
 const toggleBtn = document.getElementById('toggle-btn');
 const videoList = document.getElementById('video-list');
 const container = document.querySelector('.container');
@@ -8,35 +10,31 @@ const nextBtn = document.getElementById('next-btn');
 const submitCommentBtn = document.getElementById('submit-comment-btn');
 const commentTextArea = document.getElementById('comment-text');
 
+
 const lessons = Array.from(document.querySelectorAll('.video-list-content .vid'));
 let currentLessonIndex = 0;
 
 let initialLoad = true;
 
-// Hàm tạo URL
 function generatePlayURL(courseId, lessonId) {
-    return `${_ctx}play/${courseId}?lessonId=${lessonId}`;
+    if (IS_SAKAI_ENVIRONMENT) {
+        return `${_ctx}play/${courseId}?lessonId=${lessonId}`;
+    } else {
+        return `${_ctx}play/${courseId.split('-')[0]}?lessonId=${lessonId}`;
+    }
 }
 
-// Hàm lấy courseId từ URL
-function getCourseIdFromUrl() {
-    const pathParts = window.location.pathname.split('/');
-    return pathParts[pathParts.indexOf('play') + 1];
-}
-
-// Hàm lấy lessonId từ URL
-function getLessonIdFromUrl() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('lessonId');
-}
 
 // Thêm sự kiện click cho nút toggle-btn
 toggleBtn.addEventListener('click', () => {
+
     if (videoList.style.display === 'none' || !videoList.style.display) {
+ 
         videoList.style.display = 'block';
         container.classList.remove('expanded'); 
         toggleBtn.textContent = '☰'; 
     } else {
+       
         videoList.style.display = 'none';
         container.classList.add('expanded');
         toggleBtn.textContent = '✖';
@@ -69,12 +67,13 @@ lessons.forEach((lesson, index) => {
     });
 });
 
+
 function loadLesson(index, updateUrl = true) {
     const lesson = lessons[index];
     if (lesson) {
         const videoUrl = lesson.querySelector('video').src;
         const title = lesson.querySelector('.title').textContent;
-        const courseId = getCourseIdFromUrl();
+        const courseId = lesson.getAttribute('data-course-id');
         const lessonId = lesson.getAttribute('data-lesson-id');
 
         videoPlayer.src = videoUrl;
@@ -93,6 +92,32 @@ function loadLesson(index, updateUrl = true) {
         loadComments(courseId, lessonId);
     }
 }
+window.addEventListener('load', function() {
+    const lessonId = getLessonIdFromUrl();
+    const courseId = getCurrentCourseId();
+    
+    // Kiểm tra xem URL có chứa lessonId không
+    if (!lessonId && lessons.length > 0) {
+        const firstLessonId = lessons[0].getAttribute('data-lesson-id'); // Lấy lessonId của bài học đầu tiên
+        const newUrl = `${_ctx}play/${courseId}?lessonId=${firstLessonId}`;
+        
+        // Chuyển hướng đến URL mới có lessonId của bài học đầu tiên
+        history.replaceState(null, '', newUrl);
+    }
+
+    // Nếu có lessonId, tìm bài học tương ứng
+    if (lessonId) {
+        const lessonIndex = findLessonIndex(lessonId);
+        if (lessonIndex !== -1) {
+            currentLessonIndex = lessonIndex;
+        }
+    }
+    
+    // Tải bài học
+    if (lessons.length > 0) {
+        loadLesson(currentLessonIndex, false);
+    }
+});
 
 function loadComments(courseId, lessonId, page = 0) {
     fetch(`${_ctx}play/${courseId}/${lessonId}/comments?page=${page}`)
@@ -136,18 +161,18 @@ function loadComments(courseId, lessonId, page = 0) {
         });
 }
 
+
 function attachPaginationListeners() {
     const paginationButtons = document.querySelectorAll('.pagination .page-btn');
     paginationButtons.forEach(button => {
         button.addEventListener('click', function() {
             const page = this.getAttribute('data-page');
-            const courseId = getCourseIdFromUrl();
-            const lessonId = getLessonIdFromUrl();
+            const courseId = getCurrentCourseId();
+            const lessonId = getCurrentLessonId();
             loadComments(courseId, lessonId, page);
         });
     });
 }
-
 function attachReplyListeners() {
     const replyButtons = document.querySelectorAll('.reply-btn');
     replyButtons.forEach(button => {
@@ -171,8 +196,8 @@ function attachReplyListeners() {
 
 function submitReply(commentId, content) {
     if (content) {
-        const courseId = getCourseIdFromUrl();
-        const lessonId = getLessonIdFromUrl();
+        const courseId = getCurrentCourseId();
+        const lessonId = getCurrentLessonId();
         fetch(`${_ctx}play/comments/${commentId}/reply`, {
             method: 'POST',
             headers: {
@@ -201,6 +226,24 @@ function submitReply(commentId, content) {
     }
 }
 
+function getCurrentCourseId() {
+    if (IS_SAKAI_ENVIRONMENT) {
+        return window.location.pathname.split('/')[3];
+    } else {
+        return window.location.pathname.split('/')[3].split('-')[0];
+    }
+}
+
+function getCurrentLessonId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('lessonId');
+}
+
+function getLessonIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('lessonId');
+}
+
 // Hàm để tìm index của bài học dựa trên lessonId
 function findLessonIndex(lessonId) {
     return lessons.findIndex(lesson => lesson.getAttribute('data-lesson-id') === lessonId);
@@ -223,6 +266,14 @@ nextBtn.addEventListener('click', function () {
     }
 });
 
+// Cập nhật sự kiện click cho bài học
+lessons.forEach((lesson, index) => {
+    lesson.addEventListener('click', function () {
+        currentLessonIndex = index;
+        loadLesson(currentLessonIndex);
+    });
+});
+
 // Xử lý nút back/forward của trình duyệt
 window.addEventListener('popstate', function(event) {
     const lessonId = getLessonIdFromUrl();
@@ -235,12 +286,10 @@ window.addEventListener('popstate', function(event) {
     }
 });
 
-// Hàm gửi bình luận
 submitCommentBtn.addEventListener('click', function () {
-    console.log('Submit button clicked');
     const commentContent = commentTextArea.value.trim();
-    const courseId = getCourseIdFromUrl();
-    const lessonId = getLessonIdFromUrl();
+    const courseId = lessons[currentLessonIndex].getAttribute('data-course-id');
+    const lessonId = lessons[currentLessonIndex].getAttribute('data-lesson-id');
 
     if (commentContent) {
         fetch(`${_ctx}play/${courseId}/${lessonId}/comments`, {
@@ -256,7 +305,7 @@ submitCommentBtn.addEventListener('click', function () {
         .then(message => {
             console.log(message);
             commentTextArea.value = '';
-            loadComments(courseId, lessonId, 0); // Luôn tải trang đầu tiên sau khi gửi bình luận mới
+            loadComments(courseId, lessonId, 0);
         })
         .catch(error => {
             console.error('Lỗi:', error);
@@ -265,15 +314,13 @@ submitCommentBtn.addEventListener('click', function () {
         alert('Vui lòng nhập bình luận trước khi gửi.');
     }
 });
-
-// Khởi tạo khi trang load
 window.addEventListener('load', function() {
-    const courseId = getCourseIdFromUrl();
-    let lessonId = getLessonIdFromUrl();
+    const lessonId = getLessonIdFromUrl();
+    const courseId = getCurrentCourseId();
     
     if (!lessonId && lessons.length > 0) {
-        lessonId = lessons[0].getAttribute('data-lesson-id');
-        const newUrl = generatePlayURL(courseId, lessonId);
+        const firstLessonId = lessons[0].getAttribute('data-lesson-id');
+        const newUrl = generatePlayURL(courseId, firstLessonId);
         history.replaceState(null, '', newUrl);
     }
 
