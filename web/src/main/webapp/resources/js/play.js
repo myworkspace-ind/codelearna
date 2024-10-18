@@ -15,9 +15,19 @@ let currentLessonIndex = 0;
 
 let initialLoad = true;
 
+function getShortCourseId(fullCourseId) {
+    // Kiểm tra xem fullCourseId có phải là UUID không
+    if (fullCourseId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+        // Nếu là UUID, lấy 8 ký tự đầu tiên
+        return fullCourseId.split('-')[0];
+    }
+    // Nếu không phải UUID, trả về nguyên giá trị
+    return fullCourseId;
+}
+
 function generatePlayURL(courseId, lessonId) {
-    // Luôn sử dụng UUID đầy đủ cho courseId
-    return `${_ctx}play/${courseId}?lessonId=${lessonId}`;
+    const shortCourseId = getShortCourseId(courseId);
+    return `${_ctx}play/${shortCourseId}?lessonId=${lessonId}`;
 }
 
 // Thêm sự kiện click cho nút toggle-btn
@@ -193,8 +203,18 @@ function submitReply(commentId, content) {
 
 function getCurrentCourseId() {
     const pathParts = window.location.pathname.split('/');
-    // Tìm phần tử chứa UUID trong đường dẫn
-    return pathParts.find(part => part.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) || pathParts[3];
+    // Tìm phần tử có dạng UUID hoặc số trong đường dẫn
+    const courseIdPart = pathParts.find(part => 
+        part.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i) || 
+        part.match(/^\d+$/)
+    );
+    
+    if (courseIdPart) {
+        return getShortCourseId(courseIdPart);
+    }
+    
+    // Fallback: trả về phần tử thứ 3 trong đường dẫn (có thể cần điều chỉnh tùy vào cấu trúc URL của bạn)
+    return getShortCourseId(pathParts[3]);
 }
 
 function getCurrentLessonId() {
@@ -273,10 +293,13 @@ submitCommentBtn.addEventListener('click', function () {
 window.addEventListener('load', function() {
     const lessonId = getLessonIdFromUrl();
     const courseId = getCurrentCourseId();
-    
+
+    console.log('Initial courseId:', courseId); // Để debug
+
     if (!lessonId && lessons.length > 0) {
         const firstLessonId = lessons[0].getAttribute('data-lesson-id');
         const newUrl = generatePlayURL(courseId, firstLessonId);
+        console.log('New URL:', newUrl); // Để debug
         history.replaceState(null, '', newUrl);
     }
 
@@ -286,8 +309,10 @@ window.addEventListener('load', function() {
             currentLessonIndex = lessonIndex;
         }
     }
-    
+
     if (lessons.length > 0) {
         loadLesson(currentLessonIndex, false);
     }
+
+    console.log('Final URL:', window.location.href); // Để debug
 });
