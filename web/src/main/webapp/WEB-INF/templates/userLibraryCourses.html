@@ -11,7 +11,13 @@
     <!-- Navigation Bar fragment -->
     <th:block th:include="fragments/nav"></th:block>
     <!-- Navigation Bar fragment -->
-
+	
+    <div>
+		<p>UserEId from session: <span th:text="${session.userEid}"></span></p>
+		<p>UserEId from controller: <span th:text="${userEId}"></span></p>
+		<p>Username from session: <span th:text="${session.userDisplayName}"></span></p>
+		<p>Username from controller: <span th:text="${userName}"></span></p>
+    </div>
     <div class="container mt-4">
         <ul class="nav nav-tabs" id="courseTabs" role="tablist">
             <li class="nav-item" role="presentation">

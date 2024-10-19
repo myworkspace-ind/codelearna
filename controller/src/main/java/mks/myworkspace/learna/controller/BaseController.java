@@ -92,18 +92,18 @@ public class BaseController {
             httpSession.setAttribute("userLastName", sakaiProxy.getCurrentUserLastName());
         } else {
             // Demo for Web App
-            httpSession.setAttribute("currentSiteId", "Default");
-            httpSession.setAttribute("userDisplayName", "Le Ngoc Thach");
-            httpSession.setAttribute("userEid", "1");
-            httpSession.setAttribute("userEmail", "LNThach@gmail.com");
-            httpSession.setAttribute("userFirstName", "Thach");
-            httpSession.setAttribute("userLastName", "Le Ngoc Thach");            
+            httpSession.setAttribute("currentSiteId", "Defaultsession");
+            httpSession.setAttribute("userDisplayName", "Huynh Nam Duysession");
+            httpSession.setAttribute("userEid", "DuyHNsession");
+            httpSession.setAttribute("userEmail", "21110152@student.hcmute.edu.vnsession");
+            httpSession.setAttribute("userFirstName", "Huynh Namsession");
+            httpSession.setAttribute("userLastName", "Duysession");            
         }
     }
 
 
     public String getCurrentUserEid() {
-        return (sakaiProxy != null) ? sakaiProxy.getCurrentUserEid(): "ThachLN";
+        return (sakaiProxy != null) ? sakaiProxy.getCurrentUserEid(): "DuyHN";
     }
 
 
@@ -112,11 +112,11 @@ public class BaseController {
     }
     
     public String getCurrentUserEmail() {
-        return (sakaiProxy != null) ? sakaiProxy.getCurrentUserEmail(): "lnthach@gmail.com";
+        return (sakaiProxy != null) ? sakaiProxy.getCurrentUserEmail(): "21110152@student.hcmute.edu.vn";
     }
     
     public String getCurrentUserDisplayName() {
-        return (sakaiProxy != null) ? sakaiProxy.getCurrentUserDisplayName(): "Le Ngoc Thach";
+        return (sakaiProxy != null) ? sakaiProxy.getCurrentUserDisplayName(): "Huynh Nam Duy";
     }
 
     /**
