@@ -121,4 +121,17 @@
 <!--     </bean> -->
 	<jpa:repositories base-package="mks.myworkspace.learna.repository" />
 	<import resource="jpa.xml"/>
+	    
+    
+    <!-- Data source 0: Use JdbcTemplate to update data -->
+    <bean id="dataSource0" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${driverClassName@javax.sql.BaseDataSource}" />
+        <property name="url" value="${url@javax.sql.BaseDataSource}" />
+        <property name="username" value="${username@javax.sql.BaseDataSource}" />
+        <property name="password" value="${password@javax.sql.BaseDataSource}" />
+    </bean>
+    <bean id="jdbcTemplate0" primary="true" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource0"/>
+    </bean>
+  
 </beans>

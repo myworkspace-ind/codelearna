@@ -5,8 +5,8 @@
     <title>Add Lessons with Handsontable</title>
     <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.css">
-<script src="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.js"></script>
+   
 </head>
 <body>
     <div class="container mt-5">
@@ -16,6 +16,10 @@
             <strong>Error!</strong> <span id="error-text"></span>
         </div>
 
+        <!-- Input file to choose Excel file -->
+        <input type="file" id="fileInput" class="form-control mb-3" accept=".xls,.xlsx" onchange="handleFile(event)">
+
+        <!-- Handsontable container -->
         <div id="handsontable-container-lessons" class="mb-3"></div>
 
         <button type="button" class="btn btn-primary" th:attr="onclick='submitLessonData(event, ' + ${course.id} + '); return false;'">

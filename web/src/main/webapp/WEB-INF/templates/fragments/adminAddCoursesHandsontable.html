@@ -5,22 +5,33 @@
 <meta charset="UTF-8">
 <title>Insert courses with handsontable</title>
 <!-- <link rel="stylesheet" href="/library/webjars/handsontable/handsontable.full.min.css"> -->
-<link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.css">
-<script src="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.js"></script>
+<link rel="stylesheet"
+	href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.css">
+<script
+	src="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
 <body>
 	<div class="container mt-5">
 		<h1 class="mb-4">Add Courses with Handsontable</h1>
 
-		<div id="error-message" class="alert alert-danger" style="display: none;">
+		<div id="error-message" class="alert alert-danger"
+			style="display: none;">
 			<strong>Error!</strong> <span id="error-text"></span>
 		</div>
 
+		<input type="file" id="fileInput" class="form-control mb-3"
+			accept=".xls,.xlsx" onchange="handleFileCourse(event)">
 		<div id="handsontable-container" class="mb-3"></div>
 
-		<button type="button" class="btn btn-primary" onclick="submitCourseData(event)">Submit Courses</button>
-		<button type="button" class="btn btn-secondary" onclick="loadCoursesSection(event)">Cancel</button>
+		<button type="button" class="btn btn-primary"
+			onclick="submitCourseData(event)">Submit Courses</button>
+		<button type="button" class="btn btn-secondary"
+			onclick="loadCoursesSection(event)">Cancel</button>
+
 	</div>
 
 	<th:block th:include="fragments/javascript"></th:block>

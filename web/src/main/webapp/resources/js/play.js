@@ -1,3 +1,5 @@
+const IS_SAKAI_ENVIRONMENT = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
 const toggleBtn = document.getElementById('toggle-btn');
 const videoList = document.getElementById('video-list');
 const container = document.querySelector('.container');
@@ -13,6 +15,14 @@ const lessons = Array.from(document.querySelectorAll('.video-list-content .vid')
 let currentLessonIndex = 0;
 
 let initialLoad = true;
+
+function generatePlayURL(courseId, lessonId) {
+    if (IS_SAKAI_ENVIRONMENT) {
+        return `${_ctx}play/${courseId}?lessonId=${lessonId}`;
+    } else {
+        return `${_ctx}play/${courseId.split('-')[0]}?lessonId=${lessonId}`;
+    }
+}
 
 
 // Thêm sự kiện click cho nút toggle-btn
@@ -66,23 +76,19 @@ function loadLesson(index, updateUrl = true) {
         const courseId = lesson.getAttribute('data-course-id');
         const lessonId = lesson.getAttribute('data-lesson-id');
 
-        // Cập nhật video và tiêu đề
         videoPlayer.src = videoUrl;
         videoTitle.textContent = title;
 
-        // Cập nhật class 'active' cho bài học
         lessons.forEach(l => l.classList.remove('active'));
         lesson.classList.add('active');
 
-        // Cuộn bài học đang active vào tầm nhìn
         lesson.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-        // Cập nhật URL nếu cần
         if (updateUrl) {
-            history.replaceState(null, '', `${_ctx}play/${courseId}?lessonId=${lessonId}`);
+            const newUrl = generatePlayURL(courseId, lessonId);
+            history.replaceState(null, '', newUrl);
         }
         
-        // Tải bình luận cho bài học mới
         loadComments(courseId, lessonId);
     }
 }
@@ -122,41 +128,30 @@ function loadComments(courseId, lessonId, page = 0) {
             return response.text();
         })
         .then(html => {
-            // Tạo một DOM tạm để phân tích nội dung trả về từ server
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
 
-            // Lấy danh sách bình luận và pagination từ nội dung trả về
             const newCommentList = tempDiv.querySelector('#comment-list');
             const newPagination = tempDiv.querySelector('.pagination');
 
-            // Lấy phần tử hiện tại từ trang
             const commentListContainer = document.querySelector('#comment-list');
             const paginationContainer = document.querySelector('.pagination');
 
-            // Kiểm tra và thay thế nội dung danh sách bình luận
             if (commentListContainer && newCommentList) {
                 commentListContainer.innerHTML = newCommentList.innerHTML;
             }
 
-            // Kiểm tra và thay thế nội dung pagination
             if (paginationContainer && newPagination) {
                 paginationContainer.innerHTML = newPagination.innerHTML;
-
-                // Gắn lại sự kiện sau khi thay thế nội dung
                 attachPaginationListeners();
-            } else {
-                // Nếu không tìm thấy pagination trên trang, thử thêm lại từ DOM tạm
-                if (newPagination) {
-                    // Thêm pagination nếu chưa tồn tại
-                    const commentSection = document.querySelector('.comment-section');
-                    if (commentSection) {
-                        commentSection.appendChild(newPagination);
-                        attachPaginationListeners();
-                    }
-                } else {
-                    console.warn('Pagination element not found in the loaded content.');
+            } else if (newPagination) {
+                const commentSection = document.querySelector('.comment-section');
+                if (commentSection) {
+                    commentSection.appendChild(newPagination);
+                    attachPaginationListeners();
                 }
+            } else {
+                console.warn('Pagination element not found in the loaded content.');
             }
 
             attachReplyListeners();
@@ -178,7 +173,6 @@ function attachPaginationListeners() {
         });
     });
 }
-
 function attachReplyListeners() {
     const replyButtons = document.querySelectorAll('.reply-btn');
     replyButtons.forEach(button => {
@@ -233,7 +227,11 @@ function submitReply(commentId, content) {
 }
 
 function getCurrentCourseId() {
-    return window.location.pathname.split('/')[3]; 
+    if (IS_SAKAI_ENVIRONMENT) {
+        return window.location.pathname.split('/')[3];
+    } else {
+        return window.location.pathname.split('/')[3].split('-')[0];
+    }
 }
 
 function getCurrentLessonId() {
@@ -288,9 +286,7 @@ window.addEventListener('popstate', function(event) {
     }
 });
 
-// Hàm gửi bình luận
 submitCommentBtn.addEventListener('click', function () {
-	console.log('Submit button clicked');
     const commentContent = commentTextArea.value.trim();
     const courseId = lessons[currentLessonIndex].getAttribute('data-course-id');
     const lessonId = lessons[currentLessonIndex].getAttribute('data-lesson-id');
@@ -309,7 +305,7 @@ submitCommentBtn.addEventListener('click', function () {
         .then(message => {
             console.log(message);
             commentTextArea.value = '';
-            loadComments(courseId, lessonId, 0); // Luôn tải trang đầu tiên sau khi gửi bình luận mới
+            loadComments(courseId, lessonId, 0);
         })
         .catch(error => {
             console.error('Lỗi:', error);
@@ -318,16 +314,23 @@ submitCommentBtn.addEventListener('click', function () {
         alert('Vui lòng nhập bình luận trước khi gửi.');
     }
 });
-
-// Tải bài học ban đầu
 window.addEventListener('load', function() {
     const lessonId = getLessonIdFromUrl();
+    const courseId = getCurrentCourseId();
+    
+    if (!lessonId && lessons.length > 0) {
+        const firstLessonId = lessons[0].getAttribute('data-lesson-id');
+        const newUrl = generatePlayURL(courseId, firstLessonId);
+        history.replaceState(null, '', newUrl);
+    }
+
     if (lessonId) {
         const lessonIndex = findLessonIndex(lessonId);
         if (lessonIndex !== -1) {
             currentLessonIndex = lessonIndex;
         }
     }
+    
     if (lessons.length > 0) {
         loadLesson(currentLessonIndex, false);
     }
