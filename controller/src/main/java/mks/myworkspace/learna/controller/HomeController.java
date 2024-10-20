@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 /*import org.sakaiproject.user.api.User;
 import org.sakaiproject.user.api.UserDirectoryService;*/
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Controller
 @RequestMapping(value = {"/", "/home"})
-public class HomeController {
+public class HomeController extends BaseController {
 
     @Autowired
     private CourseService courseService;
@@ -50,11 +53,11 @@ public class HomeController {
     }
 
     @GetMapping
-    public ModelAndView getAllCourses() {
+    public ModelAndView getAllCourses(HttpServletRequest request, HttpSession httpSession) {
 		ModelAndView mav = new ModelAndView("homePage");
-//        User currentUser = userDirectoryService.getCurrentUser();
-//		log.info("Thông tin người dùng: {}", currentUser);
-//		
+
+		initSession(request, httpSession);
+		
         List<Course> courses = courseService.getAllCourses();
         mav.addObject("courses", courses);
 
@@ -70,7 +73,6 @@ public class HomeController {
             .collect(Collectors.toList());
         
         mav.addObject("campaigns", campaigns);
-        
 
         return mav;
     }

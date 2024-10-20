@@ -16,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 @Slf4j
 @Controller
 @RequestMapping("/library")
@@ -25,12 +28,18 @@ public class UserLibraryCourseController extends BaseController{
     private UserLibraryCourseService userLibraryCourseService;
 
     @GetMapping
-    public ModelAndView getUserLibraryCoursesForDefaultUser() {
+    public ModelAndView getUserLibraryCoursesForDefaultUser(HttpServletRequest request, HttpSession httpSession) {
         ModelAndView mav = new ModelAndView("userLibraryCourses");
+        
+		initSession(request, httpSession);
 
-        String userId = getCurrentUserEid();
+        String userEid = getCurrentUserEid();
+        String userName = getCurrentUserDisplayName();
+        mav.addObject("userEId",userEid);
+        mav.addObject("userName",userName);
+
         try {
-        	List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userId);
+        	List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid);
             mav.addObject("userLibraryCourses", userLibraryCourses);
 
             List<UserLibraryCourse> purchasedCourses = userLibraryCourses.stream()
@@ -53,7 +62,6 @@ public class UserLibraryCourseController extends BaseController{
                     .collect(Collectors.toList());
             mav.addObject("completedCourses", completedCourses);
 
-            log.debug("Danh sách khóa học đã lưu: {}", userLibraryCourses);
             log.debug("done");
         } catch (Exception e) {
         	log.debug("Lỗi khi tải thư viện."); ;
