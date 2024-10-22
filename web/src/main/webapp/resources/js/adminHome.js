@@ -201,13 +201,21 @@ function deleteLesson(lessonId, courseId) {
 
 // Add course 
 function fetchAddCoursePage(event) {
-	event.preventDefault();
+	if (event) {
+		event.preventDefault();
+	}
+	const dynamicContent = document.getElementById('dynamic-content');
+	if (!dynamicContent) {
+		console.error("Phần tử 'dynamic-content' không tồn tại trên trang.");
+		return;
+	}
+
 	fetch(`${_ctx}admin/addCourse`)
 		.then(response => response.text())
 		.then(html => {
-			document.getElementById('dynamic-content').innerHTML = html;
+			dynamicContent.innerHTML = html;
 		})
-		.catch(error => console.error('Error loading add course page:', error));
+		.catch(error => console.error('Error loading add course page: ', error));
 }
 
 function filterSubcategories(categoryId) {
