@@ -1,130 +1,102 @@
 <div th:fragment="editCourseModal">
-	<div class="modal fade" id="editCourseModal" tabindex="-1"
-		aria-labelledby="editCourseModalLabel" aria-hidden="true">
+	<div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="editCourseModalLabel">Edit Course</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form id="editCourseForm"
-						th:action="@{/admin/courses/edit/{id}(id=${course.id})}"
-						method="post" enctype="multipart/form-data" th:object="${course}">
+					<form id="editCourseForm" th:action="@{/admin/courses/edit/{id}(id=${course.id})}" method="post" enctype="multipart/form-data"
+						th:object="${course}">
 
 						<!-- Course Name -->
 						<div class="mb-3">
-							<label for="name" class="form-label">Course Name</label> <input
-								type="text" class="form-control" id="name" th:field="*{name}"
-								required>
+							<label for="name" class="form-label">Course Name</label> <input type="text" class="form-control" id="name" th:field="*{name}" required>
 						</div>
 
 						<!-- Original Price -->
 						<div class="row">
 							<div class="col-md-6 mb-3">
-								<label for="originalPrice" class="form-label">Original
-									Price</label> <input type="number" class="form-control"
-									id="originalPrice" th:field="*{originalPrice}" required
-									step="0.01">
+								<label for="originalPrice" class="form-label">Original Price</label> <input type="number" class="form-control" id="originalPrice"
+									th:field="*{originalPrice}" required step="1">
 							</div>
 
 							<!-- Discounted Price -->
 							<div class="col-md-6 mb-3">
-								<label for="discountedPrice" class="form-label">Discounted
-									Price</label> <input type="number" class="form-control"
-									id="discountedPrice" th:field="*{discountedPrice}" required
-									step="0.01">
+								<label for="discountedPrice" class="form-label">Discounted Price</label> <input type="number" class="form-control" id="discountedPrice"
+									th:field="*{discountedPrice}" required step="1">
 							</div>
 						</div>
 
 						<!-- Upload Image -->
-						<div class="mb-3">
+						<!-- <div class="mb-3">
 							<label for="image" class="form-label">Image</label> <input
 								type="file" class="form-control" id="image" name="image"
 								accept="image/*">
+						</div> -->
+						<div class="mb-3">
+							<label for="imageUrl" class="form-label">Image URL</label> <input type="url" class="form-control" id="imageUrl" name="imageUrl"
+								placeholder="https://example.com/image.jpg" th:field="*{imageUrl}">
 						</div>
 
 						<!-- Description -->
 						<div class="mb-3">
 							<label for="description" class="form-label">Description</label>
-							<textarea class="form-control" id="description" rows="3"
-								th:field="*{description}" required></textarea>
+							<textarea class="form-control" id="description" rows="3" th:field="*{description}" ></textarea>
 						</div>
 
 						<!-- Difficulty Level -->
 						<div class="row">
 							<div class="col-md-6 mb-3">
-								<label for="difficultyLevel" class="form-label">Difficulty
-									Level</label> <select class="form-select" id="difficultyLevel"
+								<label for="difficultyLevel" class="form-label">Difficulty Level</label> <select class="form-select" id="difficultyLevel"
 									th:field="*{difficultyLevel}" required>
-									<option value="">Choose...</option>
-									<option value="BEGINNER"
-										th:selected="${course.difficultyLevel == 'BEGINNER'}">BEGINNER</option>
-									<option value="INTERMEDIATE"
-										th:selected="${course.difficultyLevel == 'INTERMEDIATE'}">INTERMEDIATE</option>
-									<option value="ADVANCED"
-										th:selected="${course.difficultyLevel == 'ADVANCED'}">ADVANCED</option>
+									<option value="BEGINNER" th:selected="${course.difficultyLevel == 'BEGINNER'}">BEGINNER</option>
+									<option value="INTERMEDIATE" th:selected="${course.difficultyLevel == 'INTERMEDIATE'}">INTERMEDIATE</option>
+									<option value="ADVANCED" th:selected="${course.difficultyLevel == 'ADVANCED'}">ADVANCED</option>
 								</select>
 							</div>
 
 							<!-- Lesson Type -->
 							<div class="col-md-6 mb-3">
-								<label for="lessonType" class="form-label">Lesson Type</label> <select
-									class="form-select" id="lessonType" th:field="*{lessonType}"
-									required>
-									<option value="">Choose...</option>
-									<option value="VIDEO"
-										th:selected="${course.lessonType == 'VIDEO'}">VIDEO</option>
-									<option value="DOCUMENT"
-										th:selected="${course.lessonType == 'DOCUMENT'}">DOCUMENT</option>
+								<label for="lessonType" class="form-label">Lesson Type</label> <select class="form-select" id="lessonType" th:field="*{lessonType}" required>
+									<option value="VIDEO" th:selected="${course.lessonType == 'VIDEO'}">VIDEO</option>
+									<option value="INTERACTIVE" th:selected="${course.lessonType == 'INTERACTIVE'}">INTERACTIVE</option>
 								</select>
 							</div>
 						</div>
 
 						<!-- Category Dropdown -->
 						<div class="mb-3">
-							<label for="category" class="form-label">Category</label> <select
-								class="form-select" id="category"
-								th:field="*{subcategory.category.id}" required
-								onchange="filterSubcategories(this.value)">
+							<label for="category" class="form-label">Category</label> <select class="form-select" id="category" th:field="*{subcategory.category.id}"
+								required onchange="filterSubcategories(this.value)">
 								<option value="">Choose a category...</option>
-								<option th:each="category : ${categories}"
-									th:value="${category.id}" th:text="${category.name}"
-									th:selected="${category.id == course.subcategory.category.id}">
-								</option>
+								<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
+									th:selected="${category.id == course.subcategory.category.id}"></option>
 							</select>
 						</div>
 
 						<!-- Subcategory Dropdown -->
 						<div class="mb-3">
-							<label for="subcategory" class="form-label">Subcategory</label> <select
-								class="form-select" id="subcategory"
-								th:field="*{subcategory.id}" required>
+							<label for="subcategory" class="form-label">Subcategory</label> <select class="form-select" id="subcategory" th:field="*{subcategory.id}"
+								required>
 								<option value="">Choose a subcategory...</option>
-								<option th:each="subcategory : ${subcategories}"
-									th:value="${subcategory.id}"
-									th:data-category-id="${subcategory.category.id}"
-									th:text="${subcategory.name}"
-									th:selected="${subcategory.id == course.subcategory.id}">
-								</option>
+								<option th:each="subcategory : ${subcategories}" th:value="${subcategory.id}" th:data-category-id="${subcategory.category.id}"
+									th:text="${subcategory.name}" th:selected="${subcategory.id == course.subcategory.id}"></option>
 							</select>
 						</div>
 
 						<!-- Is Free Course Checkbox -->
 						<div class="mb-3 form-check">
-							<input type="checkbox" class="form-check-input" id="isFree"
-								th:field="*{isFree}"> <label class="form-check-label"
-								for="isFree">Is Free Course</label>
+							<input type="checkbox" class="form-check-input" id="isFree" th:field="*{isFree}"> <label class="form-check-label" for="isFree">Is
+								Free Course</label>
 						</div>
 
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
-						data-bs-dismiss="modal">Close</button>
-					<button type="submit" form="editCourseForm" class="btn btn-primary">Save
-						changes</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" form="editCourseForm" class="btn btn-primary">Save changes</button>
 				</div>
 			</div>
 		</div>
