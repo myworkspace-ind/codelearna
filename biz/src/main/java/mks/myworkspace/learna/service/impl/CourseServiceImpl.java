@@ -6,16 +6,23 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.repository.CourseJdbcRepository;
 import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ReviewService;
 
+@Slf4j
 @Service
 public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private CourseRepository repo;
+	
+	@Autowired
+	private CourseJdbcRepository courseJdbcRepository;
 
 	@Autowired
 	private ReviewService reviewService;
@@ -25,9 +32,15 @@ public class CourseServiceImpl implements CourseService {
 		return repo;
 	}
 
+//	@Override
+//	public Course saveCourse(Course course) {
+//		return repo.save(course);
+//	}
+	
 	@Override
 	public Course saveCourse(Course course) {
-		return repo.save(course);
+		log.debug("lay gia tri is free: ",(Boolean)course.getIsFree());
+		return courseJdbcRepository.save(course);
 	}
 
 	@Override

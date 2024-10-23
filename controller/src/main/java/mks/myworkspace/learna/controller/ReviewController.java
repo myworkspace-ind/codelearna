@@ -3,6 +3,8 @@ package mks.myworkspace.learna.controller;
 import java.security.Principal;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,7 +38,8 @@ public class ReviewController extends BaseController{
 
 	// Open a course details
 	@GetMapping("/course/{id}")
-	public ModelAndView getCourseDetail(@PathVariable Long id) {
+	public ModelAndView getCourseDetail(@PathVariable Long id, HttpServletRequest request, HttpSession httpSession) {
+		initSession(request, httpSession);
 		ModelAndView mav = new ModelAndView("courseDetail");
 		Course course = courseService.getCourseById(id);
 		List<Review> reviews = reviewService.getReviewsByCourseId(id);
@@ -48,7 +51,6 @@ public class ReviewController extends BaseController{
 	// Add review
 	@PostMapping("/course/{id}/review")
 	public String addReview(@PathVariable Long id, @ModelAttribute Review review, Principal principal) {
-//        User user = userService.findByUsername(principal.getName()); // Lấy user đang đăng nhập
 		String email = "tai@gmail.com";
 		User user = userService.findByEmail(email);
 
