@@ -23,12 +23,12 @@
 					aria-labelledby="categoriesDropdown">
 					<li class="dropdown-submenu" th:each="category : ${categories}">
 						<a class="dropdown-item dropdown-toggle" data-bs-toggle="dropdown"
-						href="#" th:text="${category.name}"></a>
+						href="#" th:text="${category.parameter.paramValue}"></a>
 						<ul class="dropdown-menu">
 							<li th:each="subcategory : ${category.subcategories}"><a
 								class="dropdown-item"
 								th:href="@{/subcategory/{id}(id=${subcategory.id})}"
-								th:text="${subcategory.name}"></a></li>
+								th:text="${subcategory.parameter.paramValue}"></a></li>
 						</ul>
 					</li>
 				</ul>

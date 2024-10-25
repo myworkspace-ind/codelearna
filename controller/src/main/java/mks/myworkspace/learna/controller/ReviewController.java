@@ -40,37 +40,22 @@ public class ReviewController extends BaseController{
 	@GetMapping("/course/{id}")
 	public ModelAndView getCourseDetail(@PathVariable Long id, HttpServletRequest request, HttpSession httpSession) {
 		initSession(request, httpSession);
+		String userId = getCurrentUserEid();
 		ModelAndView mav = new ModelAndView("courseDetail");
 		Course course = courseService.getCourseById(id);
 		List<Review> reviews = reviewService.getReviewsByCourseId(id);
 		mav.addObject("course", course);
 		mav.addObject("reviews", reviews);
+		mav.addObject("userId", userId); 
 		return mav;
 	}
 
 	// Add review
 	@PostMapping("/course/{id}/review")
-	public String addReview(@PathVariable Long id, @ModelAttribute Review review, Principal principal) {
-		String email = "tai@gmail.com";
-		User user = userService.findByEmail(email);
-
-		if (user == null) {
-			user = new User();
-			user.setName("HuuTai");
-			user.setUsername("Tai");
-			user.setPassword("123");
-			user.setEmail(email);
-			user.setPhone("1234567890");
-			user.setRole("student");
-
-			user = userService.save(user);
-		}
-		
+	public String addReview(@PathVariable Long id, @ModelAttribute Review review, Principal principal) {	
 		String userId = getCurrentUserEid();
-//		User newUser = userService.findById(userId);
 		
 		review.setCourse(courseService.getCourseById(id));
-		review.setUser(user);
 		review.setUserEid(userId);
 		reviewService.addReview(review, id);
 		return "redirect:/course/" + id;

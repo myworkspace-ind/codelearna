@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.repository.CourseJdbcRepository;
 import mks.myworkspace.learna.repository.CourseRepository;
+import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ReviewService;
 
@@ -23,6 +25,9 @@ public class CourseServiceImpl implements CourseService {
 	
 	@Autowired
 	private CourseJdbcRepository courseJdbcRepository;
+	
+	@Autowired
+	private ParameterRepository parameterRepository;
 
 	@Autowired
 	private ReviewService reviewService;
@@ -39,7 +44,6 @@ public class CourseServiceImpl implements CourseService {
 	
 	@Override
 	public Course saveCourse(Course course) {
-		log.debug("lay gia tri is free: ",(Boolean)course.getIsFree());
 		return courseJdbcRepository.save(course);
 	}
 
@@ -76,64 +80,54 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
-	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField,
-			String level, String averageRating) {
-		Sort sort = Sort.by(sortField);
-		sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
-		Pageable pageable = PageRequest.of(0, 20, sort);
+	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, String averageRating) {
+	    Sort sort = Sort.by(sortField);
+	    sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
+	    Pageable pageable = PageRequest.of(0, 20, sort);
 
-		Course.DifficultyLevel difficultyLevel = null;
-		if (level != null) {
-			try {
-				difficultyLevel = Course.DifficultyLevel.valueOf(level.toUpperCase());
-			} catch (IllegalArgumentException e) {
+	    Parameter difficultyLevelParameter = null;
+	    if (level != null) {
+	        difficultyLevelParameter = parameterRepository.findByParamValue(level.toUpperCase()); 
+	    }
 
-			}
-		}
+	    Double ratingValue = null;
+	    if (averageRating != null) {
+	        try {
+	            ratingValue = Double.valueOf(averageRating);
+	        } catch (NumberFormatException e) {
+	            log.debug("Erorr occurs while formating ratingValue into Double type" + e.getMessage());
+	        }
+	    }
 
-		Double ratingValue = null;
-		if (averageRating != null) {
-			try {
-				ratingValue = Double.valueOf(averageRating);
-			} catch (NumberFormatException e) {
-
-			}
-		}
-
-		return repo.findCoursesByFilters(keyword, difficultyLevel, ratingValue, pageable);
+	    return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue, pageable);
 	}
 
 	@Override
-	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField,
-			String level, Long subcategoryId, String rating) {
-		Sort sort = Sort.by(sortField);
-		sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
-		Pageable pageable = PageRequest.of(0, 20, sort);
+	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId, String rating) {
+	    Sort sort = Sort.by(sortField);
+	    sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
+	    Pageable pageable = PageRequest.of(0, 20, sort);
 
-		Course.DifficultyLevel difficultyLevel = null;
-		if (level != null) {
-			try {
-				difficultyLevel = Course.DifficultyLevel.valueOf(level.toUpperCase());
-			} catch (IllegalArgumentException e) {
+	    Parameter difficultyLevelParameter = null;
+	    if (level != null) {
+	        difficultyLevelParameter = parameterRepository.findByParamValue(level.toUpperCase()); 
+	    }
 
-			}
-		}
+	    Double ratingValue = null;
+	    if (rating != null) {
+	        try {
+	            ratingValue = Double.valueOf(rating);
+	        } catch (NumberFormatException e) {
+	        	log.debug("Erorr occurs while formating ratingValue into Double type" + e.getMessage());
+	        }
+	    }
 
-		Double ratingValue = null;
-		if (rating != null) {
-			try {
-				ratingValue = Double.valueOf(rating);
-			} catch (NumberFormatException e) {
-
-			}
-		}
-
-		if (subcategoryId != null) {
-			return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevel, ratingValue,
-					pageable);
-		} else {
-			return repo.findCoursesByFilters(keyword, difficultyLevel, ratingValue, pageable);
-		}
+	    if (subcategoryId != null) {
+	        return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevelParameter, ratingValue, pageable);
+	    } else {
+	        return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue, pageable);
+	    }
 	}
+
 
 }

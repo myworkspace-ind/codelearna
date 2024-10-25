@@ -36,14 +36,8 @@ public class Review {
 
 	@Column(name = "modified_at")
 	private LocalDateTime modifiedAt;
-
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "course_id", nullable = false)
 	private Course course;
-		
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
 }

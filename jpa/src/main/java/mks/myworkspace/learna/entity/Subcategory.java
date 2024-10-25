@@ -14,8 +14,13 @@ public class Subcategory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "name", nullable = false)
-	private String name;
+//	@Column(name = "name", nullable = false)
+//	private String name;
+	
+	 // Thay thế name bằng tham chiếu tới Parameter
+    @ManyToOne
+    @JoinColumn(name = "parameter_id", nullable = false)
+    private Parameter parameter;
 
 	@ManyToOne
     @JoinColumn(name = "category_id")
