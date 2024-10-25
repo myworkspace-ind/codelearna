@@ -36,7 +36,7 @@
 							<td th:text="${course.description}"></td>
 							<td th:text="${course.originalPrice}"></td>
 							<td th:text="${course.discountedPrice}"></td>
-							<td th:text="${course.difficultyLevel}"></td>
+							<td th:text="${course.difficultyLevel.paramValue}"></td>
 							<td th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
 							<td>
 								<div class="btn-group" role="group">

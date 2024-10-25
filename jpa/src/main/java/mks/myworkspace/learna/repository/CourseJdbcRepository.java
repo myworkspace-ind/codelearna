@@ -12,47 +12,62 @@ import mks.myworkspace.learna.entity.Course;
 @Repository
 public class CourseJdbcRepository {
 
-	 @Autowired
-	    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-	    public Course save(Course course) {
-	        if (course.getId() == null) {
-	            String sql = "INSERT INTO learna_course (name, original_price, discounted_price, image_url, description, "
-	                    + "difficulty_level, lesson_type, subcategory_id, is_free, created_dte, modified_dte) "
-	                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+    @Autowired
+    private ParameterRepository parameterRepository;
 
-	            KeyHolder keyHolder = new GeneratedKeyHolder();
+    public Course save(Course course) {
+        if (course.getId() == null) {
+        	String sql = "INSERT INTO learna_course (name, original_price, discounted_price, image_url, description, "
+                    + "difficulty_level_id, lesson_type_id, subcategory_id, is_free, created_dte, modified_dte) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
-	          
-	            jdbcTemplate.update(connection -> {
-	                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-	                ps.setString(1, course.getName());
-	                ps.setDouble(2, course.getOriginalPrice());
-	                ps.setDouble(3, course.getDiscountedPrice());
-	                ps.setString(4, course.getImageUrl());
-	                ps.setString(5, course.getDescription());
-	                ps.setString(6, course.getDifficultyLevel().name());
-	                ps.setString(7, course.getLessonType().name());
-	                ps.setLong(8, course.getSubcategory() != null ? course.getSubcategory().getId() : null); 
-	                ps.setBoolean(9, course.getIsFree() != null ? course.getIsFree() : false);
-	                return ps;
-	            }, keyHolder);
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            
+            jdbcTemplate.update(connection -> {
+                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                int paramIndex = 1;
+                ps.setString(paramIndex++, course.getName());
+                ps.setDouble(paramIndex++, course.getOriginalPrice());
+                ps.setDouble(paramIndex++, course.getDiscountedPrice());
+                ps.setString(paramIndex++, course.getImageUrl());
+                ps.setString(paramIndex++, course.getDescription());
+                ps.setLong(paramIndex++, course.getDifficultyLevel().getId());
+                ps.setLong(paramIndex++, course.getLessonType().getId());
+                ps.setLong(paramIndex++, course.getSubcategory().getId());
+                ps.setBoolean(paramIndex, course.getIsFree() != null ? course.getIsFree() : false);
+                return ps;
+            }, keyHolder);
 
-	            Long generatedId = keyHolder.getKey().longValue();
-	            course.setId(generatedId);
+            Long generatedId = keyHolder.getKey().longValue();
+            course.setId(generatedId);
+            
 
-	        } else {
-	        
-	            String sql = "UPDATE learna_course SET name = ?, original_price = ?, discounted_price = ?, image_url = ?, "
-	                    + "description = ?, difficulty_level = ?, lesson_type = ?, subcategory_id = ?, is_free = ?, "
-	                    +  "modified_dte = NOW() WHERE id = ?";
+        } else {
+        	 String sql = "UPDATE learna_course SET name = ?, original_price = ?, discounted_price = ?, "
+                     + "image_url = ?, description = ?, difficulty_level_id = ?, lesson_type_id = ?, "
+                     + "subcategory_id = ?, is_free = ?, modified_dte = NOW() WHERE id = ?";
 
-	            jdbcTemplate.update(sql, course.getName(), course.getOriginalPrice(), course.getDiscountedPrice(),
-	                    course.getImageUrl(), course.getDescription(), course.getDifficultyLevel().name(),
-	                    course.getLessonType().name(), course.getSubcategory() != null ? course.getSubcategory().getId() : null,
-	                    course.getIsFree(), course.getId());
-	        }
+             int rowsAffected = jdbcTemplate.update(sql, 
+                 course.getName(),
+                 course.getOriginalPrice(),
+                 course.getDiscountedPrice(),
+                 course.getImageUrl(),
+                 course.getDescription(),
+                 course.getDifficultyLevel().getId(),
+                 course.getLessonType().getId(),
+                 course.getSubcategory().getId(),
+                 course.getIsFree() != null ? course.getIsFree() : false,
+                 course.getId()
+             );
 
-	        return course;
+             if (rowsAffected == 0) {
+                 throw new RuntimeException("Course not found with id: " + course.getId());
+             }
+        }
+
+        return course;
     }
 }

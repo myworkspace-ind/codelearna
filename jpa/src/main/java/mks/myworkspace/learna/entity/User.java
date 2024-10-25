@@ -60,7 +60,4 @@ public class User {
     @Column(name = "modified_dte")
     private Date modifiedDate;
     
-    //ref reviews
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> reviews = new ArrayList<>();
 }

@@ -60,6 +60,7 @@ public class HomeController extends BaseController {
 		
         List<Course> courses = courseService.getAllCourses();
         mav.addObject("courses", courses);
+        
 
         List<Course> featuredCourses = courseService.getRandomCourses();
         mav.addObject("featuredCourses", featuredCourses);

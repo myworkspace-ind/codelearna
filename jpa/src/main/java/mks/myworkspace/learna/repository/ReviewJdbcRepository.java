@@ -19,10 +19,8 @@ public class ReviewJdbcRepository {
     private JdbcTemplate jdbcTemplate;
     
     public Review findReviewById(Long reviewId) {
-        String sql = "SELECT r.id AS review_id, r.rating_star, r.content, r.course_id, r.user_id, " +
-                     "u.id AS user_id, u.name, u.avatar_url, u.email " +
+        String sql = "SELECT r.id AS review_id, r.rating_star, r.content, r.course_id, r.user_eid " +
                      "FROM learna_review r " +
-                     "JOIN learna_user u ON r.user_id = u.id " +
                      "WHERE r.id = ?";
 
         return jdbcTemplate.queryForObject(sql, new ReviewRowMapper(), reviewId);
@@ -30,10 +28,8 @@ public class ReviewJdbcRepository {
 
 
     public List<Review> findByCourseId(Long courseId) {
-        String sql = "SELECT r.id AS review_id, r.rating_star, r.content, r.course_id, r.user_id, " +
-                     "u.id AS user_id, u.name, u.avatar_url, u.email " +
+        String sql = "SELECT r.id AS review_id, r.rating_star, r.content, r.course_id, r.user_eid " +
                      "FROM learna_review r " +
-                     "JOIN learna_user u ON r.user_id = u.id " +
                      "WHERE r.course_id = ?";
 
         return jdbcTemplate.query(sql, new ReviewRowMapper(), courseId);
@@ -52,10 +48,10 @@ public class ReviewJdbcRepository {
     public void save(Review review) {
         if (review.getId() == null) {
             // Insert mới
-            String sql = "INSERT INTO learna_review (rating_star, content, course_id, user_id, user_eid, created_at, modified_at) " +
-                         "VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
+            String sql = "INSERT INTO learna_review (rating_star, content, course_id, user_eid, created_at, modified_at) " +
+                         "VALUES (?, ?, ?, ?, NOW(), NOW())";
             jdbcTemplate.update(sql, review.getRatingStar(), review.getContent(), 
-                                review.getCourse().getId(), review.getUser().getId(), review.getUserEid());
+                                review.getCourse().getId(), review.getUserEid());
         } else {
             // Update review
             String sql = "UPDATE learna_review SET rating_star = ?, content = ?, modified_at = NOW() WHERE id = ?";
@@ -76,17 +72,12 @@ public class ReviewJdbcRepository {
             review.setId(rs.getLong("review_id"));
             review.setRatingStar(rs.getInt("rating_star"));
             review.setContent(rs.getString("content"));
+            review.setUserEid("user_eid");
             
             Course course = new Course();
             course.setId(rs.getLong("course_id")); 
             review.setCourse(course);
             
-            User user = new User();
-            user.setId(rs.getLong("user_id")); 
-            user.setName(rs.getString("name")); 
-            user.setEmail(rs.getString("email"));
-            user.setAvatarUrl(rs.getString("avatar_url"));
-            review.setUser(user);
 
             
             return review;

@@ -1,13 +1,15 @@
 package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Course;
-import mks.myworkspace.learna.entity.Course.DifficultyLevel;
-import mks.myworkspace.learna.entity.Course.LessonType;
+import mks.myworkspace.learna.repository.CourseJdbcRepository;
+import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.entity.Lesson;
+import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.entity.Subcategory;
 import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
+import mks.myworkspace.learna.service.ParameterService;
 import mks.myworkspace.learna.service.PlayService;
 import mks.myworkspace.learna.service.SubcategoryService;
 
@@ -52,6 +54,10 @@ public class AdminController {
 
 	@Autowired
 	private CourseService courseService;
+	
+	@Autowired
+	private ParameterService parameterService;
+	
 	@Autowired
 	private CategoryService categoryService;
 	@Autowired
@@ -60,6 +66,7 @@ public class AdminController {
 	private PlayService playService;
 	@Autowired
 	private LessonService lessonService;
+	
 
 	@GetMapping
 	public String showAdminHomePage() {
@@ -76,57 +83,63 @@ public class AdminController {
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {
 		ModelAndView mav = new ModelAndView("fragments/adminAddCourse");
-		mav.addObject("course", new Course());
+		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValue("difficulty_level");
+		log.info("do kho" + difficultyLevels);
+		List<Parameter> lessonTypes = parameterService.getListParamsByParamValue("lesson_type");
+		mav.addObject("difficultyLevels", difficultyLevels);
+	    mav.addObject("lessonTypes", lessonTypes);
 		return mav;
 	}
 
 	@PostMapping("/addCourse")
 	@Transactional
 	public ResponseEntity<Map<String, String>> addCourse(@Validated @ModelAttribute("course") Course course,
-			BindingResult bindingResult) {
-		Map<String, String> response = new HashMap<>();
+	        BindingResult bindingResult) {
+	    Map<String, String> response = new HashMap<>();
 
-		if (bindingResult.hasErrors()) {
-			response.put("status", "error");
-			response.put("message", "Thông tin không hợp lệ.");
-			return ResponseEntity.badRequest().body(response);
-		}
+	    if (bindingResult.hasErrors()) {
+	        response.put("status", "error");
+	        response.put("message", "Thông tin không hợp lệ.");
+	        System.out.println(bindingResult.getAllErrors());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 
-		if (course.getName() == null || course.getName().isEmpty() || course.getOriginalPrice() == null
-				|| course.getDiscountedPrice() == null || course.getSubcategory().getId() == null) {
-			response.put("status", "error");
-			response.put("message", "Vui lòng điền đầy đủ thông tin");
-			return ResponseEntity.badRequest().body(response);
-		}
+	    if (course.getName() == null || course.getName().isEmpty() 
+	        || course.getOriginalPrice() == null
+	        || course.getDiscountedPrice() == null 
+	        || course.getSubcategory() == null 
+	        || course.getSubcategory().getId() == null
+	        || course.getDifficultyLevel() == null
+	        || course.getLessonType() == null) {
+	        response.put("status", "error");
+	        response.put("message", "Vui lòng điền đầy đủ thông tin.");
+	        return ResponseEntity.badRequest().body(response);
+	    }
 
-		Subcategory subcategoryObj = subCategoryService.getSubcategoryById(course.getSubcategory().getId());
-		if (subcategoryObj == null) {
-			response.put("status", "error");
-			response.put("message", "Danh mục con không tồn tại.");
-			return ResponseEntity.badRequest().body(response);
-		}
-		course.setSubcategory(subcategoryObj);
+	    try {
+	        Parameter difficultyLevel = parameterService.getParameterById(course.getDifficultyLevel().getId());
+	        Parameter lessonType = parameterService.getParameterById(course.getLessonType().getId());
+	        
+	        if (difficultyLevel == null || lessonType == null) {
+	            response.put("status", "error");
+	            response.put("message", "Difficulty Level hoặc Lesson Type không hợp lệ");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
-		try {
-			course.setLessonType(LessonType.valueOf(course.getLessonType().name()));
-			course.setDifficultyLevel(DifficultyLevel.valueOf(course.getDifficultyLevel().name()));
-		} catch (IllegalArgumentException e) {
-			response.put("status", "error");
-			response.put("message", "Loại bài học hoặc mức độ khó không hợp lệ.");
-			return ResponseEntity.badRequest().body(response);
-		}
-
-		try {
-			courseService.saveCourse(course);
-			response.put("status", "success");
-			response.put("message", "Khóa học đã được thêm thành công!");
-			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			response.put("status", "error");
-			response.put("message", "Lỗi hệ thống: " + e.getMessage());
-			return ResponseEntity.badRequest().body(response);
-		}
+	        course.setDifficultyLevel(difficultyLevel);
+	        course.setLessonType(lessonType);
+	        
+	        courseService.saveCourse(course);
+	        response.put("status", "success");
+	        response.put("message", "Khóa học đã được thêm thành công!");
+	        return ResponseEntity.ok(response);
+	    } catch (Exception e) {
+	        response.put("status", "error");
+	        response.put("message", "Lỗi hệ thống: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
+
 
 	@GetMapping("/addCourseHandsontable")
 	public ModelAndView showAddCourseHandsontablePage() {
@@ -166,26 +179,28 @@ public class AdminController {
 					throw new IllegalArgumentException("Giá khuyến mãi không hợp lệ");
 				}
 
-				String difficultyLevelString = (String) courseMap.get("difficultyLevel");
-				if (difficultyLevelString == null || difficultyLevelString.isEmpty()) {
-					throw new IllegalArgumentException("Giá trị difficultyLevel không được để trống");
-				}
-				try {
-					course.setDifficultyLevel(DifficultyLevel.valueOf(difficultyLevelString.toUpperCase()));
-				} catch (IllegalArgumentException ex) {
-					throw new IllegalArgumentException(
-							"Giá trị difficultyLevel không hợp lệ: " + difficultyLevelString);
-				}
+			
+//				String difficultyLevelString = (String) courseMap.get("difficultyLevel");
+//				if (difficultyLevelString == null || difficultyLevelString.isEmpty()) {
+//				    throw new IllegalArgumentException("Giá trị difficultyLevel không được để trống");
+//				}
+//				Parameter difficultyLevelParameter = parameterRepository.findByParamValue(difficultyLevelString);
+//				if (difficultyLevelParameter == null) {
+//				    throw new IllegalArgumentException("Giá trị difficultyLevel không hợp lệ: " + difficultyLevelString);
+//				}
+//				course.setDifficultyLevel(difficultyLevelParameter);
+//
+//				// Xử lý lesson type
+//				String lessonTypeString = (String) courseMap.get("lessonType");
+//				if (lessonTypeString == null || lessonTypeString.isEmpty()) {
+//				    throw new IllegalArgumentException("Giá trị lessonType không được để trống");
+//				}
+//				Parameter lessonTypeParameter = parameterRepository.findByParamValue(lessonTypeString);
+//				if (lessonTypeParameter == null) {
+//				    throw new IllegalArgumentException("Giá trị lessonType không hợp lệ: " + lessonTypeString);
+//				}
+//				course.setLessonType(lessonTypeParameter); // Gán đối tượng Parameter
 
-				String lessonTypeString = (String) courseMap.get("lessonType");
-				if (lessonTypeString == null || lessonTypeString.isEmpty()) {
-					throw new IllegalArgumentException("Giá trị lessonType không được để trống");
-				}
-				try {
-					course.setLessonType(LessonType.valueOf(lessonTypeString.toUpperCase()));
-				} catch (IllegalArgumentException ex) {
-					throw new IllegalArgumentException("Giá trị lessonType không hợp lệ: " + lessonTypeString);
-				}
 
 				Object isFreeObj = courseMap.get("isFree");
 

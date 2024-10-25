@@ -1,5 +1,6 @@
 package mks.myworkspace.learna.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,16 @@ public class ParameterServiceImpl implements ParameterService{
 	public String getLogoUrl() {
 		Optional<Parameter> parameter = repo.findByParamKey("site_logo");
         return parameter.map(Parameter::getParamValue).orElse("logo");
+	}
+	
+	@Override
+	public List<Parameter> getListParamsByParamValue(String paramKey){
+		return repo.listByParamKey(paramKey);
+	}
+	
+	@Override
+	public Parameter getParameterById(Long id) {
+		 return repo.findById(id).orElse(null);
 	}
 
 }

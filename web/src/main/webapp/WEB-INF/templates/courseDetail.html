@@ -39,10 +39,10 @@
 				<div class="course-details mt-4">
 					<h4>Overview</h4>
 					<p>
-						Level Requirement: <span th:text="${course.difficultyLevel}">BEGINNER</span>
+						Level Requirement: <span th:text="${course.difficultyLevel.paramValue}">BEGINNER</span>
 					</p>
 					<p>
-						Lesson type: <span th:text="${course.lessonType}">Video</span>
+						Lesson type: <span th:text="${course.lessonType.paramValue}">Video</span>
 					</p>
 
 					<p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"
