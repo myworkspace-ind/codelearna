@@ -31,5 +31,10 @@ public class ParameterServiceImpl implements ParameterService{
 	public Parameter getParameterById(Long id) {
 		 return repo.findById(id).orElse(null);
 	}
+	
+	@Override
+	public Parameter getParameterByParamKeyAndParamValue(String paramKey, String paramValue) {
+		return repo.findByParamKeyAndParamValue(paramKey, paramValue);
+	}
 
 }

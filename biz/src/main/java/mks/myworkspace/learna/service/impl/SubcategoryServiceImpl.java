@@ -3,6 +3,7 @@ package mks.myworkspace.learna.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.entity.Subcategory;
 import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.repository.SubcategoryRepository;
@@ -24,6 +25,11 @@ public class SubcategoryServiceImpl implements SubcategoryService {
 	@Override
 	public List<Course> getCoursesBySubcategoryId(Long subcategoryId) {
 		return courseRepository.findBySubcategoryId(subcategoryId);
+	}
+	
+	@Override
+	public Subcategory getSubcategoryByParameter(Parameter parameter) {
+		return subcategoryRepository.findByParameter(parameter);
 	}
 
 	@Override

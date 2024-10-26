@@ -18,4 +18,6 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
 	
 	@Query("SELECT p FROM Parameter p WHERE p.paramKey = :paramKey")
     List<Parameter> listByParamKey(@Param("paramKey") String paramKey);
+	
+	Parameter findByParamKeyAndParamValue(String paramKey, String paramValue);
 }
