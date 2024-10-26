@@ -281,6 +281,7 @@ function fetchAddCourseHandsontablePage(event) {
 }
 
 
+
 function handleFileCourse(event) {
 	const input = event.target;
 	const file = input.files[0];
@@ -304,15 +305,17 @@ function handleFileCourse(event) {
 			console.log('Excel Data:', jsonData);
 
 			const handsontableData = jsonData
-				.filter(row => row.length >= 7)
+				.filter(row => row.length >= 9)
 				.map(row => ({
 					name: row[0] !== undefined ? row[0].toString() : undefined,
 					originalPrice: row[1] !== undefined ? parseFloat(row[1]) : undefined,
 					discountedPrice: row[2] !== undefined ? parseFloat(row[2]) : undefined,
-					description: row[3] !== undefined ? row[3].toString() : undefined,
-					difficultyLevel: row[4] !== undefined ? row[4].toString() : undefined,
-					lessonType: row[5] !== undefined ? row[5].toString() : undefined,
-					isFree: row[6] !== undefined ? row[6].toString().toUpperCase() === 'TRUE' : undefined
+					imageUrl: row[3] !== undefined ? row[3].toString() : undefined,
+					description: row[4] !== undefined ? row[4].toString() : undefined,
+					difficultyLevel: row[5] !== undefined ? row[5].toString() : undefined,
+					lessonType: row[6] !== undefined ? row[6].toString() : undefined,
+					subcategory: row[7] !== undefined ? row[7].toString() : undefined,
+					isFree: row[8] !== undefined ? row[8].toString().toUpperCase() === 'TRUE' : undefined
 				}));
 
 			if (hot) {
@@ -334,17 +337,20 @@ function handleFileCourse(event) {
 	reader.readAsArrayBuffer(file);
 }
 
+
+
 function initializeCourseHandsontable() {
 	const containerHandsontable = document.getElementById('handsontable-container');
 
 	if (containerHandsontable) {
 		hot = new Handsontable(containerHandsontable, {
 			data: [],
-			colHeaders: ['Course Name', 'Original Price', 'Discounted Price', 'Description', 'Difficulty Level', 'Lesson Type', 'Is Free'],
+			colHeaders: ['Course Name', 'Original Price', 'Discounted Price','Image URL', 'Description', 'Difficulty Level', 'Lesson Type', 'Subcategory', 'Is Free'],
 			columns: [
 				{ data: 'name', type: 'text' },
 				{ data: 'originalPrice', type: 'numeric' },
 				{ data: 'discountedPrice', type: 'numeric' },
+				{ data: 'imageUrl', type: 'text' },
 				{ data: 'description', type: 'text' },
 				{
 					data: 'difficultyLevel',
@@ -356,11 +362,19 @@ function initializeCourseHandsontable() {
 					type: 'dropdown',
 					source: ['VIDEO', 'INTERACTIVE']
 				},
+				{
+					data: 'subcategory',
+					type: 'dropdown',
+					source: ['Python', 'Java', 'Javascript', 'React', 'Machine Learning', 'IOS Development', 'Digital Marketing Strategy', 'Finance & Accounting', 'AI', 'Image Processing', 'Social Media', 'Flutter']
+				},
 				{ data: 'isFree', type: 'checkbox' }
 			],
 			minRows: 1,
 			rowHeaders: true,
 			contextMenu: true,
+			height: 'auto',
+			stretchH: 'all',
+			colWidths: [, , , 100],
 			licenseKey: 'non-commercial-and-evaluation'
 		});
 		console.log('Handsontable initialized');
@@ -370,21 +384,25 @@ function initializeCourseHandsontable() {
 }
 
 
+
+
 function submitCourseData(event) {
 	event.preventDefault();
 
 	const rawData = hot.getData();
-	console.log("rawData:",rawData)
+	console.log("rawData:", rawData);
 
 	const courseData = rawData
 		.map(row => ({
 			name: row[0] !== undefined ? row[0].toString() : null,
 			originalPrice: row[1] !== undefined ? parseFloat(row[1]) : null,
 			discountedPrice: row[2] !== undefined ? parseFloat(row[2]) : null,
-			description: row[3] !== undefined ? row[3].toString() : null,
-			difficultyLevel: row[4] !== undefined ? row[4].toString() : null,
-			lessonType: row[5] !== undefined ? row[5].toString() : null,
-			isFree: row[6] !== undefined ? row[6].toString().toUpperCase() === 'TRUE' : false
+			imageUrl: row[3] !== undefined ? row[3].toString() : null,
+			description: row[4] !== undefined ? row[4].toString() : null,
+			difficultyLevel: row[5] !== undefined ? row[5].toString() : null,
+			lessonType: row[6] !== undefined ? row[6].toString() : null,
+			subcategory: row[7] !== undefined ? row[7].toString() : null,
+			isFree: row[8] !== undefined ? row[8].toString().toUpperCase() === 'TRUE' : false
 		}));
 
 	console.log('Course data to be sent:', courseData);
@@ -416,7 +434,7 @@ function submitCourseData(event) {
 		.catch(error => {
 			console.error('Error adding courses:', error);
 			document.getElementById('error-text').innerText = error.message;
-			document.getElementById('error-message').style.display = 'block';
+			document.getElementById('error-message-handsontable').style.display = 'block';
 		});
 }
 
@@ -633,3 +651,4 @@ document.addEventListener('DOMContentLoaded', function() {
 	showPage(currentPageAdmin);
 	setupPagination();
 });
+

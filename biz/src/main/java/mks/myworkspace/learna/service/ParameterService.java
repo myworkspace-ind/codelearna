@@ -9,4 +9,5 @@ public interface ParameterService {
 	String getLogoUrl();
 	List<Parameter> getListParamsByParamValue(String paramKey);
 	Parameter getParameterById(Long id);
+	Parameter getParameterByParamKeyAndParamValue(String paramKey, String paramValue);
 }

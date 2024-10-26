@@ -167,6 +167,7 @@ public class AdminController {
 				course.setName((String) courseMap.get("name"));
 				course.setOriginalPrice((Double) courseMap.get("originalPrice"));
 				course.setDiscountedPrice((Double) courseMap.get("discountedPrice"));
+				course.setImageUrl((String) courseMap.get("imageUrl"));
 				course.setDescription((String) courseMap.get("description"));
 
 				if (course.getName() == null || course.getName().isEmpty()) {
@@ -178,28 +179,43 @@ public class AdminController {
 				if (course.getDiscountedPrice() == null || course.getDiscountedPrice() < 0) {
 					throw new IllegalArgumentException("Giá khuyến mãi không hợp lệ");
 				}
+				
 
 			
-//				String difficultyLevelString = (String) courseMap.get("difficultyLevel");
-//				if (difficultyLevelString == null || difficultyLevelString.isEmpty()) {
-//				    throw new IllegalArgumentException("Giá trị difficultyLevel không được để trống");
-//				}
-//				Parameter difficultyLevelParameter = parameterRepository.findByParamValue(difficultyLevelString);
-//				if (difficultyLevelParameter == null) {
-//				    throw new IllegalArgumentException("Giá trị difficultyLevel không hợp lệ: " + difficultyLevelString);
-//				}
-//				course.setDifficultyLevel(difficultyLevelParameter);
-//
-//				// Xử lý lesson type
-//				String lessonTypeString = (String) courseMap.get("lessonType");
-//				if (lessonTypeString == null || lessonTypeString.isEmpty()) {
-//				    throw new IllegalArgumentException("Giá trị lessonType không được để trống");
-//				}
-//				Parameter lessonTypeParameter = parameterRepository.findByParamValue(lessonTypeString);
-//				if (lessonTypeParameter == null) {
-//				    throw new IllegalArgumentException("Giá trị lessonType không hợp lệ: " + lessonTypeString);
-//				}
-//				course.setLessonType(lessonTypeParameter); // Gán đối tượng Parameter
+				 // Kiểm tra subcategory
+                String subcategoryString = (String) courseMap.get("subcategory");
+                log.info("sub convert to string: {}", subcategoryString);
+                Parameter subcategoryParameter = parameterService.getParameterByParamKeyAndParamValue("subcategory", subcategoryString);
+                log.info("sub param: {}", subcategoryParameter);
+                if (subcategoryParameter == null) {
+                    response.put("status", "error");
+                    response.put("message", "Giá trị subcategory không hợp lệ.");
+                    return ResponseEntity.badRequest().body(response);
+                }
+                Subcategory subcategory = subCategoryService.getSubcategoryByParameter(subcategoryParameter);
+                log.info("subcategory object: {}", subcategory);
+                course.setSubcategory(subcategory);
+
+                // Kiểm tra difficulty level
+                String difficultyLevelString = (String) courseMap.get("difficultyLevel");
+                Parameter difficultyLevel = parameterService.getParameterByParamKeyAndParamValue("difficulty_level", difficultyLevelString);
+                if (difficultyLevel == null) {
+                    response.put("status", "error");
+                    response.put("message", "Giá trị difficulty level không hợp lệ.");
+                    return ResponseEntity.badRequest().body(response);
+                }
+                course.setDifficultyLevel(difficultyLevel);
+                
+          
+                // Kiểm tra lesson type
+                String lessonTypeString = (String) courseMap.get("lessonType");
+                Parameter lessonType = parameterService.getParameterByParamKeyAndParamValue("lesson_type", lessonTypeString);
+                if (lessonType == null) {
+                    response.put("status", "error");
+                    response.put("message", "Giá trị lesson type không hợp lệ.");
+                    return ResponseEntity.badRequest().body(response);
+                }
+                course.setLessonType(lessonType);
 
 
 				Object isFreeObj = courseMap.get("isFree");
