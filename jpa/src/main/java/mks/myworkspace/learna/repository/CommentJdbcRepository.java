@@ -18,8 +18,8 @@ public class CommentJdbcRepository {
     private JdbcTemplate jdbcTemplate;
 
     public List<Comment> findByLessonIdAndParentCommentIsNullOrderByCreatedDateDesc(Long lessonId) {
-        String sql = "SELECT c.*, u.* FROM learna_comment c " +
-                     "JOIN learna_user u ON c.user_id = u.id " +
+        String sql = "SELECT c.* FROM learna_comment c " +
+                     
                      "WHERE c.lesson_id = ? AND c.parent_comment_id IS NULL " +
                      "ORDER BY c.created_dte DESC";
         
@@ -27,8 +27,7 @@ public class CommentJdbcRepository {
     }
 
     public Comment findById(Long id) {
-        String sql = "SELECT c.*, u.* FROM learna_comment c " +
-                     "JOIN learna_user u ON c.user_id = u.id " +
+        String sql = "SELECT c.* FROM learna_comment c " +
                      "WHERE c.id = ?";
         
         return jdbcTemplate.queryForObject(sql, new CommentRowMapper(), id);
@@ -37,10 +36,10 @@ public class CommentJdbcRepository {
     public void save(Comment comment) {
         if (comment.getId() == null) {
             // Insert
-            String sql = "INSERT INTO learna_comment (content, lesson_id, user_id, parent_comment_id, created_dte, modified_dte) " +
+            String sql = "INSERT INTO learna_comment (content, lesson_id, user_eid, parent_comment_id, created_dte, modified_dte) " +
                          "VALUES (?, ?, ?, ?, NOW(), NOW())";
             jdbcTemplate.update(sql, comment.getContent(), comment.getLesson().getId(), 
-                                comment.getUser().getId(), comment.getParentComment() != null ? comment.getParentComment().getId() : null);
+                                comment.getUserEid(), comment.getParentComment() != null ? comment.getParentComment().getId() : null);
         } else {
             // Update
             String sql = "UPDATE learna_comment SET content = ?, modified_dte = NOW() WHERE id = ?";
@@ -49,8 +48,7 @@ public class CommentJdbcRepository {
     }
 
     public List<Comment> findChildComments(Long parentId) {
-        String sql = "SELECT c.*, u.* FROM learna_comment c " +
-                     "JOIN learna_user u ON c.user_id = u.id " +
+        String sql = "SELECT c.* FROM learna_comment c " +
                      "WHERE c.parent_comment_id = ? " +
                      "ORDER BY c.created_dte ASC";
         
@@ -63,15 +61,12 @@ public class CommentJdbcRepository {
             Comment comment = new Comment();
             comment.setId(rs.getLong("id"));
             comment.setContent(rs.getString("content"));
-            
+            comment.setUserEid(rs.getString("user_eid"));
             Lesson lesson = new Lesson();
             lesson.setId(rs.getLong("lesson_id"));
             comment.setLesson(lesson);
             
-            User user = new User();
-            user.setId(rs.getLong("user_id"));
-            user.setUsername(rs.getString("username"));
-            comment.setUser(user);
+           
             
             comment.setCreatedDate(rs.getTimestamp("created_dte"));
             comment.setModifiedDate(rs.getTimestamp("modified_dte"));

@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Table(name = "learna_subcategory")
@@ -20,8 +21,10 @@ public class Subcategory {
 
 	@ManyToOne
     @JoinColumn(name = "category_id")
+	@ToString.Exclude
     private Category category;
 
     @OneToMany(mappedBy = "subcategory", fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Course> courses;
 }
