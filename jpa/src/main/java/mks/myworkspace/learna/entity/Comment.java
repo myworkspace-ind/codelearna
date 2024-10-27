@@ -30,10 +30,8 @@ public class Comment {
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_eid", nullable = false)
+    private String userEid;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id")
@@ -41,6 +39,7 @@ public class Comment {
     private Comment parentComment;
 
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Comment> childComments;
 
     @CreationTimestamp

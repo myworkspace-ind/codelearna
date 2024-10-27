@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Table(name = "learna_category")
@@ -21,5 +22,6 @@ public class Category {
     private Parameter parameter;
     
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Subcategory> subcategories; 
 }
