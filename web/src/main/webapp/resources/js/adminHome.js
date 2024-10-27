@@ -825,6 +825,7 @@ function updatePaginationState(type, currentPage, totalItems) {
     const state = paginationStates[type];
     state.currentPage = currentPage;
     state.totalPages = Math.ceil(totalItems / state.itemsPerPage);
+} // Thêm dấu ngoặc nhọn đóng ở đây
 
 // Hàm hiển thị các item theo trang
 function showPage(type, page) {
@@ -964,8 +965,6 @@ function initializePagination(type) {
     updatePagination(type);
 }
 
-
-// Khởi tạo khi DOM load
 document.addEventListener('DOMContentLoaded', function() {
     // Kiểm tra xem đang ở trang nào để khởi tạo phân trang phù hợp
     if (document.getElementById('coursesContainer')) {
