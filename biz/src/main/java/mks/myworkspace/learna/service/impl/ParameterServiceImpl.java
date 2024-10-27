@@ -11,30 +11,55 @@ import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.service.ParameterService;
 
 @Service
-public class ParameterServiceImpl implements ParameterService{
-	
+public class ParameterServiceImpl implements ParameterService {
+
 	@Autowired
 	private ParameterRepository repo;
-	
+
 	@Override
 	public String getLogoUrl() {
 		Optional<Parameter> parameter = repo.findByParamKey("site_logo");
-        return parameter.map(Parameter::getParamValue).orElse("logo");
+		return parameter.map(Parameter::getParamValue).orElse("logo");
+	}
+
+	@Override
+	public List<String> getAllDistinctParamKeys() {
+		return repo.findDistinctParamKeys();
 	}
 	
 	@Override
-	public List<Parameter> getListParamsByParamValue(String paramKey){
+	public List<Parameter> getAllParams() {
+		return repo.findAll();
+	}
+	
+	@Override
+	public Parameter saveParameters(Parameter parameters) {
+		return repo.save(parameters);
+	}
+
+	@Override
+	public List<Parameter> getListParamsByParamValue(String paramKey) {
 		return repo.listByParamKey(paramKey);
 	}
-	
+
 	@Override
 	public Parameter getParameterById(Long id) {
-		 return repo.findById(id).orElse(null);
+		return repo.findById(id).orElse(null);
 	}
-	
+
 	@Override
 	public Parameter getParameterByParamKeyAndParamValue(String paramKey, String paramValue) {
 		return repo.findByParamKeyAndParamValue(paramKey, paramValue);
+	}
+	
+	@Override
+	 public boolean paramKeyExists(String paramKey) {
+        return repo.existsByParamKey(paramKey);
+    }
+	
+	@Override
+	public void deleteParameter(Long id) {
+		repo.deleteById(id);
 	}
 
 }

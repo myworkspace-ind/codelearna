@@ -36,7 +36,9 @@ function initializeReviewForm(formSelector) {
 	});
 }
 
-
+function confirmDelete() {
+       return confirm("Are you sure you want to delete this review?");
+   }
 
 function updateStars(stars, rating) {
 	stars.forEach(star => {
