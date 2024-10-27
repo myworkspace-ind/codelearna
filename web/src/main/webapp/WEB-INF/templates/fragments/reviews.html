@@ -44,10 +44,12 @@
 
 						<div th:if="${review.userEid} == ${userId}" class="d-flex gap-2">
 							<!-- Delete Button -->
-							<form th:action="@{/course/{id}/review/{reviewId}/delete(id=${course.id}, reviewId=${review.id})}" method="post">
+							<form th:action="@{/course/{id}/review/{reviewId}/delete(id=${course.id}, reviewId=${review.id})}" method="post"
+								onsubmit="return confirmDelete();">
 								<input type="hidden" name="_method" value="delete">
 								<button type="submit" class="btn btn-danger btn-sm">Delete</button>
 							</form>
+
 
 							<!-- Edit Button -->
 							<button type="button" class="btn btn-secondary btn-sm" th:data-bs-toggle="'modal'" th:data-bs-target="'#editModal-' + ${review.id}">Edit</button>
