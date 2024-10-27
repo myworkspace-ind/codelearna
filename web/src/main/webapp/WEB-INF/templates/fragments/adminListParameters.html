@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>List Parameters</title>
+<link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container mt-5">
+		<h1 class="mb-4">Parameters Manage</h1>
+
+		<div class="d-flex justify-content-end mb-3">
+			<a class="btn btn-success" href="#" th:onclick="'fetchAddParamValueHandsontablePage(event)'"> Add Parameters with Handsontable </a>
+		</div>
+
+		<div id="coursesContainer">
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover">
+					<thead class="thead-dark">
+						<tr>
+							<th>#</th>
+							<th>Parameter Key</th>
+							<th>Parameter Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="parameter, iterStat : ${parameters}">
+							<th th:text="${iterStat.count}"></th>
+
+							<td th:text="${parameter.paramKey}"></td>
+							<td th:text="${parameter.paramValue}"></td>
+
+							<td>
+								<div class="btn-group" role="group">
+									<a href="#" class="btn btn-warning btn-sm" th:attr="onclick='loadEditParameterForm(' + ${parameter.id} + '); return false;'">Edit</a> <a href="#" class="btn btn-danger btn-sm" th:onclick="|deleteParameter(${parameter.id})|">Delete</a>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- Pagination -->
+		<nav>
+			<ul class="pagination justify-content-center" id="pagination"></ul>
+		</nav>
+	</div>
+
+</body>
+</html>

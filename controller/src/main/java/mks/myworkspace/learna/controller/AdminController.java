@@ -54,10 +54,10 @@ public class AdminController {
 
 	@Autowired
 	private CourseService courseService;
-	
+
 	@Autowired
 	private ParameterService parameterService;
-	
+
 	@Autowired
 	private CategoryService categoryService;
 	@Autowired
@@ -66,7 +66,6 @@ public class AdminController {
 	private PlayService playService;
 	@Autowired
 	private LessonService lessonService;
-	
 
 	@GetMapping
 	public String showAdminHomePage() {
@@ -87,59 +86,55 @@ public class AdminController {
 		log.info("do kho" + difficultyLevels);
 		List<Parameter> lessonTypes = parameterService.getListParamsByParamValue("lesson_type");
 		mav.addObject("difficultyLevels", difficultyLevels);
-	    mav.addObject("lessonTypes", lessonTypes);
+		mav.addObject("lessonTypes", lessonTypes);
 		return mav;
 	}
 
 	@PostMapping("/addCourse")
 	@Transactional
 	public ResponseEntity<Map<String, String>> addCourse(@Validated @ModelAttribute("course") Course course,
-	        BindingResult bindingResult) {
-	    Map<String, String> response = new HashMap<>();
+			BindingResult bindingResult) {
+		Map<String, String> response = new HashMap<>();
 
-	    if (bindingResult.hasErrors()) {
-	        response.put("status", "error");
-	        response.put("message", "Thông tin không hợp lệ.");
-	        System.out.println(bindingResult.getAllErrors());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+		if (bindingResult.hasErrors()) {
+			response.put("status", "error");
+			response.put("message", "Thông tin không hợp lệ.");
+			System.out.println(bindingResult.getAllErrors());
+			return ResponseEntity.badRequest().body(response);
+		}
 
-	    if (course.getName() == null || course.getName().isEmpty() 
-	        || course.getOriginalPrice() == null
-	        || course.getDiscountedPrice() == null 
-	        || course.getSubcategory() == null 
-	        || course.getSubcategory().getId() == null
-	        || course.getDifficultyLevel() == null
-	        || course.getLessonType() == null) {
-	        response.put("status", "error");
-	        response.put("message", "Vui lòng điền đầy đủ thông tin.");
-	        return ResponseEntity.badRequest().body(response);
-	    }
+		if (course.getName() == null || course.getName().isEmpty() || course.getOriginalPrice() == null
+				|| course.getDiscountedPrice() == null || course.getSubcategory() == null
+				|| course.getSubcategory().getId() == null || course.getDifficultyLevel() == null
+				|| course.getLessonType() == null) {
+			response.put("status", "error");
+			response.put("message", "Vui lòng điền đầy đủ thông tin.");
+			return ResponseEntity.badRequest().body(response);
+		}
 
-	    try {
-	        Parameter difficultyLevel = parameterService.getParameterById(course.getDifficultyLevel().getId());
-	        Parameter lessonType = parameterService.getParameterById(course.getLessonType().getId());
-	        
-	        if (difficultyLevel == null || lessonType == null) {
-	            response.put("status", "error");
-	            response.put("message", "Difficulty Level hoặc Lesson Type không hợp lệ");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+		try {
+			Parameter difficultyLevel = parameterService.getParameterById(course.getDifficultyLevel().getId());
+			Parameter lessonType = parameterService.getParameterById(course.getLessonType().getId());
 
-	        course.setDifficultyLevel(difficultyLevel);
-	        course.setLessonType(lessonType);
-	        
-	        courseService.saveCourse(course);
-	        response.put("status", "success");
-	        response.put("message", "Khóa học đã được thêm thành công!");
-	        return ResponseEntity.ok(response);
-	    } catch (Exception e) {
-	        response.put("status", "error");
-	        response.put("message", "Lỗi hệ thống: " + e.getMessage());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+			if (difficultyLevel == null || lessonType == null) {
+				response.put("status", "error");
+				response.put("message", "Difficulty Level hoặc Lesson Type không hợp lệ");
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			course.setDifficultyLevel(difficultyLevel);
+			course.setLessonType(lessonType);
+
+			courseService.saveCourse(course);
+			response.put("status", "success");
+			response.put("message", "Khóa học đã được thêm thành công!");
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "Lỗi hệ thống: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
-
 
 	@GetMapping("/addCourseHandsontable")
 	public ModelAndView showAddCourseHandsontablePage() {
@@ -179,44 +174,41 @@ public class AdminController {
 				if (course.getDiscountedPrice() == null || course.getDiscountedPrice() < 0) {
 					throw new IllegalArgumentException("Giá khuyến mãi không hợp lệ");
 				}
-				
 
-			
-				 // Kiểm tra subcategory
-                String subcategoryString = (String) courseMap.get("subcategory");
-                log.info("sub convert to string: {}", subcategoryString);
-                Parameter subcategoryParameter = parameterService.getParameterByParamKeyAndParamValue("subcategory", subcategoryString);
-                log.info("sub param: {}", subcategoryParameter);
-                if (subcategoryParameter == null) {
-                    response.put("status", "error");
-                    response.put("message", "Giá trị subcategory không hợp lệ.");
-                    return ResponseEntity.badRequest().body(response);
-                }
-                Subcategory subcategory = subCategoryService.getSubcategoryByParameter(subcategoryParameter);
-                log.info("subcategory object: {}", subcategory);
-                course.setSubcategory(subcategory);
+				String subcategoryString = (String) courseMap.get("subcategory");
+				log.info("sub convert to string: {}", subcategoryString);
+				Parameter subcategoryParameter = parameterService.getParameterByParamKeyAndParamValue("subcategory",
+						subcategoryString);
+				log.info("sub param: {}", subcategoryParameter);
+				if (subcategoryParameter == null) {
+					response.put("status", "error");
+					response.put("message", "Giá trị subcategory không hợp lệ.");
+					return ResponseEntity.badRequest().body(response);
+				}
+				Subcategory subcategory = subCategoryService.getSubcategoryByParameter(subcategoryParameter);
+				log.info("subcategory object: {}", subcategory);
+				course.setSubcategory(subcategory);
 
-                // Kiểm tra difficulty level
-                String difficultyLevelString = (String) courseMap.get("difficultyLevel");
-                Parameter difficultyLevel = parameterService.getParameterByParamKeyAndParamValue("difficulty_level", difficultyLevelString);
-                if (difficultyLevel == null) {
-                    response.put("status", "error");
-                    response.put("message", "Giá trị difficulty level không hợp lệ.");
-                    return ResponseEntity.badRequest().body(response);
-                }
-                course.setDifficultyLevel(difficultyLevel);
-                
-          
-                // Kiểm tra lesson type
-                String lessonTypeString = (String) courseMap.get("lessonType");
-                Parameter lessonType = parameterService.getParameterByParamKeyAndParamValue("lesson_type", lessonTypeString);
-                if (lessonType == null) {
-                    response.put("status", "error");
-                    response.put("message", "Giá trị lesson type không hợp lệ.");
-                    return ResponseEntity.badRequest().body(response);
-                }
-                course.setLessonType(lessonType);
+				String difficultyLevelString = (String) courseMap.get("difficultyLevel");
+				Parameter difficultyLevel = parameterService.getParameterByParamKeyAndParamValue("difficulty_level",
+						difficultyLevelString);
+				if (difficultyLevel == null) {
+					response.put("status", "error");
+					response.put("message", "Giá trị difficulty level không hợp lệ.");
+					return ResponseEntity.badRequest().body(response);
+				}
+				course.setDifficultyLevel(difficultyLevel);
 
+				// Kiểm tra lesson type
+				String lessonTypeString = (String) courseMap.get("lessonType");
+				Parameter lessonType = parameterService.getParameterByParamKeyAndParamValue("lesson_type",
+						lessonTypeString);
+				if (lessonType == null) {
+					response.put("status", "error");
+					response.put("message", "Giá trị lesson type không hợp lệ.");
+					return ResponseEntity.badRequest().body(response);
+				}
+				course.setLessonType(lessonType);
 
 				Object isFreeObj = courseMap.get("isFree");
 
@@ -482,5 +474,126 @@ public class AdminController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
+
+	// ADMIN PARAMETERS MANAGER
+	@GetMapping("/listParameters")
+	public ModelAndView loadParametersList() {
+		ModelAndView mav = new ModelAndView("fragments/adminListParameters");
+		mav.addObject("parameters", parameterService.getAllParams());
+		log.debug("get all params", parameterService.getAllParams());
+		return mav;
+	}
+
+	@GetMapping("/addParameterHandsontable")
+	public ModelAndView showAddParameterHandsontablePage() {
+		ModelAndView mav = new ModelAndView("fragments/adminAddParametersHandsontable");
+		return mav;
+	}
+
+	@PostMapping("/saveParametersHandsontable")
+	@Transactional
+	public ResponseEntity<Map<String, String>> saveParametersHandsontable(
+			@RequestBody List<Map<String, Object>> parameterData) {
+		log.info("Received request to save parameters");
+		Map<String, String> response = new HashMap<>();
+
+		try {
+			log.info("Received parameter data: {}", parameterData);
+
+			if (parameterData == null || parameterData.isEmpty()) {
+				throw new IllegalArgumentException("Không có dữ liệu paramter được gửi");
+			}
+
+			for (Map<String, Object> parameterMap : parameterData) {
+				Parameter parameter = new Parameter();
+
+				parameter.setParamKey((String) parameterMap.get("paramKey"));
+				parameter.setParamValue((String) parameterMap.get("paramValue"));
+
+				if (parameter.getParamKey() == null || parameter.getParamKey().isEmpty()) {
+					throw new IllegalArgumentException("Giá trị key không được để trống");
+				}
+				if (parameter.getParamValue() == null || parameter.getParamValue().isEmpty()) {
+					throw new IllegalArgumentException("Giá trị value không được để trống");
+				}
+				if (!parameterService.paramKeyExists(parameter.getParamKey())) {
+					throw new IllegalArgumentException("paramKey không hợp lệ hoặc không tồn tại trong cơ sở dữ liệu.");
+				}
+
+				try {
+					parameterService.saveParameters(parameter);
+				} catch (IllegalArgumentException ex) {
+					throw new IllegalArgumentException("Xảy ra lỗi khi thêm parameters");
+				}
+			}
+
+			response.put("status", "success");
+			response.put("message", "Parameters đã được thêm thành công!");
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			log.error("Error saving parameters: ", e);
+			response.put("status", "error");
+			response.put("message", "Có lỗi khi lưu parameters: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+	
+	@DeleteMapping("/parameter/delete/{parameterId}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteParameter(@PathVariable("parameterId") Long parameterId) {
+	    Map<String, String> response = new HashMap<>();
+	    
+	    try {
+	        Parameter parameter = parameterService.getParameterById(parameterId);
+	        
+	        if (parameter != null) {
+	            parameterService.deleteParameter(parameterId);
+	            response.put("status", "success");
+	            response.put("message", "Parameter đã được xóa thành công.");
+	            return ResponseEntity.ok(response);
+	        } else {
+	            response.put("status", "error");
+	            response.put("message", "Parameter không tồn tại.");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+	    } catch (Exception e) {
+	        response.put("status", "error");
+	        response.put("message", "Có lỗi xảy ra khi xóa Parameter: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
+	}
+	
+	@GetMapping("/parameter/edit/{id}")
+	public ModelAndView showEditParameterForm(@PathVariable("id") Long id) {
+		Parameter parameter = parameterService.getParameterById(id);
+		if (parameter == null) {
+			return new ModelAndView("redirect:/admin/listParameters");
+		}
+
+		ModelAndView mav = new ModelAndView("fragments/adminEditParameter :: editParameterModal");
+		mav.addObject("parameter", parameter);
+		mav.addObject("parametersKeyDistinct", parameterService.getAllDistinctParamKeys());
+		return mav;
+	}
+
+	@PostMapping("/parameter/edit/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> editParameter(@PathVariable("id") Long id,
+			@ModelAttribute("parameter") Parameter parameter) {
+		Parameter existingParameter = parameterService.getParameterById(id);
+		if (existingParameter == null) {
+			return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Parameter not found"));
+		}
+
+		existingParameter.setParamKey(parameter.getParamKey());
+		existingParameter.setParamValue(parameter.getParamValue());
+		
+
+		parameterService.saveParameters(existingParameter);
+
+		return ResponseEntity.ok(Map.of("status", "success", "message", "Parameter updated successfully"));
+	}
+
 
 }
