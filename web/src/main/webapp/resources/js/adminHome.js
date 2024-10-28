@@ -76,19 +76,19 @@ function submitEditCourseForm(event, courseId) {
 }
 
 function showDeleteConfirmModal(courseId) {
-	const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-	const confirmBtn = document.getElementById('confirmDeleteBtn');
-
-	// Xóa event listener cũ (nếu có)
-	const newConfirmBtn = confirmBtn.cloneNode(true);
-	confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
-	// Thêm event listener mới
-	newConfirmBtn.addEventListener('click', () => {
-		lesson(courseId, modal);
-	});
-
-	modal.show();
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    
+    // Xóa event listener cũ (nếu có)
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Thêm event listener mới
+    newConfirmBtn.addEventListener('click', () => {
+        deleteCourse(courseId, modal);
+    });
+    
+    modal.show();
 }
 
 function showLessonDeleteConfirmModal(lessonId, courseId) {
@@ -182,29 +182,42 @@ function loadEditLessonForm(lessonId) {
 }
 
 function submitEditLessonForm(event, lessonId) {
-	const form = event.target;
-	const formData = new FormData(form);
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
 
-	fetch(form.action, {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => response.json())
-		.then(data => {
-			if (data.status === "success") {
-				showSuccessToast('Lesson updated successfully!');
-				bootstrap.Modal.getInstance(document.getElementById('editLessonModal')).hide();
-				loadCourseLessons(data.courseId);
-			} else {
-				showErrorToast(data.message || 'Failed to update lesson');
-			}
-		})
-		.catch(error => {
-			console.error('Error updating lesson:', error);
-			showErrorToast('An error occurred while updating the lesson');
-		});
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === "success") {
+            showSuccessToast(data.message || 'Lesson updated successfully!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editLessonModal'));
+            if (modal) {
+                modal.hide();
+            }
+            if (data.courseId) {
+                loadCourseLessons(data.courseId);
+            }
+        } else {
+            showErrorToast(data.message || 'Failed to update lesson');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating lesson:', error);
+        showErrorToast(error.message || 'An error occurred while updating the lesson');
+    });
 }
-
 
 function deleteLesson(lessonId, courseId) {
 	fetch(`${_ctx}admin/lessons/delete/${lessonId}`, {

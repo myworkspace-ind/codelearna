@@ -375,24 +375,33 @@ public class AdminController {
 	}
 
 	@PostMapping("/lessons/edit/{id}")
-	@ResponseBody
+	@ResponseBody 
 	public ResponseEntity<Map<String, String>> editLesson(@PathVariable("id") Long lessonId,
-			@ModelAttribute("lesson") Lesson lesson) {
-		Lesson existingLesson = playService.getLessonById(lessonId);
-		if (existingLesson == null) {
-			return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Lesson not found"));
-		}
+	        @ModelAttribute("lesson") Lesson lesson) {
+	    Map<String, String> response = new HashMap<>();
+	    try {
+	        Lesson existingLesson = playService.getLessonById(lessonId);
+	        if (existingLesson == null) {
+	            response.put("status", "error"); 
+	            response.put("message", "Lesson not found");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
-		existingLesson.setTitle(lesson.getTitle());
-		existingLesson.setVideoUrl(lesson.getVideoUrl());
+	        existingLesson.setTitle(lesson.getTitle());
+	        existingLesson.setVideoUrl(lesson.getVideoUrl());
 
-		lessonService.saveLesson(existingLesson);
+	        lessonService.saveLesson(existingLesson);
 
-		Map<String, String> response = new HashMap<>();
-		response.put("status", "success");
-		response.put("message", "Lesson updated successfully");
-		response.put("courseId", existingLesson.getCourse().getId().toString());
-		return ResponseEntity.ok(response);
+	        response.put("status", "success");
+	        response.put("message", "Lesson updated successfully");
+	        response.put("courseId", existingLesson.getCourse().getId().toString());
+	        return ResponseEntity.ok(response);
+	        
+	    } catch (Exception e) {
+	        response.put("status", "error");
+	        response.put("message", "Error updating lesson: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 
 	@GetMapping("/addLessonsHandsontable/{courseId}")
