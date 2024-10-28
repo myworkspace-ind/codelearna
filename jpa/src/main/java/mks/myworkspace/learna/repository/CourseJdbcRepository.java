@@ -70,4 +70,12 @@ public class CourseJdbcRepository {
 
         return course;
     }
+    public void deleteById(Long id) {
+        String sql = "DELETE FROM learna_course WHERE id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, id);
+        
+        if (rowsAffected == 0) {
+            throw new RuntimeException("Lesson not found with id: " + id);
+        }
+    }
 }
