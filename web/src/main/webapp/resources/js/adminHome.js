@@ -52,48 +52,80 @@ function loadEditCourseForm(courseId) {
 
 
 function submitEditCourseForm(event, courseId) {
-	const form = event.target;
-	const formData = new FormData(form);
+    const form = event.target;
+    const formData = new FormData(form);
 
-	fetch(form.action, {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => response.json())
-		.then(data => {
-			if (data.status === "success") {
-				bootstrap.Modal.getInstance(document.getElementById('editCourseModal')).hide();
-				loadCoursesSection();
-			} else {
-				alert("Error: " + data.message);
-			}
-		})
-		.catch(error => {
-			console.error('Error updating course:', error);
-			alert("An error occurred while updating the course.");
-		});
+    fetch(form.action, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                showSuccessToast('Course updated successfully!');
+                bootstrap.Modal.getInstance(document.getElementById('editCourseModal')).hide();
+                loadCoursesSection();
+            } else {
+                showErrorToast(data.message || 'Failed to update course');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating course:', error);
+            showErrorToast('An error occurred while updating the course');
+        });
 }
 
-function deleteCourse(courseId) {
-	if (confirm('Are you sure you want to delete this course?')) {
-		fetch(`${_ctx}admin/courses/delete/${courseId}`, {
-			method: 'DELETE'
-		})
-			.then(response => {
-				if (response.ok) {
-					alert('Course deleted successfully');
-
-					loadCoursesSection(null);
-				} else {
-					alert('Failed to delete course');
-				}
-			})
-			.catch(error => {
-				console.error('Error deleting course:', error);
-			});
-	}
+function showDeleteConfirmModal(courseId) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    
+    // Xóa event listener cũ (nếu có)
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Thêm event listener mới
+    newConfirmBtn.addEventListener('click', () => {
+        lesson(courseId, modal);
+    });
+    
+    modal.show();
 }
 
+function showLessonDeleteConfirmModal(lessonId, courseId) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    
+    // Xóa event listener cũ (nếu có)
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Thêm event listener mới
+    newConfirmBtn.addEventListener('click', () => {
+         deleteLesson(lessonId, courseId);
+		 modal.hide();
+    });
+    
+    modal.show();
+}
+
+function deleteCourse(courseId, modal) {
+    fetch(`${_ctx}admin/courses/delete/${courseId}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (response.ok) {
+                modal.hide(); 
+                showSuccessToast('Course deleted successfully');
+                loadCoursesSection(null);
+            } else {
+                showErrorToast('Failed to delete course');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting course:', error);
+            showErrorToast('An error occurred while deleting the course');
+        });
+}
 // Course - lessons
 function loadAddLessonForm(courseId) {
 	fetch(`${_ctx}admin/courses/${courseId}/lessons/add`)
@@ -118,19 +150,14 @@ function submitLessonForm(event) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.status === "success") {
-
+				showSuccessToast('Lesson added successfully!');
 				loadCourseLessons(courseId);
 			} else {
-				const errorMessageDiv = document.getElementById('error-message');
-				errorMessageDiv.innerText = data.message;
-				errorMessageDiv.style.display = 'block';
-			}
+				showErrorToast(data.message || 'Failed to add lesson');			}
 		})
 		.catch(error => {
-			console.error('Lỗi khi thêm bài học:', error);
-			const errorMessageDiv = document.getElementById('error-message');
-			errorMessageDiv.innerText = "Có lỗi xảy ra khi thêm bài học.";
-			errorMessageDiv.style.display = 'block';
+			console.error('Error adding lesson:', error);
+			showErrorToast('An error occurred while adding the lesson');
 		});
 }
 
@@ -164,43 +191,37 @@ function submitEditLessonForm(event, lessonId) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.status === "success") {
+				showSuccessToast('Lesson updated successfully!');
 				bootstrap.Modal.getInstance(document.getElementById('editLessonModal')).hide();
 				loadCourseLessons(data.courseId);
 			} else {
-				alert("Error: " + data.message);
+				showErrorToast(data.message || 'Failed to update lesson');
 			}
 		})
 		.catch(error => {
 			console.error('Error updating lesson:', error);
-			alert("An error occurred while updating the lesson.");
+            showErrorToast('An error occurred while updating the lesson');
 		});
 }
 
 
 function deleteLesson(lessonId, courseId) {
-	if (confirm('Are you sure you want to delete this lesson?')) {
-		fetch(`${_ctx}admin/lessons/delete/${lessonId}`, {
-			method: 'DELETE'
-		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.status === "success") {
-					alert('Lesson deleted successfully');
-
-					loadCourseLessons(courseId);
-				} else {
-					alert('Failed to delete lesson: ' + data.message);
-				}
-			})
-			.catch(error => {
-				console.error('Error deleting lesson:', error);
-				alert('An error occurred while deleting the lesson.');
-			});
-	}
+    fetch(`${_ctx}admin/lessons/delete/${lessonId}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (response.ok) {
+                showSuccessToast('Lesson deleted successfully');
+                loadCourseLessons(courseId); 
+            } else {
+                showErrorToast('Failed to delete lesson');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting lesson:', error);
+            showErrorToast('An error occurred while deleting the lesson');
+        });
 }
-
-
-
 // Add course 
 function fetchAddCoursePage(event) {
 	if (event) {
@@ -244,29 +265,29 @@ function filterSubcategories(categoryId) {
 }
 
 function submitCourseForm(event) {
-	event.preventDefault();
+    event.preventDefault();
 
-	const form = document.querySelector('#courseForm');
-	const formData = new FormData(form);
+    const form = document.querySelector('#courseForm');
+    const formData = new FormData(form);
 
-	fetch(`${_ctx}admin/addCourse`, {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => response.json())
-		.then(data => {
-			const errorMessageDiv = document.getElementById('error-message');
-			if (data.status === "success") {
-				loadCoursesSection(event);
-				errorMessageDiv.style.display = 'none';
-			} else {
-				errorMessageDiv.innerText = data.message;
-				errorMessageDiv.style.display = 'block';
-			}
-		})
-		.catch(error => console.error('Error adding course:', error));
+    fetch(`${_ctx}admin/addCourse`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                showSuccessToast('Course added successfully!');
+                loadCoursesSection(event);
+            } else {
+                showErrorToast(data.message || 'Failed to add course');
+            }
+        })
+        .catch(error => {
+            console.error('Error adding course:', error);
+            showErrorToast('An error occurred while adding the course');
+        });
 }
-
 // Add course with Handsontable
 function fetchAddCourseHandsontablePage(event) {
 	event.preventDefault();
@@ -973,3 +994,86 @@ document.addEventListener('DOMContentLoaded', function() {
         initializePagination('lessons');
     }
 });
+
+
+
+// Toast type constants
+const TOAST_TYPES = {
+    SUCCESS: 'success',
+    ERROR: 'error',
+    WARNING: 'warning',
+    INFO: 'info'
+};
+
+// Toast configuration
+const TOAST_CONFIG = {
+    success: {
+        bgClass: 'bg-success',
+        icon: '<i class="bi bi-check-circle-fill"></i>'
+    },
+    error: {
+        bgClass: 'bg-danger',
+        icon: '<i class="bi bi-x-circle-fill"></i>'
+    },
+    warning: {
+        bgClass: 'bg-warning',
+        icon: '<i class="bi bi-exclamation-triangle-fill"></i>'
+    },
+    info: {
+        bgClass: 'bg-info',
+        icon: '<i class="bi bi-info-circle-fill"></i>'
+    }
+};
+
+// Function to show toast
+function showToast(message, type = TOAST_TYPES.INFO) {
+    const config = TOAST_CONFIG[type];
+    const toastId = 'toast_' + Date.now();
+    
+    const toastHTML = `
+        <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header ${config.bgClass} text-white">
+                <span class="me-2">${config.icon}</span>
+                <strong class="me-auto">${type.charAt(0).toUpperCase() + type.slice(1)}</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        </div>
+    `;
+    
+    const toastContainer = document.getElementById('toastContainer');
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, {
+        animation: true,
+        autohide: true,
+        delay: 3000
+    });
+    
+    toast.show();
+    
+    // Remove toast element after it's hidden
+    toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+    });
+}
+
+// Utility functions for different toast types
+function showSuccessToast(message) {
+    showToast(message, TOAST_TYPES.SUCCESS);
+}
+
+function showErrorToast(message) {
+    showToast(message, TOAST_TYPES.ERROR);
+}
+
+function showWarningToast(message) {
+    showToast(message, TOAST_TYPES.WARNING);
+}
+
+function showInfoToast(message) {
+    showToast(message, TOAST_TYPES.INFO);
+}
