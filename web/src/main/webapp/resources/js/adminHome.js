@@ -1,20 +1,21 @@
 // List Course
 function loadCoursesSection(event) {
-	if (event) {
-		event.preventDefault();
-	}
-	const dynamicContent = document.getElementById('dynamic-content');
-	if (!dynamicContent) {
-		console.error("Phần tử 'dynamic-content' không tồn tại trên trang.");
-		return;
-	}
+    if (event) {
+        event.preventDefault();
+    }
+    const dynamicContent = document.getElementById('dynamic-content');
+    if (!dynamicContent) {
+        console.error("Phần tử 'dynamic-content' không tồn tại trên trang.");
+        return;
+    }
 
-	fetch(`${_ctx}admin/listCourse`)
-		.then(response => response.text())
-		.then(html => {
-			dynamicContent.innerHTML = html;
-		})
-		.catch(error => console.error('Error loading courses section:', error));
+    fetch(`${_ctx}admin/listCourse`)
+        .then(response => response.text())
+        .then(html => {
+            dynamicContent.innerHTML = html;
+            initializePagination("courses"); 
+        })
+        .catch(error => console.error('Error loading courses section:', error));
 }
 
 function loadCourseLessons(courseId) {
@@ -23,6 +24,7 @@ function loadCourseLessons(courseId) {
 		.then(html => {
 
 			document.getElementById('dynamic-content').innerHTML = html;
+			initializePagination('lessons');
 		})
 		.catch(error => console.error('Lỗi khi tải danh sách bài học:', error));
 }
@@ -50,48 +52,80 @@ function loadEditCourseForm(courseId) {
 
 
 function submitEditCourseForm(event, courseId) {
-	const form = event.target;
-	const formData = new FormData(form);
+    const form = event.target;
+    const formData = new FormData(form);
 
-	fetch(form.action, {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => response.json())
-		.then(data => {
-			if (data.status === "success") {
-				bootstrap.Modal.getInstance(document.getElementById('editCourseModal')).hide();
-				loadCoursesSection();
-			} else {
-				alert("Error: " + data.message);
-			}
-		})
-		.catch(error => {
-			console.error('Error updating course:', error);
-			alert("An error occurred while updating the course.");
-		});
+    fetch(form.action, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                showSuccessToast('Course updated successfully!');
+                bootstrap.Modal.getInstance(document.getElementById('editCourseModal')).hide();
+                loadCoursesSection();
+            } else {
+                showErrorToast(data.message || 'Failed to update course');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating course:', error);
+            showErrorToast('An error occurred while updating the course');
+        });
 }
 
-function deleteCourse(courseId) {
-	if (confirm('Are you sure you want to delete this course?')) {
-		fetch(`${_ctx}admin/courses/delete/${courseId}`, {
-			method: 'DELETE'
-		})
-			.then(response => {
-				if (response.ok) {
-					alert('Course deleted successfully');
-
-					loadCoursesSection(null);
-				} else {
-					alert('Failed to delete course');
-				}
-			})
-			.catch(error => {
-				console.error('Error deleting course:', error);
-			});
-	}
+function showDeleteConfirmModal(courseId) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    
+    // Xóa event listener cũ (nếu có)
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Thêm event listener mới
+    newConfirmBtn.addEventListener('click', () => {
+        lesson(courseId, modal);
+    });
+    
+    modal.show();
 }
 
+function showLessonDeleteConfirmModal(lessonId, courseId) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    
+    // Xóa event listener cũ (nếu có)
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Thêm event listener mới
+    newConfirmBtn.addEventListener('click', () => {
+         deleteLesson(lessonId, courseId);
+		 modal.hide();
+    });
+    
+    modal.show();
+}
+
+function deleteCourse(courseId, modal) {
+    fetch(`${_ctx}admin/courses/delete/${courseId}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (response.ok) {
+                modal.hide(); 
+                showSuccessToast('Course deleted successfully');
+                loadCoursesSection(null);
+            } else {
+                showErrorToast('Failed to delete course');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting course:', error);
+            showErrorToast('An error occurred while deleting the course');
+        });
+}
 // Course - lessons
 function loadAddLessonForm(courseId) {
 	fetch(`${_ctx}admin/courses/${courseId}/lessons/add`)
@@ -116,19 +150,14 @@ function submitLessonForm(event) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.status === "success") {
-
+				showSuccessToast('Lesson added successfully!');
 				loadCourseLessons(courseId);
 			} else {
-				const errorMessageDiv = document.getElementById('error-message');
-				errorMessageDiv.innerText = data.message;
-				errorMessageDiv.style.display = 'block';
-			}
+				showErrorToast(data.message || 'Failed to add lesson');			}
 		})
 		.catch(error => {
-			console.error('Lỗi khi thêm bài học:', error);
-			const errorMessageDiv = document.getElementById('error-message');
-			errorMessageDiv.innerText = "Có lỗi xảy ra khi thêm bài học.";
-			errorMessageDiv.style.display = 'block';
+			console.error('Error adding lesson:', error);
+			showErrorToast('An error occurred while adding the lesson');
 		});
 }
 
@@ -162,43 +191,37 @@ function submitEditLessonForm(event, lessonId) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.status === "success") {
+				showSuccessToast('Lesson updated successfully!');
 				bootstrap.Modal.getInstance(document.getElementById('editLessonModal')).hide();
 				loadCourseLessons(data.courseId);
 			} else {
-				alert("Error: " + data.message);
+				showErrorToast(data.message || 'Failed to update lesson');
 			}
 		})
 		.catch(error => {
 			console.error('Error updating lesson:', error);
-			alert("An error occurred while updating the lesson.");
+            showErrorToast('An error occurred while updating the lesson');
 		});
 }
 
 
 function deleteLesson(lessonId, courseId) {
-	if (confirm('Are you sure you want to delete this lesson?')) {
-		fetch(`${_ctx}admin/lessons/delete/${lessonId}`, {
-			method: 'DELETE'
-		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.status === "success") {
-					alert('Lesson deleted successfully');
-
-					loadCourseLessons(courseId);
-				} else {
-					alert('Failed to delete lesson: ' + data.message);
-				}
-			})
-			.catch(error => {
-				console.error('Error deleting lesson:', error);
-				alert('An error occurred while deleting the lesson.');
-			});
-	}
+    fetch(`${_ctx}admin/lessons/delete/${lessonId}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (response.ok) {
+                showSuccessToast('Lesson deleted successfully');
+                loadCourseLessons(courseId); 
+            } else {
+                showErrorToast('Failed to delete lesson');
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting lesson:', error);
+            showErrorToast('An error occurred while deleting the lesson');
+        });
 }
-
-
-
 // Add course 
 function fetchAddCoursePage(event) {
 	if (event) {
@@ -242,29 +265,29 @@ function filterSubcategories(categoryId) {
 }
 
 function submitCourseForm(event) {
-	event.preventDefault();
+    event.preventDefault();
 
-	const form = document.querySelector('#courseForm');
-	const formData = new FormData(form);
+    const form = document.querySelector('#courseForm');
+    const formData = new FormData(form);
 
-	fetch(`${_ctx}admin/addCourse`, {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => response.json())
-		.then(data => {
-			const errorMessageDiv = document.getElementById('error-message');
-			if (data.status === "success") {
-				loadCoursesSection(event);
-				errorMessageDiv.style.display = 'none';
-			} else {
-				errorMessageDiv.innerText = data.message;
-				errorMessageDiv.style.display = 'block';
-			}
-		})
-		.catch(error => console.error('Error adding course:', error));
+    fetch(`${_ctx}admin/addCourse`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                showSuccessToast('Course added successfully!');
+                loadCoursesSection(event);
+            } else {
+                showErrorToast(data.message || 'Failed to add course');
+            }
+        })
+        .catch(error => {
+            console.error('Error adding course:', error);
+            showErrorToast('An error occurred while adding the course');
+        });
 }
-
 // Add course with Handsontable
 function fetchAddCourseHandsontablePage(event) {
 	event.preventDefault();
@@ -575,6 +598,7 @@ function submitLessonData(event, courseId) {
 }
 
 
+
 // Add parameter value with Handsontable
 function loadParametersManagePage(event) {
 	if (event) {
@@ -803,83 +827,253 @@ function submitEditParameterForm(event, parameterId) {
 }
 
 
-// Pagination
+// Định nghĩa state riêng cho từng loại bảng
+const paginationStates = {
+    courses: {
+        currentPage: 1,
+        itemsPerPage: 10,
+        totalPages: 1
+    },
+    lessons: {
+        currentPage: 1,
+        itemsPerPage: 5,
+        totalPages: 1
+    }
+};
 
-const itemsPerPageAdmin = 8;
-let currentPageAdmin = 1;
+// Hàm cập nhật state phân trang
+function updatePaginationState(type, currentPage, totalItems) {
+    const state = paginationStates[type];
+    state.currentPage = currentPage;
+    state.totalPages = Math.ceil(totalItems / state.itemsPerPage);
+} // Thêm dấu ngoặc nhọn đóng ở đây
 
-function showPage(page) {
-	const courses = document.querySelectorAll('tbody tr');
-	const start = (page - 1) * itemsPerPageAdmin;
-	const end = start + itemsPerPageAdmin;
+// Hàm hiển thị các item theo trang
+function showPage(type, page) {
+    const tableBody = document.querySelector(`#${type}Container tbody`);
+    if (!tableBody) return;
 
-	courses.forEach((course, index) => {
-		if (index >= start && index < end) {
-			course.style.display = '';
-		} else {
-			course.style.display = 'none';
-		}
-	});
+    const tableRows = tableBody.querySelectorAll('tr');
+    const state = paginationStates[type];
+    const start = (page - 1) * state.itemsPerPage;
+    const end = start + state.itemsPerPage;
+
+    tableRows.forEach((row, index) => {
+        if (index >= start && index < end) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
 }
 
-
-function setupPagination() {
-	const courses = document.querySelectorAll('tbody tr');
-	const pageCount = Math.ceil(courses.length / itemsPerPageAdmin);
-	const pagination = document.getElementById('pagination');
-	pagination.innerHTML = '';
-
-	function createPageItem(page) {
-		const pageItem = document.createElement('li');
-		pageItem.className = 'page-item' + (page === currentPageAdmin ? ' active' : '');
-		pageItem.innerHTML = `<a class="page-link" href="#">${page}</a>`;
-		pageItem.addEventListener('click', function(event) {
-			event.preventDefault();
-			currentPageAdmin = page;
-			showPage(currentPageAdmin);
-			setupPagination();
-		});
-		return pageItem;
-	}
-
-	// Nút Previous
-	const prevItem = document.createElement('li');
-	prevItem.className = 'page-item' + (currentPageAdmin === 1 ? ' disabled' : '');
-	prevItem.innerHTML = `<a class="page-link" href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>`;
-	prevItem.addEventListener('click', function(event) {
-		event.preventDefault();
-		if (currentPageAdmin > 1) {
-			currentPageAdmin--;
-			showPage(currentPageAdmin);
-			setupPagination();
-		}
-	});
-	pagination.appendChild(prevItem);
-
-	// Tạo các nút phân trang
-	for (let i = 1; i <= pageCount; i++) {
-		pagination.appendChild(createPageItem(i));
-	}
-
-	// Nút Next
-	const nextItem = document.createElement('li');
-	nextItem.className = 'page-item' + (currentPageAdmin === pageCount ? ' disabled' : '');
-	nextItem.innerHTML = `<a class="page-link" href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>`;
-	nextItem.addEventListener('click', function(event) {
-		event.preventDefault();
-		if (currentPageAdmin < pageCount) {
-			currentPageAdmin++;
-			showPage(currentPageAdmin);
-			setupPagination();
-		}
-	});
-	pagination.appendChild(nextItem);
+// Hàm tạo nút phân trang
+function createPaginationButton(type, page, isActive = false, isDisabled = false) {
+    const li = document.createElement('li');
+    li.className = `page-item ${isActive ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`;
+    
+    const a = document.createElement('a');
+    a.className = 'page-link';
+    a.href = '#';
+    a.textContent = page;
+    
+    if (!isDisabled) {
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (typeof page === 'number') {
+                paginationStates[type].currentPage = page;
+                updatePagination(type);
+            }
+        });
+    }
+    
+    li.appendChild(a);
+    return li;
 }
+
+// Hàm tạo nút Previous/Next
+function createNavigationButton(type, navType) {
+    const state = paginationStates[type];
+    const li = document.createElement('li');
+    const isDisabled = navType === 'prev' 
+        ? state.currentPage === 1 
+        : state.currentPage === state.totalPages;
+    
+    li.className = `page-item ${isDisabled ? 'disabled' : ''}`;
+    
+    const a = document.createElement('a');
+    a.className = 'page-link';
+    a.href = '#';
+    a.setAttribute('aria-label', navType === 'prev' ? 'Previous' : 'Next');
+    
+    const span = document.createElement('span');
+    span.setAttribute('aria-hidden', 'true');
+    span.innerHTML = navType === 'prev' ? '&laquo;' : '&raquo;';
+    
+    a.appendChild(span);
+    
+    if (!isDisabled) {
+        a.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (navType === 'prev' && state.currentPage > 1) {
+                state.currentPage--;
+            } else if (navType === 'next' && state.currentPage < state.totalPages) {
+                state.currentPage++;
+            }
+            updatePagination(type);
+        });
+    }
+    
+    li.appendChild(a);
+    return li;
+}
+
+// Hàm cập nhật UI phân trang
+function updatePagination(type) {
+    const pagination = document.getElementById(`${type}Pagination`);
+    if (!pagination) return;
+    
+    const state = paginationStates[type];
+    
+    // Xóa tất cả các nút phân trang hiện tại
+    pagination.innerHTML = '';
+    
+    // Thêm nút Previous
+    pagination.appendChild(createNavigationButton(type, 'prev'));
+    
+    // Tính toán các trang cần hiển thị
+    let startPage = Math.max(1, state.currentPage - 2);
+    let endPage = Math.min(state.totalPages, startPage + 4);
+    
+    // Điều chỉnh lại startPage nếu endPage đã đạt giới hạn
+    startPage = Math.max(1, endPage - 4);
+    
+    // Thêm nút trang đầu và dấu ...
+    if (startPage > 1) {
+        pagination.appendChild(createPaginationButton(type, 1));
+        if (startPage > 2) {
+            pagination.appendChild(createPaginationButton(type, '...', false, true));
+        }
+    }
+    
+    // Thêm các nút số trang
+    for (let i = startPage; i <= endPage; i++) {
+        pagination.appendChild(createPaginationButton(type, i, i === state.currentPage));
+    }
+    
+    // Thêm dấu ... và nút trang cuối
+    if (endPage < state.totalPages) {
+        if (endPage < state.totalPages - 1) {
+            pagination.appendChild(createPaginationButton(type, '...', false, true));
+        }
+        pagination.appendChild(createPaginationButton(type, state.totalPages));
+    }
+    
+    // Thêm nút Next
+    pagination.appendChild(createNavigationButton(type, 'next'));
+    
+    // Hiển thị các item của trang hiện tại
+    showPage(type, state.currentPage);
+}
+
+// Hàm khởi tạo phân trang cho một bảng cụ thể
+function initializePagination(type) {
+    const container = document.getElementById(`${type}Container`);
+    if (!container) return;
+
+    const totalItems = container.querySelectorAll('tbody tr').length;
+    updatePaginationState(type, 1, totalItems);
+    updatePagination(type);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-	showPage(currentPageAdmin);
-	setupPagination();
+    // Kiểm tra xem đang ở trang nào để khởi tạo phân trang phù hợp
+    if (document.getElementById('coursesContainer')) {
+        initializePagination('courses');
+    } else if (document.getElementById('lessonsContainer')) {
+        initializePagination('lessons');
+    }
 });
 
 
 
+// Toast type constants
+const TOAST_TYPES = {
+    SUCCESS: 'success',
+    ERROR: 'error',
+    WARNING: 'warning',
+    INFO: 'info'
+};
 
+// Toast configuration
+const TOAST_CONFIG = {
+    success: {
+        bgClass: 'bg-success',
+        icon: '<i class="bi bi-check-circle-fill"></i>'
+    },
+    error: {
+        bgClass: 'bg-danger',
+        icon: '<i class="bi bi-x-circle-fill"></i>'
+    },
+    warning: {
+        bgClass: 'bg-warning',
+        icon: '<i class="bi bi-exclamation-triangle-fill"></i>'
+    },
+    info: {
+        bgClass: 'bg-info',
+        icon: '<i class="bi bi-info-circle-fill"></i>'
+    }
+};
+
+// Function to show toast
+function showToast(message, type = TOAST_TYPES.INFO) {
+    const config = TOAST_CONFIG[type];
+    const toastId = 'toast_' + Date.now();
+    
+    const toastHTML = `
+        <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header ${config.bgClass} text-white">
+                <span class="me-2">${config.icon}</span>
+                <strong class="me-auto">${type.charAt(0).toUpperCase() + type.slice(1)}</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        </div>
+    `;
+    
+    const toastContainer = document.getElementById('toastContainer');
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, {
+        animation: true,
+        autohide: true,
+        delay: 3000
+    });
+    
+    toast.show();
+    
+    // Remove toast element after it's hidden
+    toastElement.addEventListener('hidden.bs.toast', () => {
+        toastElement.remove();
+    });
+}
+
+// Utility functions for different toast types
+function showSuccessToast(message) {
+    showToast(message, TOAST_TYPES.SUCCESS);
+}
+
+function showErrorToast(message) {
+    showToast(message, TOAST_TYPES.ERROR);
+}
+
+function showWarningToast(message) {
+    showToast(message, TOAST_TYPES.WARNING);
+}
+
+function showInfoToast(message) {
+    showToast(message, TOAST_TYPES.INFO);
+}
