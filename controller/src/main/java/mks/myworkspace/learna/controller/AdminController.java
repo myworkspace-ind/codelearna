@@ -341,9 +341,10 @@ public class AdminController {
 		Course course = courseService.getCourseById(courseId);
 		List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
 
-		if (lessons == null || lessons.isEmpty()) {
-			return new ModelAndView("redirect:/admin/listCourse");
-		}
+		/*
+		 * if (lessons == null || lessons.isEmpty()) { return new
+		 * ModelAndView("redirect:/admin/listCourse"); }
+		 */
 
 		ModelAndView mav = new ModelAndView("fragments/adminCourseLessons :: lessonsContent");
 		mav.addObject("course", course);

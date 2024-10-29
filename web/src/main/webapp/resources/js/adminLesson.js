@@ -173,25 +173,20 @@ function deleteLesson(lessonId, courseId) {
 		});
 }
 
-// Function để hiển thị modal xác nhận xóa
+
 function showLessonDeleteConfirmModal(lessonId, courseId) {
 	const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
 	const confirmBtn = document.getElementById('confirmDeleteBtn');
 
-	// Xóa event listeners cũ
 	confirmBtn.replaceWith(confirmBtn.cloneNode(true));
 
-	// Thêm event listener mới
 	document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
 		deleteLesson(lessonId, courseId);
 	});
 
 	modal.show();
 }
-// Add course 
 
-
-// Add Lessons with Handsontable
 let hotLessons;
 
 function fetchAddLessonHandsontablePage(event, courseId) {
