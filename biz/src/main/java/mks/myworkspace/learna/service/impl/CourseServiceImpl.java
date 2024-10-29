@@ -57,7 +57,7 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
 	public void deleteCourse(Long id) {
-		repo.deleteById(id);
+		courseJdbcRepository.deleteById(id);
 	}
 
 	@Override

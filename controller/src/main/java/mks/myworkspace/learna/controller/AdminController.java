@@ -93,47 +93,47 @@ public class AdminController {
 	@PostMapping("/addCourse")
 	@Transactional
 	public ResponseEntity<Map<String, String>> addCourse(@Validated @ModelAttribute("course") Course course,
-	        BindingResult bindingResult) {
-	    Map<String, String> response = new HashMap<>();
+			BindingResult bindingResult) {
+		Map<String, String> response = new HashMap<>();
 
-	    if (bindingResult.hasErrors()) {
-	        response.put("status", "error");
-	        response.put("message", "Invalid information.");
-	        System.out.println(bindingResult.getAllErrors());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+		if (bindingResult.hasErrors()) {
+			response.put("status", "error");
+			response.put("message", "Invalid information.");
+			System.out.println(bindingResult.getAllErrors());
+			return ResponseEntity.badRequest().body(response);
+		}
 
-	    if (course.getName() == null || course.getName().isEmpty() || course.getOriginalPrice() == null
-	            || course.getDiscountedPrice() == null || course.getSubcategory() == null
-	            || course.getSubcategory().getId() == null || course.getDifficultyLevel() == null
-	            || course.getLessonType() == null) {
-	        response.put("status", "error");
-	        response.put("message", "Please fill in all the required information.");
-	        return ResponseEntity.badRequest().body(response);
-	    }
+		if (course.getName() == null || course.getName().isEmpty() || course.getOriginalPrice() == null
+				|| course.getDiscountedPrice() == null || course.getSubcategory() == null
+				|| course.getSubcategory().getId() == null || course.getDifficultyLevel() == null
+				|| course.getLessonType() == null) {
+			response.put("status", "error");
+			response.put("message", "Please fill in all the required information.");
+			return ResponseEntity.badRequest().body(response);
+		}
 
-	    try {
-	        Parameter difficultyLevel = parameterService.getParameterById(course.getDifficultyLevel().getId());
-	        Parameter lessonType = parameterService.getParameterById(course.getLessonType().getId());
+		try {
+			Parameter difficultyLevel = parameterService.getParameterById(course.getDifficultyLevel().getId());
+			Parameter lessonType = parameterService.getParameterById(course.getLessonType().getId());
 
-	        if (difficultyLevel == null || lessonType == null) {
-	            response.put("status", "error");
-	            response.put("message", "Difficulty Level or Lesson Type is not valid.");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+			if (difficultyLevel == null || lessonType == null) {
+				response.put("status", "error");
+				response.put("message", "Difficulty Level or Lesson Type is not valid.");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	        course.setDifficultyLevel(difficultyLevel);
-	        course.setLessonType(lessonType);
+			course.setDifficultyLevel(difficultyLevel);
+			course.setLessonType(lessonType);
 
-	        courseService.saveCourse(course);
-	        response.put("status", "success");
-	        response.put("message", "The course has been added successfully!");
-	        return ResponseEntity.ok(response);
-	    } catch (Exception e) {
-	        response.put("status", "error");
-	        response.put("message", "System error: " + e.getMessage());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+			courseService.saveCourse(course);
+			response.put("status", "success");
+			response.put("message", "The course has been added successfully!");
+			return ResponseEntity.ok(response);
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "System error: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 
 	@GetMapping("/addCourseHandsontable")
@@ -145,100 +145,99 @@ public class AdminController {
 	@PostMapping("/saveCoursesHandsontable")
 	@Transactional
 	public ResponseEntity<Map<String, String>> saveCoursesHandsontable(
-	        @RequestBody List<Map<String, Object>> courseData) {
-	    log.info("Received request to save courses");
-	    Map<String, String> response = new HashMap<>();
+			@RequestBody List<Map<String, Object>> courseData) {
+		log.info("Received request to save courses");
+		Map<String, String> response = new HashMap<>();
 
-	    try {
-	        log.info("Received course data: {}", courseData);
+		try {
+			log.info("Received course data: {}", courseData);
 
-	        if (courseData == null || courseData.isEmpty()) {
-	            throw new IllegalArgumentException("No course data was sent");
-	        }
+			if (courseData == null || courseData.isEmpty()) {
+				throw new IllegalArgumentException("No course data was sent");
+			}
 
-	        for (Map<String, Object> courseMap : courseData) {
-	            Course course = new Course();
+			for (Map<String, Object> courseMap : courseData) {
+				Course course = new Course();
 
-	            course.setName((String) courseMap.get("name"));
-	            course.setOriginalPrice((Double) courseMap.get("originalPrice"));
-	            course.setDiscountedPrice((Double) courseMap.get("discountedPrice"));
-	            course.setImageUrl((String) courseMap.get("imageUrl"));
-	            course.setDescription((String) courseMap.get("description"));
+				course.setName((String) courseMap.get("name"));
+				course.setOriginalPrice((Double) courseMap.get("originalPrice"));
+				course.setDiscountedPrice((Double) courseMap.get("discountedPrice"));
+				course.setImageUrl((String) courseMap.get("imageUrl"));
+				course.setDescription((String) courseMap.get("description"));
 
-	            if (course.getName() == null || course.getName().isEmpty()) {
-	                throw new IllegalArgumentException("Course name cannot be empty");
-	            }
-	            if (course.getOriginalPrice() == null || course.getOriginalPrice() < 0) {
-	                throw new IllegalArgumentException("Invalid original price");
-	            }
-	            if (course.getDiscountedPrice() == null || course.getDiscountedPrice() < 0) {
-	                throw new IllegalArgumentException("Invalid discounted price");
-	            }
+				if (course.getName() == null || course.getName().isEmpty()) {
+					throw new IllegalArgumentException("Course name cannot be empty");
+				}
+				if (course.getOriginalPrice() == null || course.getOriginalPrice() < 0) {
+					throw new IllegalArgumentException("Invalid original price");
+				}
+				if (course.getDiscountedPrice() == null || course.getDiscountedPrice() < 0) {
+					throw new IllegalArgumentException("Invalid discounted price");
+				}
 
-	            String subcategoryString = (String) courseMap.get("subcategory");
-	            log.info("Subcategory as string: {}", subcategoryString);
-	            Parameter subcategoryParameter = parameterService.getParameterByParamKeyAndParamValue("subcategory",
-	                    subcategoryString);
-	            log.info("Subcategory parameter: {}", subcategoryParameter);
-	            if (subcategoryParameter == null) {
-	                response.put("status", "error");
-	                response.put("message", "Invalid subcategory value.");
-	                return ResponseEntity.badRequest().body(response);
-	            }
-	            Subcategory subcategory = subCategoryService.getSubcategoryByParameter(subcategoryParameter);
-	            log.info("Subcategory object: {}", subcategory);
-	            course.setSubcategory(subcategory);
+				String subcategoryString = (String) courseMap.get("subcategory");
+				log.info("Subcategory as string: {}", subcategoryString);
+				Parameter subcategoryParameter = parameterService.getParameterByParamKeyAndParamValue("subcategory",
+						subcategoryString);
+				log.info("Subcategory parameter: {}", subcategoryParameter);
+				if (subcategoryParameter == null) {
+					response.put("status", "error");
+					response.put("message", "Invalid subcategory value.");
+					return ResponseEntity.badRequest().body(response);
+				}
+				Subcategory subcategory = subCategoryService.getSubcategoryByParameter(subcategoryParameter);
+				log.info("Subcategory object: {}", subcategory);
+				course.setSubcategory(subcategory);
 
-	            String difficultyLevelString = (String) courseMap.get("difficultyLevel");
-	            Parameter difficultyLevel = parameterService.getParameterByParamKeyAndParamValue("difficulty_level",
-	                    difficultyLevelString);
-	            if (difficultyLevel == null) {
-	                response.put("status", "error");
-	                response.put("message", "Invalid difficulty level value.");
-	                return ResponseEntity.badRequest().body(response);
-	            }
-	            course.setDifficultyLevel(difficultyLevel);
+				String difficultyLevelString = (String) courseMap.get("difficultyLevel");
+				Parameter difficultyLevel = parameterService.getParameterByParamKeyAndParamValue("difficulty_level",
+						difficultyLevelString);
+				if (difficultyLevel == null) {
+					response.put("status", "error");
+					response.put("message", "Invalid difficulty level value.");
+					return ResponseEntity.badRequest().body(response);
+				}
+				course.setDifficultyLevel(difficultyLevel);
 
-	            // Check lesson type
-	            String lessonTypeString = (String) courseMap.get("lessonType");
-	            Parameter lessonType = parameterService.getParameterByParamKeyAndParamValue("lesson_type",
-	                    lessonTypeString);
-	            if (lessonType == null) {
-	                response.put("status", "error");
-	                response.put("message", "Invalid lesson type value.");
-	                return ResponseEntity.badRequest().body(response);
-	            }
-	            course.setLessonType(lessonType);
+				// Check lesson type
+				String lessonTypeString = (String) courseMap.get("lessonType");
+				Parameter lessonType = parameterService.getParameterByParamKeyAndParamValue("lesson_type",
+						lessonTypeString);
+				if (lessonType == null) {
+					response.put("status", "error");
+					response.put("message", "Invalid lesson type value.");
+					return ResponseEntity.badRequest().body(response);
+				}
+				course.setLessonType(lessonType);
 
-	            Object isFreeObj = courseMap.get("isFree");
+				Object isFreeObj = courseMap.get("isFree");
 
-	            if (isFreeObj != null && isFreeObj instanceof Boolean) {
-	                course.setIsFree((Boolean) isFreeObj);
-	            } else {
-	                course.setIsFree(false);
-	            }
+				if (isFreeObj != null && isFreeObj instanceof Boolean) {
+					course.setIsFree((Boolean) isFreeObj);
+				} else {
+					course.setIsFree(false);
+				}
 
-	            try {
-	                courseService.saveCourse(course);
-	            } catch (IllegalArgumentException ex) {
-	                throw new IllegalArgumentException("An error occurred while adding the course");
-	            }
-	        }
+				try {
+					courseService.saveCourse(course);
+				} catch (IllegalArgumentException ex) {
+					throw new IllegalArgumentException("An error occurred while adding the course");
+				}
+			}
 
-	        response.put("status", "success");
-	        response.put("message", "The courses have been added successfully!");
-	        return ResponseEntity.ok(response);
+			response.put("status", "success");
+			response.put("message", "The courses have been added successfully!");
+			return ResponseEntity.ok(response);
 
-	    } catch (Exception e) {
-	        log.error("Error saving courses: ", e);
-	        response.put("status", "error");
-	        response.put("message", "An error occurred while saving the course: " + e.getMessage());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+		} catch (Exception e) {
+			log.error("Error saving courses: ", e);
+			response.put("status", "error");
+			response.put("message", "An error occurred while saving the course: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 
-
-	@DeleteMapping("/courses/delete/{id}")
+	@PostMapping("/courses/delete/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> deleteCourse(@PathVariable("id") Long id) {
 		Map<String, String> response = new HashMap<>();
@@ -271,29 +270,70 @@ public class AdminController {
 		ModelAndView mav = new ModelAndView("fragments/adminEditCourse :: editCourseModal");
 		mav.addObject("course", course);
 		mav.addObject("categories", categoryService.getAllCategories());
+		mav.addObject("lessonTypes", parameterService.getListParamsByParamValue("lesson_type"));
+		mav.addObject("difficultyLevel", parameterService.getListParamsByParamValue("difficulty_level"));
 		return mav;
 	}
 
 	@PostMapping("/courses/edit/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> editCourse(@PathVariable("id") Long id,
-			@ModelAttribute("course") Course course) {
-		Course existingCourse = courseService.getCourseById(id);
-		if (existingCourse == null) {
-			return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Course not found"));
-		}
+	        @ModelAttribute("course") Course course) {
+	    Map<String, String> response = new HashMap<>();
+	    
+	    try {
+	        Course existingCourse = courseService.getCourseById(id);
+	        if (existingCourse == null) {
+	            response.put("status", "error");
+	            response.put("message", "Course not found");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
-		existingCourse.setName(course.getName());
-		existingCourse.setOriginalPrice(course.getOriginalPrice());
-		existingCourse.setDiscountedPrice(course.getDiscountedPrice());
-		existingCourse.setImageUrl(course.getImageUrl());
-		existingCourse.setDescription(course.getDescription());
-		existingCourse.setDifficultyLevel(course.getDifficultyLevel());
-		existingCourse.setIsFree(course.getIsFree());
+	        // Validate input
+	        if (course.getName() == null || course.getName().trim().isEmpty()) {
+	            response.put("status", "error");
+	            response.put("message", "Course name is required");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
-		courseService.saveCourse(existingCourse);
+	        // Update existing course
+	        existingCourse.setName(course.getName());
+	        existingCourse.setOriginalPrice(course.getOriginalPrice());
+	        existingCourse.setDiscountedPrice(course.getDiscountedPrice());
+	        existingCourse.setImageUrl(course.getImageUrl());
+	        existingCourse.setDescription(course.getDescription());
 
-		return ResponseEntity.ok(Map.of("status", "success", "message", "Course updated successfully"));
+	        // Cập nhật difficultyLevel bằng cách lấy đối tượng Parameter theo ID
+	        if (course.getDifficultyLevel() != null && course.getDifficultyLevel().getId() != null) {
+	            Parameter difficultyLevel = parameterService.getParameterById(course.getDifficultyLevel().getId());
+	            existingCourse.setDifficultyLevel(difficultyLevel);
+	        }
+
+	        // Cập nhật lessonType bằng cách lấy đối tượng Parameter theo ID
+	        if (course.getLessonType() != null && course.getLessonType().getId() != null) {
+	            Parameter lessonType = parameterService.getParameterById(course.getLessonType().getId());
+	            existingCourse.setLessonType(lessonType);
+	        }
+
+	        existingCourse.setIsFree(course.getIsFree());
+	        
+	        if (course.getSubcategory() != null && course.getSubcategory().getId() != null) {
+	            existingCourse.setSubcategory(course.getSubcategory());
+	        }
+
+	        courseService.saveCourse(existingCourse);
+
+	        response.put("status", "success");
+	        response.put("message", "Course updated successfully");
+	        response.put("courseId", existingCourse.getId().toString());
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        log.error("Error updating course: ", e);
+	        response.put("status", "error");
+	        response.put("message", e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 
 	@GetMapping("/courses/{id}/lessons")
@@ -301,9 +341,10 @@ public class AdminController {
 		Course course = courseService.getCourseById(courseId);
 		List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
 
-		if (lessons == null || lessons.isEmpty()) {
-			return new ModelAndView("redirect:/admin/listCourse");
-		}
+		/*
+		 * if (lessons == null || lessons.isEmpty()) { return new
+		 * ModelAndView("redirect:/admin/listCourse"); }
+		 */
 
 		ModelAndView mav = new ModelAndView("fragments/adminCourseLessons :: lessonsContent");
 		mav.addObject("course", course);
@@ -332,35 +373,40 @@ public class AdminController {
 	@PostMapping("/courses/{courseId}/lessons/add")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> addLesson(@PathVariable("courseId") Long courseId,
-	        @ModelAttribute("lesson") Lesson lesson) {
-	    Map<String, String> response = new HashMap<>();
-	    try {
-	        Course course = courseService.getCourseById(courseId);
-	        if (course == null) {
-	            response.put("status", "error");
-	            response.put("message", "Course not found.");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+			@ModelAttribute("lesson") Lesson lesson) {
+		Map<String, String> response = new HashMap<>();
 
-	        lesson.setCourse(course);
-	        lessonService.saveLesson(lesson);
+		try {
+			// Validate course existence
+			Course course = courseService.getCourseById(courseId);
+			if (course == null) {
+				response.put("status", "error");
+				response.put("message", "Course not found");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	        response.put("status", "success");
-	        response.put("message", "The lesson has been added successfully.");
+			// Validate lesson data
+			if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
+				response.put("status", "error");
+				response.put("message", "Lesson title is required");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	        ModelAndView mav = new ModelAndView("fragments/adminCourseLessons :: lessonsContent");
-	        mav.addObject("course", course);
-	        mav.addObject("lessons", playService.getLessonsByCourseId(courseId));
+			lesson.setCourse(course);
+			lessonService.saveLesson(lesson);
 
-	        return ResponseEntity.ok(response);
+			response.put("status", "success");
+			response.put("message", "Lesson added successfully");
+			response.put("courseId", courseId.toString());
+			return ResponseEntity.ok(response);
 
-	    } catch (Exception e) {
-	        response.put("status", "error");
-	        response.put("message", "Error adding lesson: " + e.getMessage());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+		} catch (Exception e) {
+			log.error("Error adding lesson: ", e);
+			response.put("status", "error");
+			response.put("message", "Error adding lesson: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
-
 
 	@GetMapping("/lessons/edit/{id}")
 	public ModelAndView showEditLessonForm(@PathVariable("id") Long lessonId) {
@@ -375,33 +421,33 @@ public class AdminController {
 	}
 
 	@PostMapping("/lessons/edit/{id}")
-	@ResponseBody 
+	@ResponseBody
 	public ResponseEntity<Map<String, String>> editLesson(@PathVariable("id") Long lessonId,
-	        @ModelAttribute("lesson") Lesson lesson) {
-	    Map<String, String> response = new HashMap<>();
-	    try {
-	        Lesson existingLesson = playService.getLessonById(lessonId);
-	        if (existingLesson == null) {
-	            response.put("status", "error"); 
-	            response.put("message", "Lesson not found");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+			@ModelAttribute("lesson") Lesson lesson) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			Lesson existingLesson = playService.getLessonById(lessonId);
+			if (existingLesson == null) {
+				response.put("status", "error");
+				response.put("message", "Lesson not found");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	        existingLesson.setTitle(lesson.getTitle());
-	        existingLesson.setVideoUrl(lesson.getVideoUrl());
+			existingLesson.setTitle(lesson.getTitle());
+			existingLesson.setVideoUrl(lesson.getVideoUrl());
 
-	        lessonService.saveLesson(existingLesson);
+			lessonService.saveLesson(existingLesson);
 
-	        response.put("status", "success");
-	        response.put("message", "Lesson updated successfully");
-	        response.put("courseId", existingLesson.getCourse().getId().toString());
-	        return ResponseEntity.ok(response);
-	        
-	    } catch (Exception e) {
-	        response.put("status", "error");
-	        response.put("message", "Error updating lesson: " + e.getMessage());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+			response.put("status", "success");
+			response.put("message", "Lesson updated successfully");
+			response.put("courseId", existingLesson.getCourse().getId().toString());
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "Error updating lesson: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 
 	@GetMapping("/addLessonsHandsontable/{courseId}")
@@ -460,12 +506,12 @@ public class AdminController {
 		}
 	}
 
-	@DeleteMapping("/lessons/delete/{id}")
+	@PostMapping("/lessons/delete/{id}") // Chuyển từ DeleteMapping sang PostMapping
 	@ResponseBody
-	public ResponseEntity<Map<String, String>> deleteLesson(@PathVariable("id") Long lessonId) {
+	public ResponseEntity<Map<String, String>> deleteLesson(@PathVariable("id") Long id) {
 		Map<String, String> response = new HashMap<>();
 		try {
-			Lesson lesson = playService.getLessonById(lessonId);
+			Lesson lesson = playService.getLessonById(id);
 			if (lesson == null) {
 				response.put("status", "error");
 				response.put("message", "Lesson not found");
@@ -473,13 +519,15 @@ public class AdminController {
 			}
 
 			Long courseId = lesson.getCourse().getId();
-			lessonService.deleteLessonById(lessonId);
+			lessonService.deleteLessonById(id);
 
 			response.put("status", "success");
 			response.put("message", "Lesson has been deleted successfully");
 			response.put("courseId", courseId.toString());
 			return ResponseEntity.ok(response);
+
 		} catch (Exception e) {
+			log.error("Error deleting lesson: ", e);
 			response.put("status", "error");
 			response.put("message", "An error occurred while trying to delete the lesson: " + e.getMessage());
 			return ResponseEntity.badRequest().body(response);
@@ -549,32 +597,32 @@ public class AdminController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
-	
+
 	@DeleteMapping("/parameter/delete/{parameterId}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> deleteParameter(@PathVariable("parameterId") Long parameterId) {
-	    Map<String, String> response = new HashMap<>();
-	    
-	    try {
-	        Parameter parameter = parameterService.getParameterById(parameterId);
-	        
-	        if (parameter != null) {
-	            parameterService.deleteParameter(parameterId);
-	            response.put("status", "success");
-	            response.put("message", "Parameter đã được xóa thành công.");
-	            return ResponseEntity.ok(response);
-	        } else {
-	            response.put("status", "error");
-	            response.put("message", "Parameter không tồn tại.");
-	            return ResponseEntity.badRequest().body(response);
-	        }
-	    } catch (Exception e) {
-	        response.put("status", "error");
-	        response.put("message", "Có lỗi xảy ra khi xóa Parameter: " + e.getMessage());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+		Map<String, String> response = new HashMap<>();
+
+		try {
+			Parameter parameter = parameterService.getParameterById(parameterId);
+
+			if (parameter != null) {
+				parameterService.deleteParameter(parameterId);
+				response.put("status", "success");
+				response.put("message", "Parameter đã được xóa thành công.");
+				return ResponseEntity.ok(response);
+			} else {
+				response.put("status", "error");
+				response.put("message", "Parameter không tồn tại.");
+				return ResponseEntity.badRequest().body(response);
+			}
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "Có lỗi xảy ra khi xóa Parameter: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
-	
+
 	@GetMapping("/parameter/edit/{id}")
 	public ModelAndView showEditParameterForm(@PathVariable("id") Long id) {
 		Parameter parameter = parameterService.getParameterById(id);
@@ -599,12 +647,10 @@ public class AdminController {
 
 		existingParameter.setParamKey(parameter.getParamKey());
 		existingParameter.setParamValue(parameter.getParamValue());
-		
 
 		parameterService.saveParameters(existingParameter);
 
 		return ResponseEntity.ok(Map.of("status", "success", "message", "Parameter updated successfully"));
 	}
-
 
 }
