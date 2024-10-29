@@ -497,7 +497,7 @@ public class AdminController {
 
 	@GetMapping("/addParameterHandsontable")
 	public ModelAndView showAddParameterHandsontablePage() {
-		ModelAndView mav = new ModelAndView("fragments/adminAddParametersHandsontable");
+		ModelAndView mav = new ModelAndView("fragments/adminAddParameterHandsontable");
 		return mav;
 	}
 
