@@ -53,9 +53,6 @@ public class PlayController {
         int end = Math.min((page + 1) * size, totalComments);
         List<Comment> paginatedComments = allComments.subList(start, end);
 
-        log.info("Đang trả về {} bình luận cho bài học {} (trang {} / {})", 
-                 paginatedComments.size(), lessonId, page + 1, totalPages);
-
         mav.addObject("comments", paginatedComments);
         mav.addObject("currentPage", page);
         mav.addObject("totalPages", totalPages);
