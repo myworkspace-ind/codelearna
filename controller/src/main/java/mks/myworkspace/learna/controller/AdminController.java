@@ -645,7 +645,6 @@ public class AdminController {
 			return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Parameter not found"));
 		}
 
-		existingParameter.setParamKey(parameter.getParamKey());
 		existingParameter.setParamValue(parameter.getParamValue());
 
 		parameterService.saveParameters(existingParameter);
