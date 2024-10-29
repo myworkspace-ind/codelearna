@@ -11,16 +11,14 @@
 						th:object="${parameter}">
 
 						<div class="mb-3">
-                            <label for="paramKey" class="form-label">Parameter Key</label>
-                            <select class="form-select" id="paramKey" th:field="*{paramKey}" required>
-                                <option th:each="key : ${parametersKeyDistinct}" th:value="${key}" 
-                                        th:text="${key}" 
-                                        th:selected="${parameter.paramKey == key}"></option>
-                            </select>
-                        </div>
-						
+							<label for="paramKey" class="form-label">Parameter Key</label> <input type="text" class="form-control" id="paramKey" th:field="*{paramKey}"
+								readonly>
+						</div>
+
+
 						<div class="mb-3">
-							<label for="paramValue" class="form-label">Parameter Value</label> <input type="text" class="form-control" id="paramValue" th:field="*{paramValue}" required>
+							<label for="paramValue" class="form-label">Parameter Value</label> <input type="text" class="form-control" id="paramValue"
+								th:field="*{paramValue}" required>
 						</div>
 
 					</form>
