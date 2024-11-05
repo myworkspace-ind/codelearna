@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xamlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Demo: Play an xAPI lesson with tracking by a LRS https://mksol.vn/xapi-lrs/mks</title>
+
+<style>
+* {
+	padding: 0;
+	margin: 0;
+}
+
+iframe {
+	background: black;
+	width: 90%;
+	height: 600px;
+}
+
+button {
+	padding: 0 10px;
+	height: 30px;
+	background: #dddd;
+	border: 0;
+	border-radius: 5px;
+	cursor: pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+	<br>
+	<center>
+		<button onclick="playCourse()">Start</button>
+		<br> <br> <select id="sl-course">
+			<option value="1">Tracking-Slide</option>
+			<option value="2">CrossOrigin</option>
+			<option value="3">Tracking-Result</option>
+		</select>
+	</center>
+	<br>
+	<div id="course"></div>
+</body>
+<script src="/library/webjars/jquery/dist/jquery.min.js"></script>
+<script>
+	/* 
+	 * Attention: Must encrypt by this method. 
+	 * If don't encrypt or encrypted by another way, 
+	 * The Course cannot send tracking process data to our server
+	 */
+	function encode(value) {
+		var result = encodeURIComponent(value).replace(/'/g, "%27").replace(
+				/"/g, "%22");
+		return result;
+	}
+
+	function openCourse(courseUrl, activityId) {
+
+		/*They are the minimum parameters that we have to pass to the 'index.html' file.*/
+        var actor = '{"name":["Lê Ngọc Thạch"],"mbox":["mailto:lnthach@gmail.com"],"objectType":"Agent"}';
+        var endPoint = 'https://mksol.vn/xapi-lrs/mks/';
+        var auth = 'Basic TMOqIE5n4buNYyBUaOG6oWNoOmxudGhhY2hAZ21haWwuY29t';
+
+		/*Encode parmaneters.*/
+		var params = 'actor=' + encode(actor) + '&endpoint=' + encode(endPoint)
+				+ '&auth=' + encode(auth) + '&activity_id='
+				+ encode(activityId);
+
+		var course = "<center><iframe src=\'" + courseUrl + '?' + params
+				+ "\'></center>";
+		document.getElementById("course").innerHTML = course;
+
+	}
+
+	function playCourse() {
+
+		var courseId = $("#sl-course").val();
+		var activityId = "";
+		var url = "";
+
+		if (courseId == 1) {
+			activityId = 'ispring://presentations/D8C37258-3807-4186-BEF6-1F2D6C6CF332'
+			url = 'https://myworkspace.vn/access/content/group/c5c14b70-efaa-4d9f-b474-17ed8c795830/Guidelines/DEV/Course_DevAppOnMWS/DevMWS_Lesson06_Explore_JSTree/res/index.html';
+		}
+
+		if (courseId == 2) {
+			activityId = 'ispring://presentations/F6BE0D12-D111-45D1-9EA6-B7CD9053CCB6';
+			url = 'https://myworkspace.vn/access/content/group/c5c14b70-efaa-4d9f-b474-17ed8c795830/Guidelines/DEV/Course_DevAppOnMWS/How_to_upload_and_display_image/res/index.html';
+		}
+
+		if (courseId == 3) {
+			activityId = 'ispring://presentations/678286AB-F6E3-4732-96BB-B1F1F5B9BB76';
+			url = 'https://myworkspace.vn/access/content/group/c5c14b70-efaa-4d9f-b474-17ed8c795830/Guidelines/DEV/Course_DevAppOnMWS/SimpleProject_ImageDetector_v0.1/MWS_ImageDetector_How_to_develop_tool_Image_Detector_Step01/res/index.html';
+		}
+		openCourse(url, activityId);
+	}
+</script>
+
+</html>
