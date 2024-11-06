@@ -206,20 +206,29 @@ function submitCourseForm(event) {
 		method: 'POST',
 		body: formData
 	})
-		.then(response => response.json())
+		.then(response => {
+			if (!response.ok) {
+				return response.json().then(data => {
+					throw new Error(data.message || 'Unknown error occurred');
+				});
+			}
+			return response.json();
+		})
 		.then(data => {
 			if (data.status === "success") {
 				showSuccessToast('Course added successfully!');
 				loadCoursesSection(event);
 			} else {
-				showErrorToast(data.message || 'Failed to add course');
+				throw new Error(data.message);
 			}
 		})
 		.catch(error => {
 			console.error('Error adding course:', error);
-			showErrorToast('An error occurred while adding the course');
+			document.getElementById('error-text-course').innerText = error.message;
+			document.getElementById('error-message-course').style.display = 'block';
 		});
 }
+
 // Add course with Handsontable
 function fetchAddCourseHandsontablePage(event) {
 	event.preventDefault();
@@ -262,15 +271,15 @@ function handleFileCourse(event) {
 			const handsontableData = jsonData
 				.filter(row => row.length >= 9)
 				.map(row => ({
-					name: row[0] !== undefined ? row[0].toString() : undefined,
-					originalPrice: row[1] !== undefined ? parseFloat(row[1]) : undefined,
-					discountedPrice: row[2] !== undefined ? parseFloat(row[2]) : undefined,
-					imageUrl: row[3] !== undefined ? row[3].toString() : undefined,
-					description: row[4] !== undefined ? row[4].toString() : undefined,
-					difficultyLevel: row[5] !== undefined ? row[5].toString() : undefined,
-					lessonType: row[6] !== undefined ? row[6].toString() : undefined,
-					subcategory: row[7] !== undefined ? row[7].toString() : undefined,
-					isFree: row[8] !== undefined ? row[8].toString().toUpperCase() === 'TRUE' : undefined
+					name: row[0] !== undefined ? row[0].toString() : null,
+					originalPrice: row[1] !== undefined ? parseFloat(row[1]) : null,
+					discountedPrice: row[2] !== undefined ? parseFloat(row[2]) : null,
+					imageUrl: row[3] !== undefined ? row[3].toString() : null,
+					description: row[4] !== undefined ? row[4].toString() : null,
+					difficultyLevel: row[5] !== undefined ? row[5].toString() : null,
+					lessonType: row[6] !== undefined ? row[6].toString() : null,
+					subcategory: row[7] !== undefined ? row[7].toString() : null,
+					isFree: row[8] !== undefined ? row[8].toString().toUpperCase() === 'TRUE' : null
 				}));
 
 			if (hot) {
@@ -349,16 +358,24 @@ function submitCourseData(event) {
 
 	const courseData = rawData
 		.map(row => ({
-			name: row[0] !== undefined ? row[0].toString() : null,
-			originalPrice: row[1] !== undefined ? parseFloat(row[1]) : null,
-			discountedPrice: row[2] !== undefined ? parseFloat(row[2]) : null,
-			imageUrl: row[3] !== undefined ? row[3].toString() : null,
-			description: row[4] !== undefined ? row[4].toString() : null,
-			difficultyLevel: row[5] !== undefined ? row[5].toString() : null,
-			lessonType: row[6] !== undefined ? row[6].toString() : null,
-			subcategory: row[7] !== undefined ? row[7].toString() : null,
-			isFree: row[8] !== undefined ? row[8].toString().toUpperCase() === 'TRUE' : false
-		}));
+			name:row[0] !== null? row[0].toString() : null,
+			originalPrice: row[1] !== null? parseFloat(row[1]) : null,
+			discountedPrice: row[2] !== null? parseFloat(row[2]) : null,
+			imageUrl: row[3] !== null? row[3].toString() : null,
+			description: row[4] !== null? row[4].toString() : null,
+			difficultyLevel: row[5] !== null? row[5].toString() : null,
+			lessonType: row[6] !== null? row[6].toString() : null,
+			subcategory: row[7] !== null? row[7].toString() : null,
+			isFree: row[8] !== null? row[8].toString().toUpperCase() === 'TRUE' : false
+		}))
+		.filter(row => row.name !== null || row.originalPrice !== null || row.discountedPrice !== null || row.difficultyLevel !== null
+			|| row.lessonType !== null || row.subcategory !== null);
+
+	if (courseData.length === 0) {
+		document.getElementById('error-text-course-handsontable').innerText = 'Please enter at least one course value.';
+		document.getElementById('error-message-course-handsontable').style.display = 'block';
+		return;
+	}
 
 	console.log('Course data to be sent:', courseData);
 
@@ -379,17 +396,16 @@ function submitCourseData(event) {
 		})
 		.then(data => {
 			if (data.status === "success") {
-				alert(data.message);
-
-				loadCoursesSection();
+				showSuccessToast(data.message || 'Course added successfully');
+				loadCoursesSection(event);
 			} else {
 				throw new Error(data.message);
 			}
 		})
 		.catch(error => {
 			console.error('Error adding courses:', error);
-			document.getElementById('error-text').innerText = error.message;
-			document.getElementById('error-message-handsontable').style.display = 'block';
+			document.getElementById('error-text-course-handsontable').innerText = error.message;
+			document.getElementById('error-message-course-handsontable').style.display = 'block';
 		});
 }
 
@@ -398,6 +414,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Kiểm tra xem đang ở trang nào để khởi tạo phân trang phù hợp
 	if (document.getElementById('coursesContainer')) {
 		initializePagination('courses');
-	} 
+	}
 });
 

@@ -1,31 +1,20 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Add parameter with handsontable</title>
-<link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
-</head>
-<body>
+<div th:fragment="addParameterWithHandsontableContent">
 	<div class="container mt-5">
 		<h1 class="mb-4">Add Parameter Values with Handsontable</h1>
 
-		<div id="error-message-parameter-handsontable" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
-			<strong>Error!</strong> <span id="error-text"></span>
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
-		</div>
+		<!-- Error Message Display -->
+		<div id="error-message-parameter-handsontable" class="alert alert-danger" style="display: none;">
+            <strong>Error!</strong> <span id="error-text-parameter-handsontable"></span>
+        </div>
 
+		<!-- File Input for Excel -->
 		<input type="file" id="fileInput" class="form-control mb-3" accept=".xls,.xlsx" onchange="handleFileParameter(event)">
+		
+		<!-- Handsontable Container -->
 		<div id="handsontable-parameter-container" class="mb-3"></div>
 
+		<!-- Action Buttons -->
 		<button type="button" class="btn btn-primary" onclick="submitParameterData(event)">Submit Parameters</button>
 		<button type="button" class="btn btn-secondary" onclick="loadParametersManagePage(event)">Cancel</button>
-
 	</div>
-
-</body>
-
-
-</html>
+</div>

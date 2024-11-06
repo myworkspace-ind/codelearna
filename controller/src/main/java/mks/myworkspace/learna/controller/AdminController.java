@@ -81,7 +81,7 @@ public class AdminController {
 
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {
-		ModelAndView mav = new ModelAndView("fragments/adminAddCourse");
+		ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
 		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValue("difficulty_level");
 		log.info("do kho" + difficultyLevels);
 		List<Parameter> lessonTypes = parameterService.getListParamsByParamValue("lesson_type");
@@ -103,28 +103,62 @@ public class AdminController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		if (course.getName() == null || course.getName().isEmpty() || course.getOriginalPrice() == null
-				|| course.getDiscountedPrice() == null || course.getSubcategory() == null
-				|| course.getSubcategory().getId() == null || course.getDifficultyLevel() == null
-				|| course.getLessonType() == null) {
+		if (course.getName() == null || course.getName().isEmpty()) {
 			response.put("status", "error");
-			response.put("message", "Please fill in all the required information.");
+			response.put("message", "Course name is required.");
 			return ResponseEntity.badRequest().body(response);
-		}
+	    }
+	    if (course.getOriginalPrice() == null) {
+	    	response.put("status", "error");
+			response.put("message", "Original price is required.");
+			return ResponseEntity.badRequest().body(response);
+	    }
+	    
+	    if (course.getDiscountedPrice() == null) {
+	    	response.put("status", "error");
+			response.put("message", "Discount price is required.");
+			return ResponseEntity.badRequest().body(response);
+	    }
 
-		try {
-			Parameter difficultyLevel = parameterService.getParameterById(course.getDifficultyLevel().getId());
-			Parameter lessonType = parameterService.getParameterById(course.getLessonType().getId());
 
-			if (difficultyLevel == null || lessonType == null) {
-				response.put("status", "error");
-				response.put("message", "Difficulty Level or Lesson Type is not valid.");
-				return ResponseEntity.badRequest().body(response);
-			}
+	    if (course.getDifficultyLevel() == null || course.getDifficultyLevel().getId() == null) {
+	        response.put("status", "error");
+	        response.put("message", "Difficulty Level is required and must be valid.");
+	        return ResponseEntity.badRequest().body(response);
+	    }
 
-			course.setDifficultyLevel(difficultyLevel);
-			course.setLessonType(lessonType);
+	    if (course.getLessonType() == null || course.getLessonType().getId() == null) {
+	        response.put("status", "error");
+	        response.put("message", "Lesson Type is required and must be valid.");
+	        return ResponseEntity.badRequest().body(response);
+	    }
 
+	    Parameter difficultyLevel = parameterService.getParameterById(course.getDifficultyLevel().getId());
+	    Parameter lessonType = parameterService.getParameterById(course.getLessonType().getId());
+
+	    if (difficultyLevel == null) {
+	        response.put("status", "error");
+	        response.put("message", "Difficulty Level is not valid.");
+	        return ResponseEntity.badRequest().body(response);
+	    }
+
+	    if (lessonType == null) {
+	        response.put("status", "error");
+	        response.put("message", "Lesson Type is not valid.");
+	        return ResponseEntity.badRequest().body(response);
+	    }
+
+
+		course.setDifficultyLevel(difficultyLevel);
+		course.setLessonType(lessonType);
+		
+		if (course.getSubcategory() == null || course.getSubcategory().getId() == null) {
+	        response.put("status", "error");
+	        response.put("message", "Subcategory is required and must be valid.");
+	        return ResponseEntity.badRequest().body(response);
+	    }
+		
+	    try {
 			courseService.saveCourse(course);
 			response.put("status", "success");
 			response.put("message", "The course has been added successfully!");
@@ -138,7 +172,7 @@ public class AdminController {
 
 	@GetMapping("/addCourseHandsontable")
 	public ModelAndView showAddCourseHandsontablePage() {
-		ModelAndView mav = new ModelAndView("fragments/adminAddCoursesHandsontable");
+		ModelAndView mav = new ModelAndView("fragments/adminAddCoursesHandsontable :: addCoursesContent");
 		return mav;
 	}
 
@@ -458,7 +492,7 @@ public class AdminController {
 			return new ModelAndView("redirect:/admin/listCourse");
 		}
 
-		ModelAndView mav = new ModelAndView("fragments/adminAddLessonsHandsontable");
+		ModelAndView mav = new ModelAndView("fragments/adminAddLessonsHandsontable :: addLessonsContent");
 		mav.addObject("course", course);
 		return mav;
 	}
@@ -472,7 +506,7 @@ public class AdminController {
 			log.info("Received lesson data: {}", lessonData);
 
 			if (lessonData == null || lessonData.isEmpty()) {
-				throw new IllegalArgumentException("No lesson data received");
+				throw new IllegalArgumentException("Please fill all the values");
 			}
 
 			Course course = courseService.getCourseById(courseId);
@@ -537,7 +571,7 @@ public class AdminController {
 	// ADMIN PARAMETERS MANAGER
 	@GetMapping("/listParameters")
 	public ModelAndView loadParametersList() {
-		ModelAndView mav = new ModelAndView("fragments/adminListParameters");
+		ModelAndView mav = new ModelAndView("fragments/adminListParameters :: parametersContent");
 		mav.addObject("parameters", parameterService.getAllParams());
 		log.debug("get all params", parameterService.getAllParams());
 		return mav;
@@ -545,7 +579,7 @@ public class AdminController {
 
 	@GetMapping("/addParameterHandsontable")
 	public ModelAndView showAddParameterHandsontablePage() {
-		ModelAndView mav = new ModelAndView("fragments/adminAddParametersHandsontable");
+		ModelAndView mav = new ModelAndView("fragments/adminAddParametersHandsontable :: addParameterWithHandsontableContent");
 		return mav;
 	}
 

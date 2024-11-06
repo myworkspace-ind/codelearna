@@ -213,6 +213,8 @@ function initializeHandsontable() {
 			minRows: 1,
 			rowHeaders: true,
 			contextMenu: true,
+			height: 200,
+			stretchH: 'all',
 			licenseKey: 'non-commercial-and-evaluation'
 		});
 		console.log('Handsontable for lessons initialized.');
@@ -308,7 +310,7 @@ function submitLessonData(event, courseId) {
 		})
 		.then(data => {
 			if (data.status === "success") {
-				alert(data.message);
+				showSuccessToast(data.message || 'Lesson added successfully');
 				loadCourseLessons(courseId);
 			} else {
 				throw new Error(data.message);
