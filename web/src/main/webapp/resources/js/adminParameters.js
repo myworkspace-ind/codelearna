@@ -59,8 +59,8 @@ function handleFileParameter(event) {
 			const handsontableData = jsonData
 				.filter(row => row.length >= 2)
 				.map(row => ({
-					paramKey: row[0] !== undefined ? row[0].toString() : undefined,
-					paramValue: row[1] !== undefined ? row[1].toString() : undefined,
+					paramKey: row[0] !== undefined ? row[0].toString() : null,
+					paramValue: row[1] !== undefined ? row[1].toString() : null,
 				}));
 
 			if (hot) {
@@ -123,10 +123,17 @@ function submitParameterData(event) {
 
 	const parameterData = rawData
 		.map(row => ({
-			paramKey: row[0] !== undefined ? row[0].toString() : null,
-			paramValue: row[1] !== undefined ? row[1].toString() : null,
+			paramKey:row[0] !== null? row[0].toString() : null,
+			paramValue:row[1] !== null? row[1].toString() : null,
+		}))
+		.filter(row => row.paramKey !== null || row.paramValue !== null); 
 
-		}));
+
+	if (parameterData.length === 0) {
+		document.getElementById('error-text-parameter-handsontable').innerText = 'Please enter at least one parameter key and value.';
+		document.getElementById('error-message-parameter-handsontable').style.display = 'block';
+		return;
+	}
 
 	console.log('Parameter data to be sent:', parameterData);
 
@@ -147,7 +154,7 @@ function submitParameterData(event) {
 		})
 		.then(data => {
 			if (data.status === "success") {
-				alert(data.message);
+				showSuccessToast(data.message || 'Parameter added successfully');
 				loadParametersManagePage(event);
 			} else {
 				throw new Error(data.message);
@@ -155,10 +162,11 @@ function submitParameterData(event) {
 		})
 		.catch(error => {
 			console.error('Error adding parameters:', error);
-			document.getElementById('error-text').innerText = error.message;
+			document.getElementById('error-text-parameter-handsontable').innerText = error.message;
 			document.getElementById('error-message-parameter-handsontable').style.display = 'block';
 		});
 }
+
 
 function deleteParameter(parameterId) {
 	if (confirm('Are you sure you want to delete this parameter?')) {
@@ -214,15 +222,16 @@ function submitEditParameterForm(event, parameterId) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.status === "success") {
-				bootstrap.Modal.getInstance(document.getElementById('editParameterModal')).hide();
-				loadParametersManagePage();
+				alert(data.message);
+				loadParametersManagePage(event);
 			} else {
-				alert("Error: " + data.message);
+				throw new Error(data.message);
 			}
 		})
 		.catch(error => {
-			console.error('Error updating parameter:', error);
-			alert("An error occurred while updating the parameter.");
+			console.error('Error submitting parameter data:', error);
+			document.getElementById('error-text-parameter-handsontable').innerText = error.message;
+			document.getElementById('error-message-parameter-handsontable').style.display = 'block';
 		});
 }
 document.addEventListener('DOMContentLoaded', function() {
