@@ -1,31 +1,64 @@
 .navbar-logo {
-    max-height: 50px;
-    width: auto;
-    object-fit: contain;
+	max-height: 50px;
+	width: auto;
+	object-fit: contain;
 }
 
-@media (max-width: 576px) {
-    .dropdown-item::before {
-        transform: rotate(-90deg);
-    }
+@media ( max-width : 576px) {
+	.dropdown-item::before {
+		transform: rotate(-90deg);
+	}
 }
 
-.dropdown:hover > .dropdown-menu {
-    display: block;
-    margin-top: .125rem;
+.dropdown:hover>.dropdown-menu {
+	display: block;
+	margin-top: .125rem;
 }
 
 .dropdown-submenu {
-    position: relative;
+	position: relative;
 }
 
-.dropdown-submenu > .dropdown-menu {
-    top: 0;
-    left: 100%;
-    margin-top: -1px;
-    display: none;
+.dropdown-submenu>.dropdown-menu {
+	top: 0;
+	left: 100%;
+	margin-top: -1px;
+	display: none;
 }
 
-.dropdown-submenu:hover > .dropdown-menu {
-    display: block;
+.dropdown-submenu:hover>.dropdown-menu {
+	display: block;
+}
+
+.navbar {
+	padding: 0.5rem 1rem;
+}
+
+.navbar-logo {
+	max-height: 40px;
+}
+
+.search-form {
+	width: 100%;
+	max-width: 400px;
+	margin: 0 1rem;
+}
+
+.dropdown-submenu {
+	position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+	top: 0;
+	left: 100%;
+	margin-top: -1px;
+}
+
+@media ( max-width : 991px) {
+	.search-form {
+		margin: 0.5rem 0;
+	}
+	.navbar-nav {
+		width: 100%;
+	}
 }
