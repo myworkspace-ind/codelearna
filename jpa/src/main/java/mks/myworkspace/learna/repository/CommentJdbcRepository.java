@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import mks.myworkspace.learna.entity.Comment;
 import mks.myworkspace.learna.entity.Lesson;
-import mks.myworkspace.learna.entity.User;
 
 @Repository
 public class CommentJdbcRepository {
