@@ -86,6 +86,14 @@
 				</li>
 			</ul>
 
+			<div class="pagination" th:if="${totalPages > 1}">
+				<button th:if="${currentPage > 0}" class="page-btn" th:attr="data-page=${currentPage - 1}">Previous</button>
+				<span th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}">
+					<button class="page-btn" th:text="${pageNum + 1}" th:attr="data-page=${pageNum}" th:classappend="${pageNum == currentPage} ? 'active'"></button>
+				</span>
+				<button th:if="${currentPage < totalPages - 1}" class="page-btn" th:attr="data-page=${currentPage + 1}">Next</button>
+			</div>
+
 			<!-- Add review form -->
 			<h5 class="mb-3">Add your review</h5>
 			<form class="review-form" th:action="@{/course/{id}/review(id=${course.id})}" method="post">
