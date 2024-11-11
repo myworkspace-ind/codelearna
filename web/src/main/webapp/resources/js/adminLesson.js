@@ -276,53 +276,60 @@ function handleFile(event) {
 
 
 function submitLessonData(event, courseId) {
-	event.preventDefault();
+    event.preventDefault();
 
-	if (!hotLessons) {
-		console.error('Handsontable not initialized');
-		return;
-	}
+    if (!hotLessons) {
+        console.error('Handsontable not initialized');
+        return;
+    }
 
-	const rawData = hotLessons.getData();
-	const lessonData = rawData
-		.filter(row => row[0] && row[1])
-		.map(row => ({
-			title: row[0].toString(),
-			videoUrl: row[1].toString()
-		}));
+    const rawData = hotLessons.getData();
+    const lessonData = rawData
+        .filter(row => row[0] && row[1])
+        .map(row => ({
+            title: row[0].toString(),
+            videoUrl: row[1].toString()
+        }));
 
-	console.log('Lesson data to be submitted:', lessonData);
+    console.log('Lesson data to be submitted:', lessonData);
 
-	fetch(`${_ctx}admin/saveLessonsHandsontable/${courseId}`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(lessonData)
-	})
-		.then(response => {
-			if (!response.ok) {
-				return response.json().then(data => {
-					throw new Error(data.message || 'Unknown error occurred');
-				});
-			}
-			return response.json();
-		})
-		.then(data => {
-			if (data.status === "success") {
-				showSuccessToast(data.message || 'Lesson added successfully');
-				loadCourseLessons(courseId);
-			} else {
-				throw new Error(data.message);
-			}
-		})
-		.catch(error => {
-			console.error('Error submitting lesson data:', error);
-			document.getElementById('error-text').innerText = error.message;
-			document.getElementById('error-message').style.display = 'block';
-		});
+    fetch(`${_ctx}admin/saveLessonsHandsontable/${courseId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json' // Thêm header này
+        },
+        body: JSON.stringify(lessonData)
+    })
+        .then(response => {
+            // Kiểm tra content-type của response
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json().then(data => {
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Server error occurred');
+                    }
+                    return data;
+                });
+            } else {
+                throw new Error('Invalid response format from server');
+            }
+        })
+        .then(data => {
+            if (data.status === "success") {
+                showSuccessToast(data.message || 'Lessons added successfully');
+                loadCourseLessons(courseId);
+            } else {
+                throw new Error(data.message || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error submitting lesson data:', error);
+            showErrorToast(error.message || 'An error occurred while saving lessons');
+            document.getElementById('error-text').innerText = error.message;
+            document.getElementById('error-message').style.display = 'block';
+        });
 }
-
 
 
 document.addEventListener('DOMContentLoaded', function() {
