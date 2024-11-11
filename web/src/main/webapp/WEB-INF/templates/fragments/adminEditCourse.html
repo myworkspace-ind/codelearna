@@ -37,13 +37,6 @@
 									step="1">
 							</div>
 						</div>
-
-						<!-- Upload Image -->
-						<!-- <div class="mb-3">
-							<label for="image" class="form-label">Image</label> <input
-								type="file" class="form-control" id="image" name="image"
-								accept="image/*">
-						</div> -->
 						<div class="mb-3">
 							<label for="imageUrl" class="form-label">Image URL</label> <input
 								type="url" class="form-control" id="imageUrl" name="imageUrl"
@@ -82,16 +75,6 @@
 										th:selected="${course.lessonType.id == type.id}"></option>
 								</select>
 							</div>
-							<!-- <div class="col-md-6 mb-3">
-								<label for="lessonType" class="form-label">Lesson Type</label> <select
-									class="form-select" id="lessonType" th:field="*{lessonType}"
-									required>
-									<option value="">Choose a lesson type...</option>
-									<option th:each="type : ${lessonTypes}" th:value="${type.id}"
-										th:text="${type.paramValue}"
-										th:selected="${course.lessonType.id == type.id}"></option>
-								</select>
-							</div> -->
 						</div>
 						<div class="mb-3">
 							<label for="category" class="form-label">Category</label> <select

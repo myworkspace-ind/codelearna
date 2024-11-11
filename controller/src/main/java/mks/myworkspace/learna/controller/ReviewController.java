@@ -18,10 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Review;
-import mks.myworkspace.learna.entity.User;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ReviewService;
-import mks.myworkspace.learna.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -33,8 +31,6 @@ public class ReviewController extends BaseController{
 	@Autowired
 	private CourseService courseService;
 
-	@Autowired
-	private UserService userService;
 
 	// Open a course details
 	@GetMapping("/course/{id}")

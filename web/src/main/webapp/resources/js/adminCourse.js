@@ -351,64 +351,85 @@ function initializeCourseHandsontable() {
 
 
 function submitCourseData(event) {
-	event.preventDefault();
+    event.preventDefault();
 
-	const rawData = hot.getData();
-	console.log("rawData:", rawData);
+    const rawData = hot.getData();
+    console.log("rawData:", rawData);
 
-	const courseData = rawData
-		.map(row => ({
-			name:row[0] !== null? row[0].toString() : null,
-			originalPrice: row[1] !== null? parseFloat(row[1]) : null,
-			discountedPrice: row[2] !== null? parseFloat(row[2]) : null,
-			imageUrl: row[3] !== null? row[3].toString() : null,
-			description: row[4] !== null? row[4].toString() : null,
-			difficultyLevel: row[5] !== null? row[5].toString() : null,
-			lessonType: row[6] !== null? row[6].toString() : null,
-			subcategory: row[7] !== null? row[7].toString() : null,
-			isFree: row[8] !== null? row[8].toString().toUpperCase() === 'TRUE' : false
-		}))
-		.filter(row => row.name !== null || row.originalPrice !== null || row.discountedPrice !== null || row.difficultyLevel !== null
-			|| row.lessonType !== null || row.subcategory !== null);
+    const courseData = rawData
+        .map(row => ({
+            name: row[0] !== null ? row[0].toString() : null,
+            // Chuyển đổi giá trị sang số thập phân
+            originalPrice: row[1] !== null ? parseFloat(row[1]).toFixed(2) : null,
+            discountedPrice: row[2] !== null ? parseFloat(row[2]).toFixed(2) : null,
+            imageUrl: row[3] !== null ? row[3].toString() : null,
+            description: row[4] !== null ? row[4].toString() : null,
+            difficultyLevel: row[5] !== null ? row[5].toString() : null,
+            lessonType: row[6] !== null ? row[6].toString() : null,
+            subcategory: row[7] !== null ? row[7].toString() : null,
+            isFree: row[8] !== null ? row[8].toString().toUpperCase() === 'TRUE' : false
+        }))
+        .filter(row => row.name !== null || row.originalPrice !== null || 
+                row.discountedPrice !== null || row.difficultyLevel !== null ||
+                row.lessonType !== null || row.subcategory !== null);
 
-	if (courseData.length === 0) {
-		document.getElementById('error-text-course-handsontable').innerText = 'Please enter at least one course value.';
-		document.getElementById('error-message-course-handsontable').style.display = 'block';
-		return;
-	}
+    if (courseData.length === 0) {
+        document.getElementById('error-text-course-handsontable').innerText = 'Please enter at least one course value.';
+        document.getElementById('error-message-course-handsontable').style.display = 'block';
+        return;
+    }
 
-	console.log('Course data to be sent:', courseData);
+    // Validate numeric values
+    for (const course of courseData) {
+        if (course.originalPrice && isNaN(parseFloat(course.originalPrice))) {
+            showErrorToast('Original price must be a valid number');
+            return;
+        }
+        if (course.discountedPrice && isNaN(parseFloat(course.discountedPrice))) {
+            showErrorToast('Discounted price must be a valid number');
+            return;
+        }
+    }
 
-	fetch(`${_ctx}admin/saveCoursesHandsontable`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(courseData)
-	})
-		.then(response => {
-			if (!response.ok) {
-				return response.json().then(data => {
-					throw new Error(data.message || 'Unknown error occurred');
-				});
-			}
-			return response.json();
-		})
-		.then(data => {
-			if (data.status === "success") {
-				showSuccessToast(data.message || 'Course added successfully');
-				loadCoursesSection(event);
-			} else {
-				throw new Error(data.message);
-			}
-		})
-		.catch(error => {
-			console.error('Error adding courses:', error);
-			document.getElementById('error-text-course-handsontable').innerText = error.message;
-			document.getElementById('error-message-course-handsontable').style.display = 'block';
-		});
+    console.log('Course data to be sent:', courseData);
+
+    fetch(`${_ctx}admin/saveCoursesHandsontable`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(courseData)
+    })
+    .then(response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    throw new Error(data.message || 'Unknown error occurred');
+                }
+                return data;
+            });
+        } else {
+            return response.text().then(text => {
+                throw new Error(`Server returned non-JSON response: ${text}`);
+            });
+        }
+    })
+    .then(data => {
+        if (data.status === "success") {
+            showSuccessToast(data.message || 'Course added successfully');
+            loadCoursesSection(event);
+        } else {
+            throw new Error(data.message || 'Unknown error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error adding courses:', error);
+        document.getElementById('error-text-course-handsontable').innerText = error.message;
+        document.getElementById('error-message-course-handsontable').style.display = 'block';
+    });
 }
-
 
 document.addEventListener('DOMContentLoaded', function() {
 	// Kiểm tra xem đang ở trang nào để khởi tạo phân trang phù hợp
