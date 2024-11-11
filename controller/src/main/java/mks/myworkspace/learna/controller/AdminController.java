@@ -179,96 +179,104 @@ public class AdminController {
 	@PostMapping("/saveCoursesHandsontable")
 	@Transactional
 	public ResponseEntity<Map<String, String>> saveCoursesHandsontable(
-			@RequestBody List<Map<String, Object>> courseData) {
-		log.info("Received request to save courses");
-		Map<String, String> response = new HashMap<>();
+	        @RequestBody List<Map<String, Object>> courseData) {
+	    log.info("Received request to save courses");
+	    Map<String, String> response = new HashMap<>();
 
-		try {
-			log.info("Received course data: {}", courseData);
+	    try {
+	        log.info("Received course data: {}", courseData);
 
-			if (courseData == null || courseData.isEmpty()) {
-				throw new IllegalArgumentException("No course data was sent");
-			}
+	        if (courseData == null || courseData.isEmpty()) {
+	            throw new IllegalArgumentException("No course data was sent");
+	        }
 
-			for (Map<String, Object> courseMap : courseData) {
-				Course course = new Course();
+	        for (Map<String, Object> courseMap : courseData) {
+	            Course course = new Course();
 
-				course.setName((String) courseMap.get("name"));
-				course.setOriginalPrice((Double) courseMap.get("originalPrice"));
-				course.setDiscountedPrice((Double) courseMap.get("discountedPrice"));
-				course.setImageUrl((String) courseMap.get("imageUrl"));
-				course.setDescription((String) courseMap.get("description"));
+	            course.setName((String) courseMap.get("name"));
+	            
+	            // Xử lý chuyển đổi giá
+	            Object originalPriceObj = courseMap.get("originalPrice");
+	            if (originalPriceObj != null) {
+	                if (originalPriceObj instanceof Integer) {
+	                    course.setOriginalPrice(((Integer) originalPriceObj).doubleValue());
+	                } else if (originalPriceObj instanceof String) {
+	                    course.setOriginalPrice(Double.parseDouble((String) originalPriceObj));
+	                } else {
+	                    course.setOriginalPrice((Double) originalPriceObj);
+	                }
+	            }
 
-				if (course.getName() == null || course.getName().isEmpty()) {
-					throw new IllegalArgumentException("Course name cannot be empty");
-				}
-				if (course.getOriginalPrice() == null || course.getOriginalPrice() < 0) {
-					throw new IllegalArgumentException("Invalid original price");
-				}
-				if (course.getDiscountedPrice() == null || course.getDiscountedPrice() < 0) {
-					throw new IllegalArgumentException("Invalid discounted price");
-				}
+	            Object discountedPriceObj = courseMap.get("discountedPrice");
+	            if (discountedPriceObj != null) {
+	                if (discountedPriceObj instanceof Integer) {
+	                    course.setDiscountedPrice(((Integer) discountedPriceObj).doubleValue());
+	                } else if (discountedPriceObj instanceof String) {
+	                    course.setDiscountedPrice(Double.parseDouble((String) discountedPriceObj));
+	                } else {
+	                    course.setDiscountedPrice((Double) discountedPriceObj);
+	                }
+	            }
 
-				String subcategoryString = (String) courseMap.get("subcategory");
-				log.info("Subcategory as string: {}", subcategoryString);
-				Parameter subcategoryParameter = parameterService.getParameterByParamKeyAndParamValue("subcategory",
-						subcategoryString);
-				log.info("Subcategory parameter: {}", subcategoryParameter);
-				if (subcategoryParameter == null) {
-					response.put("status", "error");
-					response.put("message", "Invalid subcategory value.");
-					return ResponseEntity.badRequest().body(response);
-				}
-				Subcategory subcategory = subCategoryService.getSubcategoryByParameter(subcategoryParameter);
-				log.info("Subcategory object: {}", subcategory);
-				course.setSubcategory(subcategory);
+	            course.setImageUrl((String) courseMap.get("imageUrl"));
+	            course.setDescription((String) courseMap.get("description"));
 
-				String difficultyLevelString = (String) courseMap.get("difficultyLevel");
-				Parameter difficultyLevel = parameterService.getParameterByParamKeyAndParamValue("difficulty_level",
-						difficultyLevelString);
-				if (difficultyLevel == null) {
-					response.put("status", "error");
-					response.put("message", "Invalid difficulty level value.");
-					return ResponseEntity.badRequest().body(response);
-				}
-				course.setDifficultyLevel(difficultyLevel);
+	            if (course.getName() == null || course.getName().isEmpty()) {
+	                throw new IllegalArgumentException("Course name cannot be empty");
+	            }
+	            if (course.getOriginalPrice() == null || course.getOriginalPrice() < 0) {
+	                throw new IllegalArgumentException("Invalid original price");
+	            }
+	            if (course.getDiscountedPrice() == null || course.getDiscountedPrice() < 0) {
+	                throw new IllegalArgumentException("Invalid discounted price");
+	            }
 
-				// Check lesson type
-				String lessonTypeString = (String) courseMap.get("lessonType");
-				Parameter lessonType = parameterService.getParameterByParamKeyAndParamValue("lesson_type",
-						lessonTypeString);
-				if (lessonType == null) {
-					response.put("status", "error");
-					response.put("message", "Invalid lesson type value.");
-					return ResponseEntity.badRequest().body(response);
-				}
-				course.setLessonType(lessonType);
+	            // Xử lý subcategory
+	            String subcategoryString = (String) courseMap.get("subcategory");
+	            log.info("Subcategory as string: {}", subcategoryString);
+	            Parameter subcategoryParameter = parameterService.getParameterByParamKeyAndParamValue("subcategory",
+	                    subcategoryString);
+	            if (subcategoryParameter == null) {
+	                throw new IllegalArgumentException("Invalid subcategory: " + subcategoryString);
+	            }
+	            Subcategory subcategory = subCategoryService.getSubcategoryByParameter(subcategoryParameter);
+	            course.setSubcategory(subcategory);
 
-				Object isFreeObj = courseMap.get("isFree");
+	            // Xử lý difficulty level
+	            String difficultyLevelString = (String) courseMap.get("difficultyLevel");
+	            Parameter difficultyLevel = parameterService.getParameterByParamKeyAndParamValue("difficulty_level",
+	                    difficultyLevelString);
+	            if (difficultyLevel == null) {
+	                throw new IllegalArgumentException("Invalid difficulty level: " + difficultyLevelString);
+	            }
+	            course.setDifficultyLevel(difficultyLevel);
 
-				if (isFreeObj != null && isFreeObj instanceof Boolean) {
-					course.setIsFree((Boolean) isFreeObj);
-				} else {
-					course.setIsFree(false);
-				}
+	            // Xử lý lesson type
+	            String lessonTypeString = (String) courseMap.get("lessonType");
+	            Parameter lessonType = parameterService.getParameterByParamKeyAndParamValue("lesson_type",
+	                    lessonTypeString);
+	            if (lessonType == null) {
+	                throw new IllegalArgumentException("Invalid lesson type: " + lessonTypeString);
+	            }
+	            course.setLessonType(lessonType);
 
-				try {
-					courseService.saveCourse(course);
-				} catch (IllegalArgumentException ex) {
-					throw new IllegalArgumentException("An error occurred while adding the course");
-				}
-			}
+	            // Xử lý isFree
+	            Object isFreeObj = courseMap.get("isFree");
+	            course.setIsFree(isFreeObj instanceof Boolean ? (Boolean) isFreeObj : Boolean.FALSE);
 
-			response.put("status", "success");
-			response.put("message", "The courses have been added successfully!");
-			return ResponseEntity.ok(response);
+	            courseService.saveCourse(course);
+	        }
 
-		} catch (Exception e) {
-			log.error("Error saving courses: ", e);
-			response.put("status", "error");
-			response.put("message", "An error occurred while saving the course: " + e.getMessage());
-			return ResponseEntity.badRequest().body(response);
-		}
+	        response.put("status", "success");
+	        response.put("message", "The courses have been added successfully!");
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        log.error("Error saving courses: ", e);
+	        response.put("status", "error");
+	        response.put("message", "An error occurred while saving the course: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 
 	@PostMapping("/courses/delete/{id}")
@@ -498,46 +506,54 @@ public class AdminController {
 	}
 
 	@PostMapping("/saveLessonsHandsontable/{courseId}")
-	public ResponseEntity<Map<String, String>> saveLessonsHandsontable(@PathVariable("courseId") Long courseId,
-			@RequestBody List<Map<String, Object>> lessonData) {
-		log.info("Received request to save lessons for courseId: {}", courseId);
-		Map<String, String> response = new HashMap<>();
-		try {
-			log.info("Received lesson data: {}", lessonData);
+	public ResponseEntity<Map<String, String>> saveLessonsHandsontable(
+	        @PathVariable("courseId") Long courseId,
+	        @RequestBody List<Map<String, Object>> lessonData) {
+	    log.info("Received request to save lessons for courseId: {}", courseId);
+	    Map<String, String> response = new HashMap<>();
+	    
+	    try {
+	        log.info("Received lesson data: {}", lessonData);
 
-			if (lessonData == null || lessonData.isEmpty()) {
-				throw new IllegalArgumentException("Please fill all the values");
-			}
+	        if (lessonData == null || lessonData.isEmpty()) {
+	            response.put("status", "error");
+	            response.put("message", "Please fill all the values");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
-			Course course = courseService.getCourseById(courseId);
-			if (course == null) {
-				throw new IllegalArgumentException("Course not found");
-			}
+	        Course course = courseService.getCourseById(courseId);
+	        if (course == null) {
+	            response.put("status", "error");
+	            response.put("message", "Course not found");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
-			for (Map<String, Object> lessonMap : lessonData) {
-				Lesson lesson = new Lesson();
-				lesson.setTitle((String) lessonMap.get("title"));
-				lesson.setVideoUrl((String) lessonMap.get("videoUrl"));
-				lesson.setCourse(course);
+	        for (Map<String, Object> lessonMap : lessonData) {
+	            String title = (String) lessonMap.get("title");
+	            if (title == null || title.trim().isEmpty()) {
+	                response.put("status", "error");
+	                response.put("message", "Lesson title cannot be empty");
+	                return ResponseEntity.badRequest().body(response);
+	            }
 
-				if (lesson.getTitle() == null || lesson.getTitle().isEmpty()) {
-					throw new IllegalArgumentException("Lesson title cannot be empty");
-				}
+	            Lesson lesson = new Lesson();
+	            lesson.setTitle(title);
+	            lesson.setVideoUrl((String) lessonMap.get("videoUrl"));
+	            lesson.setCourse(course);
+	            lessonService.saveLesson(lesson);
+	            log.info("Saved lesson: {}", lesson.getTitle());
+	        }
 
-				lessonService.saveLesson(lesson);
-				log.info("Saved lesson: {}", lesson.getTitle());
-			}
+	        response.put("status", "success");
+	        response.put("message", "Lessons have been successfully added!");
+	        return ResponseEntity.ok(response);
 
-			response.put("status", "success");
-			response.put("message", "Lessons have been successfully added!");
-			return ResponseEntity.ok(response);
-
-		} catch (Exception e) {
-			log.error("Error saving lessons: ", e);
-			response.put("status", "error");
-			response.put("message", "Error saving lessons: " + e.getMessage());
-			return ResponseEntity.badRequest().body(response);
-		}
+	    } catch (Exception e) {
+	        log.error("Error saving lessons: ", e);
+	        response.put("status", "error");
+	        response.put("message", "Error saving lessons: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 
 	@PostMapping("/lessons/delete/{id}") // Chuyển từ DeleteMapping sang PostMapping
