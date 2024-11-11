@@ -3,9 +3,7 @@ package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Comment;
 import mks.myworkspace.learna.entity.Lesson;
-import mks.myworkspace.learna.entity.User;
 import mks.myworkspace.learna.repository.LessonRepository;
-import mks.myworkspace.learna.repository.UserRepository;
 
 import java.util.Optional;
 
@@ -35,8 +33,6 @@ public class CommentController extends BaseController {
     @Autowired
     private LessonRepository lessonRepository;
 
-    @Autowired
-    private UserRepository userRepository;
 
     @PostMapping("/play/{courseId}/{lessonId}/comments")
     @ResponseBody

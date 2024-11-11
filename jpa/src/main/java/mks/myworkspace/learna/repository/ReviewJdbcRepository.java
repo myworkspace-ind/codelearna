@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Review;
-import mks.myworkspace.learna.entity.User;
+
 
 @Repository
 public class ReviewJdbcRepository {

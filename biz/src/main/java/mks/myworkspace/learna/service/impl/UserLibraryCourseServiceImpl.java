@@ -2,7 +2,6 @@ package mks.myworkspace.learna.service.impl;
 
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.UserLibraryCourse;
-import mks.myworkspace.learna.repository.UserRepository;
 import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.repository.UserLibraryCourseRepository;
 import mks.myworkspace.learna.repository.UserLibraryCourseJdbcRepository;
@@ -23,7 +22,6 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
     @Autowired
     public UserLibraryCourseServiceImpl(UserLibraryCourseRepository userLibraryCourseRepository,
                                         UserLibraryCourseJdbcRepository userLibraryCourseJdbcRepository,
-                                        UserRepository userRepository,
                                         CourseRepository courseRepository) {
         this.userLibraryCourseRepository = userLibraryCourseRepository;
         this.userLibraryCourseJdbcRepository = userLibraryCourseJdbcRepository;
