@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import mks.myworkspace.learna.entity.Parameter;
+import mks.myworkspace.learna.repository.ParameterJdbcRepository;
 import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.service.ParameterService;
 
@@ -15,6 +16,9 @@ public class ParameterServiceImpl implements ParameterService {
 
 	@Autowired
 	private ParameterRepository repo;
+	
+	@Autowired
+	private ParameterJdbcRepository parameterJdbcRepository;
 
 	@Override
 	public String getLogoUrl() {
@@ -34,7 +38,7 @@ public class ParameterServiceImpl implements ParameterService {
 	
 	@Override
 	public Parameter saveParameters(Parameter parameters) {
-		return repo.save(parameters);
+		return parameterJdbcRepository.save(parameters);
 	}
 
 	@Override
@@ -59,7 +63,7 @@ public class ParameterServiceImpl implements ParameterService {
 	
 	@Override
 	public void deleteParameter(Long id) {
-		repo.deleteById(id);
+		parameterJdbcRepository.deleteById(id);
 	}
 
 }
