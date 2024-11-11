@@ -602,53 +602,69 @@ public class AdminController {
 	@PostMapping("/saveParametersHandsontable")
 	@Transactional
 	public ResponseEntity<Map<String, String>> saveParametersHandsontable(
-			@RequestBody List<Map<String, Object>> parameterData) {
-		log.info("Received request to save parameters");
-		Map<String, String> response = new HashMap<>();
+	        @RequestBody List<Map<String, Object>> parameterData) {
+	    log.info("Received request to save parameters");
+	    Map<String, String> response = new HashMap<>();
 
-		try {
-			log.info("Received parameter data: {}", parameterData);
+	    try {
+	        log.info("Received parameter data: {}", parameterData);
 
-			if (parameterData == null || parameterData.isEmpty()) {
-				throw new IllegalArgumentException("Không có dữ liệu paramter được gửi");
-			}
+	        if (parameterData == null || parameterData.isEmpty()) {
+	            response.put("status", "error");
+	            response.put("message", "Không có dữ liệu parameter được gửi");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
-			for (Map<String, Object> parameterMap : parameterData) {
-				Parameter parameter = new Parameter();
+	        for (Map<String, Object> parameterMap : parameterData) {
+	            String paramKey = (String) parameterMap.get("paramKey");
+	            String paramValue = (String) parameterMap.get("paramValue");
 
-				parameter.setParamKey((String) parameterMap.get("paramKey"));
-				parameter.setParamValue((String) parameterMap.get("paramValue"));
+	            // Validation
+	            if (paramKey == null || paramKey.trim().isEmpty()) {
+	                response.put("status", "error");
+	                response.put("message", "Giá trị key không được để trống");
+	                return ResponseEntity.badRequest().body(response);
+	            }
 
-				if (parameter.getParamKey() == null || parameter.getParamKey().isEmpty()) {
-					throw new IllegalArgumentException("Giá trị key không được để trống");
-				}
-				if (parameter.getParamValue() == null || parameter.getParamValue().isEmpty()) {
-					throw new IllegalArgumentException("Giá trị value không được để trống");
-				}
-				if (!parameterService.paramKeyExists(parameter.getParamKey())) {
-					throw new IllegalArgumentException("paramKey không hợp lệ hoặc không tồn tại trong cơ sở dữ liệu.");
-				}
+	            if (paramValue == null || paramValue.trim().isEmpty()) {
+	                response.put("status", "error");
+	                response.put("message", "Giá trị value không được để trống");
+	                return ResponseEntity.badRequest().body(response);
+	            }
 
-				try {
-					parameterService.saveParameters(parameter);
-				} catch (IllegalArgumentException ex) {
-					throw new IllegalArgumentException("Xảy ra lỗi khi thêm parameters");
-				}
-			}
+	            if (!parameterService.paramKeyExists(paramKey)) {
+	                response.put("status", "error");
+	                response.put("message", "paramKey '" + paramKey + "' không hợp lệ hoặc không tồn tại trong cơ sở dữ liệu.");
+	                return ResponseEntity.badRequest().body(response);
+	            }
 
-			response.put("status", "success");
-			response.put("message", "Parameters đã được thêm thành công!");
-			return ResponseEntity.ok(response);
+	            Parameter parameter = new Parameter();
+	            parameter.setParamKey(paramKey);
+	            parameter.setParamValue(paramValue);
 
-		} catch (Exception e) {
-			log.error("Error saving parameters: ", e);
-			response.put("status", "error");
-			response.put("message", "Có lỗi khi lưu parameters: " + e.getMessage());
-			return ResponseEntity.badRequest().body(response);
-		}
+	            try {
+	                parameterService.saveParameters(parameter);
+	            } catch (Exception ex) {
+	                response.put("status", "error");
+	                response.put("message", "Xảy ra lỗi khi thêm parameter: " + ex.getMessage());
+	                return ResponseEntity.badRequest().body(response);
+	            }
+	        }
+
+	        response.put("status", "success");
+	        response.put("message", "Parameters đã được thêm thành công!");
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        log.error("Error saving parameters: ", e);
+	        response.put("status", "error");
+	        response.put("message", "Có lỗi khi lưu parameters: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 
-	@DeleteMapping("/parameter/delete/{parameterId}")
+	
+	@PostMapping("/parameter/delete/{parameterId}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> deleteParameter(@PathVariable("parameterId") Long parameterId) {
 		Map<String, String> response = new HashMap<>();

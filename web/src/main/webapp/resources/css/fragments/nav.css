@@ -2,6 +2,7 @@
 	max-height: 50px;
 	width: auto;
 	object-fit: contain;
+	margin-left: 20px;
 }
 
 @media ( max-width : 576px) {
@@ -37,6 +38,7 @@
 .navbar-logo {
 	max-height: 40px;
 }
+
 
 .search-form {
 	width: 100%;

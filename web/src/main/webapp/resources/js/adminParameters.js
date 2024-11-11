@@ -123,15 +123,13 @@ function submitParameterData(event) {
 
 	const parameterData = rawData
 		.map(row => ({
-			paramKey:row[0] !== null? row[0].toString() : null,
-			paramValue:row[1] !== null? row[1].toString() : null,
+			paramKey: row[0] !== null ? row[0].toString() : null,
+			paramValue: row[1] !== null ? row[1].toString() : null,
 		}))
-		.filter(row => row.paramKey !== null || row.paramValue !== null); 
-
+		.filter(row => row.paramKey !== null || row.paramValue !== null);
 
 	if (parameterData.length === 0) {
-		document.getElementById('error-text-parameter-handsontable').innerText = 'Please enter at least one parameter key and value.';
-		document.getElementById('error-message-parameter-handsontable').style.display = 'block';
+		showErrorToast('Please enter at least one parameter key and value.');
 		return;
 	}
 
@@ -140,54 +138,88 @@ function submitParameterData(event) {
 	fetch(`${_ctx}admin/saveParametersHandsontable`, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Accept': 'application/json'
 		},
 		body: JSON.stringify(parameterData)
 	})
 		.then(response => {
-			if (!response.ok) {
+			// Kiểm tra content-type của response
+			const contentType = response.headers.get('content-type');
+			if (contentType && contentType.includes('application/json')) {
 				return response.json().then(data => {
-					throw new Error(data.message || 'Unknown error occurred');
+					if (!response.ok) {
+						throw new Error(data.message || 'Server error occurred');
+					}
+					return data;
 				});
+			} else {
+				throw new Error('Invalid response format from server');
 			}
-			return response.json();
 		})
 		.then(data => {
 			if (data.status === "success") {
-				showSuccessToast(data.message || 'Parameter added successfully');
+				showSuccessToast(data.message || 'Parameters added successfully');
 				loadParametersManagePage(event);
 			} else {
-				throw new Error(data.message);
+				throw new Error(data.message || 'Unknown error occurred');
 			}
 		})
 		.catch(error => {
 			console.error('Error adding parameters:', error);
-			document.getElementById('error-text-parameter-handsontable').innerText = error.message;
-			document.getElementById('error-message-parameter-handsontable').style.display = 'block';
+			showErrorToast(error.message || 'Error occurred while saving parameters');
 		});
 }
 
 
-function deleteParameter(parameterId) {
-	if (confirm('Are you sure you want to delete this parameter?')) {
-		fetch(`${_ctx}admin/parameter/delete/${parameterId}`, {
-			method: 'DELETE'
+function deleteParameter(parameterId, modal) {
+	fetch(`${_ctx}admin/parameter/delete/${parameterId}`, {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json'
+		}
+	})
+		.then(response => {
+			if (!response.ok) {
+				return response.json().then(data => Promise.reject(data));
+			}
+			return response.json();
 		})
-			.then(response => {
-				if (response.ok) {
-					alert('Parameter deleted successfully');
+		.then(data => {
+			if (data.status === 'success') {
+				showSuccessToast(data.message || 'Parameter deleted successfully');
+		
+				loadParametersManagePage(null);
 
-					loadParametersManagePage(null);
-				} else {
-					alert('Failed to delete parameter');
+				// Đóng modal nếu nó đang mở
+				const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+				if (deleteModal) {
+					deleteModal.hide();
 				}
-			})
-			.catch(error => {
-				console.error('Error deleting parameter:', error);
-			});
-	}
+			} else {
+				throw new Error(data.message || 'Failed to delete parameter');
+			}
+		})
+		.catch(error => {
+			console.error('Error deleting lesson:', error);
+			showErrorToast(error.message || 'An error occurred while deleting the parameter');
+		});
 }
+function showDeleteParameterConfirmModal(parameterId) {
+	const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+	const confirmBtn = document.getElementById('confirmDeleteBtn');
 
+	// Xóa event listener cũ (nếu có)
+	const newConfirmBtn = confirmBtn.cloneNode(true);
+	confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+	// Thêm event listener mới
+	newConfirmBtn.addEventListener('click', () => {
+		deleteParameter(parameterId, modal);
+	});
+
+	modal.show();
+}
 function loadEditParameterForm(parameterId) {
 	fetch(`${_ctx}admin/parameter/edit/${parameterId}`)
 		.then(response => response.text())
