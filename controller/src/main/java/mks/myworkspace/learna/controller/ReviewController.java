@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import mks.myworkspace.learna.entity.Course;
@@ -24,33 +26,44 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
-public class ReviewController extends BaseController{
+public class ReviewController extends BaseController {
 	@Autowired
 	private ReviewService reviewService;
 
 	@Autowired
 	private CourseService courseService;
 
-
 	// Open a course details
 	@GetMapping("/course/{id}")
-	public ModelAndView getCourseDetail(@PathVariable Long id, HttpServletRequest request, HttpSession httpSession) {
+	public ModelAndView getCourseDetail(@PathVariable Long id, @RequestParam(defaultValue = "0") int page,
+			HttpServletRequest request, HttpSession httpSession) {
+
 		initSession(request, httpSession);
 		String userId = getCurrentUserEid();
 		ModelAndView mav = new ModelAndView("courseDetail");
+
 		Course course = courseService.getCourseById(id);
-		List<Review> reviews = reviewService.getReviewsByCourseId(id);
+
+		int pageSize = 5;
+		Page<Review> reviewPage = reviewService.getReviewsByCourseId(id, page, pageSize);
+
+		List<Review> reviews = reviewPage.getContent();
+		int totalPages = reviewPage.getTotalPages();
+
 		mav.addObject("course", course);
 		mav.addObject("reviews", reviews);
-		mav.addObject("userId", userId); 
+		mav.addObject("userId", userId);
+		mav.addObject("currentPage", page);
+		mav.addObject("totalPages", totalPages);
+
 		return mav;
 	}
 
 	// Add review
 	@PostMapping("/course/{id}/review")
-	public String addReview(@PathVariable Long id, @ModelAttribute Review review, Principal principal) {	
+	public String addReview(@PathVariable Long id, @ModelAttribute Review review, Principal principal) {
 		String userId = getCurrentUserEid();
-		
+
 		review.setCourse(courseService.getCourseById(id));
 		review.setUserEid(userId);
 		reviewService.addReview(review, id);
@@ -60,12 +73,10 @@ public class ReviewController extends BaseController{
 	// Delete review
 	@PostMapping("/course/{courseId}/review/{reviewId}/delete")
 	public String deleteReview(@PathVariable Long reviewId, @PathVariable Long courseId) {
-
-		reviewService.deleteReviewById(reviewId, courseId);
-		// Authentication sau
-
-		return "redirect:/course/" + courseId;
+	    reviewService.deleteReviewById(reviewId, courseId);
+	    return "redirect:/course/" + courseId;
 	}
+
 
 	// Edit review
 	@PostMapping("/course/{courseId}/review/{reviewId}/edit")
