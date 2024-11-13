@@ -48,23 +48,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.querySelectorAll('.course-data').forEach(item => {
         item.addEventListener('click', function() {
-            const isFree = this.getAttribute('data-is-free') === 'true';
             const courseId = this.getAttribute('data-course-id');
-            
-            if (isFree) {
-                window.location.href = _ctx + `/play/${courseId}`;
-            } else {
-                const course = {
-                    name: this.getAttribute('data-name'),
-                    imageUrl: this.getAttribute('data-image-url'),
-                    description: this.getAttribute('data-description'),
-                    difficultyLevel: this.getAttribute('data-difficulty-level'),
-                    lessonType: this.getAttribute('data-lesson-type'),
-                    originalPrice: parseFloat(this.getAttribute('data-original-price')),
-                    discountedPrice: parseFloat(this.getAttribute('data-discounted-price'))
-                };
-                openPopup(course);
-            }
+            window.location.href = _ctx + `/play/${courseId}`;
         });
     });
 });

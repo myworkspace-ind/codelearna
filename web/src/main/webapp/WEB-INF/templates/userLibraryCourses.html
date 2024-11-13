@@ -71,5 +71,8 @@
 	<script type="text/javascript" src="/library/js/headscripts.js"></script>
 	    
 	<script th:src="@{/resources/js/search.js}"></script>
+    <div th:if="${paymentMessage}" class="alert alert-info" role="alert">
+        <span th:text="${paymentMessage}"></span>
+    </div>  
 </body>
 </html>

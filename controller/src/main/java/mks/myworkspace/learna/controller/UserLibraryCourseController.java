@@ -38,6 +38,12 @@ public class UserLibraryCourseController extends BaseController{
         mav.addObject("userEId",userEid);
         mav.addObject("userName",userName);
 
+        String paymentMessage = (String) httpSession.getAttribute("paymentMessage");
+        if (paymentMessage != null) {
+            mav.addObject("paymentMessage", paymentMessage);
+            httpSession.removeAttribute("paymentMessage");
+        }
+
         try {
         	List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid);
             mav.addObject("userLibraryCourses", userLibraryCourses);

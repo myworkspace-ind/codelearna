@@ -9,4 +9,5 @@ public interface UserLibraryCourseService {
     void deleteUserLibraryCourse(Long id);
     List<UserLibraryCourse> getUserLibraryCoursesByUserEid(String userEId);
     void addCourseToLibrary(String userId, Long courseId, UserLibraryCourse.PaymentStatus paymentStatus, UserLibraryCourse.ProgressStatus progressStatus);
+    boolean isCoursePurchased(String userEid, Long courseId);
 }

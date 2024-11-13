@@ -48,7 +48,12 @@
 					<p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"
 						style="text-decoration: line-through;"></p>
 					<h5 class="text-danger" th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
-					<button class="btn btn-primary mt-3">Buy now</button>
+					
+					<!-- Form để gửi yêu cầu thanh toán -->
+					<form th:action="@{/payment/pay}" method="post">
+						<input type="hidden" name="courseId" th:value="${course.id}"/>
+						<button type="submit" class="btn btn-primary mt-3">Buy now</button>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -56,7 +61,6 @@
 		<div th:include="fragments/reviews :: reviews"></div>
 
 	</div>
-
 
 	<th:block th:include="fragments/javascript"></th:block>
 </body>
