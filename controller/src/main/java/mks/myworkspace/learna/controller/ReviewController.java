@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Review;
 import mks.myworkspace.learna.service.CourseService;
+import mks.myworkspace.learna.service.PaymentService;
 import mks.myworkspace.learna.service.ReviewService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,6 +34,9 @@ public class ReviewController extends BaseController {
 	@Autowired
 	private CourseService courseService;
 
+	@Autowired
+	private PaymentService paymentService;
+
 	// Open a course details
 	@GetMapping("/course/{id}")
 	public ModelAndView getCourseDetail(@PathVariable Long id, @RequestParam(defaultValue = "0") int page,
@@ -43,6 +47,7 @@ public class ReviewController extends BaseController {
 		ModelAndView mav = new ModelAndView("courseDetail");
 
 		Course course = courseService.getCourseById(id);
+		Double balance = paymentService.getBalance(userId);
 
 		int pageSize = 5;
 		Page<Review> reviewPage = reviewService.getReviewsByCourseId(id, page, pageSize);
@@ -55,6 +60,7 @@ public class ReviewController extends BaseController {
 		mav.addObject("userId", userId);
 		mav.addObject("currentPage", page);
 		mav.addObject("totalPages", totalPages);
+		mav.addObject("balance", balance);
 
 		return mav;
 	}
