@@ -15,4 +15,9 @@
         <span title="About"> <a id="about" href="#">About</a>
         </span>
     </li>
+    <li>
+        <span title="Parameters" th:class="${session.currentMenu == 'Parameters' ? 'current' : ''}">
+            <a th:href="@{/myadmin/list-parameters}">Parameters</a>
+        </span>
+    </li>
 </ul>

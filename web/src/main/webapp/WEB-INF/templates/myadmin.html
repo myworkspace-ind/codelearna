@@ -15,9 +15,13 @@
         <div th:case="'CurrentUsers'">
             <div th:replace="~{fragments/myadmin/current_users :: current_user_form}"></div>
         </div>
+        <div th:case="'Parameters'">
+            <div th:replace="~{fragments/adminListParameters :: parametersContent}"></div>
+        </div>  
         <p th:case="*">Please contact Administrator to check session attribute "currentMenu"</p>
     </div>
     
     <th:block th:include="fragments/about_dialog"></th:block>
+   	<script th:src="@{/resources/js/adminParameters.js}"></script>
 </body>
 </html>
