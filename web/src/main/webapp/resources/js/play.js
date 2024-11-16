@@ -5,8 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	const userEidElement = document.getElementById('userEid');
 	const userEid = userEidElement.getAttribute('data-user-eid');
 	console.log("User EID from div:", userEid);
-	const userEmailElement = document.getElementById('userEmail');
-	const userEmail = userEmailElement.getAttribute('data-user-email');
     const toggleBtn = document.getElementById('toggle-btn');
     const videoList = document.getElementById('video-list');
     const container = document.querySelector('.container');
@@ -72,8 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	    // Data to encode
 	    const username = userEid;
 	    console.log("Username:", username);
-	    const email = userEmail;
-		console.log("UserEmail:", userEmail);
+	    const email = "ln2thach@gmail.com";
+
 	    // String to encode
 	    const valueToEncode = `${username}:${email}`;
 	    console.log("String to encode:", valueToEncode);
@@ -94,23 +92,26 @@ document.addEventListener('DOMContentLoaded', function() {
 	    console.log(auth2);
 	    console.log("User EID course:", userEid);
 
-	    var actor = `{"name":["${userEid}"],"mbox":["${userEmail}"],"objectType":"Agent"}`;
+	    // Minimum parameters to pass to 'index.html'
+	    var actor = `{"name":["${userEid}"],"mbox":["mailto:ln2thach@gmail.com"],"objectType":"Agent"}`;
 	    console.log("Actor:", actor);
 
-	    var endPoint = `https://mksol.vn/xapi-lrs/${userEid}/`;
+	    // Endpoint của LRS
+	    var endPoint = `https://mksol.vn/xapi-lrs/dung/`;
 	    console.log("Endpoint:", endPoint);
 
 	    var auth = auth2;
 
+	    // Mã hóa các tham số
 	    var params = 'actor=' + encode(actor) + 
 	                '&endpoint=' + encode(endPoint) + 
 	                '&auth=' + encode(auth) + 
 	                '&activity_id=' + encode(activityId);
 
-
+	    // Tạo iframe HTML
 	    var iframeHTML = `<iframe src="${courseUrl}?${params}" width="100%" height="900px" frameborder="0" allowfullscreen></iframe>`;
 	    
-
+	    // Cập nhật nội dung của div course
 	    const courseDiv = document.getElementById("course");
 	    if (courseDiv) {
 	        courseDiv.innerHTML = iframeHTML;
