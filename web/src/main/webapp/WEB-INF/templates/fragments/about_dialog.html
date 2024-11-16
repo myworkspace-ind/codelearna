@@ -1,0 +1,28 @@
+<div>
+    <!-- Modal -->
+    <div class="modal fade" id="dlg_about" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">About CodeLearn Assistant</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <span>Version: </span><span>0.2.0-20241111</span>
+    
+            <div>
+              <span>> Current user:</span>
+              <p>&nbsp;-&nbsp;<span>Name: </span><span th:text="${session.userDisplayName}"></span></p>
+              <p>&nbsp;-&nbsp;<span>User Id: </span><span th:text="${session.userEid}"></span></p>
+              <p>&nbsp;-&nbsp;<span>Email: </span><span th:text="${session.userEmail}"></span></p>
+              <p>&nbsp;-&nbsp;<span>Role: </span><span th:text="${session.userRole}"></span></p>
+              
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>MyAdmin</title>
+    <th:block th:include="fragments/head"></th:block>
+</head>
+<body>
+    <th:block th:include="fragments/hnav"></th:block>
+    
+    <div th:switch="${session.currentMenu}">
+
+        <div th:case="'Settings'">
+            <div th:replace="~{fragments/myadmin/settings :: settings_form}"></div>
+        </div>
+        <div th:case="'CurrentUsers'">
+            <div th:replace="~{fragments/myadmin/current_users :: current_user_form}"></div>
+        </div>
+        <p th:case="*">Please contact Administrator to check session attribute "currentMenu"</p>
+    </div>
+    
+    <th:block th:include="fragments/about_dialog"></th:block>
+</body>
+</html>
