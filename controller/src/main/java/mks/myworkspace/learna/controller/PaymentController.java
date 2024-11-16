@@ -37,21 +37,25 @@ public class PaymentController extends BaseController {
 
     @PostMapping("/pay")
     public ModelAndView payForCourse(@RequestParam Long courseId, HttpSession httpSession) {
-        ModelAndView mav = new ModelAndView("redirect:/library"); // Chuyển hướng đến thư viện
+        ModelAndView mav = new ModelAndView("redirect:/library");
         try {
             String userEid = getCurrentUserEid();
             boolean success = paymentService.payForCourse(userEid, courseId);
             if (success) {
-                // Cập nhật số dư mới lên session
+                // Cập nhật số dư và thông báo
                 Double newBalance = paymentService.getBalance(userEid);
                 httpSession.setAttribute("userBalance", newBalance);
                 httpSession.setAttribute("paymentMessage", "Payment successful and the course has been added to your library.");
+                httpSession.setAttribute("alertType", "success");
             } else {
-                httpSession.setAttribute("paymentMessage", "Payment failed. Please check your balance.");
+                httpSession.setAttribute("paymentMessage", "Payment failed. Please check later.");
+                httpSession.setAttribute("alertType", "danger");
             }
         } catch (Exception e) {
             httpSession.setAttribute("paymentMessage", "Error occurred while processing the payment.");
+            httpSession.setAttribute("alertType", "danger");
         }
         return mav;
     }
+
 }
