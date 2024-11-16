@@ -66,4 +66,9 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
         userLibraryCourse.setProgressStatus(progressStatus);
         userLibraryCourseJdbcRepository.save(userLibraryCourse);
     }
+
+    @Override
+    public boolean isCoursePurchased(String userEid, Long courseId) {
+        return userLibraryCourseRepository.findByUserEidAndCourseId(userEid, courseId) != null;
+    }
 }

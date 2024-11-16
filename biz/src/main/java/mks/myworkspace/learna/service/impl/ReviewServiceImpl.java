@@ -3,6 +3,9 @@ package mks.myworkspace.learna.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import mks.myworkspace.learna.entity.Course;
@@ -23,11 +26,13 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Autowired
 	private CourseRepository repoCourse;
-
+	
 	@Override
-	public List<Review> getReviewsByCourseId(Long courseId) {
-		return reviewRepository.findByCourseId(courseId);
-	}
+	public Page<Review> getReviewsByCourseId(Long courseId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return reviewRepository.findByCourseId(courseId, pageable);
+    }
+	
 //	@Override
 //	public List<Review> getReviewsByCourseId(Long courseId) {
 //        return reviewJdbcRepository.findByCourseId(courseId);
