@@ -1,6 +1,10 @@
 const IS_SAKAI_ENVIRONMENT = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
 
 document.addEventListener('DOMContentLoaded', function() {
+
+	const userEidElement = document.getElementById('userEid');
+	const userEid = userEidElement.getAttribute('data-user-eid');
+	console.log("User EID from div:", userEid);
     const toggleBtn = document.getElementById('toggle-btn');
     const videoList = document.getElementById('video-list');
     const container = document.querySelector('.container');
@@ -46,33 +50,112 @@ document.addEventListener('DOMContentLoaded', function() {
         return lessons.findIndex(lesson => lesson.getAttribute('data-lesson-id') === lessonId);
     }
 
-    function loadLesson(index, updateUrl = true) {
-        const lesson = lessons[index];
-        if (lesson) {
-            const videoUrl = lesson.querySelector('video').src;
-            const title = lesson.querySelector('.title').textContent;
-            const courseId = lesson.getAttribute('data-course-id');
-            const lessonId = lesson.getAttribute('data-lesson-id');
+	function encode(value) {
+	    var result = encodeURIComponent(value).replace(/'/g, "%27").replace(/"/g, "%22");
+	    return result;
+	}
 
-            videoPlayer.src = videoUrl;
-            videoTitle.textContent = title;
+	/**
+	 * Encode string to Base64
+	 * @param {string} input - String to encode
+	 * @returns {string} - Base64 encoded string
+	 */
+	function encodeBase64(input) {
+	    const utf8Bytes = new TextEncoder().encode(input); // Convert to UTF-8
+	    const base64String = btoa(String.fromCharCode(...utf8Bytes));
+	    return base64String;
+	}
 
-            lessons.forEach(l => l.classList.remove('active'));
-            lesson.classList.add('active');
+	function generateBasicAuth() {
+	    // Data to encode
+	    const username = userEid;
+	    console.log("Username:", username);
+	    const email = "ln2thach@gmail.com";
 
-            lesson.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	    // String to encode
+	    const valueToEncode = `${username}:${email}`;
+	    console.log("String to encode:", valueToEncode);
 
-            if (updateUrl) {
-                const newUrl = generatePlayURL(courseId, lessonId);
-                history.replaceState(null, '', newUrl);
-            }
-            
-            console.log('Loading comments for courseId:', courseId, 'lessonId:', lessonId);
-            loadComments(courseId, lessonId);
-        } else {
-            console.warn('No lesson found at index:', index);
-        }
-    }
+	    // Base64 encoding
+	    const encodedValue = encodeBase64(valueToEncode);
+	    console.log("Base64 encoded value:", encodedValue);
+
+	    // Create Basic Authorization header
+	    const authHeader = `Basic ${encodedValue}`;
+	    console.log("Authorization Header:", authHeader);
+
+	    return authHeader;
+	}
+	
+	function openCourse(courseUrl, activityId) {
+	    const auth2 = generateBasicAuth();
+	    console.log(auth2);
+	    console.log("User EID course:", userEid);
+
+	    // Minimum parameters to pass to 'index.html'
+	    var actor = `{"name":["${userEid}"],"mbox":["mailto:ln2thach@gmail.com"],"objectType":"Agent"}`;
+	    console.log("Actor:", actor);
+
+	    // Endpoint của LRS
+	    var endPoint = `https://mksol.vn/xapi-lrs/dung/`;
+	    console.log("Endpoint:", endPoint);
+
+	    var auth = auth2;
+
+	    // Mã hóa các tham số
+	    var params = 'actor=' + encode(actor) + 
+	                '&endpoint=' + encode(endPoint) + 
+	                '&auth=' + encode(auth) + 
+	                '&activity_id=' + encode(activityId);
+
+	    // Tạo iframe HTML
+	    var iframeHTML = `<iframe src="${courseUrl}?${params}" width="100%" height="900px" frameborder="0" allowfullscreen></iframe>`;
+	    
+	    // Cập nhật nội dung của div course
+	    const courseDiv = document.getElementById("course");
+	    if (courseDiv) {
+	        courseDiv.innerHTML = iframeHTML;
+	    } else {
+	        console.error("Element with id 'course' not found");
+	    }
+	}
+
+
+	
+	function loadLesson(index) {
+	    const lesson = lessons[index];
+	    if (lesson) {
+	        const videoUrl = lesson.querySelector('video').src; 
+	        const title = lesson.querySelector('.title').textContent; 
+	        const courseId = lesson.getAttribute('data-course-id'); 
+	        const lessonId = lesson.getAttribute('data-lesson-id');
+	        const activityId = lesson.getAttribute('data-activity-id'); 
+
+	       
+	        videoTitle.textContent = title;
+
+	        
+	        openCourse(videoUrl, activityId);
+
+	       
+	        lessons.forEach(l => l.classList.remove('active'));
+	        lesson.classList.add('active');
+
+	        
+	        lesson.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+	  
+	        const newUrl = generatePlayURL(courseId, lessonId);
+	        history.replaceState(null, '', newUrl);
+
+	        // Load comments
+	        loadComments(courseId, lessonId);
+	    } else {
+	        console.warn('No lesson found at index:', index); 
+	    }
+	}
+
+
 
     function loadComments(courseId, lessonId, page = 0) {
         fetch(`${_ctx}play/${courseId}/${lessonId}/comments?page=${page}`)
