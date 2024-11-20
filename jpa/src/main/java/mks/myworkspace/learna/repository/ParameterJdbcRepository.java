@@ -15,26 +15,46 @@ public class ParameterJdbcRepository {
 	private DataSource dataSource;
 
 	public Parameter save(Parameter parameter) {
-		String sql = "INSERT INTO learna_parameter (param_key, param_value) VALUES (?, ?)";
+	    String sqlInsert = "INSERT INTO learna_parameter (param_key, param_value) VALUES (?, ?)";
+	    String sqlUpdate = "UPDATE learna_parameter SET param_key = ?, param_value = ? WHERE id = ?";
 
-		try (Connection conn = dataSource.getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+	    try (Connection conn = dataSource.getConnection()) {
+	        if (parameter.getId() != null) {
+	            try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
+	                ps.setString(1, parameter.getParamKey());
+	                ps.setString(2, parameter.getParamValue());
+	                ps.setLong(3, parameter.getId());
+	                int rowsUpdated = ps.executeUpdate();
+	               
+	                if (rowsUpdated == 0) {
+	                    insertNewParameter(parameter, conn, sqlInsert);
+	                }
+	            }
+	        } else {
+	            insertNewParameter(parameter, conn, sqlInsert);
+	        }
 
-			ps.setString(1, parameter.getParamKey());
-			ps.setString(2, parameter.getParamValue());
-			ps.executeUpdate();
-
-			try (ResultSet rs = ps.getGeneratedKeys()) {
-				if (rs.next()) {
-					parameter.setId(rs.getLong(1));
-				}
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return parameter;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return parameter;
 	}
+
+	private void insertNewParameter(Parameter parameter, Connection conn, String sqlInsert) throws SQLException {
+	    try (PreparedStatement ps = conn.prepareStatement(sqlInsert, PreparedStatement.RETURN_GENERATED_KEYS)) {
+	        ps.setString(1, parameter.getParamKey());
+	        ps.setString(2, parameter.getParamValue());
+	        ps.executeUpdate();
+
+	        try (ResultSet rs = ps.getGeneratedKeys()) {
+	            if (rs.next()) {
+	                parameter.setId(rs.getLong(1));
+	            }
+	        }
+	    }
+	}
+
+
 	
 	public void deleteById(Long id) {
         String sql = "DELETE FROM learna_parameter WHERE id = ?";
