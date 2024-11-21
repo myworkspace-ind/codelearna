@@ -107,9 +107,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	                '&auth=' + encode(auth) + 
 	                '&activity_id=' + encode(activityId);
 
-
-	    var iframeHTML = `<iframe src="${courseUrl}?${params}" width="100%" height="900px" frameborder="0" allowfullscreen></iframe>`;
-	    
+		if (courseUrl.includes("youtube.com") || courseUrl.includes("youtu.be")){
+			var iframeHTML = `<iframe width="1280" height="720" src="${courseUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
+		}else{
+			var iframeHTML = `<iframe src="${courseUrl}?${params}" width="100%" height="900px" frameborder="0" allowfullscreen></iframe>`;
+		}
 
 	    const courseDiv = document.getElementById("course");
 	    if (courseDiv) {
