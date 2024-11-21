@@ -1,0 +1,27 @@
+package mks.myworkspace.learna.entity;
+
+import java.util.List;
+import java.util.Set;
+import javax.persistence.*;
+import lombok.Data;
+import lombok.ToString;
+
+@Entity
+@Table(name = "learna_category")
+@Data
+public class Category {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+//    private String name;
+
+    // Thay thế name bằng tham chiếu tới Parameter
+    @ManyToOne
+    @JoinColumn(name = "parameter_id", nullable = false)
+    private Parameter parameter;
+    
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    @ToString.Exclude
+    private List<Subcategory> subcategories; 
+}

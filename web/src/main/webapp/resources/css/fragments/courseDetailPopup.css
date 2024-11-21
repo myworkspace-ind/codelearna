@@ -1,0 +1,125 @@
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    display: none; /* Đảm bảo popup không hiển thị khi trang được tải */
+}
+
+.popup-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 20px; /* Đặt bán kính bo góc bên ngoài */
+    width: 80%;
+    max-width: 600px; /* Đặt kích thước cố định cho popup */
+    height: 80%; /* Đặt chiều cao cố định cho popup */
+    max-height: 700px; /* Đặt chiều cao tối thiểu cho popup */
+    overflow: hidden; /* Ẩn phần tràn */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.close-btn {
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: auto; /* Đẩy nút đóng sang bên phải */
+}
+
+.course-header {
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 10;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.course-body {
+    overflow-y: auto;
+    flex-grow: 1;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+.course-body::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+
+.course-image img {
+    width: 100%;
+    height: 200px; /* Đặt kích thước cố định cho ảnh */
+    object-fit: cover; /* Đảm bảo ảnh không bị méo */
+    border-radius: 10px; /* Đặt bán kính bo góc bên trong */
+}
+
+.course-screenshots {
+    margin-top: 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+.course-screenshots::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+
+.screenshots-container {
+    display: inline-flex;
+}
+
+.screenshots-container img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.course-description, .course-details {
+    margin-top: 20px;
+}
+
+.course-details-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-grow: 1;
+    overflow: hidden; /* Ẩn phần tràn */
+}
+
+.course-description {
+    width: 48%;
+    padding-right: 10px;
+    overflow-y: auto; /* Cho phép cuộn nội dung nếu quá dài */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+}
+
+.course-description::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+}
+
+.course-details {
+    width: 48%;
+}
+
+.blur-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 999; /* Đảm bảo lớp phủ nằm dưới popup */
+}

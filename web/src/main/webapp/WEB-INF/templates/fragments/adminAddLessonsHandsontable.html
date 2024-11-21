@@ -1,0 +1,24 @@
+<div th:fragment="addLessonsContent">
+    <div class="container mt-5">
+        <h1 class="mb-4">Add Lessons with Handsontable for Course <span th:text="${course.name}"></span></h1>
+
+        <!-- Error Message Display -->
+        <div id="error-message" class="alert alert-danger" style="display: none;">
+            <strong>Error!</strong> <span id="error-text"></span>
+        </div>
+
+        <!-- File Input for Excel Files -->
+        <input type="file" id="fileInput" class="form-control mb-3" accept=".xls,.xlsx" onchange="handleFile(event)">
+
+        <!-- Handsontable Container -->
+        <div id="handsontable-container-lessons" class="mb-3"></div>
+
+        <!-- Submit and Cancel Buttons -->
+        <button type="button" class="btn btn-primary" th:attr="onclick='submitLessonData(event, ' + ${course.id} + '); return false;'">
+            Submit Lessons
+        </button>
+        <button type="button" class="btn btn-secondary" th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">
+            Cancel
+        </button>
+    </div>
+</div>

@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>codelearna</artifactId>
 		<groupId>mks.assistant.codelearna</groupId>
-		<version>23.0</version>
+		<version>23.2</version>
         <relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>mks.assistant.codelearna</groupId>
 	<artifactId>codelearna-tool</artifactId>
-<!-- 	<version>23.0</version> -->
+<!-- 	<version>23.2</version> -->
 	<packaging>war</packaging>
 
 	<dependencies>
