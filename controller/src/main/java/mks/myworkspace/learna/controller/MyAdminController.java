@@ -48,7 +48,12 @@ public class MyAdminController extends BaseController {
 	public String loadCourseList(HttpServletRequest request, HttpSession httpSession, Model model) {
 	    httpSession.setAttribute("currentMenu", "Course"); 
 	    model.addAttribute("courses", courseService.getAllCourses()); 
-
+	    return "myadmin";
+	}
+	@GetMapping("/revenue-statistics")
+	public String loadRevenueStatistics(HttpServletRequest request, HttpSession httpSession, Model model) {
+	    httpSession.setAttribute("currentMenu", "RevenueStatistics"); 
+	    // model.addAttribute("courses", courseService.getAllCourses()); 
 	    return "myadmin";
 	}
 }

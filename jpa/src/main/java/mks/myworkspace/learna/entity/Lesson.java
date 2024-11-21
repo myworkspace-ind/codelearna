@@ -25,7 +25,9 @@ public class Lesson {
     
     @Column(name = "video_url")
     private String videoUrl;
-
+    
+    @Column(name = "activity_id")
+    private String activityId;
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;

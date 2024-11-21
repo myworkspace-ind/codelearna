@@ -254,7 +254,11 @@ function submitEditParameterForm(event, parameterId) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.status === "success") {
-				alert(data.message);
+				showSuccessToast(data.message || 'Parameter updated successfully!');
+				const editParameterModalInstance = bootstrap.Modal.getInstance(document.getElementById('editParameterModal'));
+								if (editParameterModalInstance) {
+									editParameterModalInstance.hide();
+								}
 				loadParametersManagePage(event);
 			} else {
 				throw new Error(data.message);

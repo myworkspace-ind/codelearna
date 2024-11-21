@@ -30,24 +30,30 @@ public class UserLibraryCourseController extends BaseController{
     @GetMapping
     public ModelAndView getUserLibraryCoursesForDefaultUser(HttpServletRequest request, HttpSession httpSession) {
         ModelAndView mav = new ModelAndView("userLibraryCourses");
-        
-		initSession(request, httpSession);
+        initSession(request, httpSession);
 
         String userEid = getCurrentUserEid();
         String userName = getCurrentUserDisplayName();
-        mav.addObject("userEId",userEid);
-        mav.addObject("userName",userName);
+        mav.addObject("userEId", userEid);
+        mav.addObject("userName", userName);
 
+        // Lấy thông báo và loại alert
         String paymentMessage = (String) httpSession.getAttribute("paymentMessage");
+        String alertType = (String) httpSession.getAttribute("alertType");
+
         if (paymentMessage != null) {
             mav.addObject("paymentMessage", paymentMessage);
+            mav.addObject("alertType", alertType);
             httpSession.removeAttribute("paymentMessage");
+            httpSession.removeAttribute("alertType");
         }
 
+        // Các logic khác...
         try {
-        	List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid);
+            List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid);
             mav.addObject("userLibraryCourses", userLibraryCourses);
 
+            // Phân loại các khóa học
             List<UserLibraryCourse> purchasedCourses = userLibraryCourses.stream()
                     .filter(course -> course.getPaymentStatus() == UserLibraryCourse.PaymentStatus.PURCHASED)
                     .collect(Collectors.toList());
@@ -70,11 +76,12 @@ public class UserLibraryCourseController extends BaseController{
 
             log.debug("done");
         } catch (Exception e) {
-        	log.debug("Lỗi khi tải thư viện."); ;
-        }  
+            log.debug("Lỗi khi tải thư viện.");
+        }
 
         return mav;
     }
+
 
     @PostMapping("/add")
     @ResponseBody

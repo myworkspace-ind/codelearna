@@ -23,17 +23,21 @@
             <div th:replace="~{fragments/myadmin/current_users :: current_user_form}"></div>
         </div>
         <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
-        <div id="main-content" class="main-content">
+        <div id="dynamic-content" class="main-content" th:case="Parameters">
+        <!-- <div id="main-content" class="main-content"> -->
             <main>
-                <div id="dynamic-content" th:case="'Parameters'">
+                <div >
                     <div th:replace="~{fragments/adminListParameters :: parametersContent}"></div>
                 </div>                
                 <th:block th:include="fragments/javascript.html"></th:block>
             </main>
         </div>
+        <div th:case="'RevenueStatistics'">
+            <div th:replace="~{fragments/myadmin/revenue_statistics :: revenue_statistics_form}"></div>
+        </div>
         <div class="dashboard">
 		
-			<div th:replace="fragments/adminSidebar"></div>
+			<!-- <div th:replace="fragments/adminSidebar"></div> -->
 	
 			<div id="main-content" class="main-content">
 			
