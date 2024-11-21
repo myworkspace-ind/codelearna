@@ -16,7 +16,7 @@ import java.util.List;
 
 @Slf4j
 @Controller
-public class PlayController {
+public class PlayController extends BaseController{
 
     @Autowired
     private PlayService playService;
@@ -29,11 +29,16 @@ public class PlayController {
             @PathVariable Long courseId,
             @RequestParam(required = false) Long lessonId) {
         ModelAndView mav = new ModelAndView("play");
-
+        String userEid = getCurrentUserEid();
+        String userEmail = getCurrentUserEmail();
         // Lấy danh sách các bài học thuộc khóa học
         List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
         mav.addObject("lessons", lessons);
-
+        
+        log.debug("userEid: {}", userEid);
+        log.debug("userEmail: {}", userEmail);
+        mav.addObject("userEId",userEid);
+        mav.addObject("userEmail",userEmail);
         return mav;
     }
 
