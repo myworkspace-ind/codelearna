@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.extern.slf4j.Slf4j;
-import mks.myworkspace.learna.service.ParameterService;
 import mks.myworkspace.learna.service.CourseService;
+import mks.myworkspace.learna.service.ParameterService;
+
 
 @Controller
 @RequestMapping("/myadmin")
@@ -22,7 +23,6 @@ public class MyAdminController extends BaseController {
 	
 	@Autowired
 	private CourseService courseService;
-	
 	@GetMapping("")
 	public String showSettings(HttpServletRequest request, HttpSession httpSession) {
 		super.initSession(request, httpSession);
@@ -44,11 +44,16 @@ public class MyAdminController extends BaseController {
 	    model.addAttribute("parameters", parameterService.getAllParams()); 
 	    return "myadmin";
 	}
-	
-	@GetMapping("/list-courses")
-	public String loadCoursesList(HttpServletRequest request, HttpSession httpSession, Model model) {
-	    httpSession.setAttribute("currentMenu", "Courses");
+	@GetMapping("/course-management")
+	public String loadCourseList(HttpServletRequest request, HttpSession httpSession, Model model) {
+	    httpSession.setAttribute("currentMenu", "Course"); 
 	    model.addAttribute("courses", courseService.getAllCourses()); 
+	    return "myadmin";
+	}
+	@GetMapping("/revenue-statistics")
+	public String loadRevenueStatistics(HttpServletRequest request, HttpSession httpSession, Model model) {
+	    httpSession.setAttribute("currentMenu", "RevenueStatistics"); 
+	    // model.addAttribute("courses", courseService.getAllCourses()); 
 	    return "myadmin";
 	}
 }
