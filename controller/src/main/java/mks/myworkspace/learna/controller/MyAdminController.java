@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.extern.slf4j.Slf4j;
 import mks.myworkspace.learna.service.ParameterService;
+import mks.myworkspace.learna.service.CourseService;
 
 @Controller
 @RequestMapping("/myadmin")
@@ -18,6 +19,9 @@ import mks.myworkspace.learna.service.ParameterService;
 public class MyAdminController extends BaseController {
 	@Autowired
 	private ParameterService parameterService;
+	
+	@Autowired
+	private CourseService courseService;
 	
 	@GetMapping("")
 	public String showSettings(HttpServletRequest request, HttpSession httpSession) {
@@ -38,6 +42,13 @@ public class MyAdminController extends BaseController {
 	public String loadParametersList(HttpServletRequest request, HttpSession httpSession, Model model) {
 	    httpSession.setAttribute("currentMenu", "Parameters");
 	    model.addAttribute("parameters", parameterService.getAllParams()); 
+	    return "myadmin";
+	}
+	
+	@GetMapping("/list-courses")
+	public String loadCoursesList(HttpServletRequest request, HttpSession httpSession, Model model) {
+	    httpSession.setAttribute("currentMenu", "Courses");
+	    model.addAttribute("courses", courseService.getAllCourses()); 
 	    return "myadmin";
 	}
 }

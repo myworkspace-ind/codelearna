@@ -17,7 +17,12 @@
     </li>
     <li>
         <span title="Parameters" th:class="${session.currentMenu == 'Parameters' ? 'current' : ''}">
-            <a href="#" onclick="loadParametersManagePage(event)">Parameters</a>
+            <a th:href="@{/myadmin/list-parameters}">Parameters</a>
+        </span>
+    </li>
+    <li>
+    	<span title="Course Management" th:class="${session.currentMenu == 'Courses' ? 'current' : ''}">
+            <a th:href="@{/myadmin/list-courses}">Course Management</a>
         </span>
     </li>
 </ul>

@@ -18,6 +18,9 @@
         <div th:case="'Parameters'">
             <div th:replace="~{fragments/adminListParameters :: parametersContent}"></div>
         </div>  
+        <div th:case="'Courses'">
+            <div th:replace="~{fragments/adminListCourse :: coursesContent}"></div>
+        </div>
         <p th:case="*">Please contact Administrator to check session attribute "currentMenu"</p>
     </div>
     
