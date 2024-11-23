@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao diện thanh toán</title>
+    <th:block th:include="fragments/head"></th:block>
+    <link rel="stylesheet"
+        href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css"></head>
+<body>
+    <div class="container my-5">
+        <h4 class="text-center mb-4">Thanh toán qua chuyển khoản ngân hàng</h4>
+        <div class="row">
+            <p id="orderId" hidden th:text="${orderId}"></p>
+            <!-- Cách 1: Quét mã QR -->
+            <div class="col-md-6">
+                <h6 class="mb-3">Cách 1: Mở app ngân hàng / Ví và <b>quét mã QR</b></h6>
+                <div class="border p-3 text-center">
+                    <img th:src="${qrCodeUrl}" 
+                         alt="VietQR" class="img-fluid" style="max-width: 250px;">
+                </div>
+            </div>
+            <!-- Cách 2: Chuyển khoản thủ công -->
+            <div class="col-md-6">
+                <h6 class="mb-3">Cách 2: Chuyển khoản <b>thủ công</b> theo thông tin</h6>
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <th>Ngân hàng</th>
+                            <td th:text="'MB'"></td>
+                        </tr>
+                        <tr>
+                            <th>Thụ hưởng</th>
+                            <td th:text="'VO MINH KHOA'"></td>
+                        </tr>
+                        <tr>
+                            <th>Số tài khoản</th>
+                            <td th:text="'014028268888'"></td>
+                        </tr>
+                        <tr>
+                            <th>Số tiền</th>
+                            <td th:text="${orderAmount}"></td>
+                        </tr>
+                        <tr>
+                            <th>Nội dung CK</th>
+                            <td th:text="${orderId}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="text-danger">
+                    Lưu ý: Vui lòng giữ nguyên nội dung chuyển khoản <b th:text="${orderId}"></b> để xác nhận thanh toán tự động.
+                </p>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <span id="paymentStatus" class="text-muted">Trạng thái: 
+                <span class="spinner-border spinner-border-sm text-primary" role="status"></span> 
+                Chờ thanh toán...
+            </span>
+        </div>
+    </div>
+    <script>
+        const orderId = document.getElementById('orderId').textContent;
+        function checkPaymentStatus() {
+          fetch(`${_ctx}/payment/check/${orderId}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to check payment status');
+                }
+                return response.text();
+            })
+            .then(data => {
+                if (data.includes("PAID")) {
+                    document.getElementById('paymentStatus').innerText = "Thanh toán đơn hàng thành công.";
+                    clearInterval(paymentInterval); 
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('paymentStatus').innerText = "An error occurred, please try again.";
+                clearInterval(paymentInterval); 
+            });
+        }
+        const paymentInterval = setInterval(checkPaymentStatus, 3000);
+      </script>
+</body>
+</html>
