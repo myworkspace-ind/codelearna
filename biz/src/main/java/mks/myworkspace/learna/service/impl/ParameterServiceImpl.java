@@ -67,7 +67,7 @@ public class ParameterServiceImpl implements ParameterService {
 	}
 	
 	@Override
-	public Parameter addParamValueToParamKey(String paramKey, String paramValue) {
-		return repo.findByParamKeyAndParamValue(paramKey, paramValue);
+	public Parameter addParamValueToParamKey(Parameter parameter) {
+		return parameterJdbcRepository.addNewValueToKey(parameter);
 	}
 }

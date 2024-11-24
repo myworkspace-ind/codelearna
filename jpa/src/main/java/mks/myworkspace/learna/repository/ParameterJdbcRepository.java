@@ -53,7 +53,22 @@ public class ParameterJdbcRepository {
 	        }
 	    }
 	}
+	
+	public Parameter addNewValueToKey(Parameter parameter) {
+	    String sqlInsert = "INSERT INTO learna_parameter (param_key, param_value) VALUES (?, ?)";
 
+	    try (Connection conn = dataSource.getConnection()) {
+	        if (parameter.getId() != null) {
+	        	System.out.println("Đã tồn tại: ");
+	        } else {
+	            insertNewParameter(parameter, conn, sqlInsert);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return parameter;
+	}
 
 	
 	public void deleteById(Long id) {

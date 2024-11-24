@@ -197,12 +197,11 @@ function filterSubcategories(categoryId) {
 }
 
 function handleAddNew(selectElement) {
+	
     if (selectElement.value === "add-new") {
         document.getElementById("addNewModal").style.display = "block";
     }
 	else if(selectElement.value !== "add-new"){
-		const select = document.getElementById("difficultyLevel");
-		select.value = select.options[0].value;
 		document.getElementById("addNewModal").style.display = "none";
 	}
 }
@@ -217,7 +216,8 @@ function submitNewParamValue() {
     const paramKey = "difficultyLevel"; // Key tương ứng cho danh mục này
 
     if (newValue) {
-        fetch(`/parameter/addParamValue/${paramKey}/${newValue}`, {
+		system.out.println('Da chay');
+        fetch(`${_ctx}parameter/addParamValue`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
