@@ -45,10 +45,6 @@ public class PaymentController extends BaseController {
     
     private final RestTemplate restTemplate = new RestTemplate();
 
-
-    @Value("${payment.sepay.apiKey}")
-    private String bearerToken;
-
     @GetMapping("/balance")
     public ModelAndView getBalance(HttpServletRequest request, HttpSession httpSession) {
         ModelAndView mav = new ModelAndView("balanceView"); // View name to display balance
@@ -83,37 +79,11 @@ public class PaymentController extends BaseController {
     
     @GetMapping("/check/{orderCode}")
     public ResponseEntity<String> processPayment(@PathVariable String orderCode) {
-        String url = "https://my.sepay.vn/userapi/transactions/list?limit=20";
-
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + bearerToken);
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-
-            ResponseEntity<Map> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-            Map<String, Object> response = responseEntity.getBody();
-
-            List<Map<String, Object>> transactions = (List<Map<String, Object>>) response.get("transactions");
-
-            if (transactions != null && !transactions.isEmpty()) {
-                for (Map<String, Object> transaction : transactions) {
-                    String code = (String) transaction.get("code");
-
-                    if (code != null && code.equals(orderCode)) {
-                        Optional<Order> order = orderService.getOrder(code);
-                        BigDecimal transactionAmount = new BigDecimal((String) transaction.get("amount_in"));
-                        if (order.isPresent() && order.get().getAmount().compareTo(transactionAmount) == 0) {
-                            orderService.updateOrderStatus(order.get().getOrderCode(), Order.OrderStatus.COMPLETED);
-                            return ResponseEntity.ok("PAID");
-                        }
-                    }
-                }
-            }
-
-            return ResponseEntity.ok(orderCode + " not found");
-
+            String userEid = getCurrentUserEid();
+            String result = paymentService.processPayment(orderCode, userEid);
+            return ResponseEntity.ok(result);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred: " + e.getMessage());
         }

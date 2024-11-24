@@ -10,14 +10,24 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Order;
+import mks.myworkspace.learna.entity.UserLibraryCourse;
 import mks.myworkspace.learna.repository.OrderRepository;
 import mks.myworkspace.learna.service.OrderService;
+import mks.myworkspace.learna.service.UserLibraryCourseService;
+import mks.myworkspace.learna.repository.CourseRepository;
 
 @Service
 public class OrderServiceImpl implements OrderService{
 	@Autowired
 	private OrderRepository orderRepository;
+
+    @Autowired
+    private UserLibraryCourseService userLibraryCourseService;
+
+    @Autowired
+    private CourseRepository courseRepository; 
 
     public String generateQrCodeUrl(String orderCode, BigDecimal amount) {
         String accountNumber = "014028268888";
@@ -36,23 +46,31 @@ public class OrderServiceImpl implements OrderService{
         );
     }
 
-    public Order createOrder(String paymentMethod, BigDecimal amount, Long userId, Long courseId) {
+    public Order createOrder(String paymentMethod, String userEid, Long courseId) {
         if (paymentMethod == null || paymentMethod.isEmpty()) {
             throw new RuntimeException("Payment method must not be null or empty");
         }
+        if (userEid == null) {
+            throw new RuntimeException("User ID must not be null");
+        }
+
+        Course course = courseRepository.findById(courseId).orElse(null);
+        BigDecimal amount = new BigDecimal(course.getDiscountedPrice().toString());
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new RuntimeException("Amount must be greater than zero");
         }
-        if (userId == null) {
-            throw new RuntimeException("User ID must not be null");
+
+        UserLibraryCourse existingCourse = userLibraryCourseService.getUserLibraryCourseById(courseId);
+        if (existingCourse != null) {
+            throw new RuntimeException("Course already purchased!"); 
         }
 
         Order order = Order.builder()
                 .paymentMethod(paymentMethod)
                 .amount(amount)
-                .userId(userId)
+                .userEid(userEid)
                 .courseId(courseId)
-                .orderCode(generateOrderCode(userId))
+                .orderCode(generateOrderCode())
                 .build();
 
         orderRepository.save(order);
@@ -60,12 +78,12 @@ public class OrderServiceImpl implements OrderService{
     }
 
 
-    public String generateOrderCode(Long userId) {
+    public String generateOrderCode() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
         String currentDate = dateFormat.format(new Date());
         Random random = new Random();
-        int randomNumber = random.nextInt(9000) + 1000;
-        return "CLA" + userId + currentDate + randomNumber;
+        int randomNumber = random.nextInt(90000000) + 10000000;
+        return "CLA" + currentDate + randomNumber;
     }
 
 

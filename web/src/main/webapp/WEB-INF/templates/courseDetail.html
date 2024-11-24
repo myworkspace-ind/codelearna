@@ -97,8 +97,6 @@
                                 <div class="modal-body">
                                     <form id="paymentForm" th:action="@{/orders}" method="POST">
                                         <input type="hidden" name="courseId" th:value="${course.id}" />
-                                        <input type="hidden" name="userId" th:value="1" />
-                                        <input type="hidden" name="amount" th:value="10000" />
                                         <div class="payment-method" onclick="selectPayment('vnpay')">
                                             <div class="d-flex align-items-center">
                                                 <div class="form-check">

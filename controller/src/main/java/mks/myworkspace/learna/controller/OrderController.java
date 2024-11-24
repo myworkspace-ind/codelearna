@@ -28,23 +28,28 @@ public class OrderController extends BaseController {
     		HttpServletRequest request, 
     		HttpSession httpSession,
             @RequestParam String paymentMethod,
-            @RequestParam BigDecimal amount,
-            @RequestParam Long userId,
             @RequestParam Long courseId,
             Model model) {
     	// System.out.println("userEid:::::" + getCurrentUserEid());
-
-    	// userId = getCurrentUserEid();
-        Order order = orderService.createOrder(paymentMethod, amount, userId, courseId);
-        // System.out.println(order);
-        if ("transfer".equals(paymentMethod)) {
-            String qrCodeUrl = orderService.generateQrCodeUrl(order.getOrderCode(), amount);
-            model.addAttribute("orderId", order.getOrderCode());
-            model.addAttribute("qrCodeUrl", qrCodeUrl);
-            return "fragments/qr-code-payment";
-        } else if ("vnpay".equals(paymentMethod)) {
-            return "redirect:/orders/";
+        try {
+            String userEid = getCurrentUserEid();
+            Order order = orderService.createOrder(paymentMethod, userEid, courseId);
+            // System.out.println(order);
+            if ("transfer".equals(paymentMethod)) {
+                String qrCodeUrl = orderService.generateQrCodeUrl(order.getOrderCode(), order.getAmount());
+                model.addAttribute("orderId", order.getOrderCode());
+                model.addAttribute("qrCodeUrl", qrCodeUrl);
+                model.addAttribute("orderAmount", order.getAmount());
+                return "fragments/qr-code-payment";
+            } else if ("vnpay".equals(paymentMethod)) {
+                return "redirect:/orders/";
+            }
+            return "redirect:/library";
         }
-        return "redirect:/orders/" + order.getOrderCode();
+        catch (Exception e) {
+            httpSession.setAttribute("paymentMessage", "Error occurred while processing the payment.");
+            httpSession.setAttribute("alertType", "danger");
+        }
+    	return "redirect:/library";
     }
 }

@@ -17,8 +17,8 @@ public class Order {
     @Column(name = "order_code", unique = true, nullable = false)
     private String orderCode;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "user_eid", nullable = false)
+    private String userEid;
 
     @Column(name = "course_id", nullable = false)
     private Long courseId;

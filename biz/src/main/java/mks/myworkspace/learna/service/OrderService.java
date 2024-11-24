@@ -9,8 +9,8 @@ import mks.myworkspace.learna.repository.OrderRepository;
 
 public interface OrderService {
 	public String generateQrCodeUrl(String orderCode, BigDecimal amount);
-	public String generateOrderCode(Long userId);
-	public Order createOrder(String paymentMethod, BigDecimal amount, Long userId, Long courseId);
+	public String generateOrderCode();
+	public Order createOrder(String paymentMethod, String userEid, Long courseId);
 	public Optional<Order> getOrder(String orderCode);
 	public boolean updateOrderStatus(String orderCode, Order.OrderStatus status);
 }
