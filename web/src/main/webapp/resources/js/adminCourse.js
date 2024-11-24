@@ -200,6 +200,11 @@ function handleAddNew(selectElement) {
     if (selectElement.value === "add-new") {
         document.getElementById("addNewModal").style.display = "block";
     }
+	else if(selectElement.value !== "add-new"){
+		const select = document.getElementById("difficultyLevel");
+		select.value = select.options[0].value;
+		document.getElementById("addNewModal").style.display = "none";
+	}
 }
 
 function closeModal() {
