@@ -196,6 +196,57 @@ function filterSubcategories(categoryId) {
 	}
 }
 
+function handleAddNew(selectElement) {
+    if (selectElement.value === "add-new") {
+        document.getElementById("addNewModal").style.display = "block";
+    }
+}
+
+function closeModal() {
+    document.getElementById("addNewModal").style.display = "none";
+    document.getElementById("difficultyLevel").value = ""; // Reset selection
+}
+
+function submitNewParamValue() {
+    const newValue = document.getElementById("newParamValue").value.trim();
+    const paramKey = "difficultyLevel"; // Key tương ứng cho danh mục này
+
+    if (newValue) {
+        fetch(`/parameter/addParamValue/${paramKey}/${newValue}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Failed to add new parameter value.");
+                }
+            })
+            .then(data => {
+                // Thêm giá trị mới vào dropdown
+                const select = document.getElementById("difficultyLevel");
+                const newOption = document.createElement("option");
+                newOption.value = data.id;
+                newOption.textContent = data.paramValue;
+                select.appendChild(newOption);
+
+                // Đặt giá trị mới làm lựa chọn hiện tại
+                select.value = data.id;
+
+                // Đóng modal
+                closeModal();
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+    } else {
+        alert("Please enter a valid value.");
+    }
+}
+
 function submitCourseForm(event) {
 	event.preventDefault();
 

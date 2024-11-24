@@ -662,7 +662,28 @@ public class AdminController {
 	        return ResponseEntity.badRequest().body(response);
 	    }
 	}
+	
+	@PostMapping("/parameter/addParamValue/{paramKey}/{paramValue}")
+	@ResponseBody
+	public Parameter addParamValueToParamKey(@PathVariable("paramKey")String paramKey, @PathVariable("paramValue")String paramValue) {
+        if (paramValue == null || paramValue.isEmpty()) {
+            throw new IllegalArgumentException("ParamValue không được để trống.");
+        }
 
+        // Kiểm tra nếu paramKey đã tồn tại với giá trị tương ứng
+        Parameter existingParam = parameterService.getParameterByParamKeyAndParamValue(paramKey, paramValue);
+        if (existingParam != null) {
+            throw new IllegalArgumentException("ParamKey và ParamValue đã tồn tại.");
+        }
+
+        // Tạo mới Parameter
+        Parameter newParameter = new Parameter();
+        newParameter.setParamKey(paramKey);
+        newParameter.setParamValue(paramValue);
+
+        // Lưu vào database
+        return parameterService.saveParameters(newParameter);
+    }
 	
 	@PostMapping("/parameter/delete/{parameterId}")
 	@ResponseBody

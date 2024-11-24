@@ -46,10 +46,20 @@
 			<div class="row">
 				<div class="col-md-6 mb-3">
 					<label for="difficultyLevel" class="form-label">Difficulty Level<span style="color:red">*</span></label>
-					<select class="form-select" id="difficultyLevel" name="difficultyLevel.id" required>
-						<option value="">Choose difficulty level...</option>
-						<option th:each="difficultyLevel : ${difficultyLevels}" th:value="${difficultyLevel.id}" th:text="${difficultyLevel.paramValue}"></option>
+					<<select class="form-select" id="difficultyLevel" name="difficultyLevel.id" required onchange="handleAddNew(this)">
+					    <option value="">Choose difficulty level...</option>
+					    <option th:each="difficultyLevel : ${difficultyLevels}" th:value="${difficultyLevel.id}" th:text="${difficultyLevel.paramValue}"></option>
+					    <option value="add-new">Add new</option>
 					</select>
+					
+					<!-- Modal để nhập giá trị mới -->
+					<div id="addNewModal" style="display:none;">
+					    <label for="newParamValue">Enter new value:</label>
+					    <input type="text" id="newParamValue" placeholder="New value" required>
+					    <button onclick="submitNewParamValue()">Save</button>
+					    <button onclick="closeModal()">Cancel</button>
+					</div>
+
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="lessonType" class="form-label">Lesson Type<span style="color:red">*</span></label>
