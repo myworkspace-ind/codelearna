@@ -211,19 +211,21 @@ function closeModal() {
     document.getElementById("difficultyLevel").value = ""; // Reset selection
 }
 
-function submitNewParamValue() {
+function submitNewParamValue(event) {
+	event.preventDefault();
     const newValue = document.getElementById("newParamValue").value.trim();
-    const paramKey = "difficultyLevel"; // Key tương ứng cho danh mục này
+    const paramKey = "difficulty_level"; // Key tương ứng cho danh mục này
 
     if (newValue) {
-		system.out.println('Da chay');
-        fetch(`${_ctx}parameter/addParamValue`, {
+        fetch(`${_ctx}admin/parameter/addParamValue/${paramKey}/${newValue}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
         })
             .then(response => {
+				const url = `${_ctx}parameter/addParamValue/${paramKey}/${newValue}`;
+				alert(paramKey + " " + newValue + "" + url);
                 if (response.ok) {
                     return response.json();
                 } else {
