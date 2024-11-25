@@ -196,59 +196,57 @@ function filterSubcategories(categoryId) {
 	}
 }
 
-function handleAddNew(selectElement) {
-	
+let currentDropdownId = '';
+let currentParamKey = '';
+let myModal;
+function handleAddNew(selectElement, paramKey) { 
     if (selectElement.value === "add-new") {
-        document.getElementById("addNewModal").style.display = "block";
+		myModal = new bootstrap.Modal(document.getElementById('addNewModal'));
+        currentDropdownId = selectElement.id;
+        currentParamKey = paramKey;
+		myModal.show();
+    } else {
+		myModal = new bootstrap.Modal(document.getElementById('addNewModal'));
+		myModal.hide();
     }
-	else if(selectElement.value !== "add-new"){
-		document.getElementById("addNewModal").style.display = "none";
-	}
 }
 
 function closeModal() {
-    document.getElementById("addNewModal").style.display = "none";
-    document.getElementById("difficultyLevel").value = ""; // Reset selection
+    if (currentDropdownId) {
+        document.getElementById(currentDropdownId).value = "";
+		myModal.hide();	
+	}
 }
 
 function submitNewParamValue(event) {
-	event.preventDefault();
+    event.preventDefault();
     const newValue = document.getElementById("newParamValue").value.trim();
-    const paramKey = "difficulty_level"; // Key tương ứng cho danh mục này
-
-    if (newValue) {
-        fetch(`${_ctx}admin/parameter/addParamValue/${paramKey}/${newValue}`, {
+    if (newValue && currentParamKey) {
+        fetch(`${_ctx}admin/parameter/addParamValue/${currentParamKey}/${newValue}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
         })
-            .then(response => {
-				const url = `${_ctx}parameter/addParamValue/${paramKey}/${newValue}`;
-				alert(paramKey + " " + newValue + "" + url);
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error("Failed to add new parameter value.");
-                }
-            })
-            .then(data => {
-                // Thêm giá trị mới vào dropdown
-                const select = document.getElementById("difficultyLevel");
-                const newOption = document.createElement("option");
-                newOption.value = data.id;
-                newOption.textContent = data.paramValue;
-                select.appendChild(newOption);
-
-                // Đặt giá trị mới làm lựa chọn hiện tại
-                select.value = data.id;
-
-                // Đóng modal
-                closeModal();
-            })
-            .catch(error => {
-                alert(error.message);
-            });
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Failed to add new parameter value.");
+            }
+        })
+        .then(data => {
+            const select = document.getElementById(currentDropdownId);
+            const newOption = document.createElement("option");
+            newOption.value = data.id;
+            newOption.textContent = data.paramValue;
+            select.appendChild(newOption);
+            select.value = data.id;
+            closeModal();
+        })
+        .catch(error => {
+            alert(error.message);
+        });
     } else {
         alert("Please enter a valid value.");
     }

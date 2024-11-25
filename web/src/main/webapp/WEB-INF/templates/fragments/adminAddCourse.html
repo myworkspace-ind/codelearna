@@ -44,33 +44,32 @@
 			</div>
 
 			<div class="row">
-				<div class="col-md-6 mb-3">
-					<label for="difficultyLevel" class="form-label">Difficulty Level<span style="color:red">*</span></label>
-					<select class="form-select" id="difficultyLevel" name="difficultyLevel.id" required onchange="handleAddNew(this)">
-					    <option value="">Choose difficulty level...</option>
-					    <option th:each="difficultyLevel : ${difficultyLevels}" th:value="${difficultyLevel.id}" th:text="${difficultyLevel.paramValue}"></option>
-					    <option value="add-new">Add new</option>
-					</select>
-					
-					<!-- Modal để nhập giá trị mới -->
-					<div id="addNewModal" style="display:none;">
-					    <label for="newParamValue">Enter new value:</label>
-					    <input type="text" id="newParamValue" placeholder="New value" required>
-					    <button onclick="submitNewParamValue(event)">Save</button>
-					    <button onclick="closeModal()">Cancel</button>
-					</div>
-
-				</div>
-				<div class="col-md-6 mb-3">
-					<label for="lessonType" class="form-label">Lesson Type<span style="color:red">*</span></label>
-					<select class="form-select" id="lessonType" name="lessonType.id" required>
-						<option value="">Choose lesson type...</option>
-						<option th:each="lessonType : ${lessonTypes}" th:value="${lessonType.id}" th:text="${lessonType.paramValue}"></option>
-					</select>
-				</div>
+			    <div class="col-md-6 mb-3">
+			        <label for="difficultyLevel" class="form-label">Difficulty Level<span style="color:red">*</span></label>
+			        <select class="form-select" id="difficultyLevel" name="difficultyLevel.id" required onchange="handleAddNew(this, 'difficulty_level')">
+			            <option value="">Choose difficulty level...</option>
+			            <option th:each="difficultyLevel : ${difficultyLevels}" th:value="${difficultyLevel.id}" th:text="${difficultyLevel.paramValue}"></option>
+			            <option value="add-new">Add new</option>
+			        </select>
+			    </div>
+			    <div class="col-md-6 mb-3">
+			        <label for="lessonType" class="form-label">Lesson Type<span style="color:red">*</span></label>
+			        <select class="form-select" id="lessonType" name="lessonType.id" required onchange="handleAddNew(this, 'lesson_type')">
+			            <option value="">Choose lesson type...</option>
+			            <option th:each="lessonType : ${lessonTypes}" th:value="${lessonType.id}" th:text="${lessonType.paramValue}"></option>
+			            <option value="add-new">Add new</option>
+			        </select>
+			    </div>
 			</div>
-
-			<!-- Category and Subcategory Inputs -->
+			
+			<div class="mb-3">
+			    <label for="category" class="form-label">Category<span style="color:red">*</span></label>
+			    <select class="form-select" id="category" onchange="handleAddNew(this, 'category')" required>
+			        <option value="">Choose a category...</option>
+			        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.parameter.paramValue}"></option>
+			        <option value="add-new">Add new</option>
+			    </select>
+			</div>
 			<div class="mb-3">
 				<label for="category" class="form-label">Category<span style="color:red">*</span></label>
 				<select class="form-select" id="category" onchange="filterSubcategories(this.value, this.options[this.selectedIndex].dataset.paramId)" required>
@@ -78,7 +77,14 @@
 					<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.parameter.paramValue}" th:data-param-id="${category.parameter.id}"></option>
 				</select>
 			</div>
-
+			<div class="mb-3">
+			    <label for="subcategory" class="form-label">Subcategory<span style="color:red">*</span></label>
+			    <select class="form-select" id="subcategory" name="subcategory.id" disabled required onchange="handleAddNew(this, 'subcategory')">
+			        <option value="">Choose a subcategory...</option>
+			        <option th:each="subcategory : ${subcategories}" th:value="${subcategory.id}" th:text="${subcategory.parameter.paramValue}"></option>
+			        <option value="add-new">Add new</option>
+			    </select>
+			</div>
 			<div class="mb-3">
 				<label for="subcategory" class="form-label">Subcategory<span style="color:red">*</span></label>
 				<select class="form-select" id="subcategory" name="subcategory.id" disabled required>
@@ -86,6 +92,28 @@
 					<option th:each="subcategory : ${subcategories}" th:value="${subcategory.id}" th:data-category-id="${subcategory.category.id}" th:text="${subcategory.parameter.paramValue}"></option>
 				</select>
 			</div>
+			
+			<!-- Modal -->
+			<!-- Modal -->
+			<div class="modal fade" id="addNewModal" tabindex="-1" aria-labelledby="addNewModalLabel" aria-hidden="true">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="addNewModalLabel">Enter new value</h5>
+			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			      </div>
+			      <div class="modal-body">
+			        <label for="newParamValue">New value:</label>
+			        <input type="text" id="newParamValue" class="form-control" placeholder="New value" required>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal()">Cancel</button>
+			        <button type="button" class="btn btn-primary" onclick="submitNewParamValue(event)">Save</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+
 
 			<!-- Free Course Checkbox -->
 			<div class="mb-3 form-check">
