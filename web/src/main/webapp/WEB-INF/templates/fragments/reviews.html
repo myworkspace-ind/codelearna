@@ -13,20 +13,22 @@
 		<div class="reviews-section mt-5">
 			<h4>Learner Reviews</h4>
 			<p class="text-muted mb-3">
-				Average Rating: <strong th:text="${course.averageRating}"></strong> stars
+				Average Rating: <strong th:text="${course.averageRating ?: 0}"></strong> stars
 			</p>
+
 
 			<!-- Reviews List -->
 			<ul class="list-group mb-4">
 				<li class="review-item list-group-item" th:each="review : ${reviews}">
 					<div class="review-header d-flex align-items-center gap-3 mb-3">
-
-						<img th:src="'https://via.placeholder.com/150'" class="rounded-circle" alt="User Avatar" width="50" height="50">
+						<img th:src="'https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small/Basic_Ui__28186_29.jpg'" class="rounded-circle"
+							alt="User Avatar" width="50" height="50">
 
 						<div>
 
-							<h6 class="mb-0" th:text="${review.userEid}">User Name</h6>
-							<small class="text-muted" th:text="'By: ' + ${review.userEid}"></small>
+							<h6 class="mb-0" th:text="${review.userEid ?: 'Anonymous'}">User Name</h6>
+							<small class="text-muted" th:text="'By: ' + (${review.userEid ?: 'Anonymous'})"></small>
+
 						</div>
 
 
