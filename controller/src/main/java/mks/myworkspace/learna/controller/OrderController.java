@@ -47,7 +47,7 @@ public class OrderController extends BaseController {
             return "redirect:/library";
         }
         catch (Exception e) {
-            httpSession.setAttribute("paymentMessage", "Error occurred while processing the payment.");
+            httpSession.setAttribute("paymentMessage", "Error occurred while processing the payment: " + e.getMessage());
             httpSession.setAttribute("alertType", "danger");
         }
     	return "redirect:/library";

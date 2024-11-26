@@ -95,7 +95,7 @@
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="paymentForm" th:action="@{/orders}" method="POST">
+                                    <form id="paymentForm" th:action="@{/orders}" method="POST" onsubmit="return updateFormAction()">
                                         <input type="hidden" name="courseId" th:value="${course.id}" />
                                         <div class="payment-method" onclick="selectPayment('vnpay')">
                                             <div class="d-flex align-items-center">
@@ -168,6 +168,18 @@
             const selectedMethod = document.querySelector(`#${method}`);
             selectedMethod.checked = true;
             selectedMethod.closest('.payment-method').classList.add('selected');
+        }
+
+        function updateFormAction() {
+            const form = document.getElementById('paymentForm');
+            const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+
+            if (selectedPaymentMethod && selectedPaymentMethod.value === 'ewallet') {
+                form.action = `${_ctx}payment/pay`; 
+            } else {
+                form.action = `${_ctx}orders`; 
+            }
+            return true;
         }
     </script>
 </body>

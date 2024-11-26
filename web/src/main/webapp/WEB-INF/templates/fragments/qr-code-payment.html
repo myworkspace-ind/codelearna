@@ -78,6 +78,10 @@
                 if (data.includes("PAID")) {
                     document.getElementById('paymentStatus').innerText = "Thanh toán đơn hàng thành công.";
                     clearInterval(paymentInterval); 
+                    
+                    setTimeout(() => {
+                        window.location.href = `${_ctx}/library`;
+                    }, 3000);
                 }
             })
             .catch(error => {

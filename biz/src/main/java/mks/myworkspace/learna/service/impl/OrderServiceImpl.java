@@ -60,8 +60,8 @@ public class OrderServiceImpl implements OrderService{
             throw new RuntimeException("Amount must be greater than zero");
         }
 
-        UserLibraryCourse existingCourse = userLibraryCourseService.getUserLibraryCourseById(courseId);
-        if (existingCourse != null) {
+        boolean isExistingCourse = userLibraryCourseService.isCoursePurchased(userEid, courseId);
+        if (isExistingCourse) {
             throw new RuntimeException("Course already purchased!"); 
         }
 
