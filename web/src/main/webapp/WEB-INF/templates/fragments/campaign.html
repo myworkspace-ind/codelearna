@@ -1,0 +1,47 @@
+<div id="campaignCarousel" class="campaign-carousel carousel slide mb-6"
+	data-bs-ride="carousel">
+	<div class="carousel-indicators">
+		<button type="button" data-bs-target="#campaignCarousel"
+			th:each="campaign, iterStat : ${campaigns}"
+			th:data-bs-slide-to="${iterStat.index}"
+			th:classappend="${iterStat.index == 0} ? 'active'"
+			th:aria-current="${iterStat.index == 0} ? 'true' : 'false'"
+			th:aria-label="'Slide ' + ${iterStat.index + 1}"></button>
+	</div>
+	<div class="carousel-inner">
+		<div th:each="campaign, iterStat : ${campaigns}"
+			th:classappend="${iterStat.index == 0} ? 'active'"
+			class="campaign-carousel-item carousel-item"
+			th:data-name="${campaign.name}"
+			th:data-description="${campaign.description}"
+			th:data-start-time="${#dates.format(campaign.startTime, 'yyyy-MM-dd')}"
+			th:data-end-time="${#dates.format(campaign.endTime, 'yyyy-MM-dd')}"
+			th:data-image-url="${campaign.coverImageUrl}">
+			<img class="bd-placeholder-img" width="100%" height="100%"
+				 th:src="${campaign.coverImageUrl}"
+				 style=" object-fit: cover;">
+			<div class="container">
+				<div class="campaign-caption carousel-caption text-start">
+					<h3 th:text="${campaign.name}"></h3>
+					<p
+						th:text="${#dates.format(campaign.startTime, 'dd/MM/yyyy')} + ' - ' + ${#dates.format(campaign.endTime, 'dd/MM/yyyy')}"></p>
+
+					<p th:text="${campaign.shortDescription}"></p>
+					<p>
+						<a class="btn btn-lg btn-primary" href="#">More detail</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<button class="carousel-control-prev" type="button"
+		data-bs-target="#campaignCarousel" data-bs-slide="prev">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span> <span
+			class="visually-hidden">Previous</span>
+	</button>
+	<button class="carousel-control-next" type="button"
+		data-bs-target="#campaignCarousel" data-bs-slide="next">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span> <span
+			class="visually-hidden">Next</span>
+	</button>
+</div>

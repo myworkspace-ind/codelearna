@@ -17,55 +17,18 @@
     padding: 10px;
 }
 
-.promotion {
+.campaign {
     background: #f9f9f9;
     padding: 20px;
     border: 1px solid #ddd;
 }
 
-.promotion-item {
+.campaign-item {
     margin-bottom: 10px; /* Điều chỉnh khoảng cách giữa các chương trình khuyến mãi */
 }
 
-.promotion-item p {
+.campaign-item p {
     margin-bottom: 0.5rem; /* Loại bỏ khoảng cách giữa các đoạn văn */
-}
-
-.progress {
-    background: #e0e0e0;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-top: 5px; /* Điều chỉnh khoảng cách trên của thanh tiến trình */
-    margin-bottom: 5px; /* Điều chỉnh khoảng cách dưới của thanh tiến trình */
-}
-
-.progress-bar {
-    background: #4caf50;
-    height: 20px;
-    line-height: 20px;
-    color: white;
-    text-align: center;
-}
-
-.course-item {
-    text-align: center;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 20px;
-}
-
-.course-item img {
-    width: 100%;
-    height: auto;
-}
-
-.course-item h3 {
-    font-size: 1.2em;
-    margin: 10px 0;
-}
-
-.course-item p {
-    margin: 5px 0;
 }
 
 .carousel-inner > .item > .carousel-placeholder {

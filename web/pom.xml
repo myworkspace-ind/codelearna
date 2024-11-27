@@ -4,27 +4,27 @@
 <!--	<parent>-->
 <!--		<artifactId>codelearna</artifactId>-->
 <!--		<groupId>mks.assistant.codelearna</groupId>-->
-<!--		<version>23.0</version>-->
+<!--		<version>23.2</version>-->
 <!--	</parent>-->
 	<!-- Comments parent tag to run the web standalone -->
 	<groupId>mks.assistant.codelearna</groupId>
 	<artifactId>codelearna-web</artifactId>
-	<version>23.0</version>
+	<version>23.2</version>
 	<name>codelearna-web</name>
 	<packaging>war</packaging>
 
 	<properties>
-        <sakai.kernel.version>23.0</sakai.kernel.version>
+        <sakai.kernel.version>23.2</sakai.kernel.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>5.3.27</spring.version>
         <spring.security.version>5.5.7</spring.security.version>
-        <module.version>23.0</module.version>
+        <module.version>23.2</module.version>
         <thymeleaf.version>3.0.15.RELEASE</thymeleaf.version>
         <sakai.hibernate.version>5.6.15.Final</sakai.hibernate.version>
         <sakai.commons-io.version>2.13.0</sakai.commons-io.version>
         <spring.data.jpa.version>2.5.3</spring.data.jpa.version>
         <sakai.commons.fileupload.version>1.5</sakai.commons.fileupload.version>
-        <sakai.jackson.version>2.13.2</sakai.jackson.version>
+        <sakai.jackson.version>2.14.1</sakai.jackson.version>
         <sakai.jstl.version>1.2</sakai.jstl.version>
 		<!-- More -->
         <sakai.log4j.version>2.20.0</sakai.log4j.version>

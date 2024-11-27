@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<link rel="stylesheet" th:href="@{/resources/css/courseItem.css}">
+</head>
+<body>
+	<div th:fragment="libraryCourseItem(course)">
+		<div class="course-item">
+			<img th:src="${course.imageUrl}" th:alt="${course.name}" style="height: 200px; width: 100%; object-fit: cover;"
+				onerror="this.onerror=null;this.src='https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif';">
+			<h3 th:text="${course.name}" class="course-name" style="text-align: left;"></h3>
+			<p th:if="${course.averageRating != null}" th:text="'Rating: ' + ${course.averageRating}"></p>
+			<p th:if="${course.averageRating == null}" th:text="'Rating: 0.0'"></p>
+		</div>
+	</div>
+</body>
+</html>

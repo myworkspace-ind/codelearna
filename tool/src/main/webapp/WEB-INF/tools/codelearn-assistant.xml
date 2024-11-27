@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<registration>
+	<tool id="sakai.codelearna" 
+		title="CodeLearn Assistant" 
+		description="Help you learn IT better.">
+
+		<category name="course" />
+      	<category name="project" />
+
+		<configuration name="functions.require" /> 
+		
+    </tool>
+</registration>
+

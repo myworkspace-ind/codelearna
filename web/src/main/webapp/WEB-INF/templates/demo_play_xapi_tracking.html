@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Demo: Play an xAPI lesson with tracking by a LRS</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        iframe {
+            background: black;
+            width: 90%;
+            height: 600px;
+        }
+
+        button {
+            padding: 0 10px;
+            height: 30px;
+            background: #dddd;
+            border: 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <br>
+    <center>
+        <button onclick="playCourse()">Start</button>
+        <br> <br>
+        <select id="sl-course">
+            <option value="1">Tracking-Slide</option>
+            <option value="2">CrossOrigin</option>
+            <option value="3">Tracking-Result</option>
+        </select>
+    </center>
+    <br>
+    <div id="course"></div>
+
+    <!-- Include JavaScript file -->
+    <script src="/library/webjars/jquery/dist/jquery.min.js"></script>
+    <script th:src="@{/resources/js/tracking.js}"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+.outstand-carousel-inner > .item > .carousel-placeholder {
+    width: 100%;
+    height: 28rem; /* Điều chỉnh chiều cao của carousel */
+}
+
+.outstand-carousel-caption {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+}
