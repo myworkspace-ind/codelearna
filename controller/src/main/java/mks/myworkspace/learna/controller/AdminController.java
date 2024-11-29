@@ -588,12 +588,12 @@ public class AdminController {
 	@GetMapping("/listParameters")
 	public ModelAndView loadParametersListDiff() {
 	    ModelAndView mav = new ModelAndView("fragments/adminListParameters :: parametersContent");
-	    List<String> parameterKeyDiff = parameterService.getParamKeyDiff();  // Kiểm tra giá trị này
-	    List<Parameter> parameters = parameterService.getAllParams(); // Kiểm tra giá trị này
+	    List<String> parameterKeyDiff = parameterService.getParamKeyDiff();  
+	    List<Parameter> parameters = parameterService.getAllParams(); 
 	    mav.addObject("parameterKeyDiff", parameterKeyDiff);
 	    mav.addObject("parameters", parameters);
-	    log.debug("Distinct parameter keys: {}", parameterKeyDiff);  // Kiểm tra lại log
-	    log.debug("get all params: {}", parameters);  // Log để xác nhận dữ liệu
+	    log.debug("Distinct parameter keys: {}", parameterKeyDiff);  
+	    log.debug("get all params: {}", parameters);  
 	    return mav;
 	}
 	

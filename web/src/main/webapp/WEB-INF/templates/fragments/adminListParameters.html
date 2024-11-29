@@ -9,7 +9,6 @@
 				Parameters with Handsontable</a>
 		</div>
 		<div id="parametersContainer">
-						<!-- Dropdown to select Parameter Key -->
 			<div class="mb-3">
 				<label for="parameterKeyDiff" class="form-label">Select Parameter Key</label>
 				<select id="parameterKeyDiff" class="form-select">
@@ -18,11 +17,6 @@
 					<!-- Loop through parameterKeyDiff list -->
 					<option th:each="key : ${parameterKeyDiff}" th:value="${key}" th:text="${key}"></option>
 				</select>
-
-				<!-- Display message if parameterKeyDiff is empty -->
-				<div th:if="${#lists.isEmpty(parameterKeyDiff)}">
-					
-				</div>
 			</div>
 
 			<div class="table-responsive">
