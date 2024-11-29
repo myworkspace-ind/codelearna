@@ -8,8 +8,23 @@
 				th:onclick="'fetchAddParamValueHandsontablePage(event)'">Add
 				Parameters with Handsontable</a>
 		</div>
-
 		<div id="parametersContainer">
+						<!-- Dropdown to select Parameter Key -->
+			<div class="mb-3">
+				<label for="parameterKeyDiff" class="form-label">Select Parameter Key</label>
+				<select id="parameterKeyDiff" class="form-select">
+					<option value="" selected disabled>Select Parameter</option>
+					
+					<!-- Loop through parameterKeyDiff list -->
+					<option th:each="key : ${parameterKeyDiff}" th:value="${key}" th:text="${key}"></option>
+				</select>
+
+				<!-- Display message if parameterKeyDiff is empty -->
+				<div th:if="${#lists.isEmpty(parameterKeyDiff)}">
+					
+				</div>
+			</div>
+
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">
 					<thead class="thead-dark">
@@ -62,7 +77,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- Pagination -->
 		<nav>
 			<ul class="pagination justify-content-center"
 				id="parametersPagination"></ul>
