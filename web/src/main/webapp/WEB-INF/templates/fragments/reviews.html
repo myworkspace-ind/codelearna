@@ -125,9 +125,9 @@
 			</nav>
 
 
-			<!-- Add review form -->
-			<h5 class="mb-3">Add your review</h5>
-			<form class="review-form" th:action="@{/course/{id}/review(id=${course.id})}" method="post">
+			<!-- <!-- Add review form -->
+			<h5 class="mb-3" th:if="${hasPurchased}">Add your review</h5>
+			<form class="review-form" th:if="${hasPurchased}" th:action="@{/course/{id}/review(id=${course.id})}" method="post">
 				<div class="rating-stars mb-3">
 					<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
 						class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0" required>
@@ -139,6 +139,8 @@
 				</div>
 				<button type="submit" class="btn btn-primary">Submit Review</button>
 			</form>
+			
+			<div th:if="${!hasPurchased}" class="alert alert-warning mt-4">You need to purchase the course to get the review.</div>
 		</div>
 	</div>
 

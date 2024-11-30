@@ -19,6 +19,7 @@ import mks.myworkspace.learna.entity.Review;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.PaymentService;
 import mks.myworkspace.learna.service.ReviewService;
+import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 
 @Slf4j
@@ -32,6 +33,9 @@ public class CourseController extends BaseController{
 
 	@Autowired
 	private PaymentService paymentService;
+	
+	@Autowired
+	private UserLibraryCourseService userLibraryCourseService;
 
 	// Open a course details
 	@GetMapping("/course/{id}")
@@ -50,6 +54,8 @@ public class CourseController extends BaseController{
 
 		List<Review> reviews = reviewPage.getContent();
 		int totalPages = reviewPage.getTotalPages();
+		
+		boolean hasPurchased = userLibraryCourseService.isCoursePurchased(userId, id);
 
 		mav.addObject("course", course);
 		mav.addObject("reviews", reviews);
@@ -57,7 +63,8 @@ public class CourseController extends BaseController{
 		mav.addObject("currentPage", page);
 		mav.addObject("totalPages", totalPages);
 		mav.addObject("balance", balance);
-
+		mav.addObject("hasPurchased", hasPurchased);
+		
 		return mav;
 	}
 
