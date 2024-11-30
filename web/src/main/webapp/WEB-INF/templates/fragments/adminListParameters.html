@@ -11,12 +11,14 @@
 		<div id="parametersContainer">
 			<div class="mb-3">
 				<label for="parameterKeyDiff" class="form-label">Select Parameter Key</label>
-				<select id="parameterKeyDiff" class="form-select">
-					<option value="" selected disabled>Select Parameter</option>
-					
-					<!-- Loop through parameterKeyDiff list -->
-					<option th:each="key : ${parameterKeyDiff}" th:value="${key}" th:text="${key}"></option>
-				</select>
+				<form th:action="@{/myadmin/search-parameters}" method="get">
+					<select id="parameterKeyDiff" class="form-select" onchange="this.form.submit()" name="parameter" >
+						<option value="" selected disabled>Select Parameter</option> 
+						
+						<!-- Loop through parameterKeyDiff list -->
+						<option th:each="key : ${parameterKeyDiff}" th:value="${key}" th:text="${key}"></option>
+					</select>
+				</form>
 			</div>
 
 			<div class="table-responsive">

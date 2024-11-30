@@ -61,4 +61,13 @@ public class MyAdminController extends BaseController {
 	    // model.addAttribute("courses", courseService.getAllCourses()); 
 	    return "myadmin";
 	}
+	
+	@GetMapping("/search-parameters")
+	public String searchParameters(HttpServletRequest request, HttpSession httpSession, Model model) {
+		String parameter = request.getParameter("parameter");
+	    httpSession.setAttribute("currentMenu", "Parameters");
+	    model.addAttribute("parameters", parameterService.getListParamsByParamValue(parameter)); 
+	    model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff()); 
+	    return "myadmin";
+	}
 }
