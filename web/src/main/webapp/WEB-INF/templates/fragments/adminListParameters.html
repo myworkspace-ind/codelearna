@@ -13,10 +13,8 @@
 				<label for="parameterKeyDiff" class="form-label">Select Parameter Key</label>
 				<form th:action="@{/myadmin/search-parameters}" method="get">
 					<select id="parameterKeyDiff" class="form-select" onchange="this.form.submit()" name="parameter" >
-						<option value="" selected disabled>Select Parameter</option> 
-						
-						<!-- Loop through parameterKeyDiff list -->
-						<option th:each="key : ${parameterKeyDiff}" th:value="${key}" th:text="${key}"></option>
+						 <option th:value="${selectedParameter}" selected disabled th:text="${selectedParameter != null ? selectedParameter : 'Select Parameter'}"></option>
+    					 <option th:each="key : ${parameterKeyDiff}" th:value="${key}" th:text="${key}" th:if="${key != selectedParameter}"></option>
 					</select>
 				</form>
 			</div>
