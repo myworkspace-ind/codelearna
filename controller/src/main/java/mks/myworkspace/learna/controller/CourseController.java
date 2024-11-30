@@ -43,11 +43,11 @@ public class CourseController extends BaseController{
 			HttpServletRequest request, HttpSession httpSession) {
 
 		initSession(request, httpSession);
-		String userId = getCurrentUserEid();
+		String userEid = getCurrentUserEid();
 		ModelAndView mav = new ModelAndView("courseDetail");
 
 		Course course = courseService.getCourseById(id);
-		Double balance = paymentService.getBalance(userId);
+		Double balance = paymentService.getBalance(userEid);
 
 		int pageSize = 5;
 		Page<Review> reviewPage = reviewService.getReviewsByCourseId(id, page, pageSize);
@@ -55,15 +55,17 @@ public class CourseController extends BaseController{
 		List<Review> reviews = reviewPage.getContent();
 		int totalPages = reviewPage.getTotalPages();
 		
-		boolean hasPurchased = userLibraryCourseService.isCoursePurchased(userId, id);
+		boolean hasPurchased = userLibraryCourseService.isCoursePurchased(userEid, id);
+		boolean hasReviewed = reviewService.hasUserReviewedCourse(id, userEid);
 
 		mav.addObject("course", course);
 		mav.addObject("reviews", reviews);
-		mav.addObject("userId", userId);
+		mav.addObject("userEid", userEid);
 		mav.addObject("currentPage", page);
 		mav.addObject("totalPages", totalPages);
 		mav.addObject("balance", balance);
 		mav.addObject("hasPurchased", hasPurchased);
+		mav.addObject("hasReviewed", hasReviewed);
 		
 		return mav;
 	}
