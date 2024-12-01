@@ -19,6 +19,7 @@ import mks.myworkspace.learna.entity.Review;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.PaymentService;
 import mks.myworkspace.learna.service.ReviewService;
+import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 
 @Slf4j
@@ -32,6 +33,9 @@ public class CourseController extends BaseController{
 
 	@Autowired
 	private PaymentService paymentService;
+	
+	@Autowired
+	private UserLibraryCourseService userLibraryCourseService;
 
 	// Open a course details
 	@GetMapping("/course/{id}")
@@ -39,25 +43,30 @@ public class CourseController extends BaseController{
 			HttpServletRequest request, HttpSession httpSession) {
 
 		initSession(request, httpSession);
-		String userId = getCurrentUserEid();
+		String userEid = getCurrentUserEid();
 		ModelAndView mav = new ModelAndView("courseDetail");
 
 		Course course = courseService.getCourseById(id);
-		Double balance = paymentService.getBalance(userId);
+		Double balance = paymentService.getBalance(userEid);
 
 		int pageSize = 5;
 		Page<Review> reviewPage = reviewService.getReviewsByCourseId(id, page, pageSize);
 
 		List<Review> reviews = reviewPage.getContent();
 		int totalPages = reviewPage.getTotalPages();
+		
+		boolean hasPurchased = userLibraryCourseService.isCoursePurchased(userEid, id);
+		boolean hasReviewed = reviewService.hasUserReviewedCourse(id, userEid);
 
 		mav.addObject("course", course);
 		mav.addObject("reviews", reviews);
-		mav.addObject("userId", userId);
+		mav.addObject("userEid", userEid);
 		mav.addObject("currentPage", page);
 		mav.addObject("totalPages", totalPages);
 		mav.addObject("balance", balance);
-
+		mav.addObject("hasPurchased", hasPurchased);
+		mav.addObject("hasReviewed", hasReviewed);
+		
 		return mav;
 	}
 
