@@ -127,7 +127,7 @@
 
 			<!-- <!-- Add review form -->
 			<h5 class="mb-3" th:if="${hasPurchased && !hasReviewed}">Add your review</h5>
-			<form class="review-form" th:if="${hasPurchased && !hasReviewed}" th:action="@{/course/{id}/review(id=${course.id})}" method="post">
+			<form class="review-form" id="reviewForm" th:if="${hasPurchased && !hasReviewed}">
 				<div class="rating-stars mb-3">
 					<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
 						class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0" required>
@@ -137,7 +137,7 @@
 					<textarea class="form-control review-content" name="content" rows="4" maxlength="200" required></textarea>
 					<small class="form-text text-muted char-count">200 characters remaining</small>
 				</div>
-				<button type="submit" class="btn btn-primary">Submit Review</button>
+				<button type="submit" th:data-course-id="${course.id}" class="btn btn-primary add-review-btn">Submit Review</button>
 			</form>
 
 			<div th:if="${hasReviewed}" class="alert alert-info mt-4">You have already reviewed this course. Thank you for your feedback!</div>
