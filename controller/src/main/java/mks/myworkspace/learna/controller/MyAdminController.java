@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.extern.slf4j.Slf4j;
+import mks.myworkspace.learna.service.BusinessService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ParameterService;
 
@@ -50,10 +51,22 @@ public class MyAdminController extends BaseController {
 	    model.addAttribute("courses", courseService.getAllCourses()); 
 	    return "myadmin";
 	}
+	
+	
 	@GetMapping("/revenue-statistics")
 	public String loadRevenueStatistics(HttpServletRequest request, HttpSession httpSession, Model model) {
 	    httpSession.setAttribute("currentMenu", "RevenueStatistics"); 
 	    // model.addAttribute("courses", courseService.getAllCourses()); 
 	    return "myadmin";
+	}
+	
+	@Autowired
+	private BusinessService businessService; // Thêm dịch vụ BusinessService
+
+	@GetMapping("/business")
+	public String showCurrentBusiness(HttpServletRequest request, HttpSession httpSession, Model model) {
+	    httpSession.setAttribute("currentMenu", "CurrentBusiness");
+	    model.addAttribute("businesses", businessService.getAllBusinesses()); // Đảm bảo thêm dữ liệu vào mô hình
+	    return "myadmin"; // Hoặc trang hiển thị chính xác nơi gọi fragment
 	}
 }

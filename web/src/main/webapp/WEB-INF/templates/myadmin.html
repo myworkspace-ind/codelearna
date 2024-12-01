@@ -49,6 +49,11 @@
 				</main>
 			</div>
 		</div>
+		
+		
+		<div th:case="'CurrentBusiness'">
+            <div th:replace="~{fragments/myadmin/business :: business_form}"></div>
+        </div>   
         <p th:case="*">Please contact Administrator to check session attribute "currentMenu"</p>
     </div>
     <!-- Pagination -->
