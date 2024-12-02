@@ -32,8 +32,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findCoursesByFilters(
             @Param("keyword") String keyword, 
             @Param("level") Parameter level, 
-            @Param("averageRating") Double averageRating, 
-            Pageable pageable);
+            @Param("averageRating") Double averageRating);
 
     // Tìm kiếm khóa học trong danh mục con với các bộ lọc
     @Query("SELECT c FROM Course c JOIN c.subcategory s "
@@ -45,7 +44,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
             @Param("subcategoryId") Long subcategoryId, 
             @Param("keyword") String keyword, 
             @Param("level") Parameter level, 
-            @Param("averageRating") Double averageRating, 
-            Pageable pageable);
+            @Param("averageRating") Double averageRating);
 }
 

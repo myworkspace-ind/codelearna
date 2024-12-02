@@ -50,8 +50,8 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	public Course getCourseById(Long id) {
 		Course course = repo.findById(id).orElse(null);
-		Double averageRating = reviewService.getAverageRating(course.getId());
-		course.setAverageRating(averageRating);
+//		Double averageRating = reviewService.getAverageRating(course.getId());
+//		course.setAverageRating(averageRating);
 		return course;
 	}
 
@@ -79,34 +79,34 @@ public class CourseServiceImpl implements CourseService {
 		return repo.findBySubcategoryId(subcategoryId);
 	}
 
-	@Override
-	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, String averageRating) {
-	    Sort sort = Sort.by(sortField);
-	    sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
-	    Pageable pageable = PageRequest.of(0, 20, sort);
-
-	    Parameter difficultyLevelParameter = null;
-	    if (level != null) {
-	        difficultyLevelParameter = parameterRepository.findByParamValue(level.toUpperCase()); 
-	    }
-
-	    Double ratingValue = null;
-	    if (averageRating != null) {
-	        try {
-	            ratingValue = Double.valueOf(averageRating);
-	        } catch (NumberFormatException e) {
-	            log.debug("Erorr occurs while formating ratingValue into Double type" + e.getMessage());
-	        }
-	    }
-
-	    return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue, pageable);
-	}
+//	@Override
+//	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, String averageRating) {
+//	    Sort sort = Sort.by(sortField);
+//	    sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
+//	    Pageable pageable = PageRequest.of(0, 20, sort);
+//
+//	    Parameter difficultyLevelParameter = null;
+//	    if (level != null) {
+//	        difficultyLevelParameter = parameterRepository.findByParamValue(level.toUpperCase()); 
+//	    }
+//
+//	    Double ratingValue = null;
+//	    if (averageRating != null) {
+//	        try {
+//	            ratingValue = Double.valueOf(averageRating);
+//	        } catch (NumberFormatException e) {
+//	            log.debug("Erorr occurs while formating ratingValue into Double type" + e.getMessage());
+//	        }
+//	    }
+//
+//	    return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue, pageable);
+//	}
 
 	@Override
 	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId, String rating) {
 	    Sort sort = Sort.by(sortField);
 	    sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
-	    Pageable pageable = PageRequest.of(0, 20, sort);
+//	    Pageable pageable = PageRequest.of(0, 20, sort);
 
 	    Parameter difficultyLevelParameter = null;
 	    if (level != null) {
@@ -118,16 +118,17 @@ public class CourseServiceImpl implements CourseService {
 	        try {
 	            ratingValue = Double.valueOf(rating);
 	        } catch (NumberFormatException e) {
-	        	log.debug("Erorr occurs while formating ratingValue into Double type" + e.getMessage());
+	        	log.debug("Error occurs while formating ratingValue into Double type" + e.getMessage());
 	        }
 	    }
 
 	    if (subcategoryId != null) {
-	        return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevelParameter, ratingValue, pageable);
+	        return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevelParameter, ratingValue);
 	    } else {
-	        return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue, pageable);
+	        return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue);
 	    }
 	}
+	
 
 
 }
