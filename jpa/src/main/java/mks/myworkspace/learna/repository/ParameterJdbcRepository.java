@@ -47,6 +47,7 @@ public class ParameterJdbcRepository {
 	    String sqlInsertCategory = "INSERT INTO learna_category (parameter_id) VALUES (?)";
 	    String sqlInsertSubcategory = "INSERT INTO learna_subcategory (parameter_id, category_id) VALUES (?, ?)";
 
+        System.out.println("Thêm thành công vào bảng Category với ID: " + categoryId);
 	    try (Connection conn = dataSource.getConnection()) {
 	        // Nếu đã tồn tại ID Parameter, thực hiện cập nhật
 	        if (parameter.getId() != null) {
@@ -66,23 +67,40 @@ public class ParameterJdbcRepository {
 	            insertNewParameter(parameter, conn, sqlInsert);
 	        }
 
-	        // Nếu thêm mới thành công, tiếp tục Insert vào bảng Category và Subcategory
-	        if (parameter.getId() != null) {
+	     // Nếu thêm mới thành công, tiếp tục Insert vào bảng Category và Subcategory
+	        if (parameter.getId() != null && categoryId != 0) {
+	            System.out.println("Bắt đầu thêm vào bảng Category với parameter ID: " + parameter.getId());
 	            // Insert vào bảng Category
 	            try (PreparedStatement psCategory = conn.prepareStatement(sqlInsertCategory)) {
 	                psCategory.setLong(1, parameter.getId());
-	                psCategory.executeUpdate();
-	            }
-
-	            // Nếu có categoryId, insert vào bảng Subcategory
-	            if (categoryId != null) {
-	                try (PreparedStatement psSubcategory = conn.prepareStatement(sqlInsertSubcategory)) {
-	                    psSubcategory.setLong(1, parameter.getId());
-	                    psSubcategory.setLong(2, categoryId);
-	                    psSubcategory.executeUpdate();
+	                int categoryResult = psCategory.executeUpdate();
+	                if (categoryResult > 0) {
+	                    System.out.println("Thêm thành công vào bảng Category với ID: " + parameter.getId());
+	                } else {
+	                    System.out.println("Không thể thêm vào bảng Category với ID: " + parameter.getId());
 	                }
+	            } catch (SQLException e) {
+	                System.err.println("Lỗi khi thêm vào bảng Category: " + e.getMessage());
 	            }
 	        }
+
+	        // Nếu có categoryId, insert vào bảng Subcategory
+	        if (categoryId != null) {
+	            System.out.println("Bắt đầu thêm vào bảng Subcategory với parameter ID: " + parameter.getId() + " và category ID: " + categoryId);
+	            try (PreparedStatement psSubcategory = conn.prepareStatement(sqlInsertSubcategory)) {
+	                psSubcategory.setLong(1, parameter.getId());
+	                psSubcategory.setLong(2, categoryId);
+	                int subcategoryResult = psSubcategory.executeUpdate();
+	                if (subcategoryResult > 0) {
+	                    System.out.println("Thêm thành công vào bảng Subcategory với parameter ID: " + parameter.getId() + " và category ID: " + categoryId);
+	                } else {
+	                    System.out.println("Không thể thêm vào bảng Subcategory với parameter ID: " + parameter.getId() + " và category ID: " + categoryId);
+	                }
+	            } catch (SQLException e) {
+	                System.err.println("Lỗi khi thêm vào bảng Subcategory: " + e.getMessage());
+	            }
+	        }
+
 
 	    } catch (SQLException e) {
 	        e.printStackTrace();

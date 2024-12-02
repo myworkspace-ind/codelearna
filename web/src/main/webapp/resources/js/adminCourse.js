@@ -194,14 +194,24 @@ function filterSubcategories(categoryId) {
 		subcategorySelect.disabled = true;
 		subcategorySelect.value = "";
 	}
+	const addNew = document.getElementById('addNewForSubCategory');
+	addNew.style.display = '';
 }
 
 let currentDropdownId = '';
 let currentParamKey = '';
 let myModal;
+let categoryId = null;
 function handleAddNew(selectElement, paramKey) { 
     if (selectElement.value === "add-new") {
 		myModal = new bootstrap.Modal(document.getElementById('addNewModal'));
+		categoryId = document.getElementById("category").value;
+		if (categoryId === "add-new") {
+		    console.log("categoryId trước khi gán giá trị mới: ", categoryId);
+		    categoryId = 0;
+		    console.log("categoryId đã được gán giá trị mới: ", categoryId);
+		}
+
         currentDropdownId = selectElement.id;
         currentParamKey = paramKey;
 		myModal.show();
@@ -221,7 +231,6 @@ function closeModal() {
 function submitNewParamValue(event) {
     event.preventDefault();
     const newValue = document.getElementById("newParamValue").value.trim();
-	const categoryId = document.getElementById("category").value;
     if (newValue && currentParamKey) {
         fetch(`${_ctx}admin/parameter/addParamValue/${currentParamKey}/${newValue}/${categoryId}`, {
             method: "POST",

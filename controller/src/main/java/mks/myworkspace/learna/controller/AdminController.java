@@ -667,7 +667,7 @@ public class AdminController {
 	        return ResponseEntity.badRequest().body(response);
 	    }
 	}
-	@PostMapping("/parameter/addParamValue/{paramKey}/{paramValue}/${categoryId}")
+	@PostMapping("/parameter/addParamValue/{paramKey}/{paramValue}/{categoryId}")
 	@ResponseBody
 	public ResponseEntity<?> addParamValueToParamKey(@PathVariable("paramKey") String paramKey, 
 			@PathVariable("paramValue") String paramValue,
