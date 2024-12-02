@@ -286,3 +286,36 @@ document.addEventListener('DOMContentLoaded', function() {
 		initializePagination('parameters');
 	}
 });
+
+function initializeFilterKeyListener() {
+    const filterKey = document.getElementById('filterKey');
+    if (!filterKey) {
+        console.warn("Element with ID 'filterKey' not found. Retrying...");
+        setTimeout(initializeFilterKeyListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
+        return;
+    }
+
+    console.log("FilterKey found in DOM. Adding event listener.");
+    
+    const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
+    console.log('Parameter rows:', parameterRows);
+
+    filterKey.addEventListener('change', function () {
+        const selectedKey = filterKey.value;
+        console.log('Selected Key:', selectedKey);
+
+        parameterRows.forEach(row => {
+            const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
+            console.log('Row Parameter Key:', parameterKey);
+
+            if (selectedKey === "" || parameterKey === selectedKey) {
+                row.style.display = ""; // Hiển thị dòng
+            } else {
+                row.style.display = "none"; // Ẩn dòng
+            }
+        });
+    });
+}
+
+// Chạy sau khi DOM sẵn sàng
+document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);
