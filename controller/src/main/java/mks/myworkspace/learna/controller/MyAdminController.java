@@ -45,6 +45,7 @@ public class MyAdminController extends BaseController {
 	public String loadParametersList(HttpServletRequest request, HttpSession httpSession, Model model) {
 	    httpSession.setAttribute("currentMenu", "Parameters");
 	    model.addAttribute("parameters", parameterService.getAllParams()); 
+	    
 	    model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff()); 
 	    return "myadmin";
 	}
