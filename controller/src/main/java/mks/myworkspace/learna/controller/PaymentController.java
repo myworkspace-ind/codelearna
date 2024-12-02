@@ -1,16 +1,31 @@
 package mks.myworkspace.learna.controller;
 
+import mks.myworkspace.learna.entity.Order;
+import mks.myworkspace.learna.service.OrderService;
 import mks.myworkspace.learna.service.PaymentService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import lombok.extern.slf4j.Slf4j;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -25,6 +40,10 @@ public class PaymentController extends BaseController {
 
     @Autowired
     private UserLibraryCourseService userLibraryCourseService;
+    @Autowired
+    private OrderService orderService;
+    
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("/balance")
     public ModelAndView getBalance(HttpServletRequest request, HttpSession httpSession) {
@@ -57,5 +76,16 @@ public class PaymentController extends BaseController {
         }
         return mav;
     }
-
+    
+    @GetMapping("/check/{orderCode}")
+    public ResponseEntity<String> processPayment(@PathVariable String orderCode) {
+        try {
+            String userEid = getCurrentUserEid();
+            String result = paymentService.processPayment(orderCode, userEid);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred: " + e.getMessage());
+        }
+    }
 }
