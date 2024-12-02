@@ -13,8 +13,6 @@
 		<div class="filter-container mb-3">
 		    <label for="parameterKey" class="form-label">Select Parameter Key:</label>
 	        <select id="filterKey" class="form-select" name="parameter">
-	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
-	            <option value="">All</option>
 	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
 	                    th:value="${key}" 
 	                    th:text="${key}" 
@@ -23,13 +21,8 @@
 	        </select>
 		   
 		    <label for="parameterValue" class="form-label">Select Parameter Value:</label>
-	        <select id="filterValue" class="form-select" name="parameter">
+	        <select id="filterValue" class="form-select" name="parameter" disabled>
 	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
-	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
-	                    th:value="${key}" 
-	                    th:text="${key}" 
-	                    th:selected="${iterStat.index == 0 || key == selectedParameter}">
-	            </option>
 	        </select>
 	        
 	        <label for="parameterSite" class="form-label">Select Site:</label>

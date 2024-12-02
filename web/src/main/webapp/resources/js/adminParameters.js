@@ -136,7 +136,7 @@ function submitParameterData(event) {
 		.map(row => ({
 			paramKey: row[0] !== null ? row[0].toString() : null,
 			paramValue: row[1] !== null ? row[1].toString() : null,
-			seqno: row[2] !== null && !isNaN(parseInt(row[2])) ? parseInt(row[2]) : null 
+			seqno: row[2] !== null && !isNaN(parseInt(row[2])) ? parseInt(row[2]) : null
 		}))
 		.filter(row => row.paramKey !== null || row.paramValue !== null);
 	if (parameterData.length === 0) {
@@ -286,36 +286,98 @@ document.addEventListener('DOMContentLoaded', function() {
 		initializePagination('parameters');
 	}
 });
-
 function initializeFilterKeyListener() {
     const filterKey = document.getElementById('filterKey');
-    if (!filterKey) {
-        console.warn("Element with ID 'filterKey' not found. Retrying...");
-        setTimeout(initializeFilterKeyListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
+    const filterValue = document.getElementById('filterValue');
+    
+    if (!filterKey || !filterValue) {
+        console.warn("Elements not found. Retrying...");
+        setTimeout(initializeFilterKeyListener, 100);
         return;
     }
 
-    console.log("FilterKey found in DOM. Adding event listener.");
-    
     const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
-    console.log('Parameter rows:', parameterRows);
 
-    filterKey.addEventListener('change', function () {
+    // Lắng nghe sự thay đổi trên filterKey
+    filterKey.addEventListener('change', () => {
         const selectedKey = filterKey.value;
         console.log('Selected Key:', selectedKey);
 
-        parameterRows.forEach(row => {
-            const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-            console.log('Row Parameter Key:', parameterKey);
+        // Lọc bảng theo key đã chọn
+        filterRowsByKey(parameterRows, selectedKey);
 
-            if (selectedKey === "" || parameterKey === selectedKey) {
-                row.style.display = ""; // Hiển thị dòng
-            } else {
-                row.style.display = "none"; // Ẩn dòng
-            }
-        });
+        // Cập nhật filterValue
+        updateFilterValueState(selectedKey, filterValue, parameterRows);
+        
+        // Khi filterKey thay đổi, reset lại filterValue
+        filterValue.value = ""; // Reset giá trị filterValue
+        filterValue.disabled = selectedKey === "All"; // Vô hiệu hóa filterValue nếu "All" được chọn
+    });
+
+    // Lắng nghe sự thay đổi trên filterValue
+    filterValue.addEventListener('change', () => {
+        const selectedKey = filterKey.value;
+        const selectedValue = filterValue.value;
+        console.log('Selected Value:', selectedValue);
+
+        // Lọc bảng theo cả key và value
+        filterRowsByKeyAndValue(parameterRows, selectedKey, selectedValue);
     });
 }
+
+function filterRowsByKey(rows, selectedKey) {
+    rows.forEach(row => {
+        const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
+        row.style.display = (selectedKey === "All" || parameterKey === selectedKey) ? "" : "none";
+    });
+}
+
+function filterRowsByKeyAndValue(rows, selectedKey, selectedValue) {
+    rows.forEach(row => {
+        const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
+        const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
+
+        // Hiển thị các dòng nếu chúng khớp với cả selectedKey và selectedValue
+        if ((selectedKey === "All" || parameterKey === selectedKey) &&
+            (selectedValue === "" || parameterValue === selectedValue)) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+
+function updateFilterValueState(selectedKey, filterValue, rows) {
+    filterValue.innerHTML = ""; // Xóa các tùy chọn cũ
+
+    if (selectedKey === "All") {
+        filterValue.disabled = true;
+    } else {
+        filterValue.disabled = false;
+
+        // Lấy các giá trị duy nhất từ parameterValue của các rows tương ứng
+        const uniqueValues = new Set();
+        rows.forEach(row => {
+            const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
+            const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
+            if (parameterKey === selectedKey) {
+                uniqueValues.add(parameterValue);
+            }
+        });
+
+        // Thêm các tùy chọn vào filterValue
+        uniqueValues.forEach(value => {
+            const option = document.createElement("option");
+            option.value = value;
+            option.textContent = value;
+            filterValue.appendChild(option);
+        });
+    }
+}
+
+
+
+
 
 // Chạy sau khi DOM sẵn sàng
 document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);
