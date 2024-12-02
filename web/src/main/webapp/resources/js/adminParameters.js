@@ -306,8 +306,6 @@ function initializeFilterKeyListener() {
 
         updateFilterValueState(selectedKey, filterValue, parameterRows);
         
-        filterValue.value = "All"; 
-        filterValue.disabled = selectedKey === "All"; 
     });
 
     filterValue.addEventListener('change', () => {
