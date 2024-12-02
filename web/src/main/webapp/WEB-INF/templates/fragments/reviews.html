@@ -44,7 +44,7 @@
 					<div class="review-body">
 						<p class="mb-2" th:text="${review.content}">This is a sample review content.</p>
 
-						<div th:if="${review.userEid} == ${userId}" class="d-flex gap-2">
+						<div th:if="${review.userEid} == ${userEid}" class="d-flex gap-2">
 							<!-- Delete Button -->
 							<button type="button" class="btn btn-danger btn-sm delete-review-btn" th:data-review-id="${review.id}" th:data-course-id="${course.id}">Delete</button>
 
@@ -125,9 +125,9 @@
 			</nav>
 
 
-			<!-- Add review form -->
-			<h5 class="mb-3">Add your review</h5>
-			<form class="review-form" th:action="@{/course/{id}/review(id=${course.id})}" method="post">
+			<!-- <!-- Add review form -->
+			<h5 class="mb-3" th:if="${hasPurchased && !hasReviewed}">Add your review</h5>
+			<form class="review-form" id="reviewForm" th:if="${hasPurchased && !hasReviewed}">
 				<div class="rating-stars mb-3">
 					<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
 						class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0" required>
@@ -137,8 +137,12 @@
 					<textarea class="form-control review-content" name="content" rows="4" maxlength="200" required></textarea>
 					<small class="form-text text-muted char-count">200 characters remaining</small>
 				</div>
-				<button type="submit" class="btn btn-primary">Submit Review</button>
+				<button type="submit" th:data-course-id="${course.id}" class="btn btn-primary add-review-btn">Submit Review</button>
 			</form>
+
+			<div th:if="${hasReviewed}" class="alert alert-info mt-4">You have already reviewed this course. Thank you for your feedback!</div>
+
+			<div th:if="${!hasPurchased}" class="alert alert-warning mt-4">You need to purchase the course to leave a review.</div>
 		</div>
 	</div>
 

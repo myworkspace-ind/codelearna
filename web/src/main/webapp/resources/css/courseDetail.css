@@ -75,3 +75,10 @@
 	font-size: 0.9rem;
 	color: #555;
 }
+
+#toastContainer {
+  position: fixed;
+  top: 20px;
+  right: 20px; 
+  z-index: 9999; /
+}
