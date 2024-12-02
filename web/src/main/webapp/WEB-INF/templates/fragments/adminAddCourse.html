@@ -61,7 +61,7 @@
 			        </select>
 			    </div>
 			</div>
-			
+
 			<div class="mb-3">
 			    <label for="category" class="form-label">Category<span style="color:red">*</span></label>
 			    <select class="form-select" id="category" onchange="handleAddNew(this, 'category')" required>
@@ -71,26 +71,12 @@
 			    </select>
 			</div>
 			<div class="mb-3">
-				<label for="category" class="form-label">Category<span style="color:red">*</span></label>
-				<select class="form-select" id="category" onchange="filterSubcategories(this.value, this.options[this.selectedIndex].dataset.paramId)" required>
-					<option value="">Choose a category...</option>
-					<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.parameter.paramValue}" th:data-param-id="${category.parameter.id}"></option>
-				</select>
-			</div>
-			<div class="mb-3">
 			    <label for="subcategory" class="form-label">Subcategory<span style="color:red">*</span></label>
 			    <select class="form-select" id="subcategory" name="subcategory.id" disabled required onchange="handleAddNew(this, 'subcategory')">
 			        <option value="">Choose a subcategory...</option>
 			        <option th:each="subcategory : ${subcategories}" th:value="${subcategory.id}" th:text="${subcategory.parameter.paramValue}"></option>
 			        <option value="add-new">Add new</option>
 			    </select>
-			</div>
-			<div class="mb-3">
-				<label for="subcategory" class="form-label">Subcategory<span style="color:red">*</span></label>
-				<select class="form-select" id="subcategory" name="subcategory.id" disabled required>
-					<option value="">Choose a subcategory...</option>
-					<option th:each="subcategory : ${subcategories}" th:value="${subcategory.id}" th:data-category-id="${subcategory.category.id}" th:text="${subcategory.parameter.paramValue}"></option>
-				</select>
 			</div>
 			
 			<!-- Modal -->

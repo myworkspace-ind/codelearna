@@ -1,5 +1,6 @@
 package mks.myworkspace.learna.controller;
 
+import mks.myworkspace.learna.entity.Category;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.repository.CourseJdbcRepository;
 import mks.myworkspace.learna.repository.ParameterRepository;
@@ -85,6 +86,10 @@ public class AdminController {
 		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValue("difficulty_level");
 		log.info("do kho" + difficultyLevels);
 		List<Parameter> lessonTypes = parameterService.getListParamsByParamValue("lesson_type");
+		List<Category> categories = categoryService.getAllCategories();
+		mav.addObject("categories", categories);
+		log.info("Total categories fetched: {}", categories.size());
+		log.info("do kho" + categories);
 		mav.addObject("difficultyLevels", difficultyLevels);
 		mav.addObject("lessonTypes", lessonTypes);
 		return mav;
