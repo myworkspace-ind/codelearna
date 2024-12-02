@@ -47,6 +47,7 @@ public class MyAdminController extends BaseController {
 	    model.addAttribute("parameters", parameterService.getAllParams()); 
 	    model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff());
 	    log.info("do kho" + parameterService.getAllParams());
+
 	    return "myadmin";
 	}
 
