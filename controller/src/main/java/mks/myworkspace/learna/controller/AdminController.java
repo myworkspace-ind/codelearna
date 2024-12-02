@@ -583,16 +583,20 @@ public class AdminController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
-
+	
 	// ADMIN PARAMETERS MANAGER
 	@GetMapping("/listParameters")
-	public ModelAndView loadParametersList() {
-		ModelAndView mav = new ModelAndView("fragments/adminListParameters :: parametersContent");
-		mav.addObject("parameters", parameterService.getAllParams());
-		log.debug("get all params", parameterService.getAllParams());
-		return mav;
+	public ModelAndView loadParametersListDiff() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListParameters :: parametersContent");
+	    List<String> parameterKeyDiff = parameterService.getParamKeyDiff();  
+	    List<Parameter> parameters = parameterService.getAllParams(); 
+	    mav.addObject("parameterKeyDiff", parameterKeyDiff);
+	    mav.addObject("parameters", parameters);
+	    log.debug("Distinct parameter keys: {}", parameterKeyDiff);  
+	    log.debug("get all params: {}", parameters);  
+	    return mav;
 	}
-
+	
 	@GetMapping("/addParameterHandsontable")
 	public ModelAndView showAddParameterHandsontablePage() {
 		ModelAndView mav = new ModelAndView("fragments/adminAddParametersHandsontable :: addParameterWithHandsontableContent");
@@ -712,9 +716,8 @@ public class AdminController {
 		}
 
 		existingParameter.setParamValue(parameter.getParamValue());
-
 		parameterService.saveParameters(existingParameter);
-
+		
 		return ResponseEntity.ok(Map.of("status", "success", "message", "Parameter updated successfully"));
 	}
 

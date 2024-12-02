@@ -1,51 +1,59 @@
 <div th:fragment="parametersContent">
 	<div class="container mt-5">
 		<h1 class="mb-4">Parameters Manage</h1>
-
-
-
-
 		<!--Thêm mới filter  -->
 		<label for="filterKey" class="form-label">Filter by Parameter Key:</label>
-		<div class="filter-container mb-3">
-		    <div>
-			    <label for="filterKey" class="form-label">Parameter:</label>
-			    <select id="filterKey" class="form-select">
-			        <option value="">All</option>
-			    </select>
-		    </div>
-		    
-		    <div>
-		    	<label for="filterValue" class="form-label">Parameter Value: </label>
-			    <select id="filterValue" class="form-select">
-				    <option value="">All</option>
-				</select>
-		    </div>
-		    
-		    <div>
-		    	<label for="filterProject" class="form-label">Project: </label>
-			    <select id="filterProject" class="form-select">
-				    <option value="">All</option>
-			        <option value="">LearnA</option>
-			        <option value="">CRM</option>
-			        <option value="">AIMedia</option>
-			        <option value="">CVHub</option>
-			        <option value="">xTOEIC</option>
-				</select>
-		    </div>
-		   
-		</div>
-		<!--Thêm mới filter  -->
 		<!-- Add Parameters Button -->
 		<div class="d-flex justify-content-end mb-3">
 			<a class="btn btn-success" href="#"
 				th:onclick="'fetchAddParamValueHandsontablePage(event)'">Add
 				Parameters with Handsontable</a>
 		</div>
-		
-		
-		
 		<div id="parametersContainer">
+		<div class="filter-container mb-3">
+		    <label for="parameterKey" class="form-label">Select Parameter Key:</label>
+	        <select id="filterKey" class="form-select" name="parameter">
+	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
+	            <option value="">All</option>
+	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
+	                    th:value="${key}" 
+	                    th:text="${key}" 
+	                    th:selected="${iterStat.index == 0 || key == selectedParameter}">
+	            </option>
+	        </select>
+		   
+		    <label for="parameterValue" class="form-label">Select Parameter Value:</label>
+	        <select id="filterValue" class="form-select" name="parameter">
+	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
+	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
+	                    th:value="${key}" 
+	                    th:text="${key}" 
+	                    th:selected="${iterStat.index == 0 || key == selectedParameter}">
+	            </option>
+	        </select>
+	        
+	        <label for="parameterSite" class="form-label">Select Site:</label>
+	        <select id="filterSite" class="form-select" name="parameter">
+	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
+	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
+	                    th:value="${key}" 
+	                    th:text="${key}" 
+	                    th:selected="${iterStat.index == 0 || key == selectedParameter}">
+	            </option>
+	        </select>
+	        
+	        <label for="parameterTool" class="form-label">Select Tool:</label>
+	        <select id="filterTool" class="form-select" name="parameter">
+	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
+	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
+	                    th:value="${key}" 
+	                    th:text="${key}" 
+	                    th:selected="${iterStat.index == 0 || key == selectedParameter}">
+	            </option>
+	        </select>
+		</div>
+
+
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">
 					<thead class="thead-dark">
@@ -98,7 +106,6 @@
 				</div>
 			</div>
 		</div>
-		<!-- Pagination -->
 		<nav>
 			<ul class="pagination justify-content-center"
 				id="parametersPagination"></ul>

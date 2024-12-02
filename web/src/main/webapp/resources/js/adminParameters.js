@@ -287,126 +287,35 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Đảm bảo bảng đã được load và DOM đã sẵn sàng
-    populateComboboxes();
-    initializeFilterListener();
-});
-
-function populateComboboxes() {
-    const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
-    const filterKeySelect = document.getElementById('filterKey');
-    const filterValueSelect = document.getElementById('filterValue');
-
-    const parameterKeys = new Set();  // Dùng Set để loại bỏ trùng lặp
-    const parameterValues = new Set();  // Dùng Set để loại bỏ trùng lặp
-
-    // Lấy tất cả giá trị từ bảng
-    parameterRows.forEach(row => {
-        const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-        const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
-
-        if (parameterKey) {
-            parameterKeys.add(parameterKey);
-        }
-        if (parameterValue) {
-            parameterValues.add(parameterValue);
-        }
-    });
-
-    // Điền vào filterKey
-    filterKeySelect.innerHTML = '<option value="">All</option>';  // Reset combobox trước khi thêm mới
-    parameterKeys.forEach(key => {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = key;
-        filterKeySelect.appendChild(option);
-    });
-
-    // Điền vào filterValue với tất cả các giá trị (tạm thời chưa lọc theo key)
-    filterValueSelect.innerHTML = '<option value="">All</option>';  // Reset combobox trước khi thêm mới
-    parameterValues.forEach(value => {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = value;
-        filterValueSelect.appendChild(option);
-    });
-}
-
-function initializeFilterListener() {
+function initializeFilterKeyListener() {
     const filterKey = document.getElementById('filterKey');
-    const filterValue = document.getElementById('filterValue');
-    const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
+    if (!filterKey) {
+        console.warn("Element with ID 'filterKey' not found. Retrying...");
+        setTimeout(initializeFilterKeyListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
+        return;
+    }
+
+    console.log("FilterKey found in DOM. Adding event listener.");
     
-    // Khi thay đổi filterKey
-    filterKey.addEventListener('change', function() {
-        updateFilterValues(filterKey.value);  // Cập nhật filterValue khi filterKey thay đổi
-        applyFilters();  // Áp dụng bộ lọc ngay lập tức
-    });
+    const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
+    console.log('Parameter rows:', parameterRows);
 
-    // Khi thay đổi filterValue
-    filterValue.addEventListener('change', function() {
-        applyFilters();
-    });
-
-    // Hàm cập nhật filterValue dựa trên filterKey
-    function updateFilterValues(selectedKey) {
-        const filterValueSelect = document.getElementById('filterValue');
-        const parameterValues = new Set();  // Dùng Set để loại bỏ trùng lặp
-
-        // Lọc các giá trị parameterValue theo parameterKey đã chọn
-        parameterRows.forEach(row => {
-            const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-            const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
-
-            // Nếu chọn All hoặc key trùng khớp thì thêm parameterValue vào Set
-            if (selectedKey === "" || parameterKey === selectedKey) {
-                if (parameterValue) {
-                    parameterValues.add(parameterValue);
-                }
-            }
-        });
-
-        // Cập nhật filterValue với các giá trị tương ứng
-        filterValueSelect.innerHTML = '<option value="">All</option>';  // Reset filterValue
-        parameterValues.forEach(value => {
-            const option = document.createElement('option');
-            option.value = value;
-            option.textContent = value;
-            filterValueSelect.appendChild(option);
-        });
-    }
-
-    // Hàm áp dụng tất cả các bộ lọc
-    function applyFilters() {
+    filterKey.addEventListener('change', function () {
         const selectedKey = filterKey.value;
-        const selectedValue = filterValue.value;
+        console.log('Selected Key:', selectedKey);
 
         parameterRows.forEach(row => {
             const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-            const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
+            console.log('Row Parameter Key:', parameterKey);
 
-            let showRow = true;
-
-            // Kiểm tra lọc theo Key
-            if (selectedKey && parameterKey !== selectedKey) {
-                showRow = false;
-            }
-
-            // Kiểm tra lọc theo Value
-            if (selectedValue && parameterValue !== selectedValue) {
-                showRow = false;
-            }
-
-            // Hiển thị hoặc ẩn dòng dựa trên các bộ lọc
-            if (showRow) {
-                row.style.display = '';
+            if (selectedKey === "" || parameterKey === selectedKey) {
+                row.style.display = ""; // Hiển thị dòng
             } else {
-                row.style.display = 'none';
+                row.style.display = "none"; // Ẩn dòng
             }
         });
-    }
+    });
 }
 
 // Chạy sau khi DOM sẵn sàng
-document.addEventListener('DOMContentLoaded', initializeFilterListener);
+document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);
