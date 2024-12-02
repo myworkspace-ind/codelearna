@@ -298,29 +298,21 @@ function initializeFilterKeyListener() {
 
     const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
 
-    // Lắng nghe sự thay đổi trên filterKey
     filterKey.addEventListener('change', () => {
         const selectedKey = filterKey.value;
         console.log('Selected Key:', selectedKey);
 
-        // Lọc bảng theo key đã chọn
         filterRowsByKey(parameterRows, selectedKey);
 
-        // Cập nhật filterValue
         updateFilterValueState(selectedKey, filterValue, parameterRows);
         
-        // Khi filterKey thay đổi, reset lại filterValue
-        filterValue.value = ""; // Reset giá trị filterValue
-        filterValue.disabled = selectedKey === "All"; // Vô hiệu hóa filterValue nếu "All" được chọn
     });
 
-    // Lắng nghe sự thay đổi trên filterValue
     filterValue.addEventListener('change', () => {
         const selectedKey = filterKey.value;
         const selectedValue = filterValue.value;
         console.log('Selected Value:', selectedValue);
 
-        // Lọc bảng theo cả key và value
         filterRowsByKeyAndValue(parameterRows, selectedKey, selectedValue);
     });
 }
@@ -337,9 +329,8 @@ function filterRowsByKeyAndValue(rows, selectedKey, selectedValue) {
         const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
         const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
 
-        // Hiển thị các dòng nếu chúng khớp với cả selectedKey và selectedValue
         if ((selectedKey === "All" || parameterKey === selectedKey) &&
-            (selectedValue === "" || parameterValue === selectedValue)) {
+            (selectedValue === "All" || parameterValue === selectedValue)) {
             row.style.display = "";
         } else {
             row.style.display = "none";
@@ -348,15 +339,15 @@ function filterRowsByKeyAndValue(rows, selectedKey, selectedValue) {
 }
 
 function updateFilterValueState(selectedKey, filterValue, rows) {
-    filterValue.innerHTML = ""; // Xóa các tùy chọn cũ
+    filterValue.innerHTML = ""; 
 
     if (selectedKey === "All") {
         filterValue.disabled = true;
     } else {
         filterValue.disabled = false;
 
-        // Lấy các giá trị duy nhất từ parameterValue của các rows tương ứng
         const uniqueValues = new Set();
+		uniqueValues.add("All");
         rows.forEach(row => {
             const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
             const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
@@ -365,7 +356,6 @@ function updateFilterValueState(selectedKey, filterValue, rows) {
             }
         });
 
-        // Thêm các tùy chọn vào filterValue
         uniqueValues.forEach(value => {
             const option = document.createElement("option");
             option.value = value;
@@ -374,10 +364,4 @@ function updateFilterValueState(selectedKey, filterValue, rows) {
         });
     }
 }
-
-
-
-
-
-// Chạy sau khi DOM sẵn sàng
 document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);
