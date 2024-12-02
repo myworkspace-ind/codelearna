@@ -17,6 +17,8 @@ public interface ReviewService {
 	double getAverageRating(Long courseId);
 	void updateAverageRating(Long courseId);
 	
+	boolean hasUserReviewedCourse(Long courseId, String userEid);
+	
 	
 	
 }

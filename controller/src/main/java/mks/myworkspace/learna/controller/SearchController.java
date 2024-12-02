@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,8 +29,10 @@ public class SearchController extends BaseController {
 	                                   @RequestParam(value = "rating", required = false) String averageRating) { 
 
 	    ModelAndView mav = new ModelAndView("search");
+	    Long subcategoryId = null;
+	    
 
-	    List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, averageRating);
+	    List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, subcategoryId, averageRating);
 
 	    mav.addObject("courses", courses);
 	    mav.addObject("keyword", keyword);
@@ -39,6 +42,29 @@ public class SearchController extends BaseController {
 	    mav.addObject("rating", averageRating);
 
 	    return mav;
+	}
+	
+	@GetMapping("/subcategory/{subcategoryId}")
+	public ModelAndView searchCoursesBySubcategory(@PathVariable Long subcategoryId,
+			@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
+			@RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
+			@RequestParam(value = "level", required = false) String level,
+			@RequestParam(value = "rating", required = false) String averageRating) { 
+		ModelAndView mav = new ModelAndView("search");
+
+		List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, subcategoryId,
+				averageRating);
+
+		mav.addObject("courses", courses);
+		mav.addObject("keyword", keyword);
+		mav.addObject("sortOrder", sortOrder);
+		mav.addObject("sortField", sortField);
+		mav.addObject("level", level);
+		mav.addObject("subcategoryId", subcategoryId);
+		mav.addObject("rating", averageRating);
+
+		return mav;
 	}
 
 
