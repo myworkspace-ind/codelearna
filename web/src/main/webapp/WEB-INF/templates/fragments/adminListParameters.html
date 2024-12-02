@@ -12,12 +12,6 @@
 			    <label for="filterKey" class="form-label">Parameter:</label>
 			    <select id="filterKey" class="form-select">
 			        <option value="">All</option>
-			        <option value="site_logo">site_logo</option>
-			        <option value="difficulty_level">difficulty_level</option>
-			        <option value="lesson_type">lesson_type</option>
-			        <!-- <tr th:each="parameter : ${parameters}">
-				    	<option th:value="${parameter.paramKey}" th:text="${parameter.paramKey}"></option>
-				    </tr> -->
 			    </select>
 		    </div>
 		    
@@ -25,14 +19,11 @@
 		    	<label for="filterValue" class="form-label">Parameter Value: </label>
 			    <select id="filterValue" class="form-select">
 				    <option value="">All</option>
-				    <tr th:each="parameter : ${parameters}">
-				    	<option th:value="${parameter.paramValue}" th:text="${parameter.paramValue}"></option>
-				    </tr>
 				</select>
 		    </div>
 		    
 		    <div>
-		    	<label for="filterKey" class="form-label">Project: </label>
+		    	<label for="filterProject" class="form-label">Project: </label>
 			    <select id="filterProject" class="form-select">
 				    <option value="">All</option>
 			        <option value="">LearnA</option>
