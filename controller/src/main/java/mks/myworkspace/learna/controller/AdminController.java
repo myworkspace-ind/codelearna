@@ -667,9 +667,11 @@ public class AdminController {
 	        return ResponseEntity.badRequest().body(response);
 	    }
 	}
-	@PostMapping("/parameter/addParamValue/{paramKey}/{paramValue}")
+	@PostMapping("/parameter/addParamValue/{paramKey}/{paramValue}/${categoryId}")
 	@ResponseBody
-	public ResponseEntity<?> addParamValueToParamKey(@PathVariable("paramKey") String paramKey, @PathVariable("paramValue") String paramValue) {
+	public ResponseEntity<?> addParamValueToParamKey(@PathVariable("paramKey") String paramKey, 
+			@PathVariable("paramValue") String paramValue,
+	        @PathVariable("categoryId") Long categoryId) {
 	    if (paramValue == null || paramValue.isEmpty()) {
 	        return ResponseEntity.badRequest().body("ParamValue không được để trống.");
 	    }
@@ -687,6 +689,10 @@ public class AdminController {
 
 	    // Lưu vào database và trả về đối tượng mới
 	    Parameter savedParameter = parameterService.saveParameters(newParameter);
+
+	    if (savedParameter.getId() != null && categoryId != null) {
+	        parameterService.saveCategoryAndSubCategory(savedParameter, categoryId);
+	    }
 	    return ResponseEntity.ok(savedParameter);
 	}
 

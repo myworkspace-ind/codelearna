@@ -8,4 +8,6 @@ public interface CategoryService {
 	List<Category> getAllCategories();
 
 	List<Subcategory> findByCategoryId(Long categoryId);
+	
+	
 }

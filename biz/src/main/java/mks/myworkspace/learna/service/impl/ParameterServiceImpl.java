@@ -70,4 +70,8 @@ public class ParameterServiceImpl implements ParameterService {
 	public Parameter addParamValueToParamKey(Parameter parameter) {
 		return parameterJdbcRepository.addNewValueToKey(parameter);
 	}
+	@Override
+	public Parameter saveCategoryAndSubCategory(Parameter parameter, Long id) {
+		return parameterJdbcRepository.save(parameter,id);
+	}
 }

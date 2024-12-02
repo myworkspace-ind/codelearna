@@ -18,6 +18,7 @@ public class ParameterJdbcRepository {
 	    String sqlInsert = "INSERT INTO learna_parameter (param_key, param_value) VALUES (?, ?)";
 	    String sqlUpdate = "UPDATE learna_parameter SET param_key = ?, param_value = ? WHERE id = ?";
 
+
 	    try (Connection conn = dataSource.getConnection()) {
 	        if (parameter.getId() != null) {
 	            try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
@@ -32,6 +33,55 @@ public class ParameterJdbcRepository {
 	            }
 	        } else {
 	            insertNewParameter(parameter, conn, sqlInsert);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return parameter;
+	}
+	
+	public Parameter save(Parameter parameter, Long categoryId) {
+	    String sqlInsert = "INSERT INTO learna_parameter (param_key, param_value) VALUES (?, ?)";
+	    String sqlUpdate = "UPDATE learna_parameter SET param_key = ?, param_value = ? WHERE id = ?";
+	    String sqlInsertCategory = "INSERT INTO learna_category (parameter_id) VALUES (?)";
+	    String sqlInsertSubcategory = "INSERT INTO learna_subcategory (parameter_id, category_id) VALUES (?, ?)";
+
+	    try (Connection conn = dataSource.getConnection()) {
+	        // Nếu đã tồn tại ID Parameter, thực hiện cập nhật
+	        if (parameter.getId() != null) {
+	            try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
+	                ps.setString(1, parameter.getParamKey());
+	                ps.setString(2, parameter.getParamValue());
+	                ps.setLong(3, parameter.getId());
+	                int rowsUpdated = ps.executeUpdate();
+
+	                // Nếu không cập nhật được, thêm mới Parameter
+	                if (rowsUpdated == 0) {
+	                    insertNewParameter(parameter, conn, sqlInsert);
+	                }
+	            }
+	        } else {
+	            // Thêm mới Parameter
+	            insertNewParameter(parameter, conn, sqlInsert);
+	        }
+
+	        // Nếu thêm mới thành công, tiếp tục Insert vào bảng Category và Subcategory
+	        if (parameter.getId() != null) {
+	            // Insert vào bảng Category
+	            try (PreparedStatement psCategory = conn.prepareStatement(sqlInsertCategory)) {
+	                psCategory.setLong(1, parameter.getId());
+	                psCategory.executeUpdate();
+	            }
+
+	            // Nếu có categoryId, insert vào bảng Subcategory
+	            if (categoryId != null) {
+	                try (PreparedStatement psSubcategory = conn.prepareStatement(sqlInsertSubcategory)) {
+	                    psSubcategory.setLong(1, parameter.getId());
+	                    psSubcategory.setLong(2, categoryId);
+	                    psSubcategory.executeUpdate();
+	                }
+	            }
 	        }
 
 	    } catch (SQLException e) {

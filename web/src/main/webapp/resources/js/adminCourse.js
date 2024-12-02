@@ -221,8 +221,9 @@ function closeModal() {
 function submitNewParamValue(event) {
     event.preventDefault();
     const newValue = document.getElementById("newParamValue").value.trim();
+	const categoryId = document.getElementById("category").value;
     if (newValue && currentParamKey) {
-        fetch(`${_ctx}admin/parameter/addParamValue/${currentParamKey}/${newValue}`, {
+        fetch(`${_ctx}admin/parameter/addParamValue/${currentParamKey}/${newValue}/${categoryId}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
