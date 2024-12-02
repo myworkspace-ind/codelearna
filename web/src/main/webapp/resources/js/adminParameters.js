@@ -275,3 +275,61 @@ document.addEventListener('DOMContentLoaded', function() {
 		initializePagination('parameters');
 	}
 });
+
+function initializeFilterListener() {
+    const filterKey = document.getElementById('filterKey');
+	const filterValue = document.getElementById('filterValue');
+    if (!filterKey) {
+        console.warn("Element with ID 'filterKey' not found. Retrying...");
+        setTimeout(initializeFilterListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
+        return;
+    }
+	if (!filterValue) {
+	        console.warn("Element with ID 'filterValue' not found. Retrying...");
+	        setTimeout(initializeFilterListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
+	        return;
+	    }
+
+    console.log("FilterKey found in DOM. Adding event listener.");
+    
+    const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
+    console.log('Parameter rows:', parameterRows);
+
+    filterKey.addEventListener('change', function () {
+        const selectedKey = filterKey.value;
+        console.log('Selected Key:', selectedKey);
+
+        parameterRows.forEach(row => {
+            const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
+            console.log('Row Parameter Key:', parameterKey);
+
+            if (selectedKey === "" || parameterKey === selectedKey) {
+                row.style.display = ""; // Hiển thị dòng
+            } else {
+                row.style.display = "none"; // Ẩn dòng
+            }
+        });
+    });
+	filterValue.addEventListener('change', function () {
+	        const selectedValue = filterValue.value;
+	        console.log('Selected Value:', selectedValue);
+
+	        parameterRows.forEach(row => {
+	            const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
+	            console.log('Row Parameter Key:', parameterValue);
+
+	            if (selectedValue === "" || parameterValue === selectedValue) {
+	                row.style.display = ""; // Hiển thị dòng
+	            } else {
+	                row.style.display = "none"; // Ẩn dòng
+	            }
+	        });
+	    });
+}
+
+// Chạy sau khi DOM sẵn sàng
+document.addEventListener('DOMContentLoaded', initializeFilterListener);
+
+/*Thêm mới*/
+
+
