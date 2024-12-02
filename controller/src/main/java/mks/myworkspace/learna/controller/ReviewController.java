@@ -37,33 +37,7 @@ public class ReviewController extends BaseController {
 	@Autowired
 	private PaymentService paymentService;
 
-	// Open a course details
-	@GetMapping("/course/{id}")
-	public ModelAndView getCourseDetail(@PathVariable Long id, @RequestParam(defaultValue = "0") int page,
-			HttpServletRequest request, HttpSession httpSession) {
-
-		initSession(request, httpSession);
-		String userId = getCurrentUserEid();
-		ModelAndView mav = new ModelAndView("courseDetail");
-
-		Course course = courseService.getCourseById(id);
-		Double balance = paymentService.getBalance(userId);
-
-		int pageSize = 5;
-		Page<Review> reviewPage = reviewService.getReviewsByCourseId(id, page, pageSize);
-
-		List<Review> reviews = reviewPage.getContent();
-		int totalPages = reviewPage.getTotalPages();
-
-		mav.addObject("course", course);
-		mav.addObject("reviews", reviews);
-		mav.addObject("userId", userId);
-		mav.addObject("currentPage", page);
-		mav.addObject("totalPages", totalPages);
-		mav.addObject("balance", balance);
-
-		return mav;
-	}
+	
 
 	// Add review
 	@PostMapping("/course/{id}/review")

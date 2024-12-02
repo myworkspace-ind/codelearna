@@ -118,7 +118,7 @@ document.querySelectorAll('#coursesContainer > div').forEach(item => {
             });
 
             // Chuyển hướng đến trang play
-            window.location.href = _ctx + `play/${courseId}`;
+            window.location.href = _ctx + `course/${courseId}`;
         } else {
 			/*
             const course = {
@@ -158,7 +158,7 @@ document.querySelectorAll('#featuredCoursesCarousel .carousel-item').forEach(ite
 	            });
 
 	            // Chuyển hướng đến trang play
-	            window.location.href = _ctx + `play/${courseId}`;
+	            window.location.href = _ctx + `course/${courseId}`;
 	        } else {
 				/*
 	            const course = {
