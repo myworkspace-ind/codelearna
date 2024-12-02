@@ -289,31 +289,46 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function initializeFilterKeyListener() {
     const filterKey = document.getElementById('filterKey');
+    const filterValue = document.getElementById('filterValue');
     if (!filterKey) {
         console.warn("Element with ID 'filterKey' not found. Retrying...");
-        setTimeout(initializeFilterKeyListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
+        setTimeout(initializeFilterKeyListener, 100);
         return;
     }
 
     console.log("FilterKey found in DOM. Adding event listener.");
-    
+
     const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
     console.log('Parameter rows:', parameterRows);
 
-    filterKey.addEventListener('change', function () {
+    filterKey.addEventListener('change', () => {
         const selectedKey = filterKey.value;
         console.log('Selected Key:', selectedKey);
 
         parameterRows.forEach(row => {
             const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-            console.log('Row Parameter Key:', parameterKey);
-
-            if (selectedKey === "" || parameterKey === selectedKey) {
-                row.style.display = ""; // Hiển thị dòng
-            } else {
-                row.style.display = "none"; // Ẩn dòng
-            }
+            row.style.display = (selectedKey === "All" || parameterKey === selectedKey) ? "" : "none";
         });
+
+		const isDisabled = (selectedKey === "All");
+		    filterValue.disabled = isDisabled;
+
+		    // Nếu không bị disable, truyền giá trị từ bảng vào filterValue
+		    if (!isDisabled) {
+		        // Xóa toàn bộ các option cũ trong combobox
+		        filterValue.innerHTML = "<option value=''>Select Value</option>";
+
+		        // Duyệt qua các dòng hiện tại để lấy giá trị
+		        parameterRows.forEach(row => {
+		            if (row.style.display !== "none") { // Chỉ xử lý các dòng đang hiển thị
+		                const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim(); // Lấy giá trị từ cột thứ 3
+		                const option = document.createElement('option');
+		                option.value = parameterValue;
+		                option.textContent = parameterValue;
+		                filterValue.appendChild(option);
+		            }
+		        });
+		    }
     });
 }
 

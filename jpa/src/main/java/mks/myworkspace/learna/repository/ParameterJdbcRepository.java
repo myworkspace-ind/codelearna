@@ -80,9 +80,10 @@ public class ParameterJdbcRepository {
     }
 	
 	public List<String> getParamKeyDiff() {
-		String sql = "SELECT DISTINCT param_key FROM sakai.learna_parameter;";
+		String sql = "SELECT DISTINCT param_key FROM learna_parameter;";
 		List<String> paramKeys = new ArrayList<>();
-
+		
+		paramKeys.add("All");
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
