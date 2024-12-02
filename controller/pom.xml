@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>mks.assistant.codelearna</groupId>
 			<artifactId>codelearna-api</artifactId>
-			<!--             <version>${module.version}</version> -->
+			<!-- <version>${module.version}</version> -->
 		</dependency>
 		<dependency>
 			<groupId>mks.assistant.codelearna</groupId>
@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>mks.assistant.codelearna</groupId>
 			<artifactId>codelearna-impl</artifactId>
-			<!--             <version>${module.version}</version> -->
+			<!-- <version>${module.version}</version> -->
 		</dependency>
 		<dependency>
 			<groupId>mks.assistant.codelearna</groupId>
@@ -114,7 +114,7 @@
 
 	</dependencies>
 	<build>
-		<!-- configure the build to use the standard maven structure -->
+		<!-- Configure the build to use the standard maven structure -->
 		<sourceDirectory>src/main/java</sourceDirectory>
 	</build>
 </project>
