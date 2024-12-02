@@ -116,5 +116,10 @@ public class ReviewServiceImpl implements ReviewService {
 			repoCourse.save(course);
 		}
 	}
+	
+	@Override
+	public boolean hasUserReviewedCourse(Long courseId, String userEid) {
+	    return reviewRepository.existsByCourseIdAndUserEid(courseId, userEid);
+	}
 
 }
