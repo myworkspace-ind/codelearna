@@ -2,13 +2,58 @@
 	<div class="container mt-5">
 		<h1 class="mb-4">Parameters Manage</h1>
 
+
+
+
+		<!--Thêm mới filter  -->
+		<label for="filterKey" class="form-label">Filter by Parameter Key:</label>
+		<div class="filter-container mb-3">
+		    <div>
+			    <label for="filterKey" class="form-label">Parameter:</label>
+			    <select id="filterKey" class="form-select">
+			        <option value="">All</option>
+			        <option value="site_logo">site_logo</option>
+			        <option value="difficulty_level">difficulty_level</option>
+			        <option value="lesson_type">lesson_type</option>
+			        <!-- <tr th:each="parameter : ${parameters}">
+				    	<option th:value="${parameter.paramKey}" th:text="${parameter.paramKey}"></option>
+				    </tr> -->
+			    </select>
+		    </div>
+		    
+		    <div>
+		    	<label for="filterValue" class="form-label">Parameter Value: </label>
+			    <select id="filterValue" class="form-select">
+				    <option value="">All</option>
+				    <tr th:each="parameter : ${parameters}">
+				    	<option th:value="${parameter.paramValue}" th:text="${parameter.paramValue}"></option>
+				    </tr>
+				</select>
+		    </div>
+		    
+		    <div>
+		    	<label for="filterKey" class="form-label">Project: </label>
+			    <select id="filterProject" class="form-select">
+				    <option value="">All</option>
+			        <option value="">LearnA</option>
+			        <option value="">CRM</option>
+			        <option value="">AIMedia</option>
+			        <option value="">CVHub</option>
+			        <option value="">xTOEIC</option>
+				</select>
+		    </div>
+		   
+		</div>
+		<!--Thêm mới filter  -->
 		<!-- Add Parameters Button -->
 		<div class="d-flex justify-content-end mb-3">
 			<a class="btn btn-success" href="#"
 				th:onclick="'fetchAddParamValueHandsontablePage(event)'">Add
 				Parameters with Handsontable</a>
 		</div>
-
+		
+		
+		
 		<div id="parametersContainer">
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">
