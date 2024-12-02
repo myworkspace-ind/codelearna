@@ -65,10 +65,18 @@ public class MyAdminController extends BaseController {
 	@GetMapping("/search-parameters")
 	public String searchParameters(HttpServletRequest request, HttpSession httpSession, Model model) {
 		String parameter = request.getParameter("parameter");
+		
 	    httpSession.setAttribute("currentMenu", "Parameters");
 	    model.addAttribute("selectedParameter", parameter);
-	    model.addAttribute("parameters", parameterService.getListParamsByParamValue(parameter)); 
 	    model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff()); 
+	    if( "All".equals(parameter)) {
+		    model.addAttribute("parameters", parameterService.getAllParams()); 
+		   
+	    }else {
+		    model.addAttribute("parameters", parameterService.getListParamsByParamValue(parameter)); 
+
+	    }
+	    
 	    return "myadmin";
 	}
 }

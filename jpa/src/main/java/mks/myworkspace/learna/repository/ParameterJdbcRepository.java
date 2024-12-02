@@ -77,7 +77,7 @@ public class ParameterJdbcRepository {
 	public List<String> getParamKeyDiff() {
 	    String sql = "SELECT DISTINCT param_key FROM learna.learna_parameter;";
 	    List<String> paramKeys = new ArrayList<>();
-
+	    paramKeys.add("All");	    
 	    try (Connection conn = dataSource.getConnection();
 	         PreparedStatement ps = conn.prepareStatement(sql);
 	         ResultSet rs = ps.executeQuery()) {
