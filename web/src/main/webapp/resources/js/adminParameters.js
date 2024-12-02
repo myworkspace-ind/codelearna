@@ -287,19 +287,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 });
 
-function initializeFilterListener() {
+function initializeFilterKeyListener() {
     const filterKey = document.getElementById('filterKey');
-	const filterValue = document.getElementById('filterValue');
     if (!filterKey) {
         console.warn("Element with ID 'filterKey' not found. Retrying...");
-        setTimeout(initializeFilterListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
+        setTimeout(initializeFilterKeyListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
         return;
     }
-	if (!filterValue) {
-	        console.warn("Element with ID 'filterValue' not found. Retrying...");
-	        setTimeout(initializeFilterListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
-	        return;
-	    }
 
     console.log("FilterKey found in DOM. Adding event listener.");
     
@@ -321,26 +315,7 @@ function initializeFilterListener() {
             }
         });
     });
-	filterValue.addEventListener('change', function () {
-	        const selectedValue = filterValue.value;
-	        console.log('Selected Value:', selectedValue);
-
-	        parameterRows.forEach(row => {
-	            const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
-	            console.log('Row Parameter Key:', parameterValue);
-
-	            if (selectedValue === "" || parameterValue === selectedValue) {
-	                row.style.display = ""; // Hiển thị dòng
-	            } else {
-	                row.style.display = "none"; // Ẩn dòng
-	            }
-	        });
-	    });
 }
 
 // Chạy sau khi DOM sẵn sàng
-document.addEventListener('DOMContentLoaded', initializeFilterListener);
-
-/*Thêm mới*/
-
-
+document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);
