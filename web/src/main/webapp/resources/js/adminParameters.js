@@ -61,6 +61,9 @@ function handleFileParameter(event) {
 				.map(row => ({
 					paramKey: row[0] !== undefined ? row[0].toString() : null,
 					paramValue: row[1] !== undefined ? row[1].toString() : null,
+					seqno: row[2] !== undefined && !isNaN(parseInt(row[2]))
+						? parseInt(row[2])
+						: null
 				}));
 
 			if (hot) {
@@ -90,14 +93,22 @@ function initializeParameterHandsontable() {
 	if (containerHandsontable) {
 		hot = new Handsontable(containerHandsontable, {
 			data: [],
-			colHeaders: ['Parameter Key', 'Parameter Value'],
+			colHeaders: ['Parameter Key', 'Parameter Value', 'Sequence Number'],
 			columns: [
 				{
 					data: 'paramKey',
 					type: 'dropdown',
 					source: ['category', 'subcategory', 'difficulty_level', 'lesson_type']
 				},
-				{ data: 'paramValue', type: 'text' }
+				{ data: 'paramValue', type: 'text' },
+				{
+					data: 'seqno',
+					type: 'numeric',
+					validator: (value) => {
+						return value === null || (!isNaN(value) && Number.isInteger(Number(value)));
+					},
+					allowInvalid: false
+				}
 			],
 			minRows: 1,
 			rowHeaders: true,
@@ -125,9 +136,9 @@ function submitParameterData(event) {
 		.map(row => ({
 			paramKey: row[0] !== null ? row[0].toString() : null,
 			paramValue: row[1] !== null ? row[1].toString() : null,
+			seqno: row[2] !== null && !isNaN(parseInt(row[2])) ? parseInt(row[2]) : null 
 		}))
 		.filter(row => row.paramKey !== null || row.paramValue !== null);
-
 	if (parameterData.length === 0) {
 		showErrorToast('Please enter at least one parameter key and value.');
 		return;
@@ -188,7 +199,7 @@ function deleteParameter(parameterId, modal) {
 		.then(data => {
 			if (data.status === 'success') {
 				showSuccessToast(data.message || 'Parameter deleted successfully');
-		
+
 				loadParametersManagePage(null);
 
 				// Đóng modal nếu nó đang mở
@@ -256,9 +267,9 @@ function submitEditParameterForm(event, parameterId) {
 			if (data.status === "success") {
 				showSuccessToast(data.message || 'Parameter updated successfully!');
 				const editParameterModalInstance = bootstrap.Modal.getInstance(document.getElementById('editParameterModal'));
-								if (editParameterModalInstance) {
-									editParameterModalInstance.hide();
-								}
+				if (editParameterModalInstance) {
+					editParameterModalInstance.hide();
+				}
 				loadParametersManagePage(event);
 			} else {
 				throw new Error(data.message);
