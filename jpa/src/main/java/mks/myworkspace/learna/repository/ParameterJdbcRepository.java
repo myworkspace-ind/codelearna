@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 import mks.myworkspace.learna.entity.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +56,6 @@ public class ParameterJdbcRepository {
 	        }
 	    }
 	}
-
-
 	
 	public void deleteById(Long id) {
         String sql = "DELETE FROM learna_parameter WHERE id = ?";
@@ -72,5 +73,24 @@ public class ParameterJdbcRepository {
             e.printStackTrace();
         }
     }
+	
+	public List<String> getParamKeyDiff() {
+	    String sql = "SELECT DISTINCT param_key FROM learna.learna_parameter;";
+	    List<String> paramKeys = new ArrayList<>();
+	    paramKeys.add("All");	    
+	    try (Connection conn = dataSource.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            paramKeys.add(rs.getString("param_key"));
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return paramKeys;
+	}
 
 }

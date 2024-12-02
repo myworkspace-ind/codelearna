@@ -1,5 +1,7 @@
 package mks.myworkspace.learna.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -8,8 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import lombok.extern.slf4j.Slf4j;
+import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ParameterService;
 
@@ -41,6 +45,7 @@ public class MyAdminController extends BaseController {
 	public String loadParametersList(HttpServletRequest request, HttpSession httpSession, Model model) {
 	    httpSession.setAttribute("currentMenu", "Parameters");
 	    model.addAttribute("parameters", parameterService.getAllParams()); 
+	    model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff()); 
 	    return "myadmin";
 	}
 
@@ -54,6 +59,24 @@ public class MyAdminController extends BaseController {
 	public String loadRevenueStatistics(HttpServletRequest request, HttpSession httpSession, Model model) {
 	    httpSession.setAttribute("currentMenu", "RevenueStatistics"); 
 	    // model.addAttribute("courses", courseService.getAllCourses()); 
+	    return "myadmin";
+	}
+	
+	@GetMapping("/search-parameters")
+	public String searchParameters(HttpServletRequest request, HttpSession httpSession, Model model) {
+		String parameter = request.getParameter("parameter");
+		
+	    httpSession.setAttribute("currentMenu", "Parameters");
+	    model.addAttribute("selectedParameter", parameter);
+	    model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff()); 
+	    if( "All".equals(parameter)) {
+		    model.addAttribute("parameters", parameterService.getAllParams()); 
+		   
+	    }else {
+		    model.addAttribute("parameters", parameterService.getListParamsByParamValue(parameter)); 
+
+	    }
+	    
 	    return "myadmin";
 	}
 }
