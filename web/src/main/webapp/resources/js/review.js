@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	handleDeleteReview();
 
 	handleAddReview();
-	
+
 	/*handleEditReview();*/
 
 });
@@ -104,9 +104,9 @@ function handleAddReview() {
 	});
 }
 
-function submitReview(courseId, form) {
+/*function submitReview(courseId, form) {
 	const formData = new FormData(form);
-	fetch(_ctx + `/course/${courseId}/review`, {
+	fetch(`${_ctx}course/${courseId}/review`, {
 		method: 'POST',
 		body: formData
 	})
@@ -118,7 +118,36 @@ function submitReview(courseId, form) {
 			console.error('Error submitting review:', error);
 			showErrorToast('An error occurred. Please try again.');
 		});
+}*/
+
+function submitReview(courseId, form) {
+    const formData = new FormData(form);
+    fetch(`${_ctx}course/${courseId}/review`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+                return response.json();
+            } else {
+                throw new Error('Response is not JSON');
+            }
+        })
+        .then(data => {
+            handleServerResponse(data);
+        })
+        .catch(error => {
+            console.error('Error submitting review:', error);
+            showErrorToast(error.message || 'An error occurred. Please try again.');
+        });
 }
+
+
 
 function handleDeleteReview() {
 	let courseInfor = { courseId: null, reviewId: null };
@@ -142,9 +171,42 @@ function showDeleteModal(courseInfor) {
 }
 
 function deleteReview(courseInfor) {
+    if (courseInfor.courseId && courseInfor.reviewId) {
+        fetch(`${_ctx}course/${courseInfor.courseId}/review/${courseInfor.reviewId}/delete`, {
+            method: 'POST',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Response status:', response.status);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const contentType = response.headers.get('Content-Type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    console.error('Invalid Content-Type:', contentType);
+                    throw new Error('Response is not JSON');
+                }
+            })
+            .then(data => {
+                console.log('Server response:', data);
+                handleServerResponse(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showErrorToast(error.message || 'An error occurred. Please try again later.');
+            });
+    } else {
+        console.error('Invalid course information:', courseInfor);
+        showErrorToast('Invalid course information. Please try again.');
+    }
+}
+
+
+/*function deleteReview(courseInfor) {
 	if (courseInfor.courseId && courseInfor.reviewId) {
-		fetch(_ctx + `/course/${courseInfor.courseId}/review/${courseInfor.reviewId}/delete`, {
-			method: 'DELETE',
+		fetch(`${_ctx}course/${courseInfor.courseId}/review/${courseInfor.reviewId}/delete`, {
+			method: 'POST',
 		})
 			.then(response => response.json())
 			.then(data => {
@@ -155,7 +217,7 @@ function deleteReview(courseInfor) {
 				showErrorToast('An error occurred. Please try again later.');
 			});
 	}
-}
+}*/
 
 
 
