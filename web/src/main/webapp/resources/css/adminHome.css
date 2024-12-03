@@ -153,3 +153,18 @@ header {
 .modal.show .modal-dialog {
     transform: scale(1);
 }
+
+.filter-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.filter-container .form-label {
+    margin-bottom: 0; 
+}
+
+.filter-container .form-select {
+    width: auto; 
+}
+
