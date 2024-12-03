@@ -197,37 +197,47 @@ function filterSubcategories(categoryId) {
 }
 
 function submitCourseForm(event) {
-	event.preventDefault();
+    event.preventDefault();
 
-	const form = document.querySelector('#courseForm');
-	const formData = new FormData(form);
+    const originalPrice = parseFloat(document.getElementById('originalPrice').value);
+    const discountedPrice = parseFloat(document.getElementById('discountedPrice').value);
 
-	fetch(`${_ctx}admin/addCourse`, {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => {
-			if (!response.ok) {
-				return response.json().then(data => {
-					throw new Error(data.message || 'Unknown error occurred');
-				});
-			}
-			return response.json();
-		})
-		.then(data => {
-			if (data.status === "success") {
-				showSuccessToast('Course added successfully!');
-				loadCoursesSection(event);
-			} else {
-				throw new Error(data.message);
-			}
-		})
-		.catch(error => {
-			console.error('Error adding course:', error);
-			document.getElementById('error-text-course').innerText = error.message;
-			document.getElementById('error-message-course').style.display = 'block';
-		});
+    if (originalPrice < 0 || discountedPrice < 0) {
+        document.getElementById('error-text-course').innerText = 'Price values must be greater than or equal to 0.';
+        document.getElementById('error-message-course').style.display = 'block';
+        return; 
+    }
+
+    const form = document.querySelector('#courseForm');
+    const formData = new FormData(form);
+
+    fetch(`${_ctx}admin/addCourse`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Unknown error occurred');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === "success") {
+                showSuccessToast('Course added successfully!');
+                loadCoursesSection(event);
+            } else {
+                throw new Error(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error adding course:', error);
+            document.getElementById('error-text-course').innerText = error.message;
+            document.getElementById('error-message-course').style.display = 'block';
+        });
 }
+
 
 // Add course with Handsontable
 function fetchAddCourseHandsontablePage(event) {
