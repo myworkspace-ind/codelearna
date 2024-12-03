@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import mks.myworkspace.learna.entity.Course;
@@ -41,15 +43,16 @@ public class ReviewController extends BaseController {
 	@Autowired
 	private PaymentService paymentService;
 
-	
 	// Add review
 	@PostMapping("/course/{id}/review")
-	public ResponseEntity<Map<String, Object>> addReview(@PathVariable Long id, @ModelAttribute Review review, Principal principal) {
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> addReview(@PathVariable Long id, @ModelAttribute Review review,
+	        Principal principal, HttpServletRequest request, HttpSession httpSession) {
+	    initSession(request, httpSession);
 	    String userId = getCurrentUserEid();
 	    Map<String, Object> response = new HashMap<>();
 
 	    try {
-	 
 	        review.setCourse(courseService.getCourseById(id));
 	        review.setUserEid(userId);
 
@@ -57,34 +60,42 @@ public class ReviewController extends BaseController {
 
 	        response.put("success", true);
 	        response.put("message", "Review added successfully!");
-	        return ResponseEntity.ok(response);
+
+	        return ResponseEntity.ok()
+	                             .header(HttpHeaders.CONTENT_TYPE, "application/json")
+	                             .body(response);
 
 	    } catch (Exception e) {
-	 
 	        response.put("success", false);
 	        response.put("message", "Failed to add review. Please try again.");
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                             .header(HttpHeaders.CONTENT_TYPE, "application/json")
+	                             .body(response);
 	    }
 	}
 
 
 	// Delete review
-	@DeleteMapping("/course/{courseId}/review/{reviewId}/delete")
+	@PostMapping("/course/{courseId}/review/{reviewId}/delete")
+	@ResponseBody
 	public ResponseEntity<Map<String, Object>> deleteReview(@PathVariable Long courseId, @PathVariable Long reviewId) {
 	    Map<String, Object> response = new HashMap<>();
 
 	    try {
-	
 	        reviewService.deleteReviewById(reviewId, courseId);
 
 	        response.put("success", true);
-	        response.put("message", "Review has been added successfully!");
-	        return ResponseEntity.ok(response);
+	        response.put("message", "Review has been deleted successfully!");
+	        return ResponseEntity.ok()
+	                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+	                .body(response);
 	    } catch (Exception e) {
-	       
 	        response.put("success", false);
 	        response.put("message", "Failed to delete review. Please try again.");
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); 
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .header(HttpHeaders.CONTENT_TYPE, "application/json")
+	                .body(response);
 	    }
 	}
 
