@@ -22,6 +22,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -171,11 +172,20 @@ public class AdminController {
 	}
 
 	@GetMapping("/addCourseHandsontable")
+	@ResponseBody
 	public ModelAndView showAddCourseHandsontablePage() {
 		ModelAndView mav = new ModelAndView("fragments/adminAddCoursesHandsontable :: addCoursesContent");
 		return mav;
 	}
-
+	
+	@ResponseBody
+	@GetMapping("/values")
+	public List<String> getParamValues(@RequestParam String paramKey) {
+		return parameterService.getParamValues(paramKey).stream().map(Parameter::getParamValue) 
+				.collect(Collectors.toList());
+	}
+	
+	
 	@PostMapping("/saveCoursesHandsontable")
 	@Transactional
 	public ResponseEntity<Map<String, String>> saveCoursesHandsontable(
