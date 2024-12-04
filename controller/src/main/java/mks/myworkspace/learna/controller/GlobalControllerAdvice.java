@@ -35,7 +35,6 @@ public class GlobalControllerAdvice {
     	return subcategoryService.getAllSubcategories();
     }
     
-   
     @ModelAttribute("logoUrl")
     public String addLogoUrlToModel() {
         return parameterService.getLogoUrl();

@@ -1,6 +1,8 @@
 package mks.myworkspace.learna.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ReviewService;
+import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 @Slf4j
 @Service
@@ -25,6 +28,10 @@ public class CourseServiceImpl implements CourseService {
 	
 	@Autowired
 	private CourseJdbcRepository courseJdbcRepository;
+	
+	@Autowired
+    private UserLibraryCourseService userLibraryCourseService;
+
 	
 	@Autowired
 	private ParameterRepository parameterRepository;
@@ -68,6 +75,19 @@ public class CourseServiceImpl implements CourseService {
 		}
 		return courses;
 	}
+
+	@Override
+    public List<Course> getCoursesNotInLibrary(String userEid) {
+        List<Course> allCourses = repo.findAll();
+        List<Long> userCourseIds = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid)
+                .stream()
+                .map(userLibraryCourse -> userLibraryCourse.getCourse().getId())
+                .collect(Collectors.toList());
+
+        return allCourses.stream()
+                .filter(course -> !userCourseIds.contains(course.getId()))
+                .collect(Collectors.toList());
+    }
 
 	@Override
 	public List<Course> getRandomCourses() {
