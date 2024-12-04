@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('.course-data').forEach(item => {
         item.addEventListener('click', function() {
             const courseId = this.getAttribute('data-course-id');
-            window.location.href = _ctx + `/course/${courseId}`;
+            window.location.href = _ctx + `course/${courseId}`;
         });
     });
 });
