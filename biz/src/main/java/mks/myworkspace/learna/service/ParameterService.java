@@ -1,6 +1,7 @@
 package mks.myworkspace.learna.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import mks.myworkspace.learna.entity.Parameter;
 
@@ -16,4 +17,5 @@ public interface ParameterService {
 	boolean paramKeyExists(String paramKey);
 	void deleteParameter(Long id);
 	List<String> getParamKeyDiff();
+	List<Parameter> getParamValues(String paramKey);
 }
