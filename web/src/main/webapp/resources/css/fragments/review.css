@@ -1,0 +1,88 @@
+@charset "UTF-8";
+
+.review-item {
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.review-body {
+    margin-left: 60px;
+}
+
+.rating-stars-review span {
+    font-size: 18px;
+    transition: color 0.2s; 
+}
+
+.rating-stars-review .empty-star {
+    color: #c0c0c0; /
+}
+
+.rating-stars-review {
+    color: #ff8040;
+}
+
+
+
+
+.review-item img {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.btn-sm {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+}
+
+/* Adjusting the layout */
+.review-item .review-header h6 {
+    font-weight: bold;
+}
+
+.review-item .review-header small {
+    display: block;
+    color: gray;
+}
+
+.review-item .review-body p {
+    font-size: 0.95rem;
+    color: #333;
+}
+
+
+.modal .form-label {
+	font-weight: bold;
+}
+
+.modal .btn-close {
+	margin-left: auto;
+}
+
+
+
+
+.rating-stars .star {
+    cursor: pointer;
+    color: #ddd;
+    font-size: 24px;
+    transition: color 0.2s;
+}
+
+.rating-stars .star:hover,
+.rating-stars .star.checked {
+    color: #ff8040; 
+}
+
+.rating-stars .star:hover ~ .star {
+    color: #ddd;
+}

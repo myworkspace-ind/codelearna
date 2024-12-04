@@ -4,8 +4,8 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!--  SakaiProxy -->
- 	<bean id="mks.assistant.codelearna.logic.SakaiProxy"
-    	class="mks.assistant.codelearna.logic.SakaiProxyImpl"
+ 	<bean id="mks.myworkspace.learna.logic.SakaiProxy"
+    	class="mks.myworkspace.learna.logic.SakaiProxyImpl"
         init-method="init">
         <!-- API injection -->
         <property name="securityService" ref="org.sakaiproject.authz.api.SecurityService" />
@@ -19,8 +19,8 @@
 	</bean>
 	
 	<!-- ProjectLogic -->
-	<bean id="mks.assistant.codelearna.logic.ProjectLogic"
-    	class="mks.assistant.codelearna.logic.ProjectLogicImpl"
+	<bean id="mks.myworkspace.learna.logic.ProjectLogic"
+    	class="mks.myworkspace.learna.logic.ProjectLogicImpl"
     	init-method="init" />
 	
 
