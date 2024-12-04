@@ -21,10 +21,8 @@ public class Parameter {
 	@Column(name = "param_value", nullable = false)
 	private String paramValue;
 
-	
 	@Column(name = "seqno")
 	private Integer seqno;
-	
 
 	@Column(name = "description")
 	private String description;

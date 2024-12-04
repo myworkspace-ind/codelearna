@@ -5,4 +5,5 @@ import java.math.BigDecimal;
 public interface PaymentService {
     Double getBalance(String userEid);
     boolean payForCourse(String userEid, Long courseId);
+    public String processPayment(String orderCode, String userEid);
 }
