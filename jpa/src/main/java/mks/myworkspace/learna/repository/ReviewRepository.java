@@ -13,7 +13,7 @@ import mks.myworkspace.learna.entity.Review;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-//	List<Review> findByCourseId(Long courseId);
+	List<Review> findAllByCourseId(Long courseId);
 	Page<Review> findByCourseId(Long courseId, Pageable pageable);
 	
 	@Query("SELECT r.ratingStar FROM Review r WHERE r.course.id = :courseId")

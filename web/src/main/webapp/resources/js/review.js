@@ -195,7 +195,6 @@ function loadEditReviewForm(reviewId, courseId) {
 	fetch(`${_ctx}course/${courseId}/review/edit/${reviewId}`)
 		.then(response => response.text())
 		.then(html => {
-			// Kiểm tra và thêm hoặc thay thế phần tử modal
 			let editReviewModal = document.getElementById('editReviewModal');
 			if (!editReviewModal) {
 				document.body.insertAdjacentHTML('beforeend', html);
@@ -203,14 +202,11 @@ function loadEditReviewForm(reviewId, courseId) {
 				editReviewModal.outerHTML = html;
 			}
 
-			// Hiển thị modal và khởi tạo form
 			editReviewModal = new bootstrap.Modal(document.getElementById('editReviewModal'));
 			editReviewModal.show();
 
-			// Khởi tạo form review
 			initializeReviewForm('#editReviewForm');
 
-			// Gắn sự kiện submit cho form
 			document.getElementById('editReviewForm').addEventListener('submit', function(event) {
 				event.preventDefault();
 				submitEditReviewForm(event, reviewId);
@@ -263,3 +259,6 @@ function submitEditReviewForm(event, reviewId) {
 			showErrorToast(error.message || 'An error occurred. Please try again later.');
 		});
 }
+
+
+
