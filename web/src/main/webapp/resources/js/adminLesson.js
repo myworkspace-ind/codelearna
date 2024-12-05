@@ -40,47 +40,53 @@ function initializeAddLessonForm() {
 }
 
 function submitLessonForm(event) {
-	event.preventDefault();
+    event.preventDefault();
 
-	const form = event.target;
-	const formData = new FormData(form);
-	const courseId = form.getAttribute('data-course-id');
+    const form = event.target;
+    const formData = new FormData(form);
+    const courseId = form.getAttribute('data-course-id');
 
-	// Basic form validation
-	const title = formData.get('title');
-	if (!title || title.trim() === '') {
-		showErrorToast('Please enter a lesson title');
-		return;
-	}
+    // Basic form validation
+    const title = formData.get('title');
+    if (!title || title.trim() === '') {
+        showErrorToast('Please enter a lesson title');
+        return;
+    }
 
-	fetch(form.action, {
-		method: 'POST',
-		body: formData,
-		headers: {
-			'Accept': 'application/json'
-		}
-	})
-		.then(response => {
-			if (!response.ok) {
-				return response.json().then(data => Promise.reject(data));
-			}
-			return response.json();
-		})
-		.then(data => {
-			if (data.status === 'success') {
-				showSuccessToast(data.message || 'Lesson added successfully!');
-				if (data.courseId) {
-					loadCourseLessons(data.courseId);
-				}
-			} else {
-				throw new Error(data.message || 'Failed to add lesson');
-			}
-		})
-		.catch(error => {
-			console.error('Error adding lesson:', error);
-			showErrorToast(error.message || 'An error occurred while adding the lesson');
-		});
+    // Set default status to 'INACTIVE' if not provided
+    if (!formData.has('status') || formData.get('status').trim() === '') {
+        formData.append('status', 'INACTIVE');
+    }
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Lesson added successfully!');
+            if (data.courseId) {
+                loadCourseLessons(data.courseId);
+            }
+        } else {
+            throw new Error(data.message || 'Failed to add lesson');
+        }
+    })
+    .catch(error => {
+        console.error('Error adding lesson:', error);
+        showErrorToast(error.message || 'An error occurred while adding the lesson');
+    });
 }
+
 
 function loadEditLessonForm(lessonId) {
 	fetch(`${_ctx}admin/lessons/edit/${lessonId}`)
@@ -186,6 +192,58 @@ function showLessonDeleteConfirmModal(lessonId, courseId) {
 
 	modal.show();
 }
+
+
+function toggleLessonStatus(lessonId, courseId) {
+    fetch(`${_ctx}admin/lessons/toggleLessonStatus/${lessonId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ courseId: courseId, lessonId: lessonId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+			showSuccessToast(data.message || 'Lesson toggle Status successfully');
+			const targetCourseId = data.courseId || courseId;
+			loadCourseLessons(targetCourseId);
+			const statusChangeModel = bootstrap.Modal.getInstance(document.getElementById('statusChangeModal'));
+			if (statusChangeModel) {
+				statusChangeModel.hide();
+			}
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("An error occurred while toggling lesson status.");
+    });
+}
+function showStatusChangeModal(lessonId, courseId, currentStatus) {
+    // Kiểm tra phần tử modal có tồn tại hay không
+    const modalElement = document.getElementById('statusChangeModal');
+    if (!modalElement) {
+        console.error("Modal element not found.");
+        return;
+    }
+
+    // Khởi tạo modal của Bootstrap
+    const modal = new bootstrap.Modal(modalElement);
+
+
+    document.getElementById('confirmStatusChangeBtn').dataset.lessonId = lessonId;
+    document.getElementById('confirmStatusChangeBtn').dataset.courseId = courseId;
+    document.getElementById('confirmStatusChangeBtn').dataset.currentStatus = currentStatus;
+	
+	document.getElementById('confirmStatusChangeBtn').addEventListener('click', () => {
+			toggleLessonStatus(lessonId, courseId);
+		});
+    // Hiển thị modal
+    modal.show();
+}
+
 
 let hotLessons;
 

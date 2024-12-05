@@ -1,7 +1,7 @@
 
 import { initializePagination } from './pagination.js';
 import { showSuccessToast, showErrorToast } from './toast.js';
-
+import {showSpinnerLoading, showBarLoading, hideAllLoading} from './loading.js'
 
 window.initializePagination = initializePagination;
 window.showSuccessToast = showSuccessToast;
@@ -24,3 +24,8 @@ document.querySelectorAll('.sidebar nav a').forEach(link => {
         this.classList.add('active');
     });
 })
+
+window.showSpinnerLoading = showSpinnerLoading;
+window.showBarLoading = showBarLoading;
+window.hideAllLoading = hideAllLoading;
+

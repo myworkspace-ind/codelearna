@@ -311,6 +311,40 @@ public class AdminController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
+	@PostMapping("/courses/toggleCourseStatus/{id}") 
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> toggleCourseStatus(@PathVariable("id") Long id,
+	        @ModelAttribute("course") Course course) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			Course existingCourse = courseService.getCourseById(id);
+			if (existingCourse == null) {
+				response.put("status", "error");
+				response.put("message", "Course not found");
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			//Long courseId = existingLesson.getCourse().getId();
+	        if ("ACTIVE".equals(existingCourse.getStatus())) {
+	        	existingCourse.setStatus("INACTIVE");
+	        } else {
+	        	existingCourse.setStatus("ACTIVE");
+	        }
+	        
+	   
+	         courseService.saveCourse(existingCourse);
+			response.put("status", "success");
+			response.put("message", "Course has been toggle Course Status successfully");
+			//response.put("courseId", courseId.toString());
+			return ResponseEntity.ok(response);
+			
+		} catch (Exception e) {
+			log.error("Error deleting lesson: ", e);
+			response.put("status", "error");
+			response.put("message", "An error occurred while trying to toggleLessonStatus the course: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
 
 	@GetMapping("/courses/edit/{id}")
 	public ModelAndView showEditCourseForm(@PathVariable("id") Long id) {
@@ -425,40 +459,46 @@ public class AdminController {
 	@PostMapping("/courses/{courseId}/lessons/add")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> addLesson(@PathVariable("courseId") Long courseId,
-			@ModelAttribute("lesson") Lesson lesson) {
-		Map<String, String> response = new HashMap<>();
+	        @ModelAttribute("lesson") Lesson lesson) {
+	    Map<String, String> response = new HashMap<>();
 
-		try {
-			// Validate course existence
-			Course course = courseService.getCourseById(courseId);
-			if (course == null) {
-				response.put("status", "error");
-				response.put("message", "Course not found");
-				return ResponseEntity.badRequest().body(response);
-			}
+	    try {
+	        // Validate course existence
+	        Course course = courseService.getCourseById(courseId);
+	        if (course == null) {
+	            response.put("status", "error");
+	            response.put("message", "Course not found");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
-			// Validate lesson data
-			if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
-				response.put("status", "error");
-				response.put("message", "Lesson title is required");
-				return ResponseEntity.badRequest().body(response);
-			}
+	        // Validate lesson data
+	        if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
+	            response.put("status", "error");
+	            response.put("message", "Lesson title is required");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
-			lesson.setCourse(course);
-			lessonService.saveLesson(lesson);
+	        // Set default status to INACTIVE if not set
+	        if (lesson.getStatus() == null || lesson.getStatus().isEmpty()) {
+	            lesson.setStatus("INACTIVE");
+	        }
 
-			response.put("status", "success");
-			response.put("message", "Lesson added successfully");
-			response.put("courseId", courseId.toString());
-			return ResponseEntity.ok(response);
+	        lesson.setCourse(course);
+	        lessonService.saveLesson(lesson);
 
-		} catch (Exception e) {
-			log.error("Error adding lesson: ", e);
-			response.put("status", "error");
-			response.put("message", "Error adding lesson: " + e.getMessage());
-			return ResponseEntity.badRequest().body(response);
-		}
+	        response.put("status", "success");
+	        response.put("message", "Lesson added successfully");
+	        response.put("courseId", courseId.toString());
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        log.error("Error adding lesson: ", e);
+	        response.put("status", "error");
+	        response.put("message", "Error adding lesson: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
+
 
 	@GetMapping("/lessons/edit/{id}")
 	public ModelAndView showEditLessonForm(@PathVariable("id") Long lessonId) {
@@ -566,7 +606,7 @@ public class AdminController {
 	    }
 	}
 
-	@PostMapping("/lessons/delete/{id}") // Chuyển từ DeleteMapping sang PostMapping
+	@PostMapping("/lessons/delete/{id}") 
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> deleteLesson(@PathVariable("id") Long id) {
 		Map<String, String> response = new HashMap<>();
@@ -590,6 +630,42 @@ public class AdminController {
 			log.error("Error deleting lesson: ", e);
 			response.put("status", "error");
 			response.put("message", "An error occurred while trying to delete the lesson: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+
+
+	@PostMapping("/lessons/toggleLessonStatus/{id}") 
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> toggleLessonStatus(@PathVariable("id") Long lessonId,
+			@ModelAttribute("lesson") Lesson lesson) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			Lesson existingLesson = playService.getLessonById(lessonId);
+			if (existingLesson == null) {
+				response.put("status", "error");
+				response.put("message", "Lesson not found");
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			Long courseId = existingLesson.getCourse().getId();
+	        if ("ACTIVE".equals(existingLesson.getStatus())) {
+	        	existingLesson.setStatus("INACTIVE");
+	        } else {
+	        	existingLesson.setStatus("ACTIVE");
+	        }
+	        
+	   
+	         lessonService.saveLesson(existingLesson);
+			response.put("status", "success");
+			response.put("message", "Lesson has been toggleLessonStatus successfully");
+			response.put("courseId", courseId.toString());
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			log.error("Error deleting lesson: ", e);
+			response.put("status", "error");
+			response.put("message", "An error occurred while trying to toggleLessonStatus the lesson: " + e.getMessage());
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
