@@ -1,5 +1,29 @@
 <div th:fragment="addCourseContent">
 	<div class="container mt-5">
+		<div class="overlay" id="overlay"></div>
+		<!-- Popup content -->
+		<div class="popup" id="popup">
+			<h1>Certificate Editor</h1>
+			<div class="certificate" id="certificate">
+				<h1>CODELEARN A</h1>
+				<p>CHỨNG NHẬN</p>
+				<p class="name" contenteditable="true">NGUYỄN VĂN A</p>
+				<p>Đã hoàn thành khóa học</p>
+				<p class="course" id="popup-course-name" contenteditable="true"></p>
+				<p class="date" contenteditable="true">Ngày hoàn thành:
+					dd/mm/yyyy</p>
+				<p class="serial" contenteditable="true">Số hiệu chứng nhận: #</p>
+				<div class="qr" id="qr-container" onclick="triggerQRUpload()">
+					<span>Mã QR</span>
+				</div>
+				<input type="file" id="qr-upload" accept="image/*"
+					onchange="updateQR()">
+			</div>
+			<div class="buttons">
+				<button class="save" onclick="downloadPDF()">Tải hình ảnh</button>
+				<button class="close-btn" onclick="closePopup()">Close</button>
+			</div>
+		</div>
 		<h1 class="mb-4 fw-bolder">Add New Course</h1>
 
 		<!-- Error Message Display -->
@@ -79,8 +103,9 @@
 				<input type="checkbox" class="form-check-input" id="isFree" name="isFree"> 
 				<label class="form-check-label" for="isFree">Is Free Course</label>
 			</div>
-
-			<!-- Submit and Cancel Buttons -->
+			<div class="mb-3 form-check">
+				<button type="button"  class="btn btn-secondary" onclick="showPopup()">Show Certificate</button>
+			</div>
 			<button type="submit" class="btn btn-primary">Add Course</button>
 			<button type="button" class="btn btn-secondary" onclick="loadCoursesSection(event)">Cancel</button>
 		</form>

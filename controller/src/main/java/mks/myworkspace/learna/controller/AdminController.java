@@ -79,6 +79,13 @@ public class AdminController {
 		mav.addObject("courses", courseService.getAllCourses());
 		return mav;
 	}
+	
+	@GetMapping("/createCertificate")
+	public ModelAndView loadCreateCertificate() {
+		ModelAndView mav = new ModelAndView("fragments/adminCreateCertificate :: certificateContent");
+		mav.addObject("courses", courseService.getAllCourses());
+		return mav;
+	}
 
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {

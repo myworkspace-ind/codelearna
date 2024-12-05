@@ -1,0 +1,24 @@
+<div th:fragment="certificateContent">
+	<div class="container">
+		<div class="certificate" id="certificate">
+			<h1>CODELEARN A</h1>
+			<p>CHỨNG NHẬN</p>
+			<p class="name" contenteditable="true">NGUYỄN VĂN A</p>
+			<p>Đã hoàn thành khóa học</p>
+			<p class="course" contenteditable="true">"TÊN KHÓA HỌC"</p>
+			<p class="date" contenteditable="true">Ngày hoàn thành:
+				dd/mm/yyyy</p>
+			<p class="serial" contenteditable="true">Số hiệu chứng nhận: #</p>
+			<div class="qr" id="qr-container" onclick="triggerQRUpload()">
+				<span>Mã QR</span>
+			</div>
+			<input type="file" id="qr-upload" accept="image/*"
+				onchange="updateQR()">
+		</div>
+
+		<div class="buttons">
+			<button class="save" onclick="downloadPDF()">Tải hình ảnh</button>
+			<button type="button" class="btn btn-secondary" onclick="goBack()">Cancel</button>
+		</div>
+	</div>
+</div>
