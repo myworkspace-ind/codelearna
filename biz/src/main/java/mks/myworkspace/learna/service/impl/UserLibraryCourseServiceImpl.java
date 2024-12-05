@@ -3,6 +3,8 @@ package mks.myworkspace.learna.service.impl;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.UserLibraryCourse;
 import mks.myworkspace.learna.repository.CourseRepository;
+import mks.myworkspace.learna.repository.LessonRepository;
+import mks.myworkspace.learna.repository.LessonTrackingRepository;
 import mks.myworkspace.learna.repository.UserLibraryCourseRepository;
 import mks.myworkspace.learna.repository.UserLibraryCourseJdbcRepository;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
@@ -18,7 +20,12 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
     private final UserLibraryCourseRepository userLibraryCourseRepository;
     private final UserLibraryCourseJdbcRepository userLibraryCourseJdbcRepository;
     private final CourseRepository courseRepository;
-
+    @Autowired
+    private  LessonRepository lessonRepository;
+    @Autowired
+    private LessonTrackingRepository lessonTrackingRepository;
+    
+    
     @Autowired
     public UserLibraryCourseServiceImpl(UserLibraryCourseRepository userLibraryCourseRepository,
                                         UserLibraryCourseJdbcRepository userLibraryCourseJdbcRepository,
@@ -70,5 +77,30 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
     @Override
     public boolean isCoursePurchased(String userEid, Long courseId) {
         return userLibraryCourseRepository.findByUserEidAndCourseId(userEid, courseId) != null;
+    }
+    @Override
+    public boolean isCourseCompleted(String userEid, Long courseId) {
+        // Lấy tất cả các bài học của khóa học
+        Long totalLessons = lessonTrackingRepository.countLessonsByCourseId(courseId);
+
+        // Lấy số lượng bài học user đã hoàn thành
+        Long completedLessons = lessonTrackingRepository.countByUserEidAndCourseId(userEid, courseId);
+
+        return totalLessons != null && totalLessons.equals(completedLessons);
+    }
+    
+    @Override
+    @Transactional
+    public void updateCourseProgressStatus(String userEid, Long courseId) {
+        // Tổng số bài học trong khóa học
+        Long totalLessons = lessonRepository.countLessonsByCourseIdAndStatusActive(courseId);
+
+        // Số bài học đã hoàn thành của người dùng
+        Long completedLessons = lessonTrackingRepository.countCompletedLessonsByUserAndCourse(userEid, courseId);
+
+        if (totalLessons != null && completedLessons != null && totalLessons.equals(completedLessons)) {
+            // Cập nhật trạng thái thành COMPLETE
+            userLibraryCourseRepository.updateProgressStatusToComplete(userEid, courseId);
+        }
     }
 }

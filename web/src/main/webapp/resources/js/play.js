@@ -19,7 +19,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const lessons = Array.from(document.querySelectorAll('.video-list-content .vid'));
     let currentLessonIndex = 0;
+	function convertToEmbeddableUrl(url) {
+	       // Check if it's a YouTube URL
+	       const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+	       const match = url.match(youtubeRegex);
 
+	       if (match) {
+	           // YouTube URL
+	           const videoId = match[1];
+	           return `https://www.youtube.com/embed/${videoId}`;
+	       }
+
+	       // If not a YouTube URL, return the original URL
+	       return url;
+	   }
     function generatePlayURL(courseId, lessonId) {
         if (IS_SAKAI_ENVIRONMENT) {
             return `${_ctx}play/${courseId}?lessonId=${lessonId}`;
@@ -106,14 +119,42 @@ document.addEventListener('DOMContentLoaded', function() {
 	                '&endpoint=' + encode(endPoint) + 
 	                '&auth=' + encode(auth) + 
 	                '&activity_id=' + encode(activityId);
-
-
-	    var iframeHTML = `<iframe src="${courseUrl}?${params}" width="100%" height="900px" frameborder="0" allowfullscreen></iframe>`;
 	    
+	    const embeddableUrl = convertToEmbeddableUrl(courseUrl);
+	    var iframeHTML = `<iframe src="${embeddableUrl}?${params}" width="100%" height="900px" frameborder="0" allowfullscreen></iframe>`;
 
 	    const courseDiv = document.getElementById("course");
 	    if (courseDiv) {
 	        courseDiv.innerHTML = iframeHTML;
+
+	        // Get course and lesson IDs from the current lesson
+	        const currentLesson = lessons[currentLessonIndex];
+	        const courseId = currentLesson.getAttribute('data-course-id');
+	        const lessonId = currentLesson.getAttribute('data-lesson-id');
+
+	        // Send tracking data to the server
+	        fetch(`${_ctx}api/lesson-tracking`, {
+	            method: 'POST',
+	            headers: {
+	                'Content-Type': 'application/json'
+	            },
+	            body: JSON.stringify({
+	                userEid: userEid,
+	                courseId: courseId,
+	                lessonId: lessonId,
+	                courseUrl: courseUrl,
+	                activityId: activityId
+	            })
+	        })
+	        .then(response => {
+	            if (!response.ok) {
+	                throw new Error('Failed to save lesson tracking');
+	            }
+	            console.log('Lesson tracking saved successfully');
+	        })
+	        .catch(error => {
+	            console.error('Error saving lesson tracking:', error);
+	        });
 	    } else {
 	        console.error("Element with id 'course' not found");
 	    }

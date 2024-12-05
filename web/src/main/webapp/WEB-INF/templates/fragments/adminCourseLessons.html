@@ -12,6 +12,10 @@
 				th:data-course-id="${course.id}"
 				th:onclick="'fetchAddLessonHandsontablePage(event, this.dataset.courseId)'">
 				Add Lessons with Handsontable</button>
+			 <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletedLessonsModal">
+        <i class="fas fa-trash-alt"></i> Deleted Lessons
+    </button>
+				
 		</div>
 		<div id="lessonsContainer">
 			<div class="table-responsive">
@@ -22,6 +26,7 @@
 							<th style="width: 5%;">Lesson Number</th>
 							<th style="width: 25%;">Lesson Title</th>
 							<th style="width: 35%;">Video URL</th>
+							<th style="width: 20%;">ActivityId</th>
 							<th style="width: 15%;">Created Date</th>
 							<th style="width: 10%;">Status</th>
 							<th style="width: 20%;">Action</th>
@@ -34,6 +39,7 @@
 							<td th:text="${lesson.title}"></td>
 							<td><a th:href="${lesson.videoUrl}" target="_blank"
 								th:text="${lesson.videoUrl}"></a></td>
+							<td th:text="${lesson.activityId}"></td>
 							<td
 								th:text="${#dates.format(lesson.createdDate, 'dd-MM-yyyy HH:mm')}"></td>
 							<td th:text="${lesson.status}"></td>
@@ -114,6 +120,38 @@
 				</div>
 			</div>
 		</div>
+<div class="modal fade" id="deletedLessonsModal" tabindex="-1" aria-labelledby="deletedLessonsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletedLessonsModalLabel">Deleted Lessons</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Lesson Title</th>
+                                <th>Video URL</th>
+                                <th>ActivityId</th>
+                                <th>Deleted Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deletedLessonsTableBody">
+                            <!-- Dữ liệu sẽ được tải động qua JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 		<nav>
 			<ul class="pagination justify-content-center" id="lessonsPagination"></ul>

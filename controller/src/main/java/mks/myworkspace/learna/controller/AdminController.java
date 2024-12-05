@@ -120,6 +120,9 @@ public class AdminController {
 			response.put("message", "Discount price is required.");
 			return ResponseEntity.badRequest().body(response);
 	    }
+	    if (course.getStatus() == null || course.getStatus().isEmpty()) {
+            course.setStatus("INACTIVE");
+        }
 
 
 	    if (course.getDifficultyLevel() == null || course.getDifficultyLevel().getId() == null) {
@@ -477,6 +480,12 @@ public class AdminController {
 	            response.put("message", "Lesson title is required");
 	            return ResponseEntity.badRequest().body(response);
 	        }
+	        // Set default status to INACTIVE if not set
+	        if (lesson.getActivityId() == null || lesson.getStatus().isEmpty()) {
+	        	response.put("status", "error");
+	            response.put("message", "Lesson activity id is required");
+	            return ResponseEntity.badRequest().body(response);
+	        }
 
 	        // Set default status to INACTIVE if not set
 	        if (lesson.getStatus() == null || lesson.getStatus().isEmpty()) {
@@ -527,7 +536,8 @@ public class AdminController {
 
 			existingLesson.setTitle(lesson.getTitle());
 			existingLesson.setVideoUrl(lesson.getVideoUrl());
-
+			existingLesson.setActivityId(lesson.getActivityId());
+			
 			lessonService.saveLesson(existingLesson);
 
 			response.put("status", "success");

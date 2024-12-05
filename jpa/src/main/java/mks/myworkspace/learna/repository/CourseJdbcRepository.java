@@ -22,7 +22,7 @@ public class CourseJdbcRepository {
         if (course.getId() == null) {
         	String sql = "INSERT INTO learna_course (name, original_price, discounted_price, image_url, description, "
                     + "difficulty_level_id, lesson_type_id, subcategory_id, is_free, created_dte, modified_dte, status) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)";
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
             
@@ -37,7 +37,7 @@ public class CourseJdbcRepository {
                 ps.setLong(paramIndex++, course.getDifficultyLevel().getId());
                 ps.setLong(paramIndex++, course.getLessonType().getId());
                 ps.setLong(paramIndex++, course.getSubcategory().getId());
-                ps.setBoolean(paramIndex, course.getIsFree() != null ? course.getIsFree() : false);
+                ps.setBoolean(paramIndex++, course.getIsFree() != null ? course.getIsFree() : false);
                 ps.setString(paramIndex++, course.getStatus() != null ? course.getStatus() : "ACTIVE"); 
                 return ps;
             }, keyHolder);
@@ -73,7 +73,7 @@ public class CourseJdbcRepository {
         return course;
     }
     public void deleteById(Long id) {
-        String sql = "UPDATE learna_course SET status = 'DELETED', modified_dte = NOW() WHERE id = ?\"";
+        String sql = "UPDATE learna_course SET status = 'DELETED', modified_dte = NOW() WHERE id = ?";
         int rowsAffected = jdbcTemplate.update(sql, id);
         
         if (rowsAffected == 0) {

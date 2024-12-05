@@ -1,246 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Demo: Play an xAPI lesson with iSpring</title>
-    <style>
-        /* Style definitions... */
-        * {
-            padding: 0;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        #upload-container {
-            margin: 20px;
-            text-align: center;
-        }
-        input[type="file"] {
-            margin-top: 10px;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin: 5px 0;
-            padding: 5px;
-            background: #f5f5f5;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #iframe-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 1000;
-        }
-        #preview-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .close-button {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1001;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch qua Proxy</title>
 </head>
 <body>
-    <div id="upload-container">
-        <h2>Upload và Xem File ZIP</h2>
-        <input type="file" id="zip-file" accept=".zip" />
-        <ul id="file-list"></ul>
-    </div>
+    <h1>Dữ liệu bảng</h1>
+    <div id="table-data"></div>
 
-    <div id="iframe-container">
-        <button class="close-button">Đóng</button>
-        <iframe id="preview-iframe" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
     <script>
-        const virtualFS = new Map();
-        let tincanData = null;
+        // Proxy URL
+        const proxy = 'https://cors-anywhere.herokuapp.com/';
+        const url = 'https://mksol.vn/xapi-lrs/DuyHN/course';
 
-        // Mock iSpring environment
-        window.iSpring = {
-            init: function() {
-                console.log("iSpring initialized");
-                return this;
-            },
-            create: function() {
-                console.log("iSpring player created");
-                return {
-                    init: function() { return this; },
-                    on: function() { return this; },
-                    off: function() { return this; },
-                    play: function() { return this; },
-                    pause: function() { return this; }
-                };
-            }
-        };
+        // Fetch qua Proxy
+        fetch(proxy + url)
+            .then(response => response.text())
+            .then(html => {
+                // Tạo DOM ảo
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
 
-        function injectISpringEnvironment(htmlContent) {
-            const ispringScript = `
-                <script>
-                    window.iSpring = {
-                        init: function() {
-                            console.log("iSpring initialized in iframe");
-                            return this;
-                        },
-                        create: function() {
-                            console.log("iSpring player created in iframe");
-                            return {
-                                init: function() { return this; },
-                                on: function() { return this; },
-                                off: function() { return this; },
-                                play: function() { return this; },
-                                pause: function() { return this; }
-                            };
-                        }
-                    };
-
-                    // Intercept resource requests
-                    const originalFetch = window.fetch;
-                    window.fetch = function(url, options) {
-                        window.parent.postMessage({
-                            type: 'getResource',
-                            path: url
-                        }, '*');
-                        return originalFetch(url, options);
-                    };
-                <\/script>
-            `;
-
-            // Add base path for relative URLs
-            const basePath = `
-                <base href="/">
-            `;
-
-            return htmlContent.replace('</head>', `${basePath}${ispringScript}</head>`);
-        }
-
-        document.getElementById('zip-file').addEventListener('change', async function(event) {
-            const file = event.target.files[0];
-            if (!file || !file.name.endsWith('.zip')) {
-                alert('Vui lòng chọn một file ZIP');
-                return;
-            }
-
-            try {
-                const zip = new JSZip();
-                const zipContent = await zip.loadAsync(file);
-                const fileList = document.getElementById('file-list');
-                fileList.innerHTML = '';
-
-                // First load tincan.xml
-                if (zipContent.files['tincan.xml']) {
-                    const tincanContent = await zipContent.files['tincan.xml'].async('text');
-                    virtualFS.set('tincan.xml', tincanContent);
-                    
-                    // Parse tincan.xml
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(tincanContent, "application/xml");
-                    tincanData = {
-                        activities: Array.from(xmlDoc.getElementsByTagName("activity")).map(activity => ({
-                            id: activity.getAttribute("id"),
-                            type: activity.getAttribute("type"),
-                            name: activity.querySelector("name")?.textContent || "",
-                            description: activity.querySelector("description")?.textContent || "",
-                            launch: activity.querySelector("launch")?.textContent || ""
-                        }))
-                    };
+                // Lấy bảng
+                const table = doc.querySelector('table');
+                if (table) {
+                    document.getElementById('table-data').innerHTML = table.outerHTML;
+                } else {
+                    document.getElementById('table-data').textContent = 'Không tìm thấy bảng!';
                 }
-
-                // Then load all other files
-                for (const [relativePath, zipEntry] of Object.entries(zipContent.files)) {
-                    if (!zipEntry.dir) {
-                        let content;
-                        if (relativePath.match(/\.(png|jpg|gif|mp3|mp4|woff|ttf|cur)$/i)) {
-                            content = await zipEntry.async('blob');
-                        } else {
-                            content = await zipEntry.async('text');
-                            
-                            // If it's lms.js, store it specially
-                            if (relativePath === 'res/lms.js') {
-                                virtualFS.set('lms.js', content);
-                            }
-                        }
-                        virtualFS.set(relativePath, content);
-
-                        const li = document.createElement('li');
-                        li.textContent = relativePath;
-
-                        if (relativePath === 'res/index.html') {
-                            const openButton = document.createElement('button');
-                            openButton.textContent = "Mở";
-                            openButton.onclick = () => showPreview(relativePath);
-                            li.appendChild(openButton);
-                        }
-
-                        fileList.appendChild(li);
-                    }
-                }
-
-                console.log('Loaded files:', Array.from(virtualFS.keys()));
-            } catch (error) {
-                console.error('Error reading ZIP:', error);
-                alert('Có lỗi xảy ra khi đọc file ZIP');
-            }
-        });
-
-        async function showPreview(filePath) {
-            const content = virtualFS.get(filePath);
-            if (!content) {
-                alert('Không tìm thấy file!');
-                return;
-            }
-
-            const iframeContainer = document.getElementById('iframe-container');
-            const iframe = document.getElementById('preview-iframe');
-
-            // Inject iSpring environment and create blob URL
-            const modifiedContent = injectISpringEnvironment(content);
-            const blob = new Blob([modifiedContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-
-            // Setup message handling for resource requests
-            window.addEventListener('message', async function handleMessage(e) {
-                if (e.data?.type === 'getResource') {
-                    const resourcePath = e.data.path.replace(/^\//, '');
-                    const resource = virtualFS.get(resourcePath);
-                    
-                    if (resource) {
-                        const resourceUrl = URL.createObjectURL(
-                            resource instanceof Blob ? resource : new Blob([resource])
-                        );
-                        iframe.contentWindow.postMessage({
-                            type: 'resourceResponse',
-                            path: resourcePath,
-                            url: resourceUrl
-                        }, '*');
-                    }
-                }
+            })
+            .catch(error => {
+                console.error('Lỗi proxy:', error);
+                document.getElementById('table-data').textContent = 'Lỗi khi lấy dữ liệu!';
             });
-
-            iframe.src = url;
-            iframeContainer.style.display = 'block';
-        }
-
-        document.querySelector('.close-button').onclick = function() {
-            const iframeContainer = document.getElementById('iframe-container');
-            const iframe = document.getElementById('preview-iframe');
-            iframeContainer.style.display = 'none';
-            iframe.src = 'about:blank';
-        };
     </script>
 </body>
 </html>
