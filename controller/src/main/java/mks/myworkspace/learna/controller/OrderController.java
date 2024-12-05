@@ -43,6 +43,8 @@ public class OrderController extends BaseController {
                 return "fragments/qr-code-payment";
             } else if ("vnpay".equals(paymentMethod)) {
                 return "redirect:/orders/";
+            } else if ("ewallet".equals(paymentMethod)) {
+                return "forward:/payment/pay?courseId=" + courseId;
             }
             return "redirect:/library";
         }

@@ -141,19 +141,61 @@ function deleteCourse(courseId, modal) {
 			console.error('Error deleting course:', error);
 			showErrorToast(error.message || 'An error occurred while deleting the course');
 		});
-	/*.then(response => {
-		if (response.ok) {
-			modal.hide();
-			showSuccessToast('Course deleted successfully');
-			loadCoursesSection(null);
-		} else {
-			showErrorToast('Failed to delete course');
-		}
-	})
-	.catch(error => {
-		console.error('Error deleting course:', error);
-		showErrorToast('An error occurred while deleting the course');
-	});*/
+}
+
+function toggleCourseStatus(courseId) {
+    showSpinnerLoading(); // Hiển thị spinner khi bắt đầu yêu cầu
+
+    fetch(`${_ctx}admin/courses/toggleCourseStatus/${courseId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ courseId: courseId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideAllLoading(); // Ẩn spinner sau khi nhận được phản hồi
+
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Thay đổi trạng thái khóa học thành công');
+            loadCoursesSection(); // Tải lại danh sách khóa học sau khi thay đổi trạng thái
+
+            const statusChangeModal = bootstrap.Modal.getInstance(document.getElementById('statusChangeModal'));
+            if (statusChangeModal) {
+                statusChangeModal.hide(); // Ẩn modal nếu có
+            }
+        } else {
+            alert('Lỗi: ' + data.message);
+        }
+    })
+    .catch(error => {
+        hideAllLoading(); // Đảm bảo spinner được ẩn ngay cả khi có lỗi
+
+        console.error('Lỗi:', error);
+        alert("Đã xảy ra lỗi trong khi thay đổi trạng thái khóa học.");
+    });
+}
+
+
+function showCourseStatusChangeModal(courseId, currentStatus) {
+
+    const modalElement = document.getElementById('statusChangeModal');
+    if (!modalElement) {
+        console.error("Modal element not found.");
+        return;
+    }
+
+    const modal = new bootstrap.Modal(modalElement);
+
+    document.getElementById('confirmStatusChangeBtn').dataset.courseId = courseId;
+    document.getElementById('confirmStatusChangeBtn').dataset.currentStatus = currentStatus;
+	
+	document.getElementById('confirmStatusChangeBtn').addEventListener('click', () => {
+			toggleCourseStatus(courseId);
+		});
+
+    modal.show();
 }
 function fetchAddCoursePage(event) {
 	if (event) {

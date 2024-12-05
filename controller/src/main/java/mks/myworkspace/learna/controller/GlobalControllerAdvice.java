@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import mks.myworkspace.learna.entity.Category;
 import mks.myworkspace.learna.entity.Subcategory;
@@ -34,10 +36,13 @@ public class GlobalControllerAdvice {
     public List<Subcategory> getSubcategoriesById(){
     	return subcategoryService.getAllSubcategories();
     }
-    
-   
+
     @ModelAttribute("logoUrl")
     public String addLogoUrlToModel() {
-        return parameterService.getLogoUrl();
+    	ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+    	if(attrs != null && "GET".equalsIgnoreCase(attrs.getRequest().getMethod())) {
+    		return parameterService.getLogoUrl();
+    	}
+    	return null;
     }
 }

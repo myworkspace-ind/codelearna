@@ -1,6 +1,6 @@
 <div th:fragment="coursesContent">
 	<div class="container mt-5">
-		<h1 class="mb-4">Course Management</h1>
+		<h1 class="mb-4 fw-bolder">Course Management</h1>
 
 		<!-- Add Course Button -->
 		<div class="d-flex justify-content-end mb-3">
@@ -10,7 +10,7 @@
 				th:onclick="'fetchAddCourseHandsontablePage(event)'"> Add
 				Courses with Handsontable </a>
 		</div>
-
+<div id="loadingContainer"></div>
 		<div id="coursesContainer">
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">
@@ -24,6 +24,7 @@
 							<th>Discounted Price</th>
 							<th>Level</th>
 							<th>Free</th>
+							<th>Status</th>
 							<th>Action</th>
 						</tr>
 					</thead>
@@ -37,14 +38,22 @@
 							<td th:text="${course.originalPrice}"></td>
 							<td th:text="${course.discountedPrice}"></td>
 							<td th:text="${course.difficultyLevel.paramValue}"></td>
-							<td
-								th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
+							<td th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
+							<td th:text="${course.status}"></td>
 							<td>
 								<div class="btn-group" role="group">
 									<a href="#" class="btn btn-primary btn-sm"
 										th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View</a>
 									<a href="#" class="btn btn-warning btn-sm"
 										th:attr="onclick='loadEditCourseForm(' + ${course.id} + '); return false;'">Edit</a>
+									<button type="button" class="btn btn-sm"
+										th:class="${course.status == 'ACTIVE' ? 'btn-secondary' : 'btn-success'}"
+										th:data-course-id="${course.id}"
+										th:data-status="${course.status}"
+										th:onclick="'showCourseStatusChangeModal(this.dataset.courseId, this.dataset.status)'"
+										th:text="${course.status == 'ACTIVE' ? 'Deactivate' : 'Activate'}"
+										th:disabled="${course.status == 'DELETED'}"></button>
+									
 									<a href="#" class="btn btn-danger btn-sm"
 										th:onclick="showDeleteConfirmModal([[${course.id}]])"
 										title="Delete Course"> Delete
@@ -76,6 +85,27 @@
 						<button type="button" class="btn btn-secondary"
 							data-bs-dismiss="modal">Cancel</button>
 						<button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="statusChangeModal" tabindex="-1"
+			aria-labelledby="statusChangeModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="statusChangeModalLabel">Confirm
+							Status Change</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">Are you sure you want to change the
+						status of this course? This action will update its current status.</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-danger"
+							id="confirmStatusChangeBtn">Change Status</button>
 					</div>
 				</div>
 			</div>

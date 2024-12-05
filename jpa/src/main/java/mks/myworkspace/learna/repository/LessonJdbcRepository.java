@@ -19,8 +19,8 @@ public class LessonJdbcRepository {
     public Lesson save(Lesson lesson) {
         if (lesson.getId() == null) {
             // Insert mới
-            String sql = "INSERT INTO learna_lesson (title, video_url, course_id, created_dte, modified_dte) "
-                    + "VALUES (?, ?, ?, NOW(), NOW())";
+            String sql = "INSERT INTO learna_lesson (title, video_url, course_id, created_dte, modified_dte, status) "
+                    + "VALUES (?, ?, ?, NOW(), NOW(), ?)";  // Thêm status khi tạo mới bài học
             
             KeyHolder keyHolder = new GeneratedKeyHolder();
             
@@ -29,7 +29,8 @@ public class LessonJdbcRepository {
                 int paramIndex = 1;
                 ps.setString(paramIndex++, lesson.getTitle());
                 ps.setString(paramIndex++, lesson.getVideoUrl());
-                ps.setLong(paramIndex, lesson.getCourse().getId());
+                ps.setLong(paramIndex++, lesson.getCourse().getId());
+                ps.setString(paramIndex++, lesson.getStatus() != null ? lesson.getStatus() : "ACTIVE");  // Default status = "ACTIVE"
                 return ps;
             }, keyHolder);
             
@@ -39,12 +40,13 @@ public class LessonJdbcRepository {
         } else {
             // Update 
             String sql = "UPDATE learna_lesson SET title = ?, video_url = ?, "
-                    + "course_id = ?, modified_dte = NOW() WHERE id = ?";
+                    + "course_id = ?, modified_dte = NOW(), status = ? WHERE id = ?";
                     
             int rowsAffected = jdbcTemplate.update(sql,
                 lesson.getTitle(),
                 lesson.getVideoUrl(), 
                 lesson.getCourse().getId(),
+                lesson.getStatus(),  // Cập nhật status
                 lesson.getId()
             );
             
@@ -55,8 +57,9 @@ public class LessonJdbcRepository {
         return lesson;
     }
 
+   
     public void deleteById(Long id) {
-        String sql = "DELETE FROM learna_lesson WHERE id = ?";
+        String sql = "UPDATE learna_lesson SET status = 'DELETED', modified_dte = NOW() WHERE id = ?";
         int rowsAffected = jdbcTemplate.update(sql, id);
         
         if (rowsAffected == 0) {
