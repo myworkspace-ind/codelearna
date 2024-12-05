@@ -476,4 +476,3 @@ document.addEventListener('DOMContentLoaded', function() {
 		initializePagination('courses');
 	}
 });
-
