@@ -82,8 +82,7 @@ public class AdminController {
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {
 		ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
-		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValue("difficulty_level");
-		log.info("do kho" + difficultyLevels);
+		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValue("difficulty_level");		
 		List<Parameter> lessonTypes = parameterService.getListParamsByParamValue("lesson_type");
 		mav.addObject("difficultyLevels", difficultyLevels);
 		mav.addObject("lessonTypes", lessonTypes);

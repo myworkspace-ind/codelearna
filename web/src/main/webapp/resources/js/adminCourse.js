@@ -319,7 +319,8 @@ function initializeCourseHandsontable() {
 				{
 					data: 'difficultyLevel',
 					type: 'dropdown',
-					source: ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT', 'MASTER']
+					source: ['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT', 'MASTER'],
+					
 				},
 				{
 					data: 'lessonType',
@@ -346,10 +347,6 @@ function initializeCourseHandsontable() {
 		console.error('Error: Handsontable container not found.');
 	}
 }
-
-
-
-
 function submitCourseData(event) {
     event.preventDefault();
 
