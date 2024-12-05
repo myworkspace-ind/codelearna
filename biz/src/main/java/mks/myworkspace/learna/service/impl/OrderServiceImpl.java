@@ -30,9 +30,9 @@ public class OrderServiceImpl implements OrderService{
     private CourseRepository courseRepository; 
 
     public String generateQrCodeUrl(String orderCode, BigDecimal amount) {
-        String accountNumber = "014028268888";
+        String accountNumber = "0834643661";
         String bankCode = "MB";
-        String template = "compact";
+        String template = "qronly";
         boolean download = false;
 
         return String.format(
@@ -83,7 +83,7 @@ public class OrderServiceImpl implements OrderService{
         String currentDate = dateFormat.format(new Date());
         Random random = new Random();
         int randomNumber = random.nextInt(90000000) + 10000000;
-        return "CLA" + currentDate + randomNumber;
+        return "LA" + currentDate + randomNumber;
     }
 
 
