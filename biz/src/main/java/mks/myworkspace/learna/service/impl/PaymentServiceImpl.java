@@ -57,6 +57,12 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Value("${payment.sepay.apiKey}")
     private String bearerToken;
+    
+    @Value("${payment.vnpay.tmnCode}")
+    private String tmnCode;
+
+    @Value("${payment.vnpay.secretKey}")
+    private String secretKey;
 
     @Override
     public Double getBalance(String userEid) {
@@ -142,53 +148,51 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    //tao url thanh toan vnpay
 	@Override
 	public String generatePaymentUrlVnpay(BigDecimal amount, String orderCode, String urlReturn, String ipAddress) {
 		String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        String vnp_Returnurl1 = "/codelearna-web/payment/vnpay-payment-return";
-        String vnp_TmnCode1 = "MIV49RV3"; // kiểm tra email sau
-        String vnp_HashSecret = "ZUPVJVQA7CL4FN1WMO5T7L4QEYOTES21"; // khi đăng ký Test
-        String vnp_apiUrl = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction";
-
-        String vnp_Version = "2.1.0";
-        String vnp_Command = "pay";
-        String vnp_TxnRef = orderCode;
-        String vnp_TmnCode = vnp_TmnCode1 ;
-        String orderType = "order-type";
+        String vnp_HashSecret = secretKey; // Khóa bí mật (secret key) của VNPAY khi đăng ký dịch vụ thanh toán thử nghiệm
+        String vnp_TmnCode = tmnCode ; 
 
         Map<String, String> vnp_Params = new HashMap<>();
-        vnp_Params.put("vnp_Version", vnp_Version);
-        vnp_Params.put("vnp_Command", vnp_Command);
-        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+        vnp_Params.put("vnp_Version", "2.1.0");// Phiên bản của cổng thanh toán VNPAY
+        vnp_Params.put("vnp_Command", "pay");
+        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);//    // Mã thiết bị (tmnCode) là mã máy chủ của đơn vị cung cấp dịch vụ
         
         BigDecimal vnpAmount = amount.multiply(new BigDecimal(100));
-        vnp_Params.put("vnp_Amount", vnpAmount.toBigInteger().toString());
+        vnp_Params.put("vnp_Amount", vnpAmount.toBigInteger().toString());// Thêm số tiền vào tham số
 
         vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", orderCode);
-        vnp_Params.put("vnp_OrderType", orderType);
+        vnp_Params.put("vnp_TxnRef", orderCode); // Mã giao dịch (txnRef) là mã đơn hàng được truyền vào từ tham số
+        vnp_Params.put("vnp_OrderInfo", orderCode);// Mô tả thông tin đơn hàng
+        vnp_Params.put("vnp_OrderType", "order-type");
+        vnp_Params.put("vnp_Locale", "vn");
 
-        String locate = "vn";
-        vnp_Params.put("vnp_Locale", locate);
-
-        urlReturn += vnp_Returnurl1;
-        vnp_Params.put("vnp_ReturnUrl", urlReturn);
+        urlReturn += "/codelearna-web/payment/vnpay-payment-return";  
+        vnp_Params.put("vnp_ReturnUrl", urlReturn);// URL trả về sau khi thanh toán
         vnp_Params.put("vnp_IpAddr", ipAddress); 
 
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        // Lấy thời gian hiện tại và định dạng theo kiểu "yyyyMMddHHmmss"
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));// Sử dụng múi giờ Việt Nam
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         String vnp_CreateDate = formatter.format(cld.getTime());
-        vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
-
+        vnp_Params.put("vnp_CreateDate", vnp_CreateDate); // Thêm thời gian tạo vào tham số
+        
+        // Thêm thời gian hết hạn của giao dịch (15 phút kể từ thời điểm tạo)
         cld.add(Calendar.MINUTE, 15);
         String vnp_ExpireDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
+        // Tạo danh sách các tham số và sắp xếp chúng theo tên (bắt buộc phải sắp xếp)
         List<String> fieldNames = new ArrayList<>(vnp_Params.keySet());
         Collections.sort(fieldNames);
+        
+        // Chuẩn bị chuỗi để mã hóa (hashData) và query (queryUrl)
         StringBuilder hashData = new StringBuilder();
         StringBuilder query = new StringBuilder();
+        
+        // Duyệt qua các tham số đã sắp xếp và xây dựng query string và chuỗi hash
         Iterator<String> itr = fieldNames.iterator();
         while (itr.hasNext()) {
             String fieldName = itr.next();
@@ -196,7 +200,10 @@ public class PaymentServiceImpl implements PaymentService {
             if (fieldValue != null && fieldValue.length() > 0) {
                 hashData.append(fieldName).append('=');
                 try {
+                	// Mã hóa các giá trị tham số và thêm vào chuỗi hash
                     hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    
+                    // Tạo query string cho URL
                     query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()))
                             .append('=')
                             .append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
@@ -209,62 +216,60 @@ public class PaymentServiceImpl implements PaymentService {
                 }
             }
         }
+        
+        // Tạo URL truy vấn cho cổng thanh toán VNPAY
         String queryUrl = query.toString();
-        String salt = vnp_HashSecret;
-        String vnp_SecureHash = hmacSHA512(salt, hashData.toString());
+        
+        // Tính toán chuỗi bảo mật bằng thuật toán HMAC-SHA512 với khóa bí mật
+        String vnp_SecureHash = hmacSHA512(vnp_HashSecret, hashData.toString());
+        // Thêm giá trị bảo mật vào URL
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+        
         String paymentUrl = vnp_PayUrl + "?" + queryUrl;
         return paymentUrl;
 	}
 	
-	public static String hmacSHA512(final String key, final String data) {
+	//Hàm tính toán mã băm (hash) bằng thuật toán HMAC-SHA512.
+	@Override
+	public String hmacSHA512(final String key, final String data) {
         try {
-
             if (key == null || data == null) {
                 throw new NullPointerException();
             }
+            
+            // Tạo một instance của HMAC-SHA512 từ thư viện Java Cryptography Architecture (JCA).
             final Mac hmac512 = Mac.getInstance("HmacSHA512");
+            
+            // Chuyển đổi khóa bí mật thành mảng byte.
             byte[] hmacKeyBytes = key.getBytes();
+            
+            // Tạo đối tượng SecretKeySpec để gán khóa bí mật với thuật toán HMAC-SHA512.
             final SecretKeySpec secretKey = new SecretKeySpec(hmacKeyBytes, "HmacSHA512");
             hmac512.init(secretKey);
+            
+            // Chuyển đổi dữ liệu đầu vào (data) thành mảng byte với mã hóa UTF-8.
             byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
+            
+            // Tính toán HMAC-SHA512 và trả về kết quả dưới dạng mảng byte.
             byte[] result = hmac512.doFinal(dataBytes);
             StringBuilder sb = new StringBuilder(2 * result.length);
             for (byte b : result) {
-                sb.append(String.format("%02x", b & 0xff));
+                sb.append(String.format("%02x", b & 0xff)); // "%02x" định dạng byte dưới dạng hex.
             }
+            
             return sb.toString();
-
         } catch (Exception ex) {
             return "";
         }
     }
-    
-	 public String hashAllFields(Map fields) {
-		 String vnp_HashSecret = "ZUPVJVQA7CL4FN1WMO5T7L4QEYOTES21";
-	        List fieldNames = new ArrayList(fields.keySet());
-	        Collections.sort(fieldNames);
-	        StringBuilder sb = new StringBuilder();
-	        Iterator itr = fieldNames.iterator();
-	        while (itr.hasNext()) {
-	            String fieldName = (String) itr.next();
-	            String fieldValue = (String) fields.get(fieldName);
-	            if ((fieldValue != null) && (fieldValue.length() > 0)) {
-	                sb.append(fieldName);
-	                sb.append("=");
-	                sb.append(fieldValue);
-	            }
-	            if (itr.hasNext()) {
-	                sb.append("&");
-	            }
-	        }
-	        return hmacSHA512(vnp_HashSecret,sb.toString());
-	}
-	 
+	
+	 //Xử lý phản hồi từ VNPay khi thanh toán hoàn tất
 	@Override
 	public int processReturnVnpay(Map<String, String> fields, String userEid) {
+		// Lấy giá trị chữ ký (secure hash) được trả về từ VNPay
 		String vnp_SecureHash = fields.get("vnp_SecureHash");
-		 // Loại mã băm sử dụng SHA256, HmacSHA512
+
+		//Loại bỏ các trường không cần thiết khỏi Map để tính lại chữ ký
 	    if (fields.containsKey("vnp_SecureHashType")) {
 	        fields.remove("vnp_SecureHashType");
 	    }
@@ -272,20 +277,57 @@ public class PaymentServiceImpl implements PaymentService {
 	        fields.remove("vnp_SecureHash");
 	    }
 	    
+	    //Tìm kiếm thông tin đơn hàng tương ứng
 	    String orderCode = fields.get("vnp_OrderInfo");
 	    Optional<Order> order = orderService.getOrder(orderCode);
 	    
+	    //So sánh chữ ký đã tính toán với chữ ký được trả về từ VNPay
 	    String signValue = hashAllFields(fields);
+	    
+	    //Nếu chữ ký khớp, kiểm tra trạng thái giao dịch từ trường "vnp_TransactionStatus".
         if (signValue.equals(vnp_SecureHash)) {
             if ("00".equals(fields.get("vnp_TransactionStatus"))) {
-            	//cập nhật order, addCourseToLibrary
+            	
+            	// Giao dịch thành công: Cập nhật trạng thái đơn hàng và thêm khóa học 
                 orderService.updateOrderStatus(order.get().getOrderCode(), Order.OrderStatus.COMPLETED);
                 userLibraryCourseService.addCourseToLibrary(userEid, order.get().getCourseId(), UserLibraryCourse.PaymentStatus.PURCHASED, UserLibraryCourse.ProgressStatus.IN_PROGRESS);
                 return 1;
             } else {
+            	
+            	// Trạng thái giao dịch không phải "00", giao dịch thất bại.
                 return 0;
             }
         }
+        
         return -1;
 	}   
+	
+	// Tạo một chuỗi băm (hash) HMAC-SHA512 từ các trường trong map
+	@Override
+	public String hashAllFields(Map fields) {
+		//Lấy danh sách tên các trường (keys) từ bản đồ và đưa vào danh sách.
+	    List fieldNames = new ArrayList(fields.keySet());
+	    Collections.sort(fieldNames);
+	    
+	    //Sử dụng StringBuilder để xây dựng chuỗi đầu vào cho hàm băm.
+	    StringBuilder sb = new StringBuilder();
+	    Iterator itr = fieldNames.iterator();
+	    while (itr.hasNext()) {
+	        String fieldName = (String) itr.next();
+	        String fieldValue = (String) fields.get(fieldName);
+	        
+	        // - Chỉ thêm trường vào chuỗi nếu giá trị không null và không rỗng.
+	        if ((fieldValue != null) && (fieldValue.length() > 0)) {
+	            sb.append(fieldName);
+	            sb.append("=");
+	            sb.append(fieldValue);
+	        }
+	        
+	        // Nếu còn trường tiếp theo, thêm ký tự "&" vào chuỗi.
+	        if (itr.hasNext()) {
+	            sb.append("&");
+	        }
+	    }
+	    return hmacSHA512(secretKey,sb.toString());
+	}
 }
