@@ -30,7 +30,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Override
 	public List<Review> getFilteredReviews(Long courseId, String sortBy) {
-	    List<Review> allReviews = reviewRepository.findAllByCourseId(courseId);
+	    List<Review> allReviews = reviewRepository.findAllByCourseIdOrderByCreatedAtDesc(courseId);
 
 	    if ("rating-desc".equals(sortBy)) {
 	        allReviews = allReviews.stream()
