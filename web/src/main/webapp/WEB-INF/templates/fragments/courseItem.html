@@ -10,12 +10,15 @@
 				onerror="this.onerror=null;this.src='https://lightwidget.com/wp-content/uploads/localhost-file-not-found-480x480.avif';">
 			<h3 th:text="${course.name}" class="course-name" style="text-align: left;"></h3>
 			<p th:text="'for '+ ${#strings.capitalize(course.difficultyLevel.paramValue.toLowerCase())}" class="course-difficulty" style="text-align: left;"></p>
-			<p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}" style="text-decoration: line-through;"></p>
-			<h5 th:if="${course.isFree}" th:text="'Free'"></h5>
-			<h5 th:if="${course.isFree!=true}" th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
+			<p th:if="${course.discountedPrice != course.originalPrice}"
+				th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}" style="text-decoration: line-through;"></p>
+			<h5 th:if="${course.isFree != null and course.isFree}" th:text="'Free'"></h5>
+			<h5 th:if="${course.isFree == null or !course.isFree}"
+				th:text="'₫ ' + ${#numbers.formatDecimal((course.discountedPrice == course.originalPrice ? course.originalPrice : course.discountedPrice), 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
 			<p th:if="${course.averageRating != null}" th:text="'Rating: ' + ${course.averageRating}"></p>
 			<p th:if="${course.averageRating == null}" th:text="'Rating: 0.0'"></p>
 		</div>
 	</div>
+
 </body>
 </html>
