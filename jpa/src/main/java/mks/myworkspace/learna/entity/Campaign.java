@@ -1,6 +1,8 @@
 package mks.myworkspace.learna.entity;
 
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,4 +47,9 @@ public class Campaign {
     @UpdateTimestamp
     @Column(name = "modified_dte")
     private Date modifiedDate;
+
+	public static List<Campaign> getAllCampaigns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

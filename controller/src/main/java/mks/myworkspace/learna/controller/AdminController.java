@@ -1,11 +1,13 @@
 package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Campaign;
 import mks.myworkspace.learna.repository.CourseJdbcRepository;
 import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.entity.Subcategory;
+import mks.myworkspace.learna.service.CampaignService;
 import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
@@ -54,7 +56,8 @@ public class AdminController {
 
 	@Autowired
 	private CourseService courseService;
-
+	@Autowired
+	private CampaignService campaignService;
 	@Autowired
 	private ParameterService parameterService;
 
@@ -77,6 +80,12 @@ public class AdminController {
 		ModelAndView mav = new ModelAndView("fragments/adminListCourse :: coursesContent");
 		mav.addObject("courses", courseService.getAllCourses());
 		return mav;
+	}
+	@GetMapping("/listCampaign")
+	public ModelAndView loadCampaignsFragment() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListCampaign :: campaignsContent");
+	    mav.addObject("campaigns", campaignService.getAllCampaigns());
+	    return mav;
 	}
 
 	@GetMapping("/addCourse")
@@ -720,5 +729,4 @@ public class AdminController {
 		
 		return ResponseEntity.ok(Map.of("status", "success", "message", "Parameter updated successfully"));
 	}
-
 }
