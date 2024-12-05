@@ -118,6 +118,11 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 	
 	@Override
+	public Review getReviewById(Long reviewId) {
+		return reviewRepository.getReviewById(reviewId);
+	}
+	
+	@Override
 	public boolean hasUserReviewedCourse(Long courseId, String userEid) {
 	    return reviewRepository.existsByCourseIdAndUserEid(courseId, userEid);
 	}

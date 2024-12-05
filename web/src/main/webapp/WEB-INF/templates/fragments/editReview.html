@@ -1,0 +1,36 @@
+<div th:fragment="editReviewModal">
+	<div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+					<form id="editReviewForm" th:action="@{/course/{courseId}/review/{reviewId}/edit(courseId=${courseId}, reviewId=${review.id})}"
+						th:object="${review}">
+						<div class="modal-content">
+							<h5 class="m-3">Edit your review</h5>
+							<div class="modal-body">
+								<!-- Rating Stars -->
+								<div class="rating-stars mb-3">
+									<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
+										class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0" required>
+									<small class="rating-error text-danger" style="display: none;">Please select number of stars</small>
+								</div>
+
+								<!-- Review Content -->
+								<div class="mb-3">
+									<textarea class="form-control review-content" name="content" th:text="*{content}" rows="4" maxlength="200" required></textarea>
+									<small class="form-text text-muted char-count">200 characters remaining</small>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<!-- Modal Footer -->
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="submit" form="editReviewForm" class="btn btn-primary">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
