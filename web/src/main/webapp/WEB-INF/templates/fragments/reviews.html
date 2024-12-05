@@ -47,38 +47,10 @@
 						<div th:if="${review.userEid} == ${userEid}" class="d-flex gap-2">
 							<!-- Delete Button -->
 							<button type="button" class="btn btn-danger btn-sm delete-review-btn" th:data-review-id="${review.id}" th:data-course-id="${course.id}">Delete</button>
+							<button type="button" class="btn btn-warning btn-sm" th:data-review-id="${review.id}" th:data-course-id="${course.id}"
+								th:onclick="'loadEditReviewForm(' + ${review.id} + ',' + ${course.id} + ')'">Edit</button>
 
-							<!-- Edit Button -->
-							<button type="button" class="btn btn-secondary btn-sm" th:data-bs-toggle="'modal'" th:data-bs-target="'#editModal-' + ${review.id}">Edit</button>
 						</div>
-
-						<!-- Modal for Editing Review -->
-						<div class="modal fade" th:id="'editModal-' + ${review.id}">
-							<div class="modal-dialog">
-								<form th:action="@{/course/{courseId}/review/{reviewId}/edit(courseId=${course.id}, reviewId=${review.id})}" th:object="${review}"
-									method="post">
-									<div class="modal-content">
-										<h5 class="m-3">Edit your review</h5>
-										<div class="modal-body">
-											<div class="rating-stars mb-3">
-												<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
-													class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0"
-													required> <small class="rating-error text-danger" style="display: none;">Please select number of stars</small>
-											</div>
-											<div class="mb-3">
-												<textarea class="form-control review-content" name="content" th:text="*{content}" rows="4" maxlength="200" required></textarea>
-												<small class="form-text text-muted char-count">200 characters remaining</small>
-											</div>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-											<button type="submit" class="btn btn-primary">Update Review</button>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-
 					</div>
 				</li>
 			</ul>
