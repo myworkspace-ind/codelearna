@@ -36,13 +36,17 @@ public class GlobalControllerAdvice {
     public List<Subcategory> getSubcategoriesById(){
     	return subcategoryService.getAllSubcategories();
     }
-
+    
     @ModelAttribute("logoUrl")
     public String addLogoUrlToModel() {
     	ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-    	if(attrs != null && "GET".equalsIgnoreCase(attrs.getRequest().getMethod())) {
-    		return parameterService.getLogoUrl();
-    	}
-    	return null;
+        if (attrs != null && "GET".equalsIgnoreCase(attrs.getRequest().getMethod())) {
+            return parameterService.getLogoUrl();
+        }
+        return null;
     }
+//    @ModelAttribute("logoUrl")
+//    public String addLogoUrlToModel() {
+//        return parameterService.getLogoUrl();
+//    }
 }
