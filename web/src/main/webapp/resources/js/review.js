@@ -1,4 +1,4 @@
-import { showSuccessToast, showErrorToast } from './toast.js';
+/*import { showSuccessToast, showErrorToast } from './toast.js';
 
 function initializeReviewForm(formSelector) {
 	const form = document.querySelector(formSelector);
@@ -262,3 +262,4 @@ function submitEditReviewForm(event, reviewId) {
 
 
 
+*/

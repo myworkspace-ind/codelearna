@@ -42,7 +42,6 @@ public class OrderController extends BaseController {
                 model.addAttribute("orderAmount", order.getAmount());
                 return "fragments/qr-code-payment";
             } else if ("vnpay".equals(paymentMethod)) {
-            	
             	 request.setAttribute("order", order);
                  return "forward:/payment/vnpay";
             } else if ("ewallet".equals(paymentMethod)) {
