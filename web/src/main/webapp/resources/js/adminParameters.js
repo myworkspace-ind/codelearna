@@ -291,7 +291,7 @@ function initializeFilterKeyListener() {
     const filterKey = document.getElementById('filterKey');
     if (!filterKey) {
         console.warn("Element with ID 'filterKey' not found. Retrying...");
-        setTimeout(initializeFilterKeyListener, 100); // Thử lại sau 100ms nếu filterKey chưa load
+        setTimeout(initializeFilterKeyListener, 100);
         return;
     }
 
@@ -309,13 +309,12 @@ function initializeFilterKeyListener() {
             console.log('Row Parameter Key:', parameterKey);
 
             if (selectedKey === "" || parameterKey === selectedKey) {
-                row.style.display = ""; // Hiển thị dòng
+                row.style.display = "";
             } else {
-                row.style.display = "none"; // Ẩn dòng
+                row.style.display = "none"; 
             }
         });
     });
 }
 
-// Chạy sau khi DOM sẵn sàng
 document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);

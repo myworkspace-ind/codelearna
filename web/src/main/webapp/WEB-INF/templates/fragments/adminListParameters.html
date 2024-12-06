@@ -2,7 +2,7 @@
 	<div class="container mt-5">
 		<h1 class="mb-4 fw-bolder">Parameters Management</h1>
 		<!--Thêm mới filter  -->
-		<label for="filterKey" class="form-label">Filter by Parameter Key:</label>
+		<!-- <label for="filterKey" class="form-label">Filter by Parameter Key:</label> -->
 		<!-- Add Parameters Button -->
 		<div class="d-flex justify-content-end mb-3">
 			<a class="btn btn-success" href="#"
@@ -22,9 +22,9 @@
 	            </option>
 	        </select>
 		   
-		    <label for="parameterValue" class="form-label">Select Parameter Value:</label>
+		   <!--  <label for="parameterValue" class="form-label">Select Parameter Value:</label>
 	        <select id="filterValue" class="form-select" name="parameter">
-	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
+	            Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định
 	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
 	                    th:value="${key}" 
 	                    th:text="${key}" 
@@ -34,7 +34,7 @@
 	        
 	        <label for="parameterSite" class="form-label">Select Site:</label>
 	        <select id="filterSite" class="form-select" name="parameter">
-	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
+	            Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định
 	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
 	                    th:value="${key}" 
 	                    th:text="${key}" 
@@ -44,13 +44,13 @@
 	        
 	        <label for="parameterTool" class="form-label">Select Tool:</label>
 	        <select id="filterTool" class="form-select" name="parameter">
-	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
+	            Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định
 	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
 	                    th:value="${key}" 
 	                    th:text="${key}" 
 	                    th:selected="${iterStat.index == 0 || key == selectedParameter}">
 	            </option>
-	        </select>
+	        </select> -->
 		</div>
 
 
