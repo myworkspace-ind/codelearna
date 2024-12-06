@@ -44,7 +44,7 @@
 									<a href="#" class="btn btn-primary btn-sm"
 										th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View</a>
 									<a href="#" class="btn btn-warning btn-sm"
-										th:attr="onclick='loadEditCourseForm(' + ${course.id} + '); return false;'">Edit</a>
+										th:attr="onclick=' (' + ${course.id} + '); return false;'">Edit</a>
 									<a href="#" class="btn btn-danger btn-sm"
 										th:onclick="showDeleteConfirmModal([[${course.id}]])"
 										title="Delete Course"> Delete
