@@ -36,9 +36,9 @@ public class GlobalControllerAdvice {
     public List<Subcategory> getSubcategoriesById(){
     	return subcategoryService.getAllSubcategories();
     }
+    
     @ModelAttribute("logoUrl")
     public String addLogoUrlToModel() {
-        return parameterService.getLogoUrl();
     	ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attrs != null && "GET".equalsIgnoreCase(attrs.getRequest().getMethod())) {
             return parameterService.getLogoUrl();
