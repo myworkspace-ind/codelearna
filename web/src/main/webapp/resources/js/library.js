@@ -78,3 +78,76 @@ document.getElementById('courseDetailPopup').addEventListener('click', function(
     }
 });
 
+
+document.addEventListener('DOMContentLoaded', function() {
+    const inProgressTab = document.getElementById('in-progress-courses-tab');
+    
+    inProgressTab.addEventListener('shown.bs.tab', function() {
+        const courseItems = document.querySelectorAll('#in-progress-courses .course-data');
+        
+        courseItems.forEach(function(courseItem) {
+            const courseId = courseItem.getAttribute('data-course-id');
+            
+            if (!courseId) {
+                console.error('No course ID found for item');
+                return;
+            }
+            
+            fetch(`${_ctx}library/course/progress?courseId=${courseId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Progress data:', data);
+                    
+                    // Find the appropriate container more flexibly
+                    const cardBody = courseItem.querySelector('.card-body') || 
+                                     courseItem.closest('.card')?.querySelector('.card-body') || 
+                                     courseItem;
+                    
+                    if (!cardBody) {
+                        console.error('Could not find card body for course item');
+                        return;
+                    }
+                    
+                    // Create progress container
+                    const progressDiv = document.createElement('div');
+                    progressDiv.className = 'progress-container';
+                    progressDiv.innerHTML = `
+                        <div class="progress mb-2" style="height: 20px;">
+                            <div class="progress-bar ${getProgressBarClass(data.completionPercentage)}" 
+                                 role="progressbar" 
+                                 style="width: ${data.completionPercentage}%" 
+                                 aria-valuenow="${data.completionPercentage}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                                ${data.completionPercentage}%
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Remove existing progress container
+                    const existingProgressContainer = cardBody.querySelector('.progress-container');
+                    if (existingProgressContainer) {
+                        existingProgressContainer.remove();
+                    }
+                    
+                    // Insert new progress container before the first child
+                    cardBody.insertBefore(progressDiv, cardBody.firstChild);
+                })
+                .catch(error => {
+                    console.error('Error fetching course progress:', error);
+                });
+        });
+    });
+
+    function getProgressBarClass(percentage) {
+        if (percentage < 25) return 'bg-danger';
+        if (percentage < 50) return 'bg-warning';
+        if (percentage < 75) return 'bg-info';
+        return 'bg-success';
+    }
+});

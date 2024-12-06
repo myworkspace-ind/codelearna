@@ -103,4 +103,21 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
             userLibraryCourseRepository.updateProgressStatusToComplete(userEid, courseId);
         }
     }
+    
+    public int calculateCompletionPercentage(String userEid, Long courseId) {
+        // Tổng số bài học trong khóa học
+        Long totalLessons = lessonRepository.countLessonsByCourseIdAndStatusActive(courseId);
+
+        // Số bài học đã hoàn thành của người dùng
+        Long completedLessons = lessonTrackingRepository.countCompletedLessonsByUserAndCourse(userEid, courseId);
+
+        // Tránh chia cho 0
+        if (totalLessons == null || totalLessons == 0) {
+            return 0;
+        }
+
+        // Tính phần trăm hoàn thành
+        return (int) ((completedLessons.doubleValue() / totalLessons.doubleValue()) * 100);
+    }
+
 }

@@ -84,34 +84,33 @@ document.addEventListener('DOMContentLoaded', function() {
 	function generateBasicAuth() {
 	    // Data to encode
 	    const username = userEid;
-	    console.log("Username:", username);
+	
 	    const email = userEmail;
-		console.log("UserEmail:", userEmail);
+		
 	    // String to encode
 	    const valueToEncode = `${username}:${email}`;
-	    console.log("String to encode:", valueToEncode);
+	  
 
 	    // Base64 encoding
 	    const encodedValue = encodeBase64(valueToEncode);
-	    console.log("Base64 encoded value:", encodedValue);
+	 
 
 	    // Create Basic Authorization header
 	    const authHeader = `Basic ${encodedValue}`;
-	    console.log("Authorization Header:", authHeader);
+	 
 
 	    return authHeader;
 	}
 	
 	function openCourse(courseUrl, activityId) {
 	    const auth2 = generateBasicAuth();
-	    console.log(auth2);
-	    console.log("User EID course:", userEid);
+
 
 	    var actor = `{"name":["${userEid}"],"mbox":["${userEmail}"],"objectType":"Agent"}`;
-	    console.log("Actor:", actor);
+	  
 
 	    var endPoint = `https://mksol.vn/xapi-lrs/${userEid}/`;
-	    console.log("Endpoint:", endPoint);
+	 
 
 	    var auth = auth2;
 

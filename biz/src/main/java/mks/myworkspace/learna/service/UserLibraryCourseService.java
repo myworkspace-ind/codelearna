@@ -12,5 +12,5 @@ public interface UserLibraryCourseService {
     boolean isCoursePurchased(String userEid, Long courseId);
     boolean isCourseCompleted(String userEid, Long courseId);
     void updateCourseProgressStatus(String userEid, Long courseId);
-
+    int calculateCompletionPercentage(String userEid, Long courseId);
 }
