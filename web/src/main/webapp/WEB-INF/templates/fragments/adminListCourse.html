@@ -4,10 +4,10 @@
 
 		<!-- Add Course Button -->
 		<div class="d-flex justify-content-end mb-3">
-			<button type="button" class="btn btn-success mx-3"
+			<button type="button" class="btn btn-primary mx-3"
 				onclick="fetchAddCoursePage(event)">Add Course</button>
-			<a class="btn btn-success" href="#"
-				th:onclick="'fetchAddCourseHandsontablePage(event)'"> Add
+			<button type="button" class="btn btn-success"
+				th:onclick="fetchAddCourseHandsontablePage(event)"> Add
 				Courses with Handsontable </a>
 		</div>
 <div id="loadingContainer"></div>
@@ -35,8 +35,8 @@
 								style="max-width: 100px;" /></td>
 							<td th:text="${course.name}"></td>
 							<td th:text="${course.description}"></td>
-							<td th:text="${course.originalPrice}"></td>
-							<td th:text="${course.discountedPrice}"></td>
+							<td th:text="${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}" ></td>
+							<td th:text="${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
 							<td th:text="${course.difficultyLevel.paramValue}"></td>
 							<td th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
 							<td th:text="${course.status}"></td>
