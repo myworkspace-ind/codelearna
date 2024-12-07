@@ -18,12 +18,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -424,7 +428,42 @@ public class AdminController {
 	        return ResponseEntity.badRequest().body(response);
 	    }
 	}
+	@GetMapping("/listDeletedCourse")
+	public ModelAndView showDeletedCourses() {
+	    List<Course> courses = courseService.getAllCourses();
+	    ModelAndView mav = new ModelAndView("fragments/adminListDeletedCourse :: deletedCourseModal");
+	    // Initialize with empty list if null
+	    mav.addObject("courses", courses != null ? courses : new ArrayList<>());
+	    return mav;
+	}
+	@PostMapping("/courses/restoreCourse/{id}") 
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> restoreCourse(@PathVariable("id") Long id,
+	        @ModelAttribute("course") Course course) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			Course existingCourse = courseService.getCourseById(id);
+			if (existingCourse == null) {
+				response.put("status", "error");
+				response.put("message", "Course not found");
+				return ResponseEntity.badRequest().body(response);
+			}
 
+	        existingCourse.setStatus("INACTIVE");
+	        courseService.saveCourse(existingCourse);
+			response.put("status", "success");
+			response.put("message", "Course has been restore successfully");
+			//response.put("courseId", courseId.toString());
+			return ResponseEntity.ok(response);
+			
+		} catch (Exception e) {
+			log.error("Error deleting lesson: ", e);
+			response.put("status", "error");
+			response.put("message", "An error occurred while trying to restore the course: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+	
 	@GetMapping("/courses/{id}/lessons")
 	public ModelAndView showLessonsByCourse(@PathVariable("id") Long courseId) {
 		Course course = courseService.getCourseById(courseId);
@@ -440,7 +479,57 @@ public class AdminController {
 		mav.addObject("lessons", lessons);
 		return mav;
 	}
+	@GetMapping("/courses/{id}/deletedLessons")
+	public ModelAndView showDeletedLessonOfCourse(@PathVariable("id") Long courseId) {
+		Course course = courseService.getCourseById(courseId);
+		List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
 
+		/*
+		 * if (lessons == null || lessons.isEmpty()) { return new
+		 * ModelAndView("redirect:/admin/listCourse"); }
+		 */
+		if (course == null) {
+
+			return new ModelAndView("redirect:/admin/listCourse");
+		}
+		ModelAndView mav = new ModelAndView("fragments/adminListDeletedLesson :: deletedLessonModal");
+		mav.addObject("course", course);
+		mav.addObject("lessons", lessons);
+		return mav;
+	}
+	@PostMapping("/lessons/restore/{id}") 
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> restoreLesson(@PathVariable("id") Long lessonId,
+			@ModelAttribute("lesson") Lesson lesson) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			Lesson existingLesson = playService.getLessonById(lessonId);
+			if (existingLesson == null) {
+				response.put("status", "error");
+				response.put("message", "Lesson not found");
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			Long courseId = existingLesson.getCourse().getId();
+	        
+	        existingLesson.setStatus("INACTIVE");
+	      
+	        
+	   
+	         lessonService.saveLesson(existingLesson);
+			response.put("status", "success");
+			response.put("message", "Lesson has been restore successfully");
+			response.put("courseId", courseId.toString());
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			log.error("Error deleting lesson: ", e);
+			response.put("status", "error");
+			response.put("message", "An error occurred while trying to restore the lesson: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+	
 	@GetMapping("/courses/{id}/lessons/add")
 	public ModelAndView showAddLessonForm(@PathVariable("id") Long courseId) {
 		ModelAndView mav = new ModelAndView("fragments/adminAddLesson :: addLessonForm");
@@ -595,10 +684,18 @@ public class AdminController {
 	                response.put("message", "Lesson title cannot be empty");
 	                return ResponseEntity.badRequest().body(response);
 	            }
+	            String activityId = (String) lessonMap.get("activityId");
+	            if (activityId == null || activityId.trim().isEmpty()) {
+	                response.put("status", "error");
+	                response.put("message", "Lesson activityId cannot be empty");
+	                return ResponseEntity.badRequest().body(response);
+	            }
+	            
 
 	            Lesson lesson = new Lesson();
 	            lesson.setTitle(title);
 	            lesson.setVideoUrl((String) lessonMap.get("videoUrl"));
+	            lesson.setActivityId(activityId);
 	            lesson.setCourse(course);
 	            lessonService.saveLesson(lesson);
 	            log.info("Saved lesson: {}", lesson.getTitle());

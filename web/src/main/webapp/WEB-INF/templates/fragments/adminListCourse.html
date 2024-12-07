@@ -9,8 +9,12 @@
 			<a class="btn btn-success" href="#"
 				th:onclick="'fetchAddCourseHandsontablePage(event)'"> Add
 				Courses with Handsontable </a>
+			<button type="button" class="btn btn-outline-danger btn-sm"
+				th:onclick="'loadDeletedCoursesModal()'">
+				<i class="fas fa-trash-alt"></i> Deleted Course
+			</button>
 		</div>
-<div id="loadingContainer"></div>
+		<div id="loadingContainer"></div>
 		<div id="coursesContainer">
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">
@@ -38,7 +42,8 @@
 							<td th:text="${course.originalPrice}"></td>
 							<td th:text="${course.discountedPrice}"></td>
 							<td th:text="${course.difficultyLevel.paramValue}"></td>
-							<td th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
+							<td
+								th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
 							<td th:text="${course.status}"></td>
 							<td>
 								<div class="btn-group" role="group">
@@ -53,11 +58,10 @@
 										th:onclick="'showCourseStatusChangeModal(this.dataset.courseId, this.dataset.status)'"
 										th:text="${course.status == 'ACTIVE' ? 'Deactivate' : 'Activate'}"
 										th:disabled="${course.status == 'DELETED'}"></button>
-									
+
 									<a href="#" class="btn btn-danger btn-sm"
 										th:onclick="showDeleteConfirmModal([[${course.id}]])"
-										title="Delete Course"> Delete
-									</a>
+										title="Delete Course"> Delete </a>
 								</div>
 							</td>
 						</tr>

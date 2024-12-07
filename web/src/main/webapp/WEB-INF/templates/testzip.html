@@ -1,39 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fetch qua Proxy</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Customization</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #f9f9f9;
+    }
+    .controls {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    input[type="text"], input[type="file"], input[type="submit"] {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .dynamic-content {
+      position: relative;
+      max-width: 950px;
+      max-height: 721px;
+    }
+    .dynamic-content img {
+      width: 100%;
+      height: auto;
+    }
+    #display_name {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 36px;
+      font-weight: bold;
+      color: #E1BA61;
+      text-align: center;
+      white-space: nowrap;
+    }
+    #course_name {
+      position: absolute;
+      top: 58%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      font-weight: bold;
+      color: #E1BA61;
+      text-align: center;
+      white-space: nowrap;
+    }
+    #issue_date {
+      position: absolute;
+      top: 75%;
+      left: 73%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      color: #E1BA61;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <h1>Dữ liệu bảng</h1>
-    <div id="table-data"></div>
+  <div class="controls">
+    <input type="file" id="background" accept="image/*" onchange="uploadBackground()" />
+    <input type="text" placeholder="Your name" id="name" onchange="updateName()" />
+    <input type="text" placeholder="Course name" id="course-name" onchange="updateCourseName()" />
+    <input type="text" placeholder="Issue date" id="issue-date" onchange="updateIssueDate()" />
+    <input type="submit" value="Submit" onclick="submitDetails()" />
+    <input type="submit" value="Download as PDF" onclick="downloadPDF()" />
+  </div>
 
-    <script>
-        // Proxy URL
-        const proxy = 'https://cors-anywhere.herokuapp.com/';
-        const url = 'https://mksol.vn/xapi-lrs/DuyHN/course';
+  <div class="dynamic-content" id="certificate">
+    <img id="background_img" src="https://i.imgur.com/fLjLZrZ.png" alt="Certificate Background">
+    <h1 id="display_name">Your name here</h1>
+    <h2 id="course_name">Course name here</h2>
+    <h3 id="issue_date">Issue date here</h3>
+  </div>
 
-        // Fetch qua Proxy
-        fetch(proxy + url)
-            .then(response => response.text())
-            .then(html => {
-                // Tạo DOM ảo
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
+  <script>
+    // Hàm upload và hiển thị nền mới
+    function uploadBackground() {
+      const fileInput = document.getElementById('background');
+      const imgElement = document.getElementById('background_img');
 
-                // Lấy bảng
-                const table = doc.querySelector('table');
-                if (table) {
-                    document.getElementById('table-data').innerHTML = table.outerHTML;
-                } else {
-                    document.getElementById('table-data').textContent = 'Không tìm thấy bảng!';
-                }
-            })
-            .catch(error => {
-                console.error('Lỗi proxy:', error);
-                document.getElementById('table-data').textContent = 'Lỗi khi lấy dữ liệu!';
-            });
-    </script>
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imgElement.src = e.target.result;
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
+
+    // Hàm cập nhật tên
+    function updateName() {
+      const nameInput = document.getElementById('name');
+      const nameElement = document.getElementById('display_name');
+      nameElement.textContent = nameInput.value;
+    }
+
+    // Hàm cập nhật tên khóa học
+    function updateCourseName() {
+      const courseNameInput = document.getElementById('course-name');
+      const courseNameElement = document.getElementById('course_name');
+      courseNameElement.textContent = courseNameInput.value;
+    }
+
+    // Hàm cập nhật ngày cấp
+    function updateIssueDate() {
+      const issueDateInput = document.getElementById('issue-date');
+      const issueDateElement = document.getElementById('issue_date');
+      issueDateElement.textContent = issueDateInput.value;
+    }
+
+    // Hàm tải xuống chứng chỉ dưới dạng PDF
+    async function downloadPDF() {
+      const certificate = document.getElementById('certificate');
+
+      // Chuyển đổi DOM sang hình ảnh
+      const dataUrl = await domtoimage.toPng(certificate);
+
+      // Khởi tạo jsPDF
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [certificate.offsetWidth, certificate.offsetHeight] });
+
+      // Thêm hình ảnh vào PDF
+      pdf.addImage(dataUrl, 'PNG', 0, 0, certificate.offsetWidth, certificate.offsetHeight);
+
+      // Lưu file PDF
+      pdf.save('certificate.pdf');
+    }
+  </script>
 </body>
 </html>

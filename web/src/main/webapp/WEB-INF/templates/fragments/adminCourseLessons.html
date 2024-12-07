@@ -12,10 +12,11 @@
 				th:data-course-id="${course.id}"
 				th:onclick="'fetchAddLessonHandsontablePage(event, this.dataset.courseId)'">
 				Add Lessons with Handsontable</button>
-			 <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletedLessonsModal">
-        <i class="fas fa-trash-alt"></i> Deleted Lessons
-    </button>
-				
+			<button type="button" class="btn btn-outline-danger btn-sm"
+				th:data-course-id="${course.id}"
+				th:onclick="'loadDeletedLessonsModal('+${course.id}+')'">
+				<i class="fas fa-trash-alt"></i> Deleted Lessons
+			</button>
 		</div>
 		<div id="lessonsContainer">
 			<div class="table-responsive">
@@ -33,7 +34,9 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="lesson, iterStat : ${lessons}">
+						<!-- Changed to filter only ACTIVE and INACTIVE lessons -->
+						<tr
+							th:each="lesson, iterStat : ${lessons.?[status == 'ACTIVE' or status == 'INACTIVE']}">
 							<th th:text="${iterStat.count}"></th>
 							<td th:text="${iterStat.index + 1}"></td>
 							<td th:text="${lesson.title}"></td>
@@ -45,13 +48,13 @@
 							<td th:text="${lesson.status}"></td>
 							<td>
 								<div class="btn-group" role="group">
-									<!-- Nút Edit -->
+									<!-- Edit Button -->
 									<button type="button" class="btn btn-warning btn-sm"
 										th:data-lesson-id="${lesson.id}"
 										th:onclick="'loadEditLessonForm(this.dataset.lessonId)'"
 										th:disabled="${lesson.status == 'DELETED'}">Edit</button>
 
-									<!-- Nút Activate/Deactivate -->
+									<!-- Activate/Deactivate Button -->
 									<button type="button" class="btn btn-sm"
 										th:class="${lesson.status == 'ACTIVE' ? 'btn-secondary' : 'btn-success'}"
 										th:data-lesson-id="${lesson.id}"
@@ -61,7 +64,7 @@
 										th:text="${lesson.status == 'ACTIVE' ? 'Deactivate' : 'Activate'}"
 										th:disabled="${lesson.status == 'DELETED'}"></button>
 
-									<!-- Nút Delete -->
+									<!-- Delete Button -->
 									<button type="button" class="btn btn-danger btn-sm"
 										th:data-lesson-id="${lesson.id}"
 										th:data-course-id="${course.id}"
@@ -69,7 +72,6 @@
 										th:disabled="${lesson.status == 'DELETED'}">Delete</button>
 								</div>
 							</td>
-
 						</tr>
 					</tbody>
 				</table>
@@ -120,39 +122,6 @@
 				</div>
 			</div>
 		</div>
-<div class="modal fade" id="deletedLessonsModal" tabindex="-1" aria-labelledby="deletedLessonsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deletedLessonsModalLabel">Deleted Lessons</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Lesson Title</th>
-                                <th>Video URL</th>
-                                <th>ActivityId</th>
-                                <th>Deleted Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="deletedLessonsTableBody">
-                            <!-- Dữ liệu sẽ được tải động qua JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 		<nav>
 			<ul class="pagination justify-content-center" id="lessonsPagination"></ul>
 		</nav>

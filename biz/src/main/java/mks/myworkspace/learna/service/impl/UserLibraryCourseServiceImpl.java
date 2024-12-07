@@ -100,7 +100,7 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
 
         if (totalLessons != null && completedLessons != null && totalLessons.equals(completedLessons)) {
             // Cập nhật trạng thái thành COMPLETE
-            userLibraryCourseRepository.updateProgressStatusToComplete(userEid, courseId);
+        	userLibraryCourseJdbcRepository.updateProgressStatusToComplete(userEid, courseId);
         }
     }
     

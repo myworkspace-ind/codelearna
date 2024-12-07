@@ -20,10 +20,10 @@ public interface UserLibraryCourseRepository extends JpaRepository<UserLibraryCo
 
     UserLibraryCourse findByUserEidAndCourseId(String userEid, Long courseId);
     
-    @Modifying
-    @Transactional
-    @Query("UPDATE UserLibraryCourse ulc SET ulc.progressStatus = 'COMPLETE' WHERE ulc.userEid = :userEid AND ulc.course.id = :courseId")
-    void updateProgressStatusToComplete(@Param("userEid") String userEid, @Param("courseId") Long courseId);
+//    @Modifying
+//    @Transactional
+//    @Query("UPDATE UserLibraryCourse ulc SET ulc.progressStatus = 'COMPLETE' WHERE ulc.userEid = :userEid AND ulc.course.id = :courseId")
+//    void updateProgressStatusToComplete(@Param("userEid") String userEid, @Param("courseId") Long courseId);
 
 
 
