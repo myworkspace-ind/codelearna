@@ -99,6 +99,10 @@ public class CourseServiceImpl implements CourseService {
 		return repo.findBySubcategoryId(subcategoryId);
 	}
 
+	@Override
+	public int getTotalCourses() {
+        return repo.getTotalCourses();
+    }
 //	@Override
 //	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, String averageRating) {
 //	    Sort sort = Sort.by(sortField);

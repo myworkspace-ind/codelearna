@@ -10,4 +10,7 @@ public interface UserLibraryCourseService {
     List<UserLibraryCourse> getUserLibraryCoursesByUserEid(String userEId);
     void addCourseToLibrary(String userId, Long courseId, UserLibraryCourse.PaymentStatus paymentStatus, UserLibraryCourse.ProgressStatus progressStatus);
     boolean isCoursePurchased(String userEid, Long courseId);
+    boolean isCourseCompleted(String userEid, Long courseId);
+    void updateCourseProgressStatus(String userEid, Long courseId);
+    int calculateCompletionPercentage(String userEid, Long courseId);
 }
