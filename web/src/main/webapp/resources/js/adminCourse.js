@@ -141,19 +141,61 @@ function deleteCourse(courseId, modal) {
 			console.error('Error deleting course:', error);
 			showErrorToast(error.message || 'An error occurred while deleting the course');
 		});
-	/*.then(response => {
-		if (response.ok) {
-			modal.hide();
-			showSuccessToast('Course deleted successfully');
-			loadCoursesSection(null);
-		} else {
-			showErrorToast('Failed to delete course');
-		}
-	})
-	.catch(error => {
-		console.error('Error deleting course:', error);
-		showErrorToast('An error occurred while deleting the course');
-	});*/
+}
+
+function toggleCourseStatus(courseId) {
+    showSpinnerLoading(); // Hiển thị spinner khi bắt đầu yêu cầu
+
+    fetch(`${_ctx}admin/courses/toggleCourseStatus/${courseId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ courseId: courseId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideAllLoading(); // Ẩn spinner sau khi nhận được phản hồi
+
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Thay đổi trạng thái khóa học thành công');
+            loadCoursesSection(); // Tải lại danh sách khóa học sau khi thay đổi trạng thái
+
+            const statusChangeModal = bootstrap.Modal.getInstance(document.getElementById('statusChangeModal'));
+            if (statusChangeModal) {
+                statusChangeModal.hide(); // Ẩn modal nếu có
+            }
+        } else {
+            alert('Lỗi: ' + data.message);
+        }
+    })
+    .catch(error => {
+        hideAllLoading(); // Đảm bảo spinner được ẩn ngay cả khi có lỗi
+
+        console.error('Lỗi:', error);
+        alert("Đã xảy ra lỗi trong khi thay đổi trạng thái khóa học.");
+    });
+}
+
+
+function showCourseStatusChangeModal(courseId, currentStatus) {
+
+    const modalElement = document.getElementById('statusChangeModal');
+    if (!modalElement) {
+        console.error("Modal element not found.");
+        return;
+    }
+
+    const modal = new bootstrap.Modal(modalElement);
+
+    document.getElementById('confirmStatusChangeBtn').dataset.courseId = courseId;
+    document.getElementById('confirmStatusChangeBtn').dataset.currentStatus = currentStatus;
+	
+	document.getElementById('confirmStatusChangeBtn').addEventListener('click', () => {
+			toggleCourseStatus(courseId);
+		});
+
+    modal.show();
 }
 function fetchAddCoursePage(event) {
 	if (event) {
@@ -303,7 +345,7 @@ function handleFileCourse(event) {
 
 
 
-function initializeCourseHandsontable() {
+/*function initializeCourseHandsontable() {
 	const containerHandsontable = document.getElementById('handsontable-container');
 
 	if (containerHandsontable) {
@@ -346,95 +388,270 @@ function initializeCourseHandsontable() {
 		console.error('Error: Handsontable container not found.');
 	}
 }
+*/
+
+function initializeCourseHandsontable() {
+	const containerHandsontable = document.getElementById('handsontable-container');
+
+	if (containerHandsontable) {
+		hot = new Handsontable(containerHandsontable, {
+			data: [],
+			colHeaders: ['Course Name', 'Original Price', 'Discounted Price', 'Image URL', 'Description', 'Difficulty Level', 'Lesson Type', 'Subcategory', 'Is Free'],
+			columns: [
+				{ data: 'name', type: 'text' },
+				{ data: 'originalPrice', type: 'numeric' },
+				{ data: 'discountedPrice', type: 'numeric' },
+				{ data: 'imageUrl', type: 'text' },
+				{ data: 'description', type: 'text' },
+				{
+					data: 'difficultyLevel',
+					type: 'dropdown',
+					source: function(query, process) {
+						fetch(_ctx + `/admin/values?paramKey=difficulty_level`)
+							.then((response) => response.json())
+							.then((data) => {
+								process(data);
+								console.log("Call api successfully")
+							})
+							.catch((error) => {
+								console.error('Error fetching difficulty levels:', error);
+								process([]);
+							});
+					}
+				},
+				{
+					data: 'lessonType',
+					type: 'dropdown',
+					source: function(query, process) {
+						fetch(_ctx + `/admin/values?paramKey=lesson_type`)
+							.then((response) => response.json())
+							.then((data) => {
+								process(data);
+								console.log("Call api successfully")
+							})
+							.catch((error) => {
+								console.error('Error fetching difficulty levels:', error);
+								process([]);
+							});
+					}
+				},
+				{
+					data: 'lessonType',
+					type: 'dropdown',
+					source: function(query, process) {
+						fetch(_ctx + `/admin/values?paramKey=subcategory`)
+							.then((response) => response.json())
+							.then((data) => {
+								process(data);
+								console.log("Call api successfully")
+							})
+							.catch((error) => {
+								console.error('Error fetching difficulty levels:', error);
+								process([]);
+							});
+					}
+				},
+				{ data: 'isFree', type: 'checkbox' }
+			],
+			minRows: 1,
+			rowHeaders: true,
+			contextMenu: true,
+			height: 200,
+			stretchH: 'all',
+			colWidths: [, , , 100],
+			licenseKey: 'non-commercial-and-evaluation'
+		});
+		console.log('Handsontable initialized');
+	} else {
+		console.error('Error: Handsontable container not found.');
+	}
+}
 
 
 
 
 function submitCourseData(event) {
-    event.preventDefault();
+	event.preventDefault();
 
-    const rawData = hot.getData();
-    console.log("rawData:", rawData);
+	const rawData = hot.getData();
+	console.log("rawData:", rawData);
 
-    const courseData = rawData
-        .map(row => ({
-            name: row[0] !== null ? row[0].toString() : null,
-            // Chuyển đổi giá trị sang số thập phân
-            originalPrice: row[1] !== null ? parseFloat(row[1]).toFixed(2) : null,
-            discountedPrice: row[2] !== null ? parseFloat(row[2]).toFixed(2) : null,
-            imageUrl: row[3] !== null ? row[3].toString() : null,
-            description: row[4] !== null ? row[4].toString() : null,
-            difficultyLevel: row[5] !== null ? row[5].toString() : null,
-            lessonType: row[6] !== null ? row[6].toString() : null,
-            subcategory: row[7] !== null ? row[7].toString() : null,
-            isFree: row[8] !== null ? row[8].toString().toUpperCase() === 'TRUE' : false
-        }))
-        .filter(row => row.name !== null || row.originalPrice !== null || 
-                row.discountedPrice !== null || row.difficultyLevel !== null ||
-                row.lessonType !== null || row.subcategory !== null);
+	const courseData = rawData
+		.map(row => ({
+			name: row[0] !== null ? row[0].toString() : null,
+			// Chuyển đổi giá trị sang số thập phân
+			originalPrice: row[1] !== null ? parseFloat(row[1]).toFixed(2) : null,
+			discountedPrice: row[2] !== null ? parseFloat(row[2]).toFixed(2) : null,
+			imageUrl: row[3] !== null ? row[3].toString() : null,
+			description: row[4] !== null ? row[4].toString() : null,
+			difficultyLevel: row[5] !== null ? row[5].toString() : null,
+			lessonType: row[6] !== null ? row[6].toString() : null,
+			subcategory: row[7] !== null ? row[7].toString() : null,
+			isFree: row[8] !== null ? row[8].toString().toUpperCase() === 'TRUE' : false
+		}))
+		.filter(row => row.name !== null || row.originalPrice !== null ||
+			row.discountedPrice !== null || row.difficultyLevel !== null ||
+			row.lessonType !== null || row.subcategory !== null);
 
-    if (courseData.length === 0) {
-        document.getElementById('error-text-course-handsontable').innerText = 'Please enter at least one course value.';
-        document.getElementById('error-message-course-handsontable').style.display = 'block';
+	if (courseData.length === 0) {
+		document.getElementById('error-text-course-handsontable').innerText = 'Please enter at least one course value.';
+		document.getElementById('error-message-course-handsontable').style.display = 'block';
+		return;
+	}
+
+	// Validate numeric values
+	for (const course of courseData) {
+		if (course.originalPrice && isNaN(parseFloat(course.originalPrice))) {
+			showErrorToast('Original price must be a valid number');
+			return;
+		}
+		if (course.discountedPrice && isNaN(parseFloat(course.discountedPrice))) {
+			showErrorToast('Discounted price must be a valid number');
+			return;
+		}
+	}
+
+	console.log('Course data to be sent:', courseData);
+
+	fetch(`${_ctx}admin/saveCoursesHandsontable`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json'
+		},
+		body: JSON.stringify(courseData)
+	})
+		.then(response => {
+			const contentType = response.headers.get('content-type');
+			if (contentType && contentType.includes('application/json')) {
+				return response.json().then(data => {
+					if (!response.ok) {
+						throw new Error(data.message || 'Unknown error occurred');
+					}
+					return data;
+				});
+			} else {
+				return response.text().then(text => {
+					throw new Error(`Server returned non-JSON response: ${text}`);
+				});
+			}
+		})
+		.then(data => {
+			if (data.status === "success") {
+				showSuccessToast(data.message || 'Course added successfully');
+				loadCoursesSection(event);
+			} else {
+				throw new Error(data.message || 'Unknown error occurred');
+			}
+		})
+		.catch(error => {
+			console.error('Error adding courses:', error);
+			document.getElementById('error-text-course-handsontable').innerText = error.message;
+			document.getElementById('error-message-course-handsontable').style.display = 'block';
+		});
+}
+
+function loadDeletedCoursesModal() {
+    fetch(`${_ctx}admin/listDeletedCourse`)
+        .then(response => response.text())
+        .then(html => {
+            // Ensure the modal ID matches exactly
+            if (!document.getElementById('deletedCoursesModal')) {
+                document.body.insertAdjacentHTML('beforeend', html);
+            } else {
+                document.getElementById('deletedCoursesModal').outerHTML = html;
+            }
+            
+            // Safely create the modal
+            var deletedCourseModal = document.getElementById('deletedCoursesModal');
+            if (deletedCourseModal) {
+                deletedCourseModal = new bootstrap.Modal(deletedCourseModal);
+                deletedCourseModal.show();
+            } else {
+                console.error("Deleted lessons modal element not found");
+            }
+        })
+        .catch(error => console.error('Error loading deleted lessons modal:', error));
+}
+
+function showCourseRestoreConfirmModal(courseId) {
+    if (!courseId) {
+        console.error('No course ID provided');
+        showErrorToast('Error: Course ID is missing');
         return;
     }
 
-    // Validate numeric values
-    for (const course of courseData) {
-        if (course.originalPrice && isNaN(parseFloat(course.originalPrice))) {
-            showErrorToast('Original price must be a valid number');
-            return;
-        }
-        if (course.discountedPrice && isNaN(parseFloat(course.discountedPrice))) {
-            showErrorToast('Discounted price must be a valid number');
-            return;
-        }
+    const modal = new bootstrap.Modal(document.getElementById('restoreConfirmModal'));
+    const confirmBtn = document.getElementById('confirmRestoreBtn');
+
+    // Remove any existing event listeners to prevent multiple triggers
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    // Store the courseId on the button itself
+    newConfirmBtn.setAttribute('data-course-id', courseId);
+
+    // Add the event listener with the stored courseId
+    newConfirmBtn.addEventListener('click', () => {
+        const storedCourseId = newConfirmBtn.getAttribute('data-course-id');
+        restoreCourse(storedCourseId);
+    });
+
+    modal.show();
+}
+
+function restoreCourse(courseId) {
+    if (!courseId) {
+        console.error('No course ID provided to restore');
+        showErrorToast('Error: Course ID is missing');
+        return;
     }
 
-    console.log('Course data to be sent:', courseData);
-
-    fetch(`${_ctx}admin/saveCoursesHandsontable`, {
+    fetch(`${_ctx}admin/courses/restoreCourse/${courseId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
-        },
-        body: JSON.stringify(courseData)
-    })
-    .then(response => {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return response.json().then(data => {
-                if (!response.ok) {
-                    throw new Error(data.message || 'Unknown error occurred');
-                }
-                return data;
-            });
-        } else {
-            return response.text().then(text => {
-                throw new Error(`Server returned non-JSON response: ${text}`);
-            });
         }
     })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
     .then(data => {
-        if (data.status === "success") {
-            showSuccessToast(data.message || 'Course added successfully');
-            loadCoursesSection(event);
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Course restored successfully');
+            
+            // Close all modals
+            const restoreModal = bootstrap.Modal.getInstance(document.getElementById('restoreConfirmModal'));
+            const deletedCoursesModal = bootstrap.Modal.getInstance(document.getElementById('deletedCoursesModal'));
+            
+            if (restoreModal) restoreModal.hide();
+            if (deletedCoursesModal) deletedCoursesModal.hide();
+            
+            // Remove modal backdrops
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+            
+            // Reload the courses section
+            loadCoursesSection();
         } else {
-            throw new Error(data.message || 'Unknown error occurred');
+            throw new Error(data.message || 'Failed to restore course');
         }
     })
     .catch(error => {
-        console.error('Error adding courses:', error);
-        document.getElementById('error-text-course-handsontable').innerText = error.message;
-        document.getElementById('error-message-course-handsontable').style.display = 'block';
+        console.error('Error restoring course:', error);
+        showErrorToast(error.message || 'An error occurred while restoring the course');
     });
 }
-
 document.addEventListener('DOMContentLoaded', function() {
 	// Kiểm tra xem đang ở trang nào để khởi tạo phân trang phù hợp
 	if (document.getElementById('coursesContainer')) {
 		initializePagination('courses');
 	}
 });
+
+
+
 

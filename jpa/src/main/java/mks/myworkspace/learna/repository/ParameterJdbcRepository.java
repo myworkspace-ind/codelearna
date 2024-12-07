@@ -1,19 +1,27 @@
 package mks.myworkspace.learna.repository;
 
+import java.lang.System.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 import mks.myworkspace.learna.entity.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.interceptor.LoggingCacheErrorHandler;
 import org.springframework.stereotype.Repository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
+@Slf4j
 public class ParameterJdbcRepository {
 	@Autowired
 	private DataSource dataSource;
-
+	
 	public Parameter save(Parameter parameter) {
 	    String sqlInsert = "INSERT INTO learna_parameter (param_key, param_value) VALUES (?, ?)";
 	    String sqlUpdate = "UPDATE learna_parameter SET param_key = ?, param_value = ? WHERE id = ?";
@@ -53,8 +61,6 @@ public class ParameterJdbcRepository {
 	        }
 	    }
 	}
-
-
 	
 	public void deleteById(Long id) {
         String sql = "DELETE FROM learna_parameter WHERE id = ?";
@@ -72,5 +78,55 @@ public class ParameterJdbcRepository {
             e.printStackTrace();
         }
     }
+	
+	public List<String> getParamKeyDiff() {
+		String sql = "SELECT DISTINCT param_key FROM sakai.learna_parameter;";
+		List<String> paramKeys = new ArrayList<>();
+
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			conn = dataSource.getConnection();
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				paramKeys.add(rs.getString("param_key"));
+			}
+		} catch (SQLException e) {
+			log.error("Could not excute " + sql, e);
+		} finally {
+			close(rs);
+			close(ps);
+			close(conn);
+		}
+
+		return paramKeys;
+	}
+
+	private void close(Connection conn) {
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			// Do nothing
+		}
+	}
+
+	private void close(PreparedStatement ps) {
+		try {
+			ps.close();
+		} catch (SQLException e) {
+			// Do nothing
+		}
+	}
+
+	private void close(ResultSet rs) {
+		try {
+			rs.close();
+		} catch (SQLException e) {
+			// Do nothing
+		}
+	}
 
 }

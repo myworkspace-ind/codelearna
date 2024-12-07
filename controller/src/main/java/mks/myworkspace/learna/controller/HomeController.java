@@ -58,7 +58,7 @@ public class HomeController extends BaseController {
         }
         httpSession.setAttribute("userBalance", balance);
 
-        List<Course> courses = courseService.getAllCourses();
+        List<Course> courses = courseService.getCoursesNotInLibrary(userEid);
         mav.addObject("courses", courses);
         
         List<Course> featuredCourses = courseService.getRandomCourses();

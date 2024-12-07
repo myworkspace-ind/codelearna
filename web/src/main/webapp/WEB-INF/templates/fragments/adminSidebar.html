@@ -1,29 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
-    <div th:fragment="sidebar">
-        <div id="sidebar" class="sidebar">
-            <div class="sidebar-header">
-                <h2>WebLoGo</h2>
-            </div>
-            <nav>
-                <a href="#" class="active" data-section="dashboard">
-                    <span class="text">Dashboard</span>
-                </a>
-                <a href="#" data-section="users" onclick="loadParametersManagePage(event)">
-                    <span class="text">Parameters Management</span>
-                </a>
-                <a href="#" data-section="courses" onclick="loadCoursesSection(event)">
-                    <span class="text">Courses Management</span>
-                </a>
-                <a href="#" data-section="revenue">
-                    <span class="text">Revenue Statistics</span>
-                </a>
-            </nav>
-            <a href="#" class="logout">
-                <span class="text">Log Out</span>
-            </a>
-        </div>
-    </div>
+	<div th:fragment="sidebar">
+		<div id="sidebar" class="sidebar">
+			<a class="sidebar-header" th:href="@{/admin}"> <img th:src="${logoUrl}" alt="Site Logo">
+			</a>
+			<nav>
+				<a href="#" data-section="dashboard" onclick="loadDashboard(event)"> <span class="text">Admin Dashboard</span>
+				</a> </a> <a href="#" data-section="users" onclick="loadParametersManagePage(event)"> <span class="text">Parameters Management</span>
+				</a> <a href="#" data-section="courses" onclick="loadCoursesSection(event)"> <span class="text">Courses Management</span>
+				</a> <a href="#" data-section="revenue"> <span class="text">Revenue Statistics</span>
+				</a>
+			</nav>
+		</div>
+	</div>
 </body>
+
 </html>

@@ -1,0 +1,81 @@
+<div th:fragment="deletedLessonModal">
+	<div class="modal fade" id="deletedLessonsModal" tabindex="-1"
+		aria-labelledby="deletedLessonsModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deletedLessonsModalLabel">Deleted
+						Lessons</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Lesson Number</th>
+									<th>Lesson Title</th>
+									<th>Video URL</th>
+									<th>ActivityId</th>
+									<!--  <th>Deleted Date</th> -->
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody id="deletedLessonsTableBody">
+								<!-- Dynamically populated with deleted lessons -->
+								<tr
+									th:each="lesson, iterStat : ${lessons.?[status == 'DELETED']}"
+									th:if="${not #lists.isEmpty(lessons.?[status == 'DELETED'])}">
+									<th th:text="${iterStat.count}"></th>
+									<td th:text="${iterStat.index + 1}"></td>
+									<td th:text="${lesson.title}"></td>
+									<td><a th:href="${lesson.videoUrl}" target="_blank"
+										th:text="${lesson.videoUrl}"></a></td>
+									<td th:text="${lesson.activityId}"></td>
+									<!--     <td th:text="${#dates.format(lesson.deletedDate, 'dd-MM-yyyy HH:mm')}"></td> -->
+									<td>
+										<button type="button" class="btn btn-success btn-sm"
+											th:data-lesson-id="${lesson.id}"
+											th:data-course-id="${course.id}"
+											th:onclick="'showLessonRestoreConfirmModal(' + ${lesson.id} + ', ' + ${course.id} + ')'">
+											Restore</button>
+									</td>
+								</tr>
+								<tr th:if="${#lists.isEmpty(lessons.?[status == 'DELETED'])}">
+									<td colspan="7" class="text-center">No deleted lessons
+										found</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal fade" id="restoreConfirmModal" tabindex="-1"
+					aria-labelledby="restoreConfirmModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="restoreConfirmModalLabel">Confirm
+									Restore</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">Are you sure you want to restore
+								this lesson?</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-success"
+									id="confirmRestoreBtn">Restore</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>

@@ -8,6 +8,7 @@
     <link rel="stylesheet" th:href="@{/resources/css/fragments/courseDetailPopup.css}">
 </head>
 <body>
+	<span id="user_eid" th:text="${userEId}" style="display: none;"></span>
     <!-- Navigation Bar fragment -->
     <th:block th:include="fragments/nav"></th:block>
     
@@ -67,7 +68,7 @@
 
     <!-- Popup chi tiết khóa học -->
     <th:block th:include="fragments/popupDetailCourse"></th:block>
-    
+    <th:block th:include="fragments/popupCertificateDefault"></th:block>
 
     <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/resources/js/library.js}"></script>
