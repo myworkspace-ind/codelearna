@@ -30,7 +30,7 @@
 			<main>
 				<div th:replace="~{fragments/welcome::welcome-section}"></div>
 				<div id="dynamic-content"></div>
-				<th:block th:include="fragments/javascript.html"></th:block>
+				<!-- <th:block th:include="fragments/javascript.html"></th:block> -->
 			</main>
 
 		</div>
@@ -42,5 +42,7 @@
 	<script th:src="@{/resources/js/searchLessonAdmin.js}"></script>
 	<script th:src="@{/resources/js/adminLesson.js}"></script>
 	<script th:src="@{/resources/js/adminParameters.js}"></script>
+	<script th:src="@{/resources/js/adminRevenue.js}"></script>
+	<script th:src="@{/resources/js/revenueFetchData.js}"></script>
 </body>
 </html>
