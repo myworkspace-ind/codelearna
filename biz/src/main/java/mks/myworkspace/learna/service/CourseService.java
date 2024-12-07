@@ -19,4 +19,6 @@ public interface CourseService {
     List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId, String averageRating);
 
     List<Course> getCoursesNotInLibrary(String userEid);
+    
+    int getTotalCourses();
 }

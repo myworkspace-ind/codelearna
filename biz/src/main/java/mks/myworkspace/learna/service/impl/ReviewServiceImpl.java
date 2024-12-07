@@ -1,6 +1,7 @@
 package mks.myworkspace.learna.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,19 +21,38 @@ public class ReviewServiceImpl implements ReviewService {
 
 	@Autowired
 	private ReviewRepository reviewRepository;
-	
+
 	@Autowired
-    private ReviewJdbcRepository reviewJdbcRepository;
+	private ReviewJdbcRepository reviewJdbcRepository;
 
 	@Autowired
 	private CourseRepository repoCourse;
-	
+
 	@Override
-	public Page<Review> getReviewsByCourseId(Long courseId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return reviewRepository.findByCourseId(courseId, pageable);
-    }
-	
+	public List<Review> getFilteredReviews(Long courseId, String sortBy) {
+	    List<Review> allReviews = reviewRepository.findAllByCourseIdOrderByCreatedAtDesc(courseId);
+
+	    if ("rating-desc".equals(sortBy)) {
+	        allReviews = allReviews.stream()
+	                .sorted((r1, r2) -> r2.getRatingStar() - r1.getRatingStar())
+	                .collect(Collectors.toList());
+	    } else if ("rating-asc".equals(sortBy)) {
+	        allReviews = allReviews.stream()
+	                .sorted((r1, r2) -> r1.getRatingStar() - r2.getRatingStar())
+	                .collect(Collectors.toList());
+	    } else if ("date-desc".equals(sortBy)) {
+	        allReviews = allReviews.stream()
+	                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+	                .collect(Collectors.toList());
+	    } else if ("date-asc".equals(sortBy)) {
+	        allReviews = allReviews.stream()
+	                .sorted((r1, r2) -> r1.getCreatedAt().compareTo(r2.getCreatedAt()))
+	                .collect(Collectors.toList());
+	    }
+
+	    return allReviews;
+	}
+
 //	@Override
 //	public List<Review> getReviewsByCourseId(Long courseId) {
 //        return reviewJdbcRepository.findByCourseId(courseId);
@@ -44,25 +64,25 @@ public class ReviewServiceImpl implements ReviewService {
 //		reviewRepository.save(review);
 //		updateAverageRating(courseId);
 //	}
-	
+
 	@Override
-    public void addReview(Review review, Long courseId) {
-        review.setId(null); 
-        reviewJdbcRepository.save(review);
-        updateAverageRating(courseId);
-    }
+	public void addReview(Review review, Long courseId) {
+		review.setId(null);
+		reviewJdbcRepository.save(review);
+		updateAverageRating(courseId);
+	}
 
 //	@Override
 //	public void deleteReviewById(Long reviewId, Long courseId) {
 //		reviewRepository.deleteById(reviewId);
 //		updateAverageRating(courseId);
 //	}
-	
+
 	@Override
-    public void deleteReviewById(Long reviewId, Long courseId) {
-        reviewJdbcRepository.deleteById(reviewId); 
-        updateAverageRating(courseId);
-    }
+	public void deleteReviewById(Long reviewId, Long courseId) {
+		reviewJdbcRepository.deleteById(reviewId);
+		updateAverageRating(courseId);
+	}
 
 //	@Override
 //	public void updateReviewById(Long reviewId, Review review) {
@@ -77,19 +97,18 @@ public class ReviewServiceImpl implements ReviewService {
 //	}
 	@Override
 	public void updateReviewById(Long reviewId, Review review) {
-	    Review existingReview = reviewJdbcRepository.findReviewById(reviewId);
-	    
-	    if (existingReview == null) {
-	        throw new RuntimeException("Review not found");
-	    }
-	    
-	    existingReview.setRatingStar(review.getRatingStar());
-	    existingReview.setContent(review.getContent());
+		Review existingReview = reviewJdbcRepository.findReviewById(reviewId);
 
-	    reviewJdbcRepository.save(existingReview); 
-	    updateAverageRating(existingReview.getCourse().getId());
+		if (existingReview == null) {
+			throw new RuntimeException("Review not found");
+		}
+
+		existingReview.setRatingStar(review.getRatingStar());
+		existingReview.setContent(review.getContent());
+
+		reviewJdbcRepository.save(existingReview);
+		updateAverageRating(existingReview.getCourse().getId());
 	}
-
 
 	@Override
 	public double getAverageRating(Long courseId) {
@@ -116,10 +135,15 @@ public class ReviewServiceImpl implements ReviewService {
 			repoCourse.save(course);
 		}
 	}
-	
+
+	@Override
+	public Review getReviewById(Long reviewId) {
+		return reviewRepository.getReviewById(reviewId);
+	}
+
 	@Override
 	public boolean hasUserReviewedCourse(Long courseId, String userEid) {
-	    return reviewRepository.existsByCourseIdAndUserEid(courseId, userEid);
+		return reviewRepository.existsByCourseIdAndUserEid(courseId, userEid);
 	}
 
 }

@@ -345,7 +345,7 @@ function handleFileCourse(event) {
 
 
 
-function initializeCourseHandsontable() {
+/*function initializeCourseHandsontable() {
 	const containerHandsontable = document.getElementById('handsontable-container');
 
 	if (containerHandsontable) {
@@ -388,89 +388,167 @@ function initializeCourseHandsontable() {
 		console.error('Error: Handsontable container not found.');
 	}
 }
+*/
+
+function initializeCourseHandsontable() {
+	const containerHandsontable = document.getElementById('handsontable-container');
+
+	if (containerHandsontable) {
+		hot = new Handsontable(containerHandsontable, {
+			data: [],
+			colHeaders: ['Course Name', 'Original Price', 'Discounted Price', 'Image URL', 'Description', 'Difficulty Level', 'Lesson Type', 'Subcategory', 'Is Free'],
+			columns: [
+				{ data: 'name', type: 'text' },
+				{ data: 'originalPrice', type: 'numeric' },
+				{ data: 'discountedPrice', type: 'numeric' },
+				{ data: 'imageUrl', type: 'text' },
+				{ data: 'description', type: 'text' },
+				{
+					data: 'difficultyLevel',
+					type: 'dropdown',
+					source: function(query, process) {
+						fetch(_ctx + `/admin/values?paramKey=difficulty_level`)
+							.then((response) => response.json())
+							.then((data) => {
+								process(data);
+								console.log("Call api successfully")
+							})
+							.catch((error) => {
+								console.error('Error fetching difficulty levels:', error);
+								process([]);
+							});
+					}
+				},
+				{
+					data: 'lessonType',
+					type: 'dropdown',
+					source: function(query, process) {
+						fetch(_ctx + `/admin/values?paramKey=lesson_type`)
+							.then((response) => response.json())
+							.then((data) => {
+								process(data);
+								console.log("Call api successfully")
+							})
+							.catch((error) => {
+								console.error('Error fetching difficulty levels:', error);
+								process([]);
+							});
+					}
+				},
+				{
+					data: 'lessonType',
+					type: 'dropdown',
+					source: function(query, process) {
+						fetch(_ctx + `/admin/values?paramKey=subcategory`)
+							.then((response) => response.json())
+							.then((data) => {
+								process(data);
+								console.log("Call api successfully")
+							})
+							.catch((error) => {
+								console.error('Error fetching difficulty levels:', error);
+								process([]);
+							});
+					}
+				},
+				{ data: 'isFree', type: 'checkbox' }
+			],
+			minRows: 1,
+			rowHeaders: true,
+			contextMenu: true,
+			height: 200,
+			stretchH: 'all',
+			colWidths: [, , , 100],
+			licenseKey: 'non-commercial-and-evaluation'
+		});
+		console.log('Handsontable initialized');
+	} else {
+		console.error('Error: Handsontable container not found.');
+	}
+}
 
 
 
 
 function submitCourseData(event) {
-    event.preventDefault();
+	event.preventDefault();
 
-    const rawData = hot.getData();
-    console.log("rawData:", rawData);
+	const rawData = hot.getData();
+	console.log("rawData:", rawData);
 
-    const courseData = rawData
-        .map(row => ({
-            name: row[0] !== null ? row[0].toString() : null,
-            // Chuyển đổi giá trị sang số thập phân
-            originalPrice: row[1] !== null ? parseFloat(row[1]).toFixed(2) : null,
-            discountedPrice: row[2] !== null ? parseFloat(row[2]).toFixed(2) : null,
-            imageUrl: row[3] !== null ? row[3].toString() : null,
-            description: row[4] !== null ? row[4].toString() : null,
-            difficultyLevel: row[5] !== null ? row[5].toString() : null,
-            lessonType: row[6] !== null ? row[6].toString() : null,
-            subcategory: row[7] !== null ? row[7].toString() : null,
-            isFree: row[8] !== null ? row[8].toString().toUpperCase() === 'TRUE' : false
-        }))
-        .filter(row => row.name !== null || row.originalPrice !== null || 
-                row.discountedPrice !== null || row.difficultyLevel !== null ||
-                row.lessonType !== null || row.subcategory !== null);
+	const courseData = rawData
+		.map(row => ({
+			name: row[0] !== null ? row[0].toString() : null,
+			// Chuyển đổi giá trị sang số thập phân
+			originalPrice: row[1] !== null ? parseFloat(row[1]).toFixed(2) : null,
+			discountedPrice: row[2] !== null ? parseFloat(row[2]).toFixed(2) : null,
+			imageUrl: row[3] !== null ? row[3].toString() : null,
+			description: row[4] !== null ? row[4].toString() : null,
+			difficultyLevel: row[5] !== null ? row[5].toString() : null,
+			lessonType: row[6] !== null ? row[6].toString() : null,
+			subcategory: row[7] !== null ? row[7].toString() : null,
+			isFree: row[8] !== null ? row[8].toString().toUpperCase() === 'TRUE' : false
+		}))
+		.filter(row => row.name !== null || row.originalPrice !== null ||
+			row.discountedPrice !== null || row.difficultyLevel !== null ||
+			row.lessonType !== null || row.subcategory !== null);
 
-    if (courseData.length === 0) {
-        document.getElementById('error-text-course-handsontable').innerText = 'Please enter at least one course value.';
-        document.getElementById('error-message-course-handsontable').style.display = 'block';
-        return;
-    }
+	if (courseData.length === 0) {
+		document.getElementById('error-text-course-handsontable').innerText = 'Please enter at least one course value.';
+		document.getElementById('error-message-course-handsontable').style.display = 'block';
+		return;
+	}
 
-    // Validate numeric values
-    for (const course of courseData) {
-        if (course.originalPrice && isNaN(parseFloat(course.originalPrice))) {
-            showErrorToast('Original price must be a valid number');
-            return;
-        }
-        if (course.discountedPrice && isNaN(parseFloat(course.discountedPrice))) {
-            showErrorToast('Discounted price must be a valid number');
-            return;
-        }
-    }
+	// Validate numeric values
+	for (const course of courseData) {
+		if (course.originalPrice && isNaN(parseFloat(course.originalPrice))) {
+			showErrorToast('Original price must be a valid number');
+			return;
+		}
+		if (course.discountedPrice && isNaN(parseFloat(course.discountedPrice))) {
+			showErrorToast('Discounted price must be a valid number');
+			return;
+		}
+	}
 
-    console.log('Course data to be sent:', courseData);
+	console.log('Course data to be sent:', courseData);
 
-    fetch(`${_ctx}admin/saveCoursesHandsontable`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify(courseData)
-    })
-    .then(response => {
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.includes('application/json')) {
-            return response.json().then(data => {
-                if (!response.ok) {
-                    throw new Error(data.message || 'Unknown error occurred');
-                }
-                return data;
-            });
-        } else {
-            return response.text().then(text => {
-                throw new Error(`Server returned non-JSON response: ${text}`);
-            });
-        }
-    })
-    .then(data => {
-        if (data.status === "success") {
-            showSuccessToast(data.message || 'Course added successfully');
-            loadCoursesSection(event);
-        } else {
-            throw new Error(data.message || 'Unknown error occurred');
-        }
-    })
-    .catch(error => {
-        console.error('Error adding courses:', error);
-        document.getElementById('error-text-course-handsontable').innerText = error.message;
-        document.getElementById('error-message-course-handsontable').style.display = 'block';
-    });
+	fetch(`${_ctx}admin/saveCoursesHandsontable`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json'
+		},
+		body: JSON.stringify(courseData)
+	})
+		.then(response => {
+			const contentType = response.headers.get('content-type');
+			if (contentType && contentType.includes('application/json')) {
+				return response.json().then(data => {
+					if (!response.ok) {
+						throw new Error(data.message || 'Unknown error occurred');
+					}
+					return data;
+				});
+			} else {
+				return response.text().then(text => {
+					throw new Error(`Server returned non-JSON response: ${text}`);
+				});
+			}
+		})
+		.then(data => {
+			if (data.status === "success") {
+				showSuccessToast(data.message || 'Course added successfully');
+				loadCoursesSection(event);
+			} else {
+				throw new Error(data.message || 'Unknown error occurred');
+			}
+		})
+		.catch(error => {
+			console.error('Error adding courses:', error);
+			document.getElementById('error-text-course-handsontable').innerText = error.message;
+			document.getElementById('error-message-course-handsontable').style.display = 'block';
+		});
 }
 
 function loadDeletedCoursesModal() {
@@ -573,4 +651,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		initializePagination('courses');
 	}
 });
+
+
+
 

@@ -1,0 +1,39 @@
+<div th:fragment="welcome-section">
+	<div class="welcome-section container-fluid px-4 py-5 bg-light" id="welcomeSection">
+		<div class="row">
+			<div class="col-12">
+				<div class="d-flex justify-content-between align-items-center mb-4">
+					<h1 class="display-6 text-primary fw-bold">Welcome to the Admin Dashboard</h1>
+				</div>
+
+				<div class="card border-0 shadow-lg overflow-hidden">
+					<div class="card-body p-4">
+						<div class="row align-items-center">
+							<div class="col-md-8">
+								<h3 class="text-dark mb-3 fw-semibold">Hello, Administrator</h3>
+								<p class="text-muted lead">Here you can manage courses, view statistics, and configure system settings.</p>
+							</div>
+							<div class="col-md-4">
+								<div class="quick-stats d-flex justify-content-end gap-4">
+									<div class="stat-card text-center bg-white p-3 rounded shadow-sm">
+										<h4 class="text-success display-6 mb-1 fw-bold" th:text="${totalCourses} ?: 0">0</h4>
+										<span class="text-muted small">Total Courses</span>
+									</div>
+									<div class="stat-card text-center bg-white p-3 rounded shadow-sm">
+										<h4 class="text-primary display-6 mb-1 fw-bold" th:text="${totalUsers} ?: 0">0</h4>
+										<span class="text-muted small">Total Users</span>
+									</div>
+									<div class="stat-card text-center bg-white p-3 rounded shadow-sm">
+										<h4 class="text-danger display-6 mb-1 fw-bold" th:text="${totalRevenue} ?: '0 VND'">0 VND</h4>
+										<span class="text-muted small">Total Revenue</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

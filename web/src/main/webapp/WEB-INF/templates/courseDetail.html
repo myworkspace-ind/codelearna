@@ -8,36 +8,10 @@
 <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" th:href="@{/resources/css/courseDetail.css}">
 <link rel="stylesheet" th:href="@{/resources/css/fragments/review.css}">
-<style>
-    .payment-method {
-        border: 2px solid #dee2e6;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .payment-method:hover {
-        border-color: #0d6efd;
-        transform: translateY(-2px);
-    }
-    
-    .payment-method.selected {
-        border-color: #0d6efd;
-        background-color: #f8f9fa;
-    }
-    
-    .payment-method img {
-        width: 60px;
-        height: 60px;
-        object-fit: contain;
-    }
-</style>
 </head>
 
 <body>
-    <th:block th:include="fragments/nav"></th:block>
+	<th:block th:include="fragments/nav"></th:block>
 
 	<div class="container mt-5">
 		<div id="toastContainer"></div>
@@ -46,21 +20,21 @@
 			<h2 th:text="${course.name}">Tên khóa học</h2>
 		</div>
 
-        <!-- Course Body -->
-        <div class="course-body row mt-4">
-            <div class="col-md-8">
-                <!-- Course Image -->
-                <div class="course-image mb-4">
-                    <img th:src="@{${course.imageUrl}}" alt="Course Image">
-                </div>
-            </div>
+		<!-- Course Body -->
+		<div class="course-body row mt-4">
+			<div class="col-md-8">
+				<!-- Course Image -->
+				<div class="course-image mb-4">
+					<img th:src="@{${course.imageUrl}}" alt="Course Image">
+				</div>
+			</div>
 
-            <div class="col-md-4">
-                <!-- Course Description -->
-                <div class="course-description">
-                    <h4>About this course</h4>
-                    <p th:text="${course.description}">Đây là mô tả khóa học.</p>
-                </div>
+			<div class="col-md-4">
+				<!-- Course Description -->
+				<div class="course-description">
+					<h4>About this course</h4>
+					<p th:text="${course.description}">Đây là mô tả khóa học.</p>
+				</div>
 
 				<!-- Course Details -->
 				<div class="course-details mt-4">
@@ -87,98 +61,68 @@
 						</form>
 
 						<!-- Payment Modal -->
-                        <div class="modal fade" id="paymentModal" tabindex="-1"
-                        aria-labelledby="paymentModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="paymentModalLabel">Chọn phương thức thanh toán</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="paymentForm" th:action="@{/orders}" method="POST" onsubmit="return updateFormAction()">
-                                        <input type="hidden" name="courseId" th:value="${course.id}" />
-                                        <div class="payment-method" onclick="selectPayment('vnpay')">
-                                            <div class="d-flex align-items-center">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="paymentMethod"
-                                                        value="vnpay" id="vnpay" required>
-                                                </div>
-                                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp1v7T287-ikP1m7dEUbs2n1SbbLEqkMd1ZA&s" alt="VNPay" class="mx-3">
-                                                <div>
-                                                    <label class="form-check-label fw-bold" for="vnpay">VNPay</label>
-                                                    <p class="mb-0 text-muted">Thanh toán qua VNPay QR</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="payment-method" onclick="selectPayment('transfer')">
-                                            <div class="d-flex align-items-center">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="paymentMethod"
-                                                        value="transfer" id="transfer" required>
-                                                </div>
-                                                <img src="https://as2.ftcdn.net/v2/jpg/05/75/04/69/1000_F_575046954_qW0J1XojpoKKVXsqRBv9EEHxpWbXYXwZ.jpg" alt="Bank Transfer" class="mx-3">
-                                                <div>
-                                                    <label class="form-check-label fw-bold" for="bank">Chuyển khoản ngân
-                                                        hàng</label>
-                                                    <p class="mb-0 text-muted">Chuyển khoản trực tiếp đến tài khoản ngân
-                                                        hàng</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="payment-method" onclick="selectPayment('ewallet')">
-                                            <div class="d-flex align-items-center">
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="paymentMethod"
-                                                        value="ewallet" id="ewallet" required>
-                                                </div>
-                                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRArEDOq61XOZCihVYcectnLqJ4LiFswQlpHg&s" alt="eWallet" class="mx-3">
-                                                <div>
-                                                    <label class="form-check-label fw-bold" for="ewallet">Ví điện tử</label>
-                                                    <p class="mb-0 text-muted">Thanh toán qua ví điện tử</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="mt-4">
-                                            <button type="submit" class="btn btn-primary w-100 py-2">Xác nhận thanh
-                                                toán</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+						<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-lg">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="paymentModalLabel">Chọn phương thức thanh toán</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<form id="paymentForm" th:action="@{/orders}" method="POST" onsubmit="return updateFormAction()">
+											<input type="hidden" name="courseId" th:value="${course.id}" />
+											<div class="payment-method" onclick="selectPayment('vnpay')">
+												<div class="d-flex align-items-center">
+													<div class="form-check">
+														<input class="form-check-input" type="radio" name="paymentMethod" value="vnpay" id="vnpay" required>
+													</div>
+													<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp1v7T287-ikP1m7dEUbs2n1SbbLEqkMd1ZA&s" alt="VNPay" class="mx-3">
+													<div>
+														<label class="form-check-label fw-bold" for="vnpay">VNPay</label>
+														<p class="mb-0 text-muted">Thanh toán qua VNPay QR</p>
+													</div>
+												</div>
+											</div>
+											<div class="payment-method" onclick="selectPayment('transfer')">
+												<div class="d-flex align-items-center">
+													<div class="form-check">
+														<input class="form-check-input" type="radio" name="paymentMethod" value="transfer" id="transfer" required>
+													</div>
+													<img src="https://as2.ftcdn.net/v2/jpg/05/75/04/69/1000_F_575046954_qW0J1XojpoKKVXsqRBv9EEHxpWbXYXwZ.jpg" alt="Bank Transfer"
+														class="mx-3">
+													<div>
+														<label class="form-check-label fw-bold" for="bank">Chuyển khoản ngân hàng</label>
+														<p class="mb-0 text-muted">Chuyển khoản trực tiếp đến tài khoản ngân hàng</p>
+													</div>
+												</div>
+											</div>
+											<div class="payment-method" onclick="selectPayment('ewallet')">
+												<div class="d-flex align-items-center">
+													<div class="form-check">
+														<input class="form-check-input" type="radio" name="paymentMethod" value="ewallet" id="ewallet" required>
+													</div>
+													<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRArEDOq61XOZCihVYcectnLqJ4LiFswQlpHg&s" alt="eWallet" class="mx-3">
+													<div>
+														<label class="form-check-label fw-bold" for="ewallet">Ví điện tử</label>
+														<p class="mb-0 text-muted">Thanh toán qua ví điện tử</p>
+													</div>
+												</div>
+											</div>
+											<div class="mt-4">
+												<button type="submit" class="btn btn-primary w-100 py-2">Xác nhận thanh toán</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-        </div>
-    </div>
-	
-	<div th:include="fragments/reviews :: reviews"></div>
+		</div>
+		<div th:include="fragments/reviews :: reviews"></div>
 	</div>
-    <th:block th:include="fragments/javascript"></th:block>
-    <script>
-        function selectPayment(method) {
-            document.querySelectorAll('.payment-method').forEach(el => {
-                el.classList.remove('selected');
-            });
-            
-            const selectedMethod = document.querySelector(`#${method}`);
-            selectedMethod.checked = true;
-            selectedMethod.closest('.payment-method').classList.add('selected');
-        }
+	<th:block th:include="fragments/javascript"></th:block>
 
-        function updateFormAction() {
-            const form = document.getElementById('paymentForm');
-            const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
-
-            if (selectedPaymentMethod && selectedPaymentMethod.value === 'ewallet') {
-                form.action = `${_ctx}payment/pay`; 
-            } else {
-                form.action = `${_ctx}orders`; 
-            }
-            return true;
-        }
-    </script>
 </body>
 </html>
