@@ -51,6 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	updateVisibility();
 });
 
+
+
+
 window.showSpinnerLoading = showSpinnerLoading;
 window.showBarLoading = showBarLoading;
 window.hideAllLoading = hideAllLoading;

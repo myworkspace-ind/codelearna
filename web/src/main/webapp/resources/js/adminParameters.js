@@ -290,7 +290,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeFilterKeyListener() {
     const filterKey = document.getElementById('filterKey');
     if (!filterKey) {
-        console.warn("Element with ID 'filterKey' not found. Retrying...");
+        /*console.warn("Element with ID 'filterKey' not found. Retrying...");*/
         setTimeout(initializeFilterKeyListener, 100);
         return;
     }
