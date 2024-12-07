@@ -70,10 +70,18 @@ public class AdminController {
 
 	@GetMapping
 	public String showAdminHomePage(Model model) {
-		model.addAttribute("dynamicContent", "");
-		model.addAttribute("totalCourses", 10);
+		int totalCourses = courseService.getTotalCourses();
+		model.addAttribute("totalCourses", totalCourses);
 		model.addAttribute("totalUsers", 100);
 		return "adminHome";
+	}
+	
+	@GetMapping("/dashboard")
+	public String showDashBoard(Model model) {
+		int totalCourses = courseService.getTotalCourses();
+		model.addAttribute("totalCourses", totalCourses);
+		model.addAttribute("totalUsers", 100);
+		return "fragments/welcome :: welcome-section";
 	}
 
 	@GetMapping("/listCourse")
