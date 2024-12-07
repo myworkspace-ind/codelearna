@@ -50,6 +50,9 @@ public interface UserLibraryCourseRepository extends JpaRepository<UserLibraryCo
     	       "WHERE ulc.paymentStatus = 'PURCHASED' " +
     	       "AND ulc.createdDate BETWEEN :startDate AND :endDate")
     Double calculateTotalRevenueByDateRange(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    
+    @Query("SELECT DISTINCT u.userEid FROM UserLibraryCourse u")
+    List<String> findDistinctUserEids();
 
 }
 
