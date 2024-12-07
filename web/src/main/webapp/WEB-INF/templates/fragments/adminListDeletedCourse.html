@@ -40,13 +40,11 @@
 									<td
 										th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
 									<td>
-    <button type="button" 
-            class="btn btn-success btn-sm"
-            th:data-course-id="${course.id}"
-            onclick="showCourseRestoreConfirmModal(this.getAttribute('data-course-id'))">
-        Restore
-    </button>
-</td>
+										<button type="button" class="btn btn-success btn-sm"
+											th:data-course-id="${course.id}"
+											onclick="showCourseRestoreConfirmModal(this.getAttribute('data-course-id'))">
+											Restore</button>
+									</td>
 								</tr>
 								<!-- Show message if no deleted courses found -->
 								<tr
