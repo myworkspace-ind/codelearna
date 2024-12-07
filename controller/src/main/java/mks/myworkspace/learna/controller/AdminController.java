@@ -97,7 +97,7 @@ public class AdminController {
 	
 	@GetMapping("/revenue")
 	public ModelAndView revenueFragment() {
-		ModelAndView mav = new ModelAndView("other_revenue");
+		ModelAndView mav = new ModelAndView("fragments/revenue :: revenue");
 		return mav;
 	}
 

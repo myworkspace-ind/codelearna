@@ -1,42 +1,42 @@
 <div th:fragment="revenue">
-	    <div class="container-fluid py-4">
-	        <div class="row">
-	            <div class="col-12">
-	                <div class="card">
-	                    <div class="card-header bg-primary text-white">
-	                        <h1 class="h3 text-center mb-0">Revenue Statistics</h1>
-	                    </div>
-	                    <div class="card-body">
-							<div class="row mb-4 responsive-stack">
-	                            <div class="col-md-4">
-	                                <label for="time-period" class="form-label">Select Time Period:</label>
-	                                <select id="time-period" class="form-select custom-select">
-	                                    <option value="all">All Time</option>
-	                                    <option value="day">Last Day</option>
-	                                    <option value="month">Last Month</option>
-	                                    <option value="3month">Last 3 Months</option>
-	                                    <option value="6month">Last 6 Months</option>
-	                                    <option value="year">Last Year</option>
-	                                    <option value="custom">Custom Range</option>
-	                                </select>
-	                            </div>
-	                            <div class="col-md-4 d-flex align-items-end">
-	                                <button id="fetch-button" class="btn btn-primary btn-custom" onclick="fetchRevenueStatistics()">
-	                                    Fetch Data
-	                                </button>
-	                            </div>
-	                        </div>
-							
-							<div id="custom-range" class="row mb-4" style="display:none;">
-							    <div class="col-md-2	">
-							        <label for="start-date" class="form-label">Start Date:</label>
-							        <input type="date" id="start-date" class="form-control">
-							    </div>
-							    <div class="col-md-2">
-							        <label for="end-date" class="form-label">End Date:</label>
-							        <input type="date" id="end-date" class="form-control">
-							    </div>
-							</div>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h3 text-center mb-0">Revenue Statistics</h1>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4 responsive-stack">
+                            <div class="col-md-4">
+                                <label for="time-period" class="form-label">Select Time Period:</label>
+                                <select id="time-period" class="form-select custom-select">
+                                    <option value="all">All Time</option>
+                                    <option value="day">Last Day</option>
+                                    <option value="month">Last Month</option>
+                                    <option value="3month">Last 3 Months</option>
+                                    <option value="6month">Last 6 Months</option>
+                                    <option value="year">Last Year</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button id="fetch-button" class="btn btn-primary btn-custom">
+                                    Fetch Data
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="custom-range" class="row mb-4" style="display:none;">
+                            <div class="col-md-2">
+                                <label for="start-date" class="form-label">Start Date:</label>
+                                <input type="date" id="start-date" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="end-date" class="form-label">End Date:</label>
+                                <input type="date" id="end-date" class="form-control">
+                            </div>
+                        </div>
 	
 	                        <!-- Total Revenue -->
 	                        <div class="alert alert-info" role="alert">
@@ -85,138 +85,18 @@
 	    <script src="/library/webjars/jquery/dist/jquery.min.js"></script>
 	    <script src="/library/webjars/popper.js/2.9.3/umd/popper.min.js"></script>
 	    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
-	    <script>
-	    var currentPagee = 1;
-	    var pageSize = 5;
-	    var totalPages = 1;
+	     <script th:inline="javascript">
+        // Thêm đoạn script để khởi tạo ngày mặc định
+        window.onload = function() {
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
 
-	    window.onload = function() {
-	        // Get today's date
-	        const today = new Date();
-	        // Get yesterday's date
-	        const yesterday = new Date(today);
-	        yesterday.setDate(today.getDate() - 1);
+            const formatDate = (date) => date.toISOString().split('T')[0];
 
-	        // Format the dates to 'YYYY-MM-DD'
-	        const formatDate = (date) => date.toISOString().split('T')[0];
-
-	        // Set the default values for the start and end dates
-	        document.getElementById('start-date').value = formatDate(yesterday);
-	        document.getElementById('end-date').value = formatDate(today);
-	    };
-
-	    function formatCurrency(amount) {
-	        if (amount) {
-	            return new Intl.NumberFormat('vi-VN', {
-	                style: 'currency',
-	                currency: 'VND',
-	                maximumFractionDigits: 0
-	            }).format(amount);
-	        }
-	        return 'N/A';
-	    }
-
-	    function fetchRevenueStatistics() {
-	        var timePeriod = document.getElementById('time-period').value;
-	        var startDate = document.getElementById('start-date').value;
-	        var endDate = document.getElementById('end-date').value;
-
-	        var url = `${_ctx}/api/revenue/statistics?page=${currentPagee}&size=${pageSize}`;
-
-	        if (timePeriod === 'custom' && startDate && endDate) {
-	            url += `&startDate=${startDate}&endDate=${endDate}`;
-	        } else {
-	            url += `&timePeriod=${timePeriod}`;
-	        }
-
-	        fetch(url)
-	            .then(response => response.json())
-	            .then(data => {
-	                const totalRevenue = formatCurrency(data.totalRevenue);
-	                document.getElementById('total-revenue').innerText = totalRevenue;
-
-	                const tempRevenue = formatCurrency(data.tempRevenue);
-	                document.getElementById('temp-revenue').innerText = tempRevenue;
-	                
-	                const revenueData = data.revenueByCourse;
-	                const tbody = document.getElementById('revenue-data');
-	                tbody.innerHTML = '';
-
-	                if (revenueData && revenueData.length > 0) {
-	                    revenueData.forEach(item => {
-	                        const row = document.createElement('tr');
-	                        row.innerHTML = `
-	                            <td>${item.courseName}</td>
-	                            <td>${item.purchaseCount}</td>
-	                            <td>${formatCurrency(item.revenue)}</td>
-	                        `;
-	                        tbody.appendChild(row);
-	                    });
-	                } else {
-	                    tbody.innerHTML = `<tr><td colspan="3" class="text-center">No revenue data available</td></tr>`;
-	                }
-
-	                totalPages = data.totalPages;
-	                updatePagination();
-	            })
-	            .catch(error => {
-	                console.error('Error fetching revenue statistics:', error);
-	            });
-	    }
-
-	    function updatePagination() {
-	        const paginationContainer = document.getElementById('pagination');
-	        paginationContainer.innerHTML = '';
-
-	        if (currentPagee > 1) {
-	            const prevButton = document.createElement('button');
-	            prevButton.classList.add('btn', 'btn-primary');
-	            prevButton.innerText = 'Previous';
-	            prevButton.onclick = function() {
-	                currentPagee--;
-	                fetchRevenueStatistics();
-	            };
-	            paginationContainer.appendChild(prevButton);
-	        }
-
-	        for (let i = 1; i <= totalPages; i++) {
-	            const pageButton = document.createElement('button');
-	            pageButton.classList.add('btn', 'btn-secondary');
-	            pageButton.innerText = i;
-	            if (i === currentPagee) {
-	                pageButton.disabled = true;
-	                pageButton.classList.add('active');
-	            }
-	            pageButton.onclick = function() {
-	                currentPagee = i;
-	                fetchRevenueStatistics();
-	            };
-	            paginationContainer.appendChild(pageButton);
-	        }
-
-	        if (currentPagee < totalPages) {
-	            const nextButton = document.createElement('button');
-	            nextButton.classList.add('btn', 'btn-primary');
-	            nextButton.innerText = 'Next';
-	            nextButton.onclick = function() {
-	                currentPagee++;
-	                fetchRevenueStatistics();
-	            };
-	            paginationContainer.appendChild(nextButton);
-	        }
-	    }
-
-	    document.getElementById('time-period').addEventListener('change', function() {
-	        var selectedPeriod = this.value;
-	        var customRangeDiv = document.getElementById('custom-range');
-	        if (selectedPeriod === 'custom') {
-	            customRangeDiv.style.display = 'block';
-	        } else {
-	            customRangeDiv.style.display = 'none';
-	        }
-	    });
-	    
-	    fetchRevenueStatistics(); 
-	    </script>
+            document.getElementById('start-date').value = formatDate(yesterday);
+            document.getElementById('end-date').value = formatDate(today);
+        };
+    </script>
 	    
 </div>
