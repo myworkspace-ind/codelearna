@@ -38,48 +38,56 @@ public class RevenueServiceImpl implements RevenueService {
     public Map<String, Object> getRevenueStatistics(int page, int size, String timePeriod, Date startDate, Date endDate) {
         Pageable pageable = PageRequest.of(page - 1, size); // Page starts from 0
         Page<Object[]> pageResults;
+        Double tempRevenue;
 
         // Calculate startDate and endDate based on timePeriod if not custom
         if (!"custom".equalsIgnoreCase(timePeriod)) {
-            endDate = new Date(); // Current date
+        	Date today = new Date(); // Current date
             Calendar calendar = Calendar.getInstance();
-            calendar.setTime(endDate);
+            calendar.setTime(today);
 
             switch (timePeriod.toLowerCase()) {
                 case "day":
-                    startDate = endDate; // Today
+                	calendar.add(Calendar.DATE, -1);
+                	startDate = calendar.getTime(); //Last day
+                	endDate = today;
                     break;
                 case "month":
                     calendar.add(Calendar.MONTH, -1);
                     startDate = calendar.getTime();
+                    endDate = today;
                     break;
                 case "3month":
                     calendar.add(Calendar.MONTH, -3);
                     startDate = calendar.getTime();
+                    endDate = today;
                     break;
                 case "6month":
                     calendar.add(Calendar.MONTH, -6);
                     startDate = calendar.getTime();
+                    endDate = today;
                     break;
                 case "year":
                     calendar.add(Calendar.YEAR, -1);
                     startDate = calendar.getTime();
+                    endDate = today;
                     break;
                 default:
-                    startDate = null;
-                    endDate = null;
                     break;
             }
         }
 
         log.debug("Calculated startDate: {} and endDate: {}", startDate, endDate);
+        
 
         if (startDate != null && endDate != null) {
             // Use a single repository method with startDate and endDate for all cases
             pageResults = userLibraryCourseRepository.calculateRevenueByDateRange(startDate, endDate, pageable);
+            tempRevenue = userLibraryCourseRepository.calculateTotalRevenueByDateRange(startDate, endDate);
         } else {
             // Default to all-time revenue if no specific range is provided
             pageResults = userLibraryCourseRepository.calculateRevenueByCourse(pageable);
+            tempRevenue = getTotalRevenue();
         }
 
         List<Map<String, Object>> revenueData = new ArrayList<>();
@@ -94,6 +102,7 @@ public class RevenueServiceImpl implements RevenueService {
 
         Map<String, Object> response = new HashMap<>();
         response.put("totalRevenue", getTotalRevenue());
+        response.put("tempRevenue", tempRevenue);
         response.put("revenueByCourse", revenueData);
         response.put("totalPages", pageResults.getTotalPages());
         response.put("currentPage", pageResults.getNumber() + 1);
