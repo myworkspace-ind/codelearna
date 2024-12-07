@@ -551,6 +551,100 @@ function submitCourseData(event) {
 		});
 }
 
+function loadDeletedCoursesModal() {
+    fetch(`${_ctx}admin/listDeletedCourse`)
+        .then(response => response.text())
+        .then(html => {
+            // Ensure the modal ID matches exactly
+            if (!document.getElementById('deletedCoursesModal')) {
+                document.body.insertAdjacentHTML('beforeend', html);
+            } else {
+                document.getElementById('deletedCoursesModal').outerHTML = html;
+            }
+            
+            // Safely create the modal
+            var deletedCourseModal = document.getElementById('deletedCoursesModal');
+            if (deletedCourseModal) {
+                deletedCourseModal = new bootstrap.Modal(deletedCourseModal);
+                deletedCourseModal.show();
+            } else {
+                console.error("Deleted lessons modal element not found");
+            }
+        })
+        .catch(error => console.error('Error loading deleted lessons modal:', error));
+}
+
+function showCourseRestoreConfirmModal(courseId) {
+    if (!courseId) {
+        console.error('No course ID provided');
+        showErrorToast('Error: Course ID is missing');
+        return;
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('restoreConfirmModal'));
+    const confirmBtn = document.getElementById('confirmRestoreBtn');
+
+    // Remove any existing event listeners to prevent multiple triggers
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    // Store the courseId on the button itself
+    newConfirmBtn.setAttribute('data-course-id', courseId);
+
+    // Add the event listener with the stored courseId
+    newConfirmBtn.addEventListener('click', () => {
+        const storedCourseId = newConfirmBtn.getAttribute('data-course-id');
+        restoreCourse(storedCourseId);
+    });
+
+    modal.show();
+}
+
+function restoreCourse(courseId) {
+    if (!courseId) {
+        console.error('No course ID provided to restore');
+        showErrorToast('Error: Course ID is missing');
+        return;
+    }
+
+    fetch(`${_ctx}admin/courses/restoreCourse/${courseId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Course restored successfully');
+            
+            // Close all modals
+            const restoreModal = bootstrap.Modal.getInstance(document.getElementById('restoreConfirmModal'));
+            const deletedCoursesModal = bootstrap.Modal.getInstance(document.getElementById('deletedCoursesModal'));
+            
+            if (restoreModal) restoreModal.hide();
+            if (deletedCoursesModal) deletedCoursesModal.hide();
+            
+            // Remove modal backdrops
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+            
+            // Reload the courses section
+            loadCoursesSection();
+        } else {
+            throw new Error(data.message || 'Failed to restore course');
+        }
+    })
+    .catch(error => {
+        console.error('Error restoring course:', error);
+        showErrorToast(error.message || 'An error occurred while restoring the course');
+    });
+}
 document.addEventListener('DOMContentLoaded', function() {
 	// Kiểm tra xem đang ở trang nào để khởi tạo phân trang phù hợp
 	if (document.getElementById('coursesContainer')) {

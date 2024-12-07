@@ -32,4 +32,16 @@ public class UserLibraryCourseJdbcRepository {
                                 userLibraryCourse.getId());
         }
     }
+    
+    public void updateProgressStatusToComplete(String userEid, Long courseId) {
+        String sql = "UPDATE learna_user_library_course SET " +
+                    "progress_status = ?, " +
+                    "modified_dte = NOW() " +
+                    "WHERE user_eid = ? AND course_id = ?";
+        
+        jdbcTemplate.update(sql, 
+            UserLibraryCourse.ProgressStatus.COMPLETE.name(),
+            userEid,
+            courseId);
+    }
 }	

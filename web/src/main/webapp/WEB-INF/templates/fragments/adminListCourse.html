@@ -14,8 +14,7 @@
 				 onkeypress="handleSearchCourseKeyPress(event)">
 			<button class="btn btn-outline-secondary ms-2" type="button" onclick="searchCourses()">Search</button>
 		</div>
-
-
+  
 		<div id="loadingContainer"></div>
 		<div id="coursesContainer">
 			<div class="table-responsive">
@@ -43,7 +42,8 @@
 							<td th:text="${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
 							<td th:text="${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
 							<td th:text="${course.difficultyLevel.paramValue}"></td>
-							<td th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
+							<td
+								th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
 							<td th:text="${course.status}"></td>
 							<td>
 								<div class="btn-group" role="group">
@@ -53,8 +53,8 @@
 										th:data-course-id="${course.id}" th:data-status="${course.status}"
 										th:onclick="'showCourseStatusChangeModal(this.dataset.courseId, this.dataset.status)'"
 										th:text="${course.status == 'ACTIVE' ? 'Deactivate' : 'Activate'}" th:disabled="${course.status == 'DELETED'}"></button>
-
 									<a href="#" class="btn btn-danger btn-sm" th:onclick="showDeleteConfirmModal([[${course.id}]])" title="Delete Course"> Delete </a>
+
 								</div>
 							</td>
 						</tr>

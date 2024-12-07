@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Khóa học</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Thêm CSS cho popup chứng chỉ */
+        #certificatePopupOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #certificatePopupContainer {
+            background: white;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90%;
+            width: 800px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .certificate-controls {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            background: #f4f4f4;
+        }
+
+        .dynamic-content {
+            position: relative;
+            max-width: 100%;
+            max-height: 600px;
+        }
+
+        .dynamic-content img {
+            width: 100%;
+            height: auto;
+        }
+
+        #display_name {
+            position: absolute;
+            top: 43%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 36px;
+            font-weight: bold;
+            color: #E1BA61;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #course_name {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: #E1BA61;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #issue_date {
+            position: absolute;
+            top: 78%;
+            left: 73%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #E1BA61;
+            text-align: center;
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #333;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <!-- Popup chứng chỉ -->
+    <div id="certificatePopupOverlay">
+        <div id="certificatePopupContainer">
+            <button class="close-popup" onclick="closeCertificatePopup()">&times;</button>
+            <div class="certificate-controls">
+                <button class="btn btn-primary me-2" onclick="downloadCertificatePDF()">Tải xuống PDF</button>
+            </div>
+            <div class="dynamic-content" id="certificate">
+                <img id="background_img" src="https://i.imgur.com/fLjLZrZ.png" alt="Certificate Background">
+                <h1 id="display_name">Tên học viên</h1>
+                <h2 id="course_name">Tên khóa học</h2>
+                <h3 id="issue_date">Ngày cấp</h3>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
