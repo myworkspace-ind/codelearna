@@ -94,6 +94,12 @@ public class AdminController {
 		mav.addObject("courses", courseService.getAllCourses());
 		return mav;
 	}
+	
+	@GetMapping("/revenue")
+	public ModelAndView revenueFragment() {
+		ModelAndView mav = new ModelAndView("other_revenue");
+		return mav;
+	}
 
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {

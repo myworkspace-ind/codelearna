@@ -32,11 +32,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class RevenueController {
 
-    private final RevenueService revenueService;
 
     @GetMapping
     public ModelAndView getRevenuePage() {
-        ModelAndView mav = new ModelAndView("revenue");
+        ModelAndView mav = new ModelAndView("other_revenue");
         return mav;
     }
 }
