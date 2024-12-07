@@ -13,7 +13,7 @@ import mks.myworkspace.learna.entity.Review;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-//	List<Review> findByCourseId(Long courseId);
+	List<Review> findAllByCourseIdOrderByCreatedAtDesc(Long courseId);
 	Page<Review> findByCourseId(Long courseId, Pageable pageable);
 	
 	@Query("SELECT r.ratingStar FROM Review r WHERE r.course.id = :courseId")
@@ -23,5 +23,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 	// Get average rating with courseId
 	@Query("SELECT AVG(r.ratingStar) FROM Review r WHERE r.course.id = :courseId")
     Double findAverageRatingByCourseId(@Param("courseId") Long courseId);
+	
+	boolean existsByCourseIdAndUserEid(Long courseId, String userEid);
+	
+	Review getReviewById(Long reviewId);
 
 }

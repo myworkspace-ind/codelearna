@@ -1,0 +1,88 @@
+<div th:fragment="deletedCourseModal">
+	<div class="modal fade" id="deletedCoursesModal" tabindex="-1"
+		aria-labelledby="deletedCoursesModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deletedCoursesModalLabel">Deleted
+						Lessons</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Image</th>
+									<th>Course Name</th>
+									<th>Description</th>
+									<th>Original Price</th>
+									<th>Discounted Price</th>
+									<th>Level</th>
+									<th>Free</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody id="deletedLessonsTableBody">
+								<!-- Combined conditions into a single th:if -->
+								<tr th:each="course, iterStat : ${courses}"
+									th:if="${courses != null and course.status == 'DELETED'}">
+									<th th:text="${iterStat.count}"></th>
+									<td><img th:src="${course.imageUrl}" alt="course image"
+										style="max-width: 100px;" /></td>
+									<td th:text="${course.name}"></td>
+									<td th:text="${course.description}"></td>
+									<td th:text="${course.originalPrice}"></td>
+									<td th:text="${course.discountedPrice}"></td>
+									<td th:text="${course.difficultyLevel?.paramValue}"></td>
+									<td
+										th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
+									<td>
+    <button type="button" 
+            class="btn btn-success btn-sm"
+            th:data-course-id="${course.id}"
+            onclick="showCourseRestoreConfirmModal(this.getAttribute('data-course-id'))">
+        Restore
+    </button>
+</td>
+								</tr>
+								<!-- Show message if no deleted courses found -->
+								<tr
+									th:if="${courses == null or #lists.isEmpty(courses) or #lists.isEmpty(courses.?[status == 'DELETED'])}">
+									<td colspan="9" class="text-center">No deleted lessons
+										found</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal fade" id="restoreConfirmModal" tabindex="-1"
+					aria-labelledby="restoreConfirmModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="restoreConfirmModalLabel">Confirm
+									Restore</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body">Are you sure you want to restore
+								this lesson?</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-success"
+									id="confirmRestoreBtn">Restore</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>

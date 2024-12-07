@@ -5,10 +5,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chi tiết khóa học</title>
-<link rel="stylesheet"
-	href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
-<link rel="stylesheet"
-	th:href="@{/resources/css/fragments/courseDetail.css}">
+<link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" th:href="@{/resources/css/courseDetail.css}">
 <link rel="stylesheet" th:href="@{/resources/css/fragments/review.css}">
 </head>
 
@@ -16,6 +14,7 @@
 	<th:block th:include="fragments/nav"></th:block>
 
 	<div class="container mt-5">
+		<div id="toastContainer"></div>
 		<!-- Course Header -->
 		<div class="course-header">
 			<h2 th:text="${course.name}">Tên khóa học</h2>
@@ -41,46 +40,79 @@
 				<div class="course-details mt-4">
 					<h4>Overview</h4>
 					<p>
-						Level Requirement: <span
-							th:text="${course.difficultyLevel.paramValue}">BEGINNER</span>
+						Level Requirement: <span th:text="${course.difficultyLevel.paramValue}">BEGINNER</span>
 					</p>
 					<p>
 						Lesson type: <span th:text="${course.lessonType.paramValue}">Video</span>
 					</p>
 
-					<p
-						th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"
-						style="text-decoration: line-through;"></p>
-					<h5 class="text-danger"
-						th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
+					<p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}" style="text-decoration: line-through;"></p>
+					<h5 class="text-danger" th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
 
-					<!-- Form để gửi yêu cầu thanh toán -->
-					<form th:action="@{/payment/pay}" method="post" id="paymentForm">
-						<input type="hidden" name="courseId" th:value="${course.id}" />
-						<button type="button" class="btn btn-primary mt-3"
-							data-bs-toggle="modal" data-bs-target="#confirmModal">Buy
-							now</button>
-					</form>
+					<div th:if="${hasPurchased}">
+						<!-- Nếu đã mua khóa học, hiện nút "Learn Now" -->
+						<button class="btn btn-success mt-3 learn-now-btn" th:attr="data-course-id=${course.id}">Learn Now</button>
+					</div>
+					<div th:if="${!hasPurchased}">
+						<!-- Nếu chưa mua, hiện nút "Buy Now" -->
+						<form th:action="@{/payment/pay}" method="post" id="paymentForm">
+							<input type="hidden" name="courseId" th:value="${course.id}" />
+							<button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#paymentModal">Buy now</button>
+						</form>
 
-					<!-- Modal xác nhận thanh toán -->
-					<div class="modal fade" id="confirmModal" tabindex="-1"
-						aria-labelledby="confirmModalLabel" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="confirmModalLabel">Confirm
-										Payment</h5>
-									<button type="button" class="btn-close" data-bs-dismiss="modal"
-										aria-label="Close"></button>
-								</div>
-								<div class="modal-body">Are you sure you want to proceed
-									with the payment for this course?</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary"
-										data-bs-dismiss="modal">Cancel</button>
-									<!-- Nút xác nhận sẽ gọi một hàm JavaScript để gửi form -->
-									<button type="button" class="btn btn-primary"
-										id="confirmPaymentBtn">Confirm</button>
+						<!-- Payment Modal -->
+						<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-lg">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="paymentModalLabel">Chọn phương thức thanh toán</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<form id="paymentForm" th:action="@{/orders}" method="POST" onsubmit="return updateFormAction()">
+											<input type="hidden" name="courseId" th:value="${course.id}" />
+											<div class="payment-method" onclick="selectPayment('vnpay')">
+												<div class="d-flex align-items-center">
+													<div class="form-check">
+														<input class="form-check-input" type="radio" name="paymentMethod" value="vnpay" id="vnpay" required>
+													</div>
+													<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp1v7T287-ikP1m7dEUbs2n1SbbLEqkMd1ZA&s" alt="VNPay" class="mx-3">
+													<div>
+														<label class="form-check-label fw-bold" for="vnpay">VNPay</label>
+														<p class="mb-0 text-muted">Thanh toán qua VNPay QR</p>
+													</div>
+												</div>
+											</div>
+											<div class="payment-method" onclick="selectPayment('transfer')">
+												<div class="d-flex align-items-center">
+													<div class="form-check">
+														<input class="form-check-input" type="radio" name="paymentMethod" value="transfer" id="transfer" required>
+													</div>
+													<img src="https://as2.ftcdn.net/v2/jpg/05/75/04/69/1000_F_575046954_qW0J1XojpoKKVXsqRBv9EEHxpWbXYXwZ.jpg" alt="Bank Transfer"
+														class="mx-3">
+													<div>
+														<label class="form-check-label fw-bold" for="bank">Chuyển khoản ngân hàng</label>
+														<p class="mb-0 text-muted">Chuyển khoản trực tiếp đến tài khoản ngân hàng</p>
+													</div>
+												</div>
+											</div>
+											<div class="payment-method" onclick="selectPayment('ewallet')">
+												<div class="d-flex align-items-center">
+													<div class="form-check">
+														<input class="form-check-input" type="radio" name="paymentMethod" value="ewallet" id="ewallet" required>
+													</div>
+													<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRArEDOq61XOZCihVYcectnLqJ4LiFswQlpHg&s" alt="eWallet" class="mx-3">
+													<div>
+														<label class="form-check-label fw-bold" for="ewallet">Ví điện tử</label>
+														<p class="mb-0 text-muted">Thanh toán qua ví điện tử</p>
+													</div>
+												</div>
+											</div>
+											<div class="mt-4">
+												<button type="submit" class="btn btn-primary w-100 py-2">Xác nhận thanh toán</button>
+											</div>
+										</form>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -88,19 +120,9 @@
 				</div>
 			</div>
 		</div>
-
 		<div th:include="fragments/reviews :: reviews"></div>
-
 	</div>
-
 	<th:block th:include="fragments/javascript"></th:block>
-	<script>
-	    // JavaScript để xử lý việc gửi form khi người dùng nhấn "Confirm"
-	    document.getElementById('confirmPaymentBtn').addEventListener('click', function() {
-	        // Gửi form khi nhấn "Confirm"
-	        document.getElementById('paymentForm').submit();
-	    });
-	</script>
-</body>
 
+</body>
 </html>
