@@ -2,48 +2,48 @@ import { showSuccessToast, showErrorToast } from './toast.js';
 
 
 function initializeReviewForm(formSelector) {
-    const form = document.querySelector(formSelector);
-    if (!form) {
-        console.warn(`Form not found for selector: ${formSelector}`);
-        return; 
-    }
+	const form = document.querySelector(formSelector);
+	if (!form) {
+		console.warn(`Form not found for selector: ${formSelector}`);
+		return;
+	}
 
-    const stars = form.querySelectorAll('.rating-stars .star');
-    const ratingInput = form.querySelector('input[name="ratingStar"]');
-    const ratingError = form.querySelector('.rating-error');
-    const reviewContent = form.querySelector('.review-content');
-    const charCount = form.querySelector('.char-count');
+	const stars = form.querySelectorAll('.rating-stars .star');
+	const ratingInput = form.querySelector('input[name="ratingStar"]');
+	const ratingError = form.querySelector('.rating-error');
+	const reviewContent = form.querySelector('.review-content');
+	const charCount = form.querySelector('.char-count');
 
-    if (!stars || !ratingInput) {
-        console.warn(`Required elements not found in form: ${formSelector}`);
-        return;
-    }
+	if (!stars || !ratingInput) {
+		console.warn(`Required elements not found in form: ${formSelector}`);
+		return;
+	}
 
-    form.addEventListener('submit', function (e) {
-        if (!ratingInput.value || ratingInput.value === "0") {
-            e.preventDefault();
-            if (ratingError) {
-                ratingError.style.display = "block";
-            }
-        }
-    });
+	form.addEventListener('submit', function(e) {
+		if (!ratingInput.value || ratingInput.value === "0") {
+			e.preventDefault();
+			if (ratingError) {
+				ratingError.style.display = "block";
+			}
+		}
+	});
 
-    stars.forEach(star => {
-        star.addEventListener('click', function () {
-            const rating = this.getAttribute('data-rating');
-            ratingInput.value = rating;
-            updateStars(stars, rating);
-            if (ratingError) {
-                ratingError.style.display = "none";
-            }
-        });
-    });
+	stars.forEach(star => {
+		star.addEventListener('click', function() {
+			const rating = this.getAttribute('data-rating');
+			ratingInput.value = rating;
+			updateStars(stars, rating);
+			if (ratingError) {
+				ratingError.style.display = "none";
+			}
+		});
+	});
 
-    if (reviewContent && charCount) {
-        reviewContent.addEventListener('input', function () {
-            updateCharacterCount(this, charCount);
-        });
-    }
+	if (reviewContent && charCount) {
+		reviewContent.addEventListener('input', function() {
+			updateCharacterCount(this, charCount);
+		});
+	}
 }
 
 
@@ -122,6 +122,15 @@ function handleAddReview() {
 
 function submitReview(courseId, form) {
 	const formData = new FormData(form);
+	const ratingInput = form.querySelector('input[name="ratingStar"]');
+	const ratingError = form.querySelector('.rating-error');
+
+	if (ratingInput.value === "0") {
+		if (ratingError) {
+			ratingError.style.display = "block";
+		}
+		return;
+	}
 	fetch(`${_ctx}course/${courseId}/review`, {
 		method: 'POST',
 		body: formData
