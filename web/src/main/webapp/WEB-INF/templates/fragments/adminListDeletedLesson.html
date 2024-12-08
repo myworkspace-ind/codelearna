@@ -39,7 +39,8 @@
 										<button type="button" class="btn btn-success btn-sm"
 											th:data-lesson-id="${lesson.id}"
 											th:data-course-id="${course.id}"
-											th:onclick="'showLessonRestoreConfirmModal(' + ${lesson.id} + ', ' + ${course.id} + ')'">
+											th:onclick="|showLessonRestoreConfirmModal(${lesson.id}, ${course.id})|"
+>
 											Restore</button>
 									</td>
 								</tr>
