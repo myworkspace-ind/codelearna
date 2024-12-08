@@ -153,3 +153,215 @@ header {
 .modal.show .modal-dialog {
     transform: scale(1);
 }
+
+.filter-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.filter-container .form-label {
+    margin-bottom: 0; 
+}
+
+.filter-container .form-select {
+    width: auto; 
+}
+
+/* Admin sidebar css */
+body {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	background-color: #f4f4f4;
+}
+
+.sidebar {
+	width: 250px;
+	height: 100vh;
+	background-color: #1f2937;
+	color: #fff;
+	display: flex;
+	flex-direction: column;
+	padding: 20px 0;
+	position: fixed;
+}
+
+.sidebar-header {
+	text-align: center;
+	padding: 20px 0;
+	font-size: 24px;
+	font-weight: bold;
+	border-bottom: 1px solid #374151;
+}
+
+.sidebar nav {
+	margin-top: 20px;
+	flex: 1;
+}
+
+.sidebar nav a {
+	display: flex;
+	align-items: center;
+	padding: 15px 20px;
+	color: #cbd5e1;
+	text-decoration: none;
+	transition: all 0.3s ease;
+	font-size: 16px;
+	border-left: 4px solid transparent;
+}
+
+.sidebar nav a:hover {
+	background-color: #374151;
+	color: #fff;
+	border-left: 4px solid #3b82f6;
+	text-decoration: none;
+}
+
+.sidebar nav a.active {
+	background-color: #3b82f6;
+	color: #fff;
+	font-weight: bold;
+	border-left: 4px solid #2563eb;
+}
+
+.sidebar .logout {
+	margin-top: auto;
+	padding: 15px 20px;
+	color: #ef4444;
+	text-decoration: none;
+	font-weight: bold;
+	border-top: 1px solid #374151;
+}
+
+.sidebar .logout:hover {
+	background-color: #991b1b;
+	color: #fff;
+}
+
+
+/* adminHome.css */
+
+/* Bố cục chính */
+.dashboard {
+    display: flex;
+    min-height: 100vh; 
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    flex-shrink: 0; 
+    background-color: #1f2937;
+    color: white;
+    position: fixed; 
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+/* Main content */
+.main-content {
+    margin-left: 250px;
+    flex-grow: 1; 
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* Sidebar chiếm toàn bộ chiều rộng màn hình */
+        position: static; /* Sidebar sẽ di chuyển lên đầu */
+        height: auto;
+    }
+
+    .main-content {
+        margin-left: 0; /* Đặt lại margin-left cho nội dung */
+    }
+
+    .dashboard {
+        flex-direction: column; /* Bố cục dọc khi trên màn hình nhỏ */
+    }
+}
+
+
+
+.sidebar.collapsed {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+.main-content {
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: 0;
+}
+
+ /* Logo admin page css */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; 
+    border-bottom: 1px solid #374151; 
+}
+
+.sidebar-header img {
+    max-width: 100%; 
+    height: auto;
+    max-height: 50px;
+    object-fit: contain; 
+}
+
+.sidebar {
+    background-color: #1f2937;
+    color: #fff;
+}
+
+.sidebar nav {
+    margin-top: 20px; 
+}
+
+.container-fluid {
+    max-width: 1200px;
+}
+
+/* Revenue */
+.card {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+.table-responsive {
+    margin-top: 20px;
+}
+.pagination {
+    justify-content: center;
+    margin-top: 20px;
+}
+.custom-select {
+    border-radius: 6px;
+}
+.temp-revenue {
+    background-color: #f0f0f0;
+    border-top: 2px solid #007bff;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+#custom-range {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+@media (max-width: 768px) {
+    .responsive-stack > * {
+        margin-bottom: 10px;
+    }
+}
+
+
+

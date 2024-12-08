@@ -16,10 +16,43 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.getElementById('next-btn');
     const submitCommentBtn = document.getElementById('submit-comment-btn');
     const commentTextArea = document.getElementById('comment-text');
+	const searchInput = document.getElementById('search');
+	   searchInput.addEventListener('keyup', function() {
+	       searchLessons(this.value);
+	   });
 
+	   function searchLessons(searchTerm) {
+	       lessons.forEach(lesson => {
+	           const title = lesson.querySelector('.title').textContent.toLowerCase();
+	           if (title.includes(searchTerm.toLowerCase())) {
+	               lesson.style.visibility = 'visible';
+	               lesson.style.height = '';
+	               lesson.style.opacity = '1';
+	               lesson.style.pointerEvents = 'auto';
+	           } else {
+	               lesson.style.visibility = 'hidden';
+	               lesson.style.height = '0';
+	               lesson.style.opacity = '0';
+	               lesson.style.pointerEvents = 'none';
+	           }
+	       });
+	   }
     const lessons = Array.from(document.querySelectorAll('.video-list-content .vid'));
     let currentLessonIndex = 0;
+	function convertToEmbeddableUrl(url) {
+	       // Check if it's a YouTube URL
+	       const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+	       const match = url.match(youtubeRegex);
 
+	       if (match) {
+	           // YouTube URL
+	           const videoId = match[1];
+	           return `https://www.youtube.com/embed/${videoId}`;
+	       }
+
+	       // If not a YouTube URL, return the original URL
+	       return url;
+	   }
     function generatePlayURL(courseId, lessonId) {
         if (IS_SAKAI_ENVIRONMENT) {
             return `${_ctx}play/${courseId}?lessonId=${lessonId}`;
@@ -71,34 +104,33 @@ document.addEventListener('DOMContentLoaded', function() {
 	function generateBasicAuth() {
 	    // Data to encode
 	    const username = userEid;
-	    console.log("Username:", username);
+	
 	    const email = userEmail;
-		console.log("UserEmail:", userEmail);
+		
 	    // String to encode
 	    const valueToEncode = `${username}:${email}`;
-	    console.log("String to encode:", valueToEncode);
+	  
 
 	    // Base64 encoding
 	    const encodedValue = encodeBase64(valueToEncode);
-	    console.log("Base64 encoded value:", encodedValue);
+	 
 
 	    // Create Basic Authorization header
 	    const authHeader = `Basic ${encodedValue}`;
-	    console.log("Authorization Header:", authHeader);
+	 
 
 	    return authHeader;
 	}
 	
 	function openCourse(courseUrl, activityId) {
 	    const auth2 = generateBasicAuth();
-	    console.log(auth2);
-	    console.log("User EID course:", userEid);
+
 
 	    var actor = `{"name":["${userEid}"],"mbox":["${userEmail}"],"objectType":"Agent"}`;
-	    console.log("Actor:", actor);
+	  
 
 	    var endPoint = `https://mksol.vn/xapi-lrs/${userEid}/`;
-	    console.log("Endpoint:", endPoint);
+	 
 
 	    var auth = auth2;
 
@@ -106,16 +138,42 @@ document.addEventListener('DOMContentLoaded', function() {
 	                '&endpoint=' + encode(endPoint) + 
 	                '&auth=' + encode(auth) + 
 	                '&activity_id=' + encode(activityId);
-
-		if (courseUrl.includes("youtube.com") || courseUrl.includes("youtu.be")){
-			var iframeHTML = `<iframe width="100%" height="720px" src="${convertYoutubeLinkToEmbed(courseUrl)}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
-		}else{
-			var iframeHTML = `<iframe src="${courseUrl}?${params}" width="100%" height="900px" frameborder="0" allowfullscreen></iframe>`;
-		}
+	    
+	    const embeddableUrl = convertToEmbeddableUrl(courseUrl);
+	    var iframeHTML = `<iframe src="${embeddableUrl}?${params}" width="100%" height="900px" frameborder="0" allowfullscreen></iframe>`;
 
 	    const courseDiv = document.getElementById("course");
 	    if (courseDiv) {
 	        courseDiv.innerHTML = iframeHTML;
+
+	        // Get course and lesson IDs from the current lesson
+	        const currentLesson = lessons[currentLessonIndex];
+	        const courseId = currentLesson.getAttribute('data-course-id');
+	        const lessonId = currentLesson.getAttribute('data-lesson-id');
+
+	        // Send tracking data to the server
+	        fetch(`${_ctx}api/lesson-tracking`, {
+	            method: 'POST',
+	            headers: {
+	                'Content-Type': 'application/json'
+	            },
+	            body: JSON.stringify({
+	                userEid: userEid,
+	                courseId: courseId,
+	                lessonId: lessonId,
+	                courseUrl: courseUrl,
+	                activityId: activityId
+	            })
+	        })
+	        .then(response => {
+	            if (!response.ok) {
+	                throw new Error('Failed to save lesson tracking');
+	            }
+	            console.log('Lesson tracking saved successfully');
+	        })
+	        .catch(error => {
+	            console.error('Error saving lesson tracking:', error);
+	        });
 	    } else {
 	        console.error("Element with id 'course' not found");
 	    }
@@ -289,20 +347,17 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a reply before submitting.');
         }
     }
-
     // Thêm sự kiện click cho nút toggle-btn
-    toggleBtn.addEventListener('click', () => {
-        if (videoList.style.display === 'none' || !videoList.style.display) {
-            videoList.style.display = 'block';
-            container.classList.remove('expanded'); 
-            toggleBtn.textContent = '☰'; 
-        } else {
-            videoList.style.display = 'none';
-            container.classList.add('expanded');
-            toggleBtn.textContent = '✖';
-        }
-    });
-
+	toggleBtn.addEventListener('click', () => {
+	    const container = document.querySelector('.container-play');
+	    if (container.classList.contains('expanded')) {
+	        container.classList.remove('expanded');
+	        toggleBtn.textContent = '☰'; 
+	    } else {
+	        container.classList.add('expanded');
+	        toggleBtn.textContent = '✖';
+	    }
+	});
     // Xử lý sự kiện click cho bài học
     lessons.forEach((lesson, index) => {
         lesson.addEventListener('click', function () {
@@ -399,4 +454,5 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.warn('No lessons found');
     }
+	
 });

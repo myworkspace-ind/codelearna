@@ -10,8 +10,6 @@ public interface CourseService {
     Course getCourseById(Long id);
     void deleteCourse(Long id);
     
-    
-    
     List<Course> getAllCourses();
     List<Course> getRandomCourses(); 
     List<Course> getCoursesBySubcategory(Long id);
@@ -20,6 +18,7 @@ public interface CourseService {
 //    List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, String averageRating);
     List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId, String averageRating);
 
+    List<Course> getCoursesNotInLibrary(String userEid);
     
-    
+    int getTotalCourses();
 }
