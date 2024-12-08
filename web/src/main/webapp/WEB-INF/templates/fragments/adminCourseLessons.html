@@ -44,7 +44,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="lesson, iterStat : ${lessons}">
+						<tr th:each="lesson, iterStat : ${lessons}" th:if="${lesson.status == 'ACTIVE' or lesson.status == 'INACTIVE'}">
 							<th th:text="${iterStat.count}"></th>
 							<td th:text="${iterStat.index + 1}"></td>
 							<td th:text="${lesson.title}"></td>
