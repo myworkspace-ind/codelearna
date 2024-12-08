@@ -47,13 +47,14 @@
 					<p>
 						Lesson type: <span th:text="${course.lessonType.paramValue}">Video</span>
 					</p>
+					<div th:if="${course.isFree == null or !course.isFree}">
 
-					<p th:if="${!course.isFree}"
-						th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"
-						style="text-decoration: line-through;"></p>
-					<h5 th:if="${!course.isFree}" class="text-danger"
-						th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
-
+						<p
+							th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"
+							style="text-decoration: line-through;"></p>
+						<h5 class="text-danger"
+							th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
+					</div>
 					<div th:if="${hasPurchased}">
 						<!-- Nếu đã mua khóa học, hiện nút "Learn Now" -->
 						<button class="btn btn-success mt-3 learn-now-btn"
