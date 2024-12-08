@@ -441,7 +441,7 @@ function initializeCourseHandsontable() {
 					}
 				},
 				{
-					data: 'lessonType',
+					data: 'subcategory',
 					type: 'dropdown',
 					source: function(query, process) {
 						fetch(_ctx + `/admin/values?paramKey=subcategory`)
