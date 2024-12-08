@@ -60,10 +60,10 @@ function handleFileParameter(event) {
 				.filter(row => row.length >= 2)
 				.map(row => ({
 					paramKey: row[0] !== undefined ? row[0].toString() : null,
-					paramValue: row[1] !== undefined ? row[1].toString() : null,
-					seqno: row[2] !== undefined && !isNaN(parseInt(row[2]))
+					paramValue: row[1] !== undefined ? row[1].toString() : null
+					/*seqno: row[2] !== undefined && !isNaN(parseInt(row[2]))
 						? parseInt(row[2])
-						: null
+						: null*/
 				}));
 
 			if (hot) {
@@ -101,14 +101,14 @@ function initializeParameterHandsontable() {
 					source: ['category', 'subcategory', 'difficulty_level', 'lesson_type']
 				},
 				{ data: 'paramValue', type: 'text' },
-				{
+				/*{
 					data: 'seqno',
 					type: 'numeric',
 					validator: (value) => {
 						return value === null || (!isNaN(value) && Number.isInteger(Number(value)));
 					},
 					allowInvalid: false
-				}
+				}*/
 			],
 			minRows: 1,
 			rowHeaders: true,
@@ -136,7 +136,7 @@ function submitParameterData(event) {
 		.map(row => ({
 			paramKey: row[0] !== null ? row[0].toString() : null,
 			paramValue: row[1] !== null ? row[1].toString() : null,
-			seqno: row[2] !== null && !isNaN(parseInt(row[2])) ? parseInt(row[2]) : null
+			/*seqno: row[2] !== null && !isNaN(parseInt(row[2])) ? parseInt(row[2]) : null*/ 
 		}))
 		.filter(row => row.paramKey !== null || row.paramValue !== null);
 	if (parameterData.length === 0) {
@@ -288,10 +288,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 function initializeFilterKeyListener() {
     const filterKey = document.getElementById('filterKey');
-    const filterValue = document.getElementById('filterValue');
-    
-    if (!filterKey || !filterValue) {
-        console.warn("Elements not found. Retrying...");
+    if (!filterKey) {
+        /*console.warn("Element with ID 'filterKey' not found. Retrying...");*/
         setTimeout(initializeFilterKeyListener, 100);
         return;
     }
@@ -350,9 +348,12 @@ function updateFilterValueState(selectedKey, filterValue, rows) {
 		uniqueValues.add("All");
         rows.forEach(row => {
             const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-            const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
-            if (parameterKey === selectedKey) {
-                uniqueValues.add(parameterValue);
+            console.log('Row Parameter Key:', parameterKey);
+
+            if (selectedKey === "" || parameterKey === selectedKey) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none"; 
             }
         });
 
@@ -364,4 +365,5 @@ function updateFilterValueState(selectedKey, filterValue, rows) {
         });
     }
 }
+
 document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);

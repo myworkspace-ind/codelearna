@@ -1,8 +1,12 @@
 import { showSuccessToast, showErrorToast } from './toast.js';
 
+
 function initializeReviewForm(formSelector) {
 	const form = document.querySelector(formSelector);
-	if (!form) return;
+	if (!form) {
+		console.warn(`Form not found for selector: ${formSelector}`);
+		return;
+	}
 
 	const stars = form.querySelectorAll('.rating-stars .star');
 	const ratingInput = form.querySelector('input[name="ratingStar"]');
@@ -10,13 +14,17 @@ function initializeReviewForm(formSelector) {
 	const reviewContent = form.querySelector('.review-content');
 	const charCount = form.querySelector('.char-count');
 
+	if (!stars || !ratingInput) {
+		console.warn(`Required elements not found in form: ${formSelector}`);
+		return;
+	}
+
 	form.addEventListener('submit', function(e) {
-		if (!ratingInput || ratingInput.value === "0") {
+		if (!ratingInput.value || ratingInput.value === "0") {
 			e.preventDefault();
 			if (ratingError) {
 				ratingError.style.display = "block";
 			}
-			return;
 		}
 	});
 
@@ -37,6 +45,7 @@ function initializeReviewForm(formSelector) {
 		});
 	}
 }
+
 
 function updateStars(stars, rating) {
 	stars.forEach(star => {
@@ -86,25 +95,42 @@ function initializeReviewForms() {
 	});
 }
 
+
 function handleAddReview() {
 	let courseInfor = { courseId: null };
 
-	document.querySelectorAll('.add-review-btn').forEach(button => {
-		button.addEventListener('click', function() {
-			courseInfor.courseId = this.getAttribute('data-course-id');
+	const addReviewButtons = document.querySelectorAll('.add-review-btn');
+	if (addReviewButtons.length > 0) {
+		addReviewButtons.forEach(button => {
+			button.addEventListener('click', function() {
+				courseInfor.courseId = this.getAttribute('data-course-id');
+			});
 		});
-	});
+	}
 
-	document.getElementById('reviewForm').addEventListener('submit', function(event) {
-		event.preventDefault();
-		if (courseInfor.courseId) {
-			submitReview(courseInfor.courseId, this);
-		}
-	});
+	const reviewForm = document.getElementById('reviewForm');
+	if (reviewForm) {
+		reviewForm.addEventListener('submit', function(event) {
+			event.preventDefault();
+			if (courseInfor.courseId) {
+				submitReview(courseInfor.courseId, this);
+			}
+		});
+	}
 }
+
 
 function submitReview(courseId, form) {
 	const formData = new FormData(form);
+	const ratingInput = form.querySelector('input[name="ratingStar"]');
+	const ratingError = form.querySelector('.rating-error');
+
+	if (ratingInput.value === "0") {
+		if (ratingError) {
+			ratingError.style.display = "block";
+		}
+		return;
+	}
 	fetch(`${_ctx}course/${courseId}/review`, {
 		method: 'POST',
 		body: formData

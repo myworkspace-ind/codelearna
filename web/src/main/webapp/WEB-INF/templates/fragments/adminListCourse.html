@@ -4,13 +4,27 @@
 
 		<!-- Add Course Button -->
 		<div class="d-flex justify-content-end mb-3">
-			<button type="button" class="btn btn-success mx-3"
+			<button type="button" class="btn btn-primary mx-3"
 				onclick="fetchAddCoursePage(event)">Add Course</button>
-			<a class="btn btn-success" href="#"
-				th:onclick="'fetchAddCourseHandsontablePage(event)'"> Add
-				Courses with Handsontable </a>
+			<button type="button" class="btn btn-success"
+				th:onclick="fetchAddCourseHandsontablePage(event)">Add
+				Courses with Handsontable</button>
+			<button type="button" class="btn btn-outline-danger btn-sm"
+				th:onclick="'loadDeletedCoursesModal()'">
+				<i class="fas fa-trash-alt"></i> Deleted Course
+			</button>
 		</div>
-<div id="loadingContainer"></div>
+
+		<div class="d-flex justify-content-between align-items-center mb-3"
+			style="width: 300px;">
+			<input type="text" id="courseSearchInput" class="form-control"
+				placeholder="Search course name..." aria-label="Search course name"
+				onkeypress="handleSearchCourseKeyPress(event)">
+			<button class="btn btn-outline-secondary ms-2" type="button"
+				onclick="searchCourses()">Search</button>
+		</div>
+
+		<div id="loadingContainer"></div>
 		<div id="coursesContainer">
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">
@@ -29,16 +43,19 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="course, iterStat : ${courses}">
+						<tr th:each="course, iterStat : ${courses}" th:if="${course.status == 'ACTIVE' or course.status == 'INACTIVE'}">
 							<th th:text="${iterStat.count}"></th>
 							<td><img th:src="${course.imageUrl}" alt="course image"
 								style="max-width: 100px;" /></td>
 							<td th:text="${course.name}"></td>
 							<td th:text="${course.description}"></td>
-							<td th:text="${course.originalPrice}"></td>
-							<td th:text="${course.discountedPrice}"></td>
+							<td
+								th:text="${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
+							<td
+								th:text="${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></td>
 							<td th:text="${course.difficultyLevel.paramValue}"></td>
-							<td th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
+							<td
+								th:text="${course.isFree == null || course.isFree == false ? 'No' : 'Yes'}"></td>
 							<td th:text="${course.status}"></td>
 							<td>
 								<div class="btn-group" role="group">
@@ -53,11 +70,10 @@
 										th:onclick="'showCourseStatusChangeModal(this.dataset.courseId, this.dataset.status)'"
 										th:text="${course.status == 'ACTIVE' ? 'Deactivate' : 'Activate'}"
 										th:disabled="${course.status == 'DELETED'}"></button>
-									
 									<a href="#" class="btn btn-danger btn-sm"
 										th:onclick="showDeleteConfirmModal([[${course.id}]])"
-										title="Delete Course"> Delete
-									</a>
+										title="Delete Course"> Delete </a>
+
 								</div>
 							</td>
 						</tr>

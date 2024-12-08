@@ -9,4 +9,6 @@ public interface CommentService {
     Comment findById(Long id);
     
     void saveComment(Comment comment);
+    
+    List<Comment> findChildCommentsByParentId(Long parentId);
 }
