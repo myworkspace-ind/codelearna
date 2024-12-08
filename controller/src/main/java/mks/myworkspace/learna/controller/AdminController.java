@@ -96,7 +96,7 @@ public class AdminController {
 		mav.addObject("lessonTypes", lessonTypes);
 		return mav;
 	}
-
+	
 	@PostMapping("/addCourse")
 	@Transactional
 	public ResponseEntity<Map<String, String>> addCourse(@Validated @ModelAttribute("course") Course course,

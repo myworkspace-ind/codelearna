@@ -1,29 +1,28 @@
 <div th:fragment="addCourseContent">
 	<div class="container mt-5">
-		<div class="overlay" id="overlay"></div>
 		<!-- Popup content -->
-		<div class="popup" id="popup">
-			<h1>Certificate Editor</h1>
+		<div class="popupCertificate" id="popup">
 			<div class="certificate" id="certificate">
 				<h1>CODELEARN A</h1>
-				<p>CHỨNG NHẬN</p>
-				<p class="name" contenteditable="true">NGUYỄN VĂN A</p>
-				<p>Đã hoàn thành khóa học</p>
-				<p class="course" id="popup-course-name" contenteditable="true"></p>
-				<p class="date" contenteditable="true">Ngày hoàn thành:
+				<p>CERTIFICATE</p>
+				<p class="name" contenteditable="true">"NAME"</p>
+				<p>Completed the course</p>
+				<p class="course" id="popup-course-name" contenteditable="true">"COURSE NAME"</p>
+				<p class="date" contenteditable="true">Completion date:
 					dd/mm/yyyy</p>
-				<p class="serial" contenteditable="true">Số hiệu chứng nhận: #</p>
+				<p class="serial" contenteditable="true">Certification number: #</p>
 				<div class="qr" id="qr-container" onclick="triggerQRUpload()">
-					<span>Mã QR</span>
+					<span>QR code</span>
 				</div>
 				<input type="file" id="qr-upload" accept="image/*"
 					onchange="updateQR()">
 			</div>
-			<div class="buttons">
-				<button class="save" onclick="downloadPDF()">Tải hình ảnh</button>
-				<button class="close-btn" onclick="closePopup()">Close</button>
+			<div class="buttons mt-3">
+				<button class="btn btn-primary" onclick="downloadPDF()">Download images</button>
+				<button class="btn btn-secondary" onclick="closePopup()">Close</button>
 			</div>
 		</div>
+		
 		<h1 class="mb-4 fw-bolder">Add New Course</h1>
 
 		<!-- Error Message Display -->
@@ -45,17 +44,19 @@
 
 			<div class="row">
 				<div class="col-md-6 mb-3">
-					<label for="originalPrice" class="form-label">Original Price<span style="color:red">*</span></label> 
-					<input type="number" class="form-control" id="originalPrice" name="originalPrice" required step="1">
+					<label for="originalPrice" class="form-label">Original Price <span style="color:red">*</span></label>
+					<input type="number" class="form-control" id="originalPrice" name="originalPrice" required step="1" min="0">
+					<div class="invalid-feedback">Original price must be 0 or greater.</div>
 				</div>
 				<div class="col-md-6 mb-3">
-					<label for="discountedPrice" class="form-label">Discounted Price<span style="color:red">*</span></label> 
-					<input type="number" class="form-control" id="discountedPrice" name="discountedPrice" required step="1">
+					<label for="discountedPrice" class="form-label">Discounted Price <span style="color:red">*</span></label>
+					<input type="number" class="form-control" id="discountedPrice" name="discountedPrice" required step="1" min="0">
+					<div class="invalid-feedback">Discounted price must be 0 or greater.</div>
 				</div>
 			</div>
 
 			<div class="mb-3">
-				<label for="image" class="form-label">Image URL</label> 
+				<label for="imageUrl" class="form-label">Image URL</label>
 				<input type="text" class="form-control" id="imageUrl" name="imageUrl" placeholder="Enter image URL" required>
 				<div class="invalid-feedback">Please enter an image URL.</div>
 			</div>
@@ -67,13 +68,13 @@
 			</div>
 			<div class="row">
 				<div class="col-md-6 mb-3">
-					<label for="difficultyLevel" class="form-label">Difficulty Level<span style="color:red">*</span></label>
+					<label for="difficultyLevel" class="form-label">Difficulty Level <span style="color:red">*</span></label>
 					<select class="form-select" id="difficultyLevel" name="difficultyLevel.id" required>
 						<option th:each="difficultyLevel : ${difficultyLevels}" th:value="${difficultyLevel.id}" th:text="${difficultyLevel.paramValue}"></option>
 					</select>
 				</div>
 				<div class="col-md-6 mb-3">
-					<label for="lessonType" class="form-label">Lesson Type<span style="color:red">*</span></label>
+					<label for="lessonType" class="form-label">Lesson Type <span style="color:red">*</span></label>
 					<select class="form-select" id="lessonType" name="lessonType.id" required>
 						<option value="">Choose lesson type...</option>
 						<option th:each="lessonType : ${lessonTypes}" th:value="${lessonType.id}" th:text="${lessonType.paramValue}"></option>
@@ -83,7 +84,7 @@
 
 			<!-- Category and Subcategory Inputs -->
 			<div class="mb-3">
-				<label for="category" class="form-label">Category<span style="color:red">*</span></label>
+				<label for="category" class="form-label">Category <span style="color:red">*</span></label>
 				<select class="form-select" id="category" onchange="filterSubcategories(this.value, this.options[this.selectedIndex].dataset.paramId)" required>
 					<option value="">Choose a category...</option>
 					<option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.parameter.paramValue}" th:data-param-id="${category.parameter.id}"></option>
@@ -91,7 +92,7 @@
 			</div>
 
 			<div class="mb-3">
-				<label for="subcategory" class="form-label">Subcategory<span style="color:red">*</span></label>
+				<label for="subcategory" class="form-label">Subcategory <span style="color:red">*</span></label>
 				<select class="form-select" id="subcategory" name="subcategory.id" disabled required>
 					<option value="">Choose a subcategory...</option>
 					<option th:each="subcategory : ${subcategories}" th:value="${subcategory.id}" th:data-category-id="${subcategory.category.id}" th:text="${subcategory.parameter.paramValue}"></option>
@@ -100,12 +101,10 @@
 
 			<!-- Free Course Checkbox -->
 			<div class="mb-3 form-check">
-				<input type="checkbox" class="form-check-input" id="isFree" name="isFree"> 
+				<input type="checkbox" class="form-check-input" id="isFree" name="isFree">
 				<label class="form-check-label" for="isFree">Is Free Course</label>
 			</div>
-			<div class="mb-3 form-check">
-				<button type="button"  class="btn btn-secondary" onclick="showPopup()">Show Certificate</button>
-			</div>
+			<button type="button"  class="btn btn-secondary" onclick="showPopup()">Show Certificate</button>
 			<button type="submit" class="btn btn-primary">Add Course</button>
 			<button type="button" class="btn btn-secondary" onclick="loadCoursesSection(event)">Cancel</button>
 		</form>

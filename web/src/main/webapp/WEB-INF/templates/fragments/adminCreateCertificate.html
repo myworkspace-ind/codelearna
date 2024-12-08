@@ -2,23 +2,23 @@
 	<div class="container">
 		<div class="certificate" id="certificate">
 			<h1>CODELEARN A</h1>
-			<p>CHỨNG NHẬN</p>
-			<p class="name" contenteditable="true">NGUYỄN VĂN A</p>
-			<p>Đã hoàn thành khóa học</p>
-			<p class="course" contenteditable="true">"TÊN KHÓA HỌC"</p>
-			<p class="date" contenteditable="true">Ngày hoàn thành:
+			<p>CERTIFICATE</p>
+			<p class="name" contenteditable="true">"NAME"</p>
+			<p>Completed the course</p>
+			<p class="course" id="popup-course-name" contenteditable="true">"COURSE NAME"</p>
+			<p class="date" contenteditable="true">Completion date:
 				dd/mm/yyyy</p>
-			<p class="serial" contenteditable="true">Số hiệu chứng nhận: #</p>
+			<p class="serial" contenteditable="true">Certification number: #</p>
 			<div class="qr" id="qr-container" onclick="triggerQRUpload()">
-				<span>Mã QR</span>
+				<span>QR code</span>
 			</div>
 			<input type="file" id="qr-upload" accept="image/*"
 				onchange="updateQR()">
 		</div>
-
-		<div class="buttons">
-			<button class="save" onclick="downloadPDF()">Tải hình ảnh</button>
-			<button type="button" class="btn btn-secondary" onclick="goBack()">Cancel</button>
+		<div class="buttons mt-3">
+			<button class="btn btn-primary" onclick="downloadPDF()">Download
+				images</button>
+			<button class="btn btn-secondary" onclick="closePopup()">Close</button>
 		</div>
 	</div>
 </div>
