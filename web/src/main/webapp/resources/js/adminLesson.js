@@ -454,10 +454,6 @@ function restoreLesson(lessonId, courseId) {
     .catch(error => {
         console.error('Error restoring lesson:', error);
         showErrorToast(error.message || 'An error occurred while restoring the lesson');
-        
-        $('#deletedLessonsModal').modal('hide');
-        $('#restoreConfirmModal').modal('hide');
-        $('.modal-backdrop').remove();
     });
 }
 
