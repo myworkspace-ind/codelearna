@@ -43,7 +43,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="course, iterStat : ${courses}">
+						<tr th:each="course, iterStat : ${courses}" th:if="${course.status == 'ACTIVE' or course.status == 'INACTIVE'}">
 							<th th:text="${iterStat.count}"></th>
 							<td><img th:src="${course.imageUrl}" alt="course image"
 								style="max-width: 100px;" /></td>
