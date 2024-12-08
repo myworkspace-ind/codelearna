@@ -12,6 +12,7 @@ import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
 import mks.myworkspace.learna.service.ParameterService;
 import mks.myworkspace.learna.service.PlayService;
+import mks.myworkspace.learna.service.RevenueService;
 import mks.myworkspace.learna.service.SubcategoryService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
 
@@ -75,20 +76,26 @@ public class AdminController {
 	@Autowired
 	private LessonService lessonService;
 	@Autowired
+	private RevenueService revenueService;
+	@Autowired
 	private UserLibraryCourseService userLibraryCourseService;
 	@GetMapping
 	public String showAdminHomePage(Model model) {
 		int totalCourses = courseService.getTotalCourses();
+		Double totalRevenues = revenueService.getTotalRevenue();
 		model.addAttribute("totalCourses", totalCourses);
 		model.addAttribute("totalUsers", 100);
+		model.addAttribute("totalRevenue", totalRevenues);
 		return "adminHome";
 	}
 	
 	@GetMapping("/dashboard")
 	public String showDashBoard(Model model) {
 		int totalCourses = courseService.getTotalCourses();
+		Double totalRevenues = revenueService.getTotalRevenue();
 		model.addAttribute("totalCourses", totalCourses);
 		model.addAttribute("totalUsers", 100);
+		model.addAttribute("totalRevenue", totalRevenues);
 		return "fragments/welcome :: welcome-section";
 	}
 

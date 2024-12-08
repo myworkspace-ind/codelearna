@@ -24,7 +24,7 @@
 										<span class="text-muted small">Total Users</span>
 									</div>
 									<div class="stat-card text-center bg-white p-3 rounded shadow-sm">
-										<h4 class="text-danger display-6 mb-1 fw-bold" th:text="${totalRevenue} ?: '0 VND'">0 VND</h4>
+										<h4 class="text-danger display-6 mb-1 fw-bold" th:text="${#numbers.formatDecimal((totalRevenue), 1, 'DEFAULT', 0, 'DEFAULT')}" >0 VND</h4>
 										<span class="text-muted small">Total Revenue</span>
 									</div>
 								</div>
