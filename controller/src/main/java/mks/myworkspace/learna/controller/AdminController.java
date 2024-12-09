@@ -83,8 +83,9 @@ public class AdminController {
 	public String showAdminHomePage(Model model) {
 		int totalCourses = courseService.getTotalCourses();
 		Double totalRevenues = revenueService.getTotalRevenue();
+		Long totalUsers = userLibraryCourseService.countTotalUserLibrary();
 		model.addAttribute("totalCourses", totalCourses);
-		model.addAttribute("totalUsers", 100);
+		model.addAttribute("totalUsers", totalUsers);
 		model.addAttribute("totalRevenue", totalRevenues);
 		return "adminHome";
 	}
@@ -93,8 +94,9 @@ public class AdminController {
 	public String showDashBoard(Model model) {
 		int totalCourses = courseService.getTotalCourses();
 		Double totalRevenues = revenueService.getTotalRevenue();
+		Long totalUsers = userLibraryCourseService.countTotalUserLibrary();
 		model.addAttribute("totalCourses", totalCourses);
-		model.addAttribute("totalUsers", 100);
+		model.addAttribute("totalUsers", totalUsers);
 		model.addAttribute("totalRevenue", totalRevenues);
 		return "fragments/welcome :: welcome-section";
 	}
