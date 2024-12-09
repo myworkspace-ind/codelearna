@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +61,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/admin")
 @Slf4j
-public class AdminController {
+public class AdminController extends BaseController{
 
 	@Autowired
 	private CourseService courseService;
@@ -80,13 +82,18 @@ public class AdminController {
 	@Autowired
 	private UserLibraryCourseService userLibraryCourseService;
 	@GetMapping
-	public String showAdminHomePage(Model model) {
-		int totalCourses = courseService.getTotalCourses();
-		Double totalRevenues = revenueService.getTotalRevenue();
-		model.addAttribute("totalCourses", totalCourses);
-		model.addAttribute("totalUsers", 100);
-		model.addAttribute("totalRevenue", totalRevenues);
-		return "adminHome";
+	public String showAdminHomePage(Model model, HttpServletRequest request) {
+	    String currentUserEid = getCurrentUserEid();
+	    if (!"admin".equals(currentUserEid)) {
+	        return "accessDenied"; // Trả về trang không có quyền
+	    }
+
+	    int totalCourses = courseService.getTotalCourses();
+	    Double totalRevenues = revenueService.getTotalRevenue();
+	    model.addAttribute("totalCourses", totalCourses);
+	    model.addAttribute("totalUsers", 100);
+	    model.addAttribute("totalRevenue", totalRevenues);
+	    return "adminHome";
 	}
 	
 	@GetMapping("/dashboard")

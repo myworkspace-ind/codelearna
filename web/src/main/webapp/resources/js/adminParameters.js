@@ -387,7 +387,6 @@ function restoreParameter(parameterId) {
             
             // Remove modal backdrops
             document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
-            
             // Reload the courses section
             loadParametersManagePage();
         } else {
