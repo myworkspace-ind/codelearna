@@ -19,23 +19,31 @@
 
 </head>
 <body>
-<th:block th:include="fragments/hnav"></th:block>
- <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+	<!-- <th:block th:include="fragments/hnav"></th:block> -->
+	<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
 	<div class="dashboard">
-		
-			<div th:replace="fragments/adminSidebar"></div>
-	
-			<div id="main-content" class="main-content">
-			
-				<main>
-					<div id="dynamic-content"></div>
-					<th:block th:include="fragments/javascript.html"></th:block>
-				</main>
-			</div>
+
+		<div th:replace="fragments/adminSidebar"></div>
+
+		<div id="main-content" class="main-content">
+
+			<main>
+				<div th:replace="~{fragments/welcome::welcome-section}"></div>
+				<div id="dynamic-content"></div>
+				<th:block th:include="fragments/javascript.html"></th:block>
+			</main>
+
 		</div>
+	</div>
 	<script type="module" th:src="@{/resources/js/adminHome.js}"></script>
+	<script th:src="@{/resources/js/adminDashboard.js}"></script>
 	<script th:src="@{/resources/js/adminCourse.js}"></script>
+	<script th:src="@{/resources/js/searchCourseAdmin.js}"></script>
 	<script th:src="@{/resources/js/adminLesson.js}"></script>
+	<script th:src="@{/resources/js/searchLessonAdmin.js}"></script>
 	<script th:src="@{/resources/js/adminParameters.js}"></script>
+	<script th:src="@{/resources/js/adminRevenue.js}"></script>
+	<script th:src="@{/resources/js/revenueFetchData.js}"></script>
+	<script th:src="@{/resources/js/adminManageProcess.js}"></script>
 </body>
 </html>
