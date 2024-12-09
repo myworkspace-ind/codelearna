@@ -224,7 +224,7 @@ public class AdminController extends BaseController{
 	@ResponseBody
 	@GetMapping("/values")
 	public List<String> getParamValues(@RequestParam String paramKey) {
-		return parameterService.getParamValues(paramKey).stream().map(Parameter::getParamValue)
+		return parameterService.getListParamsByParamValueAndStatus(paramKey, "ACTIVE").stream().map(Parameter::getParamValue)
 				.collect(Collectors.toList());
 	}
 	
@@ -738,6 +738,7 @@ public class AdminController extends BaseController{
 	            lesson.setVideoUrl((String) lessonMap.get("videoUrl"));
 	            lesson.setActivityId(activityId);
 	            lesson.setCourse(course);
+	            lesson.setStatus("INACTIVE");
 	            lessonService.saveLesson(lesson);
 	            log.info("Saved lesson: {}", lesson.getTitle());
 	        }

@@ -46,12 +46,12 @@
 									<!-- Conditional Delete/Restore button based on status -->
 									<a th:if="${parameter.status == 'ACTIVE'}" href="#"
 										class="btn btn-danger btn-sm"
-										th:onclick="showDeleteParameterConfirmModal([[${parameter.id}]])">Delete</a>
+										th:onclick="showDeleteParameterConfirmModal([[${parameter.id}]])">Disable</a>
 
 									<a th:if="${parameter.status == 'DELETED'}" href="#"
 										class="btn btn-success btn-sm"
 										th:data-parameter-id="${parameter.id}"
-                                            onclick="showParameterRestoreConfirmModal(this.getAttribute('data-parameter-id'))">Restore</a>
+                                            onclick="showParameterRestoreConfirmModal(this.getAttribute('data-parameter-id'))">Enable</a>
 								</div>
 							</td>
 						</tr>
