@@ -219,6 +219,12 @@ public class AdminController {
 		return parameterService.getParamValues(paramKey).stream().map(Parameter::getParamValue)
 				.collect(Collectors.toList());
 	}
+	
+	@ResponseBody
+    @GetMapping("/paramKey")
+    public List<String> getParamKeys() {
+        return parameterService.getAllDistinctParamKeys();
+    }
 
 	@PostMapping("/saveCoursesHandsontable")
 	@Transactional
@@ -922,7 +928,7 @@ public class AdminController {
 
 		ModelAndView mav = new ModelAndView("fragments/adminEditParameter :: editParameterModal");
 		mav.addObject("parameter", parameter);
-		mav.addObject("parametersKeyDistinct", parameterService.getAllDistinctParamKeys());
+		mav.addObject("parametersKeyDistinct", parameterService.getDistinctParamKeys());
 		return mav;
 	}
 
