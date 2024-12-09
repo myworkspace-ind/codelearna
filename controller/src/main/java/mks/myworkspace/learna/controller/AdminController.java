@@ -6,12 +6,15 @@ import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.entity.Subcategory;
+import mks.myworkspace.learna.entity.UserLibraryCourse;
 import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
 import mks.myworkspace.learna.service.ParameterService;
 import mks.myworkspace.learna.service.PlayService;
+import mks.myworkspace.learna.service.RevenueService;
 import mks.myworkspace.learna.service.SubcategoryService;
+import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,6 +53,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -71,20 +75,27 @@ public class AdminController {
 	private PlayService playService;
 	@Autowired
 	private LessonService lessonService;
-
+	@Autowired
+	private RevenueService revenueService;
+	@Autowired
+	private UserLibraryCourseService userLibraryCourseService;
 	@GetMapping
 	public String showAdminHomePage(Model model) {
 		int totalCourses = courseService.getTotalCourses();
+		Double totalRevenues = revenueService.getTotalRevenue();
 		model.addAttribute("totalCourses", totalCourses);
 		model.addAttribute("totalUsers", 100);
+		model.addAttribute("totalRevenue", totalRevenues);
 		return "adminHome";
 	}
 	
 	@GetMapping("/dashboard")
 	public String showDashBoard(Model model) {
 		int totalCourses = courseService.getTotalCourses();
+		Double totalRevenues = revenueService.getTotalRevenue();
 		model.addAttribute("totalCourses", totalCourses);
 		model.addAttribute("totalUsers", 100);
+		model.addAttribute("totalRevenue", totalRevenues);
 		return "fragments/welcome :: welcome-section";
 	}
 
@@ -92,6 +103,12 @@ public class AdminController {
 	public ModelAndView loadCoursesFragment() {
 		ModelAndView mav = new ModelAndView("fragments/adminListCourse :: coursesContent");
 		mav.addObject("courses", courseService.getAllCourses());
+		return mav;
+	}
+	
+	@GetMapping("/revenue")
+	public ModelAndView revenueFragment() {
+		ModelAndView mav = new ModelAndView("fragments/revenue :: revenue");
 		return mav;
 	}
 
@@ -923,5 +940,51 @@ public class AdminController {
 
 		return ResponseEntity.ok(Map.of("status", "success", "message", "Parameter updated successfully"));
 	}
-
+	@GetMapping("/listManageLearningProgress")
+    public ModelAndView loadUserLibraryFragment() {
+        ModelAndView mav = new ModelAndView("fragments/adminManageLearningProgress :: userLibraryContent");
+        
+        // Fetch all unique user EIDs from user library courses
+        List<String> uniqueUserEids = userLibraryCourseService.findAllUniqueUserEids();
+        
+        // Prepare a list to hold user library information
+        List<UserLibraryDTO> userLibraryData = new ArrayList<>();
+        
+        for (String userEid : uniqueUserEids) {
+            // Get all courses for this user
+            List<UserLibraryCourse> userCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid);
+            
+            // Calculate completed and in-progress courses
+            long completedCourses = userCourses.stream()
+                .filter(course -> course.getProgressStatus() == UserLibraryCourse.ProgressStatus.COMPLETE)
+                .count();
+            
+            long inProgressCourses = userCourses.stream()
+                .filter(course -> course.getProgressStatus() == UserLibraryCourse.ProgressStatus.IN_PROGRESS)
+                .count();
+            
+            // Create DTO for this user
+            UserLibraryDTO userDto = new UserLibraryDTO();
+            userDto.setUserEid(userEid);
+            userDto.setCompletedCoursesCount(completedCourses);
+            userDto.setInProgressCoursesCount(inProgressCourses);
+            userDto.setXapiLink("https://mksol.vn/xapi-lrs/" + userEid + "/course");
+            
+            userLibraryData.add(userDto);
+        }
+        
+        mav.addObject("userLibraries", userLibraryData);
+        return mav;
+    }
+	
+	@Data
+	public class UserLibraryDTO {
+	    private String userEid;
+	    private long completedCoursesCount;
+	    private long inProgressCoursesCount;
+	    private String xapiLink;
+	}
 }
+	
+	
+

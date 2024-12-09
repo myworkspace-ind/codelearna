@@ -439,13 +439,11 @@ function restoreLesson(lessonId, courseId) {
     .then(data => {
         if (data.status === 'success') {
             showSuccessToast(data.message || 'Lesson restored successfully');
-            
+			const restoreModal = bootstrap.Modal.getInstance(document.getElementById('restoreConfirmModal'));
+			const deletedLessonsModal = bootstrap.Modal.getInstance(document.getElementById('deletedLessonsModal'));
             // Explicitly close both modals
-            $('#deletedLessonsModal').modal('hide');
-            $('#restoreConfirmModal').modal('hide');
-            
-            // Remove modal backdrops
-            $('.modal-backdrop').remove();
+			if (restoreModal) restoreModal.hide();
+			if (deletedLessonsModal) deletedLessonsModal.hide();
             
             // Reload the course lessons
             loadCourseLessons(courseId);
@@ -456,11 +454,6 @@ function restoreLesson(lessonId, courseId) {
     .catch(error => {
         console.error('Error restoring lesson:', error);
         showErrorToast(error.message || 'An error occurred while restoring the lesson');
-        
-        // Ensure modals are closed in case of error
-        $('#deletedLessonsModal').modal('hide');
-        $('#restoreConfirmModal').modal('hide');
-        $('.modal-backdrop').remove();
     });
 }
 

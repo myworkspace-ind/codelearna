@@ -6,7 +6,7 @@ const paginationStates = {
 	},
 	lessons: {
 		currentPage: 1,
-		itemsPerPage: 3,
+		itemsPerPage: 5,
 		totalPages: 1
 	},
 	parameters: {

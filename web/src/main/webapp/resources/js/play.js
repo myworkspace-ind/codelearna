@@ -16,7 +16,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.getElementById('next-btn');
     const submitCommentBtn = document.getElementById('submit-comment-btn');
     const commentTextArea = document.getElementById('comment-text');
+	const searchInput = document.getElementById('search');
+	   searchInput.addEventListener('keyup', function() {
+	       searchLessons(this.value);
+	   });
 
+	   function searchLessons(searchTerm) {
+	       lessons.forEach(lesson => {
+	           const title = lesson.querySelector('.title').textContent.toLowerCase();
+	           if (title.includes(searchTerm.toLowerCase())) {
+	               lesson.style.visibility = 'visible';
+	               lesson.style.height = '';
+	               lesson.style.opacity = '1';
+	               lesson.style.pointerEvents = 'auto';
+	           } else {
+	               lesson.style.visibility = 'hidden';
+	               lesson.style.height = '0';
+	               lesson.style.opacity = '0';
+	               lesson.style.pointerEvents = 'none';
+	           }
+	       });
+	   }
     const lessons = Array.from(document.querySelectorAll('.video-list-content .vid'));
     let currentLessonIndex = 0;
 	function convertToEmbeddableUrl(url) {
@@ -302,20 +322,17 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please enter a reply before submitting.');
         }
     }
-
     // Thêm sự kiện click cho nút toggle-btn
-    toggleBtn.addEventListener('click', () => {
-        if (videoList.style.display === 'none' || !videoList.style.display) {
-            videoList.style.display = 'block';
-            container.classList.remove('expanded'); 
-            toggleBtn.textContent = '☰'; 
-        } else {
-            videoList.style.display = 'none';
-            container.classList.add('expanded');
-            toggleBtn.textContent = '✖';
-        }
-    });
-
+	toggleBtn.addEventListener('click', () => {
+	    const container = document.querySelector('.container-play');
+	    if (container.classList.contains('expanded')) {
+	        container.classList.remove('expanded');
+	        toggleBtn.textContent = '☰'; 
+	    } else {
+	        container.classList.add('expanded');
+	        toggleBtn.textContent = '✖';
+	    }
+	});
     // Xử lý sự kiện click cho bài học
     lessons.forEach((lesson, index) => {
         lesson.addEventListener('click', function () {
@@ -412,4 +429,5 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.warn('No lessons found');
     }
+	
 });

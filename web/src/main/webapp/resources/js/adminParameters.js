@@ -60,10 +60,10 @@ function handleFileParameter(event) {
 				.filter(row => row.length >= 2)
 				.map(row => ({
 					paramKey: row[0] !== undefined ? row[0].toString() : null,
-					paramValue: row[1] !== undefined ? row[1].toString() : null,
-					seqno: row[2] !== undefined && !isNaN(parseInt(row[2]))
+					paramValue: row[1] !== undefined ? row[1].toString() : null
+					/*seqno: row[2] !== undefined && !isNaN(parseInt(row[2]))
 						? parseInt(row[2])
-						: null
+						: null*/
 				}));
 
 			if (hot) {
@@ -101,14 +101,14 @@ function initializeParameterHandsontable() {
 					source: ['category', 'subcategory', 'difficulty_level', 'lesson_type']
 				},
 				{ data: 'paramValue', type: 'text' },
-				{
+				/*{
 					data: 'seqno',
 					type: 'numeric',
 					validator: (value) => {
 						return value === null || (!isNaN(value) && Number.isInteger(Number(value)));
 					},
 					allowInvalid: false
-				}
+				}*/
 			],
 			minRows: 1,
 			rowHeaders: true,
@@ -136,7 +136,7 @@ function submitParameterData(event) {
 		.map(row => ({
 			paramKey: row[0] !== null ? row[0].toString() : null,
 			paramValue: row[1] !== null ? row[1].toString() : null,
-			seqno: row[2] !== null && !isNaN(parseInt(row[2])) ? parseInt(row[2]) : null 
+			/*seqno: row[2] !== null && !isNaN(parseInt(row[2])) ? parseInt(row[2]) : null*/ 
 		}))
 		.filter(row => row.paramKey !== null || row.paramValue !== null);
 	if (parameterData.length === 0) {

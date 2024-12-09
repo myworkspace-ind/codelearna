@@ -12,10 +12,15 @@ document.addEventListener("DOMContentLoaded", function() {
 	const toggleSidebarBtn = document.querySelector(".toggle-sidebar");
 	const sidebar = document.querySelector(".sidebar");
 
-	toggleSidebarBtn.addEventListener("click", function() {
-		sidebar.classList.toggle("collapsed");
-	});
+	if (toggleSidebarBtn && sidebar) {
+		toggleSidebarBtn.addEventListener("click", function() {
+			sidebar.classList.toggle("collapsed");
+		});
+	} else {
+		console.warn("Toggle button or sidebar element not found.");
+	}
 });
+
 
 
 document.querySelectorAll('.sidebar nav a').forEach(link => {

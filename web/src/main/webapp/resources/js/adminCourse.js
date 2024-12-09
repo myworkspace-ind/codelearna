@@ -144,39 +144,44 @@ function deleteCourse(courseId, modal) {
 }
 
 function toggleCourseStatus(courseId) {
-    showSpinnerLoading(); // Hiển thị spinner khi bắt đầu yêu cầu
-
     fetch(`${_ctx}admin/courses/toggleCourseStatus/${courseId}`, {
         method: 'POST',
         headers: {
+            'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ courseId: courseId })
     })
-    .then(response => response.json())
+    .then(response => {
+        // Kiểm tra xem phản hồi có phải JSON không
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json();
+        } else {
+            // Nếu không phải JSON, chuyển đổi sang text để debug
+            return response.text().then(text => {
+                throw new Error(`Server returned non-JSON response: ${text}`);
+            });
+        }
+    })
     .then(data => {
-        hideAllLoading(); // Ẩn spinner sau khi nhận được phản hồi
-
         if (data.status === 'success') {
             showSuccessToast(data.message || 'Thay đổi trạng thái khóa học thành công');
-            loadCoursesSection(); // Tải lại danh sách khóa học sau khi thay đổi trạng thái
+            loadCoursesSection();
 
             const statusChangeModal = bootstrap.Modal.getInstance(document.getElementById('statusChangeModal'));
             if (statusChangeModal) {
-                statusChangeModal.hide(); // Ẩn modal nếu có
+                statusChangeModal.hide();
             }
         } else {
-            alert('Lỗi: ' + data.message);
+            throw new Error(data.message || 'Lỗi không xác định');
         }
     })
     .catch(error => {
-        hideAllLoading(); // Đảm bảo spinner được ẩn ngay cả khi có lỗi
-
         console.error('Lỗi:', error);
-        alert("Đã xảy ra lỗi trong khi thay đổi trạng thái khóa học.");
+        showErrorToast(error.message || "Đã xảy ra lỗi trong khi thay đổi trạng thái khóa học.");
     });
 }
-
 
 function showCourseStatusChangeModal(courseId, currentStatus) {
 
@@ -436,7 +441,7 @@ function initializeCourseHandsontable() {
 					}
 				},
 				{
-					data: 'lessonType',
+					data: 'subcategory',
 					type: 'dropdown',
 					source: function(query, process) {
 						fetch(_ctx + `/admin/values?paramKey=subcategory`)
