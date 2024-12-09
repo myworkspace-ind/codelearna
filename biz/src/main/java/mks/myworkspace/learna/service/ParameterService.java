@@ -18,4 +18,5 @@ public interface ParameterService {
 	void deleteParameter(Long id);
 	List<String> getParamKeyDiff();
 	List<Parameter> getParamValues(String paramKey);
+	List<String> getValues(String paramKey, String orderBy);
 }

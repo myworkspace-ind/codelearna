@@ -21,64 +21,63 @@ import lombok.extern.slf4j.Slf4j;
 public class ParameterJdbcRepository {
 	@Autowired
 	private DataSource dataSource;
-	
+
 	public Parameter save(Parameter parameter) {
-	    String sqlInsert = "INSERT INTO learna_parameter (param_key, param_value) VALUES (?, ?)";
-	    String sqlUpdate = "UPDATE learna_parameter SET param_key = ?, param_value = ? WHERE id = ?";
+		String sqlInsert = "INSERT INTO learna_parameter (param_key, param_value) VALUES (?, ?)";
+		String sqlUpdate = "UPDATE learna_parameter SET param_key = ?, param_value = ? WHERE id = ?";
 
-	    try (Connection conn = dataSource.getConnection()) {
-	        if (parameter.getId() != null) {
-	            try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
-	                ps.setString(1, parameter.getParamKey());
-	                ps.setString(2, parameter.getParamValue());
-	                ps.setLong(3, parameter.getId());
-	                int rowsUpdated = ps.executeUpdate();
-	               
-	                if (rowsUpdated == 0) {
-	                    insertNewParameter(parameter, conn, sqlInsert);
-	                }
-	            }
-	        } else {
-	            insertNewParameter(parameter, conn, sqlInsert);
-	        }
+		try (Connection conn = dataSource.getConnection()) {
+			if (parameter.getId() != null) {
+				try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
+					ps.setString(1, parameter.getParamKey());
+					ps.setString(2, parameter.getParamValue());
+					ps.setLong(3, parameter.getId());
+					int rowsUpdated = ps.executeUpdate();
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return parameter;
+					if (rowsUpdated == 0) {
+						insertNewParameter(parameter, conn, sqlInsert);
+					}
+				}
+			} else {
+				insertNewParameter(parameter, conn, sqlInsert);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return parameter;
 	}
 
 	private void insertNewParameter(Parameter parameter, Connection conn, String sqlInsert) throws SQLException {
-	    try (PreparedStatement ps = conn.prepareStatement(sqlInsert, PreparedStatement.RETURN_GENERATED_KEYS)) {
-	        ps.setString(1, parameter.getParamKey());
-	        ps.setString(2, parameter.getParamValue());
-	        ps.executeUpdate();
+		try (PreparedStatement ps = conn.prepareStatement(sqlInsert, PreparedStatement.RETURN_GENERATED_KEYS)) {
+			ps.setString(1, parameter.getParamKey());
+			ps.setString(2, parameter.getParamValue());
+			ps.executeUpdate();
 
-	        try (ResultSet rs = ps.getGeneratedKeys()) {
-	            if (rs.next()) {
-	                parameter.setId(rs.getLong(1));
-	            }
-	        }
-	    }
+			try (ResultSet rs = ps.getGeneratedKeys()) {
+				if (rs.next()) {
+					parameter.setId(rs.getLong(1));
+				}
+			}
+		}
 	}
-	
+
 	public void deleteById(Long id) {
-        String sql = "DELETE FROM learna_parameter WHERE id = ?";
+		String sql = "DELETE FROM learna_parameter WHERE id = ?";
 
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+		try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setLong(1, id);
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected == 0) {
-                System.out.println("Không tìm thấy Parameter với id: " + id);
-            }
+			ps.setLong(1, id);
+			int rowsAffected = ps.executeUpdate();
+			if (rowsAffected == 0) {
+				System.out.println("Không tìm thấy Parameter với id: " + id);
+			}
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public List<String> getParamKeyDiff() {
 		String sql = "SELECT DISTINCT param_key FROM sakai.learna_parameter;";
 		List<String> paramKeys = new ArrayList<>();
@@ -103,6 +102,25 @@ public class ParameterJdbcRepository {
 		}
 
 		return paramKeys;
+	}
+
+	public List<String> getValues(String paramKey, String orderBy) {
+		String sql = "SELECT param_value FROM sakai.learna_parameter WHERE param_key = ? ORDER BY seqno ASC";
+		List<String> values = new ArrayList<>();
+		try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, paramKey);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					values.add(rs.getString("param_value"));
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return values;
 	}
 
 	private void close(Connection conn) {
