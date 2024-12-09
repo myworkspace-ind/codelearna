@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 import lombok.Data;
+import lombok.ToString;
 
 @Entity
 @Table(name = "learna_subcategory")
@@ -14,13 +15,16 @@ public class Subcategory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "name", nullable = false)
-	private String name;
+    @ManyToOne
+    @JoinColumn(name = "parameter_id", nullable = false)
+    private Parameter parameter;
 
 	@ManyToOne
     @JoinColumn(name = "category_id")
+	@ToString.Exclude
     private Category category;
 
     @OneToMany(mappedBy = "subcategory", fetch = FetchType.EAGER)
+    @ToString.Exclude
     private List<Course> courses;
 }

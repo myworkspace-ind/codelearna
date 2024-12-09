@@ -2,9 +2,9 @@ package mks.myworkspace.learna.service.impl;
 
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.UserLibraryCourse;
-import mks.myworkspace.learna.repository.UserRepository;
 import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.repository.UserLibraryCourseRepository;
+import mks.myworkspace.learna.repository.UserLibraryCourseJdbcRepository;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,19 +16,22 @@ import java.util.List;
 public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
 
     private final UserLibraryCourseRepository userLibraryCourseRepository;
+    private final UserLibraryCourseJdbcRepository userLibraryCourseJdbcRepository;
     private final CourseRepository courseRepository;
 
     @Autowired
     public UserLibraryCourseServiceImpl(UserLibraryCourseRepository userLibraryCourseRepository,
-                                        UserRepository userRepository,
+                                        UserLibraryCourseJdbcRepository userLibraryCourseJdbcRepository,
                                         CourseRepository courseRepository) {
         this.userLibraryCourseRepository = userLibraryCourseRepository;
+        this.userLibraryCourseJdbcRepository = userLibraryCourseJdbcRepository;
         this.courseRepository = courseRepository;
     }
 
     @Override
     public UserLibraryCourse saveUserLibraryCourse(UserLibraryCourse userLibraryCourse) {
-        return userLibraryCourseRepository.save(userLibraryCourse);
+        userLibraryCourseJdbcRepository.save(userLibraryCourse);
+        return userLibraryCourse;
     }
 
     @Override
@@ -61,6 +64,11 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
         userLibraryCourse.setCourse(course);
         userLibraryCourse.setPaymentStatus(paymentStatus);
         userLibraryCourse.setProgressStatus(progressStatus);
-        userLibraryCourseRepository.save(userLibraryCourse);
+        userLibraryCourseJdbcRepository.save(userLibraryCourse);
+    }
+
+    @Override
+    public boolean isCoursePurchased(String userEid, Long courseId) {
+        return userLibraryCourseRepository.findByUserEidAndCourseId(userEid, courseId) != null;
     }
 }

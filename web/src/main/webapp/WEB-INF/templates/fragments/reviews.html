@@ -11,82 +11,95 @@
 	<div th:fragment="reviews">
 
 		<div class="reviews-section mt-5">
-			<h4>Learner Reviews</h4>
+			<div class="d-flex justify-content-between align-items-center mb-3">
+				<h4>Learner Reviews</h4>
+				<div class="filter-reviews">
+					<select id="reviewSortSelect" class="form-select form-select-sm w-auto" onchange="applySorting()">
+						<option value="">Sort Reviews</option>
+						<option value="rating-desc" th:selected="${selectedSort == 'rating-desc'}">Highest Rating</option>
+						<option value="rating-asc" th:selected="${selectedSort == 'rating-asc'}">Lowest Rating</option>
+						<option value="date-desc" th:selected="${selectedSort == 'date-desc'}">Most Recent</option>
+						<option value="date-asc" th:selected="${selectedSort == 'date-asc'}">Oldest First</option>
+					</select>
+				</div>
+			</div>
+
 			<p class="text-muted mb-3">
-				Average Rating: <strong th:text="${course.averageRating}"></strong> stars
+				Average Rating: <strong th:text="${course.averageRating ?: 0}"></strong> stars
 			</p>
 
 			<!-- Reviews List -->
 			<ul class="list-group mb-4">
-				<li class="review-item list-group-item" th:each="review : ${reviews}">
+				<li class="review-item list-group-item" th:attr="data-date=${review.createdAt}" th:each="review : ${reviews}">
 					<div class="review-header d-flex align-items-center gap-3 mb-3">
-
-						<img th:src="${review.user.avatarUrl}" class="rounded-circle" alt="User Avatar" width="50" height="50">
-
+						<img th:src="'https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small/Basic_Ui__28186_29.jpg'" class="rounded-circle"
+							alt="User Avatar" width="50" height="50">
 						<div>
-
-							<h6 class="mb-0" th:text="${review.user.name}">User Name</h6>
-							<small class="text-muted" th:text="'By: ' + ${review.user.email}"></small>
+							<h6 class="mb-0" th:text="${review.userEid ?: 'Anonymous'}">User Name</h6>
+							<small class="text-muted" th:text="'By: ' + (${review.userEid ?: 'Anonymous'})"></small>
 						</div>
-
-
 						<div class="ms-auto">
 							<div class="rating-stars-review">
 								<span th:each="i : ${#numbers.sequence(1, 5)}"> <span th:class="${i <= review.ratingStar ? '' : 'empty-star'}"
-									th:text="${i <= review.ratingStar ? '★' : '☆'}"></span>
-								</span>
+									th:text="${i <= review.ratingStar ? '★' : '☆'}"></span></span>
 							</div>
 						</div>
-
 					</div>
 					<div class="review-body">
 						<p class="mb-2" th:text="${review.content}">This is a sample review content.</p>
 
-						<div th:if="${review.user.email} == 'tai@gmail.com'" class="d-flex gap-2">
+						<div th:if="${review.userEid} == ${userEid}" class="d-flex gap-2">
 							<!-- Delete Button -->
-							<form th:action="@{/course/{id}/review/{reviewId}/delete(id=${course.id}, reviewId=${review.id})}" method="post">
-								<input type="hidden" name="_method" value="delete">
-								<button type="submit" class="btn btn-danger btn-sm">Delete</button>
-							</form>
-
-							<!-- Edit Button -->
-							<button type="button" class="btn btn-secondary btn-sm" th:data-bs-toggle="'modal'" th:data-bs-target="'#editModal-' + ${review.id}">Edit</button>
+							<button type="button" class="btn btn-danger btn-sm delete-review-btn" th:data-review-id="${review.id}" th:data-course-id="${course.id}">Delete</button>
+							<button type="button" class="btn btn-warning btn-sm" th:data-review-id="${review.id}" th:data-course-id="${course.id}"
+								th:onclick="'loadEditReviewForm(' + ${review.id} + ',' + ${course.id} + ')'">Edit</button>
 						</div>
-
-						<!-- Modal for Editing Review -->
-						<div class="modal fade" th:id="'editModal-' + ${review.id}">
-							<div class="modal-dialog">
-								<form th:action="@{/course/{courseId}/review/{reviewId}/edit(courseId=${course.id}, reviewId=${review.id})}" th:object="${review}"
-									method="post">
-									<div class="modal-content">
-										<h5 class="m-3">Edit your review</h5>
-										<div class="modal-body">
-											<div class="rating-stars mb-3">
-												<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
-													class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0"
-													required> <small class="rating-error text-danger" style="display: none;">Please select number of stars</small>
-											</div>
-											<div class="mb-3">
-												<textarea class="form-control review-content" name="content" th:text="*{content}" rows="4" maxlength="200" required></textarea>
-												<small class="form-text text-muted char-count">200 characters remaining</small>
-											</div>
-										</div>
-										<div class="modal-footer">
-											<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-											<button type="submit" class="btn btn-primary">Update Review</button>
-										</div>
-									</div>
-								</form>
-							</div>
-						</div>
-
 					</div>
 				</li>
 			</ul>
 
-			<!-- Add review form -->
-			<h5 class="mb-3">Add your review</h5>
-			<form class="review-form" th:action="@{/course/{id}/review(id=${course.id})}" method="post">
+
+			<!-- Delete modal -->
+			<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header bg-danger text-white">
+							<h5 class="modal-title" id="deleteConfirmModalLabel">
+								<i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Delete
+							</h5>
+							<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p>Are you sure you want to delete this review? This action cannot be undone.</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+							<button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Pagination -->
+			<nav aria-label="Page navigation" th:if="${totalPages > 1}">
+				<ul class="pagination justify-content-center">
+					<!-- Nút Previous -->
+					<li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'"><a class="page-link"
+						th:href="@{/course/{id}(id=${course.id}, page=${currentPage - 1})}">Previous</a></li>
+
+					<!-- Các trang -->
+					<li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'"><a
+						class="page-link" th:text="${i + 1}" th:href="@{/course/{id}(id=${course.id}, page=${i})}"></a></li>
+
+					<!-- Nút Next -->
+					<li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'"><a class="page-link"
+						th:href="@{/course/{id}(id=${course.id}, page=${currentPage + 1})}">Next</a></li>
+				</ul>
+			</nav>
+
+			<!-- <!-- Add review form -->
+			<h5 class="mb-3" th:if="${hasPurchased && !hasReviewed}">Add your review</h5>
+			<form class="review-form" id="reviewForm" th:if="${hasPurchased && !hasReviewed}">
 				<div class="rating-stars mb-3">
 					<span class="star" data-rating="1">★</span> <span class="star" data-rating="2">★</span> <span class="star" data-rating="3">★</span> <span
 						class="star" data-rating="4">★</span> <span class="star" data-rating="5">★</span> <input type="hidden" name="ratingStar" value="0" required>
@@ -96,12 +109,18 @@
 					<textarea class="form-control review-content" name="content" rows="4" maxlength="200" required></textarea>
 					<small class="form-text text-muted char-count">200 characters remaining</small>
 				</div>
-				<button type="submit" class="btn btn-primary">Submit Review</button>
+				<button type="submit" th:data-course-id="${course.id}" class="btn btn-primary add-review-btn">Submit Review</button>
 			</form>
+
+			<div th:if="${hasReviewed}" class="alert alert-info mt-4">You have already reviewed this course. Thank you for your feedback!</div>
+
+			<div th:if="${!hasPurchased}" class="alert alert-warning mt-4">You need to purchase the course to leave a review.</div>
+
+			<input type="hidden" name="courseId" th:value="${course.id}"> <input type="hidden" name="currentPage" th:value="${currentPage}">
 		</div>
+
 	</div>
 
-	<th:block th:include="fragments/javascript"></th:block>
 </body>
 
 </html>

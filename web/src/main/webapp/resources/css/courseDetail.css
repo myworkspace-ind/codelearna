@@ -1,0 +1,111 @@
+.course-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.course-header h2 {
+	font-size: 2rem;
+	color: #343a40;
+}
+
+.course-image img {
+	max-width: 800px;
+	height: 500px;
+	border-radius: 10px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.screenshots-container {
+	display: flex;
+	justify-content: space-between;
+	gap: 15px;
+	margin-bottom: 20px;
+}
+
+.screenshots-container img {
+	width: 80px;
+	height: 80px;
+	object-fit: cover;
+	border-radius: 5px;
+	box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.course-description {
+	font-size: 1rem;
+}
+
+.course-details-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	margin-top: 30px;
+}
+
+.course-details h4 {
+	font-size: 1.5rem;
+	color: #d9534f;
+}
+
+/* Reviews styling */
+.reviews-section {
+	margin-top: 40px;
+	padding: 20px;
+	background-color: #f8f9fa;
+	border-radius: 10px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-item {
+	margin-bottom: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.review-item:last-child {
+	border-bottom: none;
+}
+
+.review-item h5 {
+	font-size: 1.2rem;
+	color: #007bff;
+}
+
+.review-item p {
+	font-size: 0.9rem;
+	color: #555;
+}
+
+#toastContainer {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 9999;
+	/
+}
+
+/* Payment css  */
+.payment-method {
+	border: 2px solid #dee2e6;
+	border-radius: 10px;
+	padding: 20px;
+	margin-bottom: 20px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.payment-method:hover {
+	border-color: #0d6efd;
+	transform: translateY(-2px);
+}
+
+.payment-method.selected {
+	border-color: #0d6efd;
+	background-color: #f8f9fa;
+}
+
+.payment-method img {
+	width: 60px;
+	height: 60px;
+	object-fit: contain;
+}

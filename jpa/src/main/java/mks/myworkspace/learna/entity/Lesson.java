@@ -2,7 +2,6 @@ package mks.myworkspace.learna.entity;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.*;
 
@@ -12,7 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import lombok.Data;
 
 @Entity
-@Table(name="learna_lesson", uniqueConstraints =@UniqueConstraint(columnNames = "id"))
+@Table(name = "learna_lesson", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 @Data
 public class Lesson {
 
@@ -25,15 +24,25 @@ public class Lesson {
     
     @Column(name = "video_url")
     private String videoUrl;
+    
+    @Column(name = "activity_id")
+    private String activityId;
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
-    
+
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Comment> comments;
 
-    
+  
+    @Column(name = "status", nullable = false)
+    private String status;  
+
+
+    @Column(name = "order_number")
+    private Integer orderNumber;
+
     @CreationTimestamp
     @Column(name = "created_dte")
     private Date createdDate;
@@ -42,11 +51,6 @@ public class Lesson {
     @Column(name = "modified_dte")
     private Date modifiedDate;
 
-	/*
-	 * @ManyToMany(mappedBy = "lessons") private Set<Course> courses;
-	 */
-    
- 
     public List<Comment> getComments() {
         return comments;
     }

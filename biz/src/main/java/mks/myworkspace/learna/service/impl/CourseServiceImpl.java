@@ -1,21 +1,40 @@
 package mks.myworkspace.learna.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Parameter;
+import mks.myworkspace.learna.repository.CourseJdbcRepository;
 import mks.myworkspace.learna.repository.CourseRepository;
+import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ReviewService;
+import mks.myworkspace.learna.service.UserLibraryCourseService;
 
+@Slf4j
 @Service
 public class CourseServiceImpl implements CourseService {
 
 	@Autowired
 	private CourseRepository repo;
+	
+	@Autowired
+	private CourseJdbcRepository courseJdbcRepository;
+	
+	@Autowired
+    private UserLibraryCourseService userLibraryCourseService;
+
+	
+	@Autowired
+	private ParameterRepository parameterRepository;
 
 	@Autowired
 	private ReviewService reviewService;
@@ -25,22 +44,27 @@ public class CourseServiceImpl implements CourseService {
 		return repo;
 	}
 
+//	@Override
+//	public Course saveCourse(Course course) {
+//		return repo.save(course);
+//	}
+	
 	@Override
 	public Course saveCourse(Course course) {
-		return repo.save(course);
+		return courseJdbcRepository.save(course);
 	}
 
 	@Override
 	public Course getCourseById(Long id) {
 		Course course = repo.findById(id).orElse(null);
-		Double averageRating = reviewService.getAverageRating(course.getId());
-		course.setAverageRating(averageRating);
+//		Double averageRating = reviewService.getAverageRating(course.getId());
+//		course.setAverageRating(averageRating);
 		return course;
 	}
 
 	@Override
 	public void deleteCourse(Long id) {
-		repo.deleteById(id);
+		courseJdbcRepository.deleteById(id);
 	}
 
 	@Override
@@ -53,6 +77,19 @@ public class CourseServiceImpl implements CourseService {
 	}
 
 	@Override
+    public List<Course> getCoursesNotInLibrary(String userEid) {
+        List<Course> allCourses = repo.findAll();
+        List<Long> userCourseIds = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid)
+                .stream()
+                .map(userLibraryCourse -> userLibraryCourse.getCourse().getId())
+                .collect(Collectors.toList());
+
+        return allCourses.stream()
+                .filter(course -> !userCourseIds.contains(course.getId()))
+                .collect(Collectors.toList());
+    }
+
+	@Override
 	public List<Course> getRandomCourses() {
 		return repo.findRandomCourses();
 	}
@@ -62,65 +99,56 @@ public class CourseServiceImpl implements CourseService {
 		return repo.findBySubcategoryId(subcategoryId);
 	}
 
-	@Override
-	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField,
-			String level, String averageRating) {
-		Sort sort = Sort.by(sortField);
-		sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
-		Pageable pageable = PageRequest.of(0, 20, sort);
-
-		Course.DifficultyLevel difficultyLevel = null;
-		if (level != null) {
-			try {
-				difficultyLevel = Course.DifficultyLevel.valueOf(level.toUpperCase());
-			} catch (IllegalArgumentException e) {
-
-			}
-		}
-
-		Double ratingValue = null;
-		if (averageRating != null) {
-			try {
-				ratingValue = Double.valueOf(averageRating);
-			} catch (NumberFormatException e) {
-
-			}
-		}
-
-		return repo.findCoursesByFilters(keyword, difficultyLevel, ratingValue, pageable);
-	}
+//	@Override
+//	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, String averageRating) {
+//	    Sort sort = Sort.by(sortField);
+//	    sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
+//	    Pageable pageable = PageRequest.of(0, 20, sort);
+//
+//	    Parameter difficultyLevelParameter = null;
+//	    if (level != null) {
+//	        difficultyLevelParameter = parameterRepository.findByParamValue(level.toUpperCase()); 
+//	    }
+//
+//	    Double ratingValue = null;
+//	    if (averageRating != null) {
+//	        try {
+//	            ratingValue = Double.valueOf(averageRating);
+//	        } catch (NumberFormatException e) {
+//	            log.debug("Erorr occurs while formating ratingValue into Double type" + e.getMessage());
+//	        }
+//	    }
+//
+//	    return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue, pageable);
+//	}
 
 	@Override
-	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField,
-			String level, Long subcategoryId, String rating) {
-		Sort sort = Sort.by(sortField);
-		sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
-		Pageable pageable = PageRequest.of(0, 20, sort);
+	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId, String rating) {
+	    Sort sort = Sort.by(sortField);
+	    sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
+//	    Pageable pageable = PageRequest.of(0, 20, sort);
 
-		Course.DifficultyLevel difficultyLevel = null;
-		if (level != null) {
-			try {
-				difficultyLevel = Course.DifficultyLevel.valueOf(level.toUpperCase());
-			} catch (IllegalArgumentException e) {
+	    Parameter difficultyLevelParameter = null;
+	    if (level != null) {
+	        difficultyLevelParameter = parameterRepository.findByParamValue(level.toUpperCase()); 
+	    }
 
-			}
-		}
+	    Double ratingValue = null;
+	    if (rating != null) {
+	        try {
+	            ratingValue = Double.valueOf(rating);
+	        } catch (NumberFormatException e) {
+	        	log.debug("Error occurs while formating ratingValue into Double type" + e.getMessage());
+	        }
+	    }
 
-		Double ratingValue = null;
-		if (rating != null) {
-			try {
-				ratingValue = Double.valueOf(rating);
-			} catch (NumberFormatException e) {
-
-			}
-		}
-
-		if (subcategoryId != null) {
-			return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevel, ratingValue,
-					pageable);
-		} else {
-			return repo.findCoursesByFilters(keyword, difficultyLevel, ratingValue, pageable);
-		}
+	    if (subcategoryId != null) {
+	        return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevelParameter, ratingValue);
+	    } else {
+	        return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue);
+	    }
 	}
+	
+
 
 }

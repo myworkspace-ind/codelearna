@@ -12,6 +12,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,13 +52,13 @@ public class Course {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "difficulty_level", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private DifficultyLevel difficultyLevel;
+    @ManyToOne
+    @JoinColumn(name = "difficulty_level_id", nullable = false)
+    private Parameter difficultyLevel;
 
-    @Column(name = "lesson_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private LessonType lessonType;
+    @ManyToOne
+    @JoinColumn(name = "lesson_type_id", nullable = false)
+    private Parameter lessonType;
     
     @ManyToOne
     @JoinColumn(name = "subcategory_id")
@@ -76,29 +77,19 @@ public class Course {
     @UpdateTimestamp
     @Column(name = "modified_dte")
     private Date modifiedDate;
-
+    
+    @Column(name = "status", nullable = false)
+    private String status;  
+    
     @ManyToMany
     @JoinTable(
-        name = "course_lesson",
+        name = "learna_course_lesson",
         joinColumns = @JoinColumn(name = "course_id"),
         inverseJoinColumns = @JoinColumn(name = "lesson_id")
     )
     private Set<Lesson> lessons;
     
     private Double averageRating;
-    
 
-    public enum DifficultyLevel {
-        BEGINNER,
-        INTERMEDIATE,
-        ADVANCED,
-        EXPERT,
-        MASTER
-    }
-
-    public enum LessonType {
-        VIDEO,
-        INTERACTIVE
-    }
 }
 

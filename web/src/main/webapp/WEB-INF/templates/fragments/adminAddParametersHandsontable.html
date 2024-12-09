@@ -1,0 +1,20 @@
+<div th:fragment="addParameterWithHandsontableContent">
+	<div class="container mt-5">
+		<h1 class="mb-4 fw-bolder">Add Parameter Values with Handsontable</h1>
+
+		<!-- Error Message Display -->
+		<div id="error-message-parameter-handsontable" class="alert alert-danger" style="display: none;">
+            <strong>Error!</strong> <span id="error-text-parameter-handsontable"></span>
+        </div>
+
+		<!-- File Input for Excel -->
+		<input type="file" id="fileInput" class="form-control mb-3" accept=".xls,.xlsx" onchange="handleFileParameter(event)">
+		
+		<!-- Handsontable Container -->
+		<div id="handsontable-parameter-container" class="mb-3"></div>
+
+		<!-- Action Buttons -->
+		<button type="button" class="btn btn-primary" onclick="submitParameterData(event)">Submit Parameters</button>
+		<button type="button" class="btn btn-secondary" onclick="loadParametersManagePage(event)">Cancel</button>
+	</div>
+</div>

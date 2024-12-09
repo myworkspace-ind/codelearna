@@ -10,8 +10,18 @@
 <body>
     <!-- Navigation Bar fragment -->
     <th:block th:include="fragments/nav"></th:block>
+    
+    <!-- Alert fragment -->
+    <div class="container mt-3">
+	    <div th:if="${paymentMessage}" 
+	         th:class="'alert alert-dismissible fade show alert-' + ${alertType}" 
+	         role="alert">
+	        <span th:text="${paymentMessage}"></span>
+	        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	    </div>
+	</div>
+    
     <!-- Navigation Bar fragment -->
-
     <div class="container mt-4">
         <ul class="nav nav-tabs" id="courseTabs" role="tablist">
             <li class="nav-item" role="presentation">
@@ -48,6 +58,7 @@
             </div>
         </div>
     </div>
+    
 
     <div id="blurOverlay" class="blur-overlay" style="display: none;"></div>
 
@@ -72,5 +83,7 @@
 	<script type="text/javascript" src="/library/js/headscripts.js"></script>
 	    
 	<script th:src="@{/resources/js/search.js}"></script>
+        <span th:text="${paymentMessage}"></span>
+    </div>  
 </body>
 </html>

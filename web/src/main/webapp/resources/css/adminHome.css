@@ -20,6 +20,7 @@ body {
 
 .sidebar {
     width: 250px;
+    height: 100vh;
     background-color: var(--primary-color);
     color: white;
     padding: 20px;
@@ -77,49 +78,6 @@ header {
     margin-bottom: 20px;
 }
 
-#sidebarToggle {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-.dashboard-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.card {
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-.card .icon {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.card h2 {
-    margin: 10px 0;
-    font-size: 24px;
-}
-
-.chart-container {
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-#revenueChart {
-    width: 100%;
-    height: 300px;
-}
 
 @media (max-width: 768px) {
     .dashboard {
@@ -143,3 +101,228 @@ header {
         grid-template-columns: 1fr;
     }
 }
+
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+}
+
+.modal.fade .modal-content {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.modal-header.bg-danger {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-body p {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 1rem 2rem 2rem;
+    justify-content: center;
+}
+
+.modal-footer .btn {
+    min-width: 100px;
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+}
+
+.modal-footer .btn-danger {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    border: none;
+}
+
+.modal-footer .btn-danger:hover {
+    background: linear-gradient(45deg, #c82333, #bd2130);
+}
+
+/* Animation cho modal */
+.modal.fade .modal-dialog {
+    transform: scale(0.8);
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
+}
+
+.filter-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.filter-container .form-label {
+    margin-bottom: 0; 
+}
+
+.filter-container .form-select {
+    width: auto; 
+}
+
+/* Admin sidebar css */
+body {
+	margin: 0;
+	font-family: Arial, sans-serif;
+	background-color: #f4f4f4;
+}
+
+.sidebar {
+	width: 250px;
+	height: 100vh;
+	background-color: #1f2937;
+	color: #fff;
+	display: flex;
+	flex-direction: column;
+	padding: 20px 0;
+	position: fixed;
+}
+
+.sidebar-header {
+	text-align: center;
+	padding: 20px 0;
+	font-size: 24px;
+	font-weight: bold;
+	border-bottom: 1px solid #374151;
+}
+
+.sidebar nav {
+	margin-top: 20px;
+	flex: 1;
+}
+
+.sidebar nav a {
+	display: flex;
+	align-items: center;
+	padding: 15px 20px;
+	color: #cbd5e1;
+	text-decoration: none;
+	transition: all 0.3s ease;
+	font-size: 16px;
+	border-left: 4px solid transparent;
+}
+
+.sidebar nav a:hover {
+	background-color: #374151;
+	color: #fff;
+	border-left: 4px solid #3b82f6;
+	text-decoration: none;
+}
+
+.sidebar nav a.active {
+	background-color: #3b82f6;
+	color: #fff;
+	font-weight: bold;
+	border-left: 4px solid #2563eb;
+}
+
+.sidebar .logout {
+	margin-top: auto;
+	padding: 15px 20px;
+	color: #ef4444;
+	text-decoration: none;
+	font-weight: bold;
+	border-top: 1px solid #374151;
+}
+
+.sidebar .logout:hover {
+	background-color: #991b1b;
+	color: #fff;
+}
+
+
+/* adminHome.css */
+
+/* Bố cục chính */
+.dashboard {
+    display: flex;
+    min-height: 100vh; 
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    flex-shrink: 0; 
+    background-color: #1f2937;
+    color: white;
+    position: fixed; 
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+/* Main content */
+.main-content {
+    margin-left: 250px;
+    flex-grow: 1; 
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+/* Responsive - Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* Sidebar chiếm toàn bộ chiều rộng màn hình */
+        position: static; /* Sidebar sẽ di chuyển lên đầu */
+        height: auto;
+    }
+
+    .main-content {
+        margin-left: 0; /* Đặt lại margin-left cho nội dung */
+    }
+
+    .dashboard {
+        flex-direction: column; /* Bố cục dọc khi trên màn hình nhỏ */
+    }
+}
+
+
+
+.sidebar.collapsed {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+.main-content {
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: 0;
+}
+
+ /* Logo admin page css */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; 
+    border-bottom: 1px solid #374151; 
+}
+
+.sidebar-header img {
+    max-width: 100%; 
+    height: auto;
+    max-height: 50px;
+    object-fit: contain; 
+}
+
+.sidebar {
+    background-color: #1f2937;
+    color: #fff;
+}
+
+.sidebar nav {
+    margin-top: 20px; 
+}
+
+

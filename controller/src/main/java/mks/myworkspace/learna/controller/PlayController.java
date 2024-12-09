@@ -13,10 +13,11 @@ import org.springframework.web.servlet.ModelAndView;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
-public class PlayController {
+public class PlayController extends BaseController{
 
     @Autowired
     private PlayService playService;
@@ -29,11 +30,22 @@ public class PlayController {
             @PathVariable Long courseId,
             @RequestParam(required = false) Long lessonId) {
         ModelAndView mav = new ModelAndView("play");
-
+        String userEid = getCurrentUserEid();
+        String userEmail = getCurrentUserEmail();
         // Lấy danh sách các bài học thuộc khóa học
         List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
-        mav.addObject("lessons", lessons);
+        log.debug("Danh sách bài học trước khi lọc: {}", lessons);
 
+        lessons = lessons.stream()
+                         .filter(lesson -> "ACTIVE".equals(lesson.getStatus()))
+                         .collect(Collectors.toList());
+
+        mav.addObject("lessons", lessons);
+        
+        log.debug("userEid: {}", userEid);
+        log.debug("userEmail: {}", userEmail);
+        mav.addObject("userEId",userEid);
+        mav.addObject("userEmail",userEmail);
         return mav;
     }
 
@@ -52,9 +64,6 @@ public class PlayController {
         int start = page * size;
         int end = Math.min((page + 1) * size, totalComments);
         List<Comment> paginatedComments = allComments.subList(start, end);
-
-        log.info("Đang trả về {} bình luận cho bài học {} (trang {} / {})", 
-                 paginatedComments.size(), lessonId, page + 1, totalPages);
 
         mav.addObject("comments", paginatedComments);
         mav.addObject("currentPage", page);

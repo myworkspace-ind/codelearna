@@ -1,13 +1,18 @@
 package mks.myworkspace.learna.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Review;
 import mks.myworkspace.learna.repository.CourseRepository;
+import mks.myworkspace.learna.repository.ReviewJdbcRepository;
 import mks.myworkspace.learna.repository.ReviewRepository;
 import mks.myworkspace.learna.service.ReviewService;
 
@@ -15,44 +20,99 @@ import mks.myworkspace.learna.service.ReviewService;
 public class ReviewServiceImpl implements ReviewService {
 
 	@Autowired
-	private ReviewRepository repo;
+	private ReviewRepository reviewRepository;
+
+	@Autowired
+	private ReviewJdbcRepository reviewJdbcRepository;
 
 	@Autowired
 	private CourseRepository repoCourse;
 
 	@Override
-	public List<Review> getReviewsByCourseId(Long courseId) {
-		return repo.findByCourseId(courseId);
+	public List<Review> getFilteredReviews(Long courseId, String sortBy) {
+	    List<Review> allReviews = reviewRepository.findAllByCourseIdOrderByCreatedAtDesc(courseId);
+
+	    if ("rating-desc".equals(sortBy)) {
+	        allReviews = allReviews.stream()
+	                .sorted((r1, r2) -> r2.getRatingStar() - r1.getRatingStar())
+	                .collect(Collectors.toList());
+	    } else if ("rating-asc".equals(sortBy)) {
+	        allReviews = allReviews.stream()
+	                .sorted((r1, r2) -> r1.getRatingStar() - r2.getRatingStar())
+	                .collect(Collectors.toList());
+	    } else if ("date-desc".equals(sortBy)) {
+	        allReviews = allReviews.stream()
+	                .sorted((r1, r2) -> r2.getCreatedAt().compareTo(r1.getCreatedAt()))
+	                .collect(Collectors.toList());
+	    } else if ("date-asc".equals(sortBy)) {
+	        allReviews = allReviews.stream()
+	                .sorted((r1, r2) -> r1.getCreatedAt().compareTo(r2.getCreatedAt()))
+	                .collect(Collectors.toList());
+	    }
+
+	    return allReviews;
 	}
+
+//	@Override
+//	public List<Review> getReviewsByCourseId(Long courseId) {
+//        return reviewJdbcRepository.findByCourseId(courseId);
+//    }
+
+//	@Override
+//	public void addReview(Review review, Long courseId) {
+//		review.setId(null);
+//		reviewRepository.save(review);
+//		updateAverageRating(courseId);
+//	}
 
 	@Override
 	public void addReview(Review review, Long courseId) {
 		review.setId(null);
-		repo.save(review);
+		reviewJdbcRepository.save(review);
 		updateAverageRating(courseId);
 	}
+
+//	@Override
+//	public void deleteReviewById(Long reviewId, Long courseId) {
+//		reviewRepository.deleteById(reviewId);
+//		updateAverageRating(courseId);
+//	}
 
 	@Override
 	public void deleteReviewById(Long reviewId, Long courseId) {
-		repo.deleteById(reviewId);
+		reviewJdbcRepository.deleteById(reviewId);
 		updateAverageRating(courseId);
 	}
 
+//	@Override
+//	public void updateReviewById(Long reviewId, Review review) {
+//
+//		Review existingReview = reviewRepository.findById(reviewId).orElseThrow(() -> new RuntimeException("Review not found"));
+//
+//		existingReview.setRatingStar(review.getRatingStar());
+//		existingReview.setContent(review.getContent());
+//
+//		reviewRepository.save(existingReview);
+//		updateAverageRating(existingReview.getId());
+//	}
 	@Override
 	public void updateReviewById(Long reviewId, Review review) {
+		Review existingReview = reviewJdbcRepository.findReviewById(reviewId);
 
-		Review existingReview = repo.findById(reviewId).orElseThrow(() -> new RuntimeException("Review not found"));
+		if (existingReview == null) {
+			throw new RuntimeException("Review not found");
+		}
 
 		existingReview.setRatingStar(review.getRatingStar());
 		existingReview.setContent(review.getContent());
 
-		repo.save(existingReview);
-		updateAverageRating(existingReview.getId());
+		reviewJdbcRepository.save(existingReview);
+		updateAverageRating(existingReview.getCourse().getId());
 	}
 
 	@Override
 	public double getAverageRating(Long courseId) {
-		Double averageRating = repo.findAverageRatingByCourseId(courseId);
+		Double averageRating = reviewRepository.findAverageRatingByCourseId(courseId);
 		if (averageRating != null) {
 			averageRating = Math.round(averageRating * 10.0) / 10.0;
 			return averageRating;
@@ -64,7 +124,7 @@ public class ReviewServiceImpl implements ReviewService {
 	@Override
 	public void updateAverageRating(Long courseId) {
 
-		List<Double> ratings = repo.findRatingsByCourseId(courseId);
+		List<Double> ratings = reviewRepository.findRatingsByCourseId(courseId);
 
 		if (ratings != null && !ratings.isEmpty()) {
 
@@ -74,6 +134,16 @@ public class ReviewServiceImpl implements ReviewService {
 
 			repoCourse.save(course);
 		}
+	}
+
+	@Override
+	public Review getReviewById(Long reviewId) {
+		return reviewRepository.getReviewById(reviewId);
+	}
+
+	@Override
+	public boolean hasUserReviewedCourse(Long courseId, String userEid) {
+		return reviewRepository.existsByCourseIdAndUserEid(courseId, userEid);
 	}
 
 }

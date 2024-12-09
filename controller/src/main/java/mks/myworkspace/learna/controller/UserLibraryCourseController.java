@@ -16,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 @Slf4j
 @Controller
 @RequestMapping("/library")
@@ -25,14 +28,32 @@ public class UserLibraryCourseController extends BaseController{
     private UserLibraryCourseService userLibraryCourseService;
 
     @GetMapping
-    public ModelAndView getUserLibraryCoursesForDefaultUser() {
+    public ModelAndView getUserLibraryCoursesForDefaultUser(HttpServletRequest request, HttpSession httpSession) {
         ModelAndView mav = new ModelAndView("userLibraryCourses");
+        initSession(request, httpSession);
 
-        String userId = getCurrentUserEid();
+        String userEid = getCurrentUserEid();
+        String userName = getCurrentUserDisplayName();
+        mav.addObject("userEId", userEid);
+        mav.addObject("userName", userName);
+
+        // Lấy thông báo và loại alert
+        String paymentMessage = (String) httpSession.getAttribute("paymentMessage");
+        String alertType = (String) httpSession.getAttribute("alertType");
+
+        if (paymentMessage != null) {
+            mav.addObject("paymentMessage", paymentMessage);
+            mav.addObject("alertType", alertType);
+            httpSession.removeAttribute("paymentMessage");
+            httpSession.removeAttribute("alertType");
+        }
+
+        // Các logic khác...
         try {
-        	List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userId);
+            List<UserLibraryCourse> userLibraryCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid);
             mav.addObject("userLibraryCourses", userLibraryCourses);
 
+            // Phân loại các khóa học
             List<UserLibraryCourse> purchasedCourses = userLibraryCourses.stream()
                     .filter(course -> course.getPaymentStatus() == UserLibraryCourse.PaymentStatus.PURCHASED)
                     .collect(Collectors.toList());
@@ -53,14 +74,14 @@ public class UserLibraryCourseController extends BaseController{
                     .collect(Collectors.toList());
             mav.addObject("completedCourses", completedCourses);
 
-            log.debug("Danh sách khóa học đã lưu: {}", userLibraryCourses);
             log.debug("done");
         } catch (Exception e) {
-        	log.debug("Lỗi khi tải thư viện."); ;
-        }  
+            log.debug("Lỗi khi tải thư viện.");
+        }
 
         return mav;
     }
+
 
     @PostMapping("/add")
     @ResponseBody
