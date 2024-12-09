@@ -583,16 +583,20 @@ public class AdminController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
-
+	
 	// ADMIN PARAMETERS MANAGER
 	@GetMapping("/listParameters")
-	public ModelAndView loadParametersList() {
-		ModelAndView mav = new ModelAndView("fragments/adminListParameters :: parametersContent");
-		mav.addObject("parameters", parameterService.getAllParams());
-		log.debug("get all params", parameterService.getAllParams());
-		return mav;
+	public ModelAndView loadParametersListDiff() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListParameters :: parametersContent");
+	    List<String> parameterKeyDiff = parameterService.getParamKeyDiff();  
+	    List<Parameter> parameters = parameterService.getAllParams(); 
+	    mav.addObject("parameterKeyDiff", parameterKeyDiff);
+	    mav.addObject("parameters", parameters);
+	    log.debug("Distinct parameter keys: {}", parameterKeyDiff);  
+	    log.debug("get all params: {}", parameters);  
+	    return mav;
 	}
-
+	
 	@GetMapping("/addParameterHandsontable")
 	public ModelAndView showAddParameterHandsontablePage() {
 		ModelAndView mav = new ModelAndView("fragments/adminAddParametersHandsontable :: addParameterWithHandsontableContent");
@@ -611,7 +615,7 @@ public class AdminController {
 
 	        if (parameterData == null || parameterData.isEmpty()) {
 	            response.put("status", "error");
-	            response.put("message", "Không có dữ liệu parameter được gửi");
+	            response.put("message", "No parameter data sent!");
 	            return ResponseEntity.badRequest().body(response);
 	        }
 
@@ -622,19 +626,19 @@ public class AdminController {
 	            // Validation
 	            if (paramKey == null || paramKey.trim().isEmpty()) {
 	                response.put("status", "error");
-	                response.put("message", "Giá trị key không được để trống");
+	                response.put("message", "Key value cannot be empty!");
 	                return ResponseEntity.badRequest().body(response);
 	            }
 
 	            if (paramValue == null || paramValue.trim().isEmpty()) {
 	                response.put("status", "error");
-	                response.put("message", "Giá trị value không được để trống");
+	                response.put("message", "The value cannot be empty!");
 	                return ResponseEntity.badRequest().body(response);
 	            }
 
 	            if (!parameterService.paramKeyExists(paramKey)) {
 	                response.put("status", "error");
-	                response.put("message", "paramKey '" + paramKey + "' không hợp lệ hoặc không tồn tại trong cơ sở dữ liệu.");
+	                response.put("message", "paramKey '" + paramKey + "' is invalid or does not exist in the database.");
 	                return ResponseEntity.badRequest().body(response);
 	            }
 
@@ -646,19 +650,19 @@ public class AdminController {
 	                parameterService.saveParameters(parameter);
 	            } catch (Exception ex) {
 	                response.put("status", "error");
-	                response.put("message", "Xảy ra lỗi khi thêm parameter: " + ex.getMessage());
+	                response.put("message", "Error occurred while adding parameter: " + ex.getMessage());
 	                return ResponseEntity.badRequest().body(response);
 	            }
 	        }
 
 	        response.put("status", "success");
-	        response.put("message", "Parameters đã được thêm thành công!");
+	        response.put("message", "Parameters added successfully!");
 	        return ResponseEntity.ok(response);
 
 	    } catch (Exception e) {
 	        log.error("Error saving parameters: ", e);
 	        response.put("status", "error");
-	        response.put("message", "Có lỗi khi lưu parameters: " + e.getMessage());
+	        response.put("message", "Error saving parameters: " + e.getMessage());
 	        return ResponseEntity.badRequest().body(response);
 	    }
 	}
@@ -696,16 +700,16 @@ public class AdminController {
 			if (parameter != null) {
 				parameterService.deleteParameter(parameterId);
 				response.put("status", "success");
-				response.put("message", "Parameter đã được xóa thành công.");
+				response.put("message", "Parameter was deleted successfully!");
 				return ResponseEntity.ok(response);
 			} else {
 				response.put("status", "error");
-				response.put("message", "Parameter không tồn tại.");
+				response.put("message", "Parameter does not exist.");
 				return ResponseEntity.badRequest().body(response);
 			}
 		} catch (Exception e) {
 			response.put("status", "error");
-			response.put("message", "Có lỗi xảy ra khi xóa Parameter: " + e.getMessage());
+			response.put("message", "Error occurred while deleting Parameter: " + e.getMessage());
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
@@ -733,9 +737,8 @@ public class AdminController {
 		}
 
 		existingParameter.setParamValue(parameter.getParamValue());
-
 		parameterService.saveParameters(existingParameter);
-
+		
 		return ResponseEntity.ok(Map.of("status", "success", "message", "Parameter updated successfully"));
 	}
 

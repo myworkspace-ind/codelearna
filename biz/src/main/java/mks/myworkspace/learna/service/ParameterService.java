@@ -15,5 +15,6 @@ public interface ParameterService {
 	Parameter saveParameters(Parameter parameters);
 	boolean paramKeyExists(String paramKey);
 	void deleteParameter(Long id);
+	List<String> getParamKeyDiff();
 	Parameter addParamValueToParamKey(String paramKey, String paramValue);
 }

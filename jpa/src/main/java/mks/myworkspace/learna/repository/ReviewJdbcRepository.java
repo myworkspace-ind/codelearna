@@ -34,6 +34,7 @@ public class ReviewJdbcRepository {
 
         return jdbcTemplate.query(sql, new ReviewRowMapper(), courseId);
     }
+    
 
     public List<Double> findRatingsByCourseId(Long courseId) {
         String sql = "SELECT r.rating_star FROM learna_review r WHERE r.course_id = ?";
@@ -77,10 +78,8 @@ public class ReviewJdbcRepository {
             Course course = new Course();
             course.setId(rs.getLong("course_id")); 
             review.setCourse(course);
-            
-
-            
             return review;
         }
     }
+    
 }

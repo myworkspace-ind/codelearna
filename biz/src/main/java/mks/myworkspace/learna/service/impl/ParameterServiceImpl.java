@@ -65,6 +65,11 @@ public class ParameterServiceImpl implements ParameterService {
 	public void deleteParameter(Long id) {
 		parameterJdbcRepository.deleteById(id);
 	}
+	@Override
+	public List<String> getParamKeyDiff() {
+		return parameterJdbcRepository.getParamKeyDiff();
+	}
+
 	
 	@Override
 	public Parameter addParamValueToParamKey(String paramKey, String paramValue) {
