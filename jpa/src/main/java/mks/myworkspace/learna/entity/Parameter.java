@@ -26,5 +26,15 @@ public class Parameter {
 
 	@Column(name = "description")
 	private String description;
+	
+	 @Column(name = "status", nullable = false)
+	 private String status;  
+	 
+	 public enum status {
+	        ACTIVE,
+	        INACTIVE,
+	        DELETED
+	    }
+
 
 }

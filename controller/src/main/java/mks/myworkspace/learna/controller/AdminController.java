@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +61,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/admin")
 @Slf4j
-public class AdminController {
+public class AdminController extends BaseController{
 
 	@Autowired
 	private CourseService courseService;
@@ -81,6 +83,10 @@ public class AdminController {
 	private UserLibraryCourseService userLibraryCourseService;
 	@GetMapping
 	public String showAdminHomePage(Model model) {
+  String currentUserEid = getCurrentUserEid();
+	    if (!"admin".equals(currentUserEid)) {
+	        return "accessDenied"; 
+	    }
 		int totalCourses = courseService.getTotalCourses();
 		Double totalRevenues = revenueService.getTotalRevenue();
 		Long totalUsers = userLibraryCourseService.countTotalUserLibrary();
@@ -116,13 +122,13 @@ public class AdminController {
 
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {
-		ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
-		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValue("difficulty_level");
-		log.info("do kho" + difficultyLevels);
-		List<Parameter> lessonTypes = parameterService.getListParamsByParamValue("lesson_type");
-		mav.addObject("difficultyLevels", difficultyLevels);
-		mav.addObject("lessonTypes", lessonTypes);
-		return mav;
+	    ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
+	    List<Parameter> difficultyLevels = parameterService.getListParamsByParamValueAndStatus("difficulty_level", "ACTIVE");
+	    log.info("do kho" + difficultyLevels);
+	    List<Parameter> lessonTypes = parameterService.getListParamsByParamValueAndStatus("lesson_type", "ACTIVE");
+	    mav.addObject("difficultyLevels", difficultyLevels);
+	    mav.addObject("lessonTypes", lessonTypes);
+	    return mav;
 	}
 
 	@PostMapping("/addCourse")
@@ -917,6 +923,34 @@ public class AdminController {
 		} catch (Exception e) {
 			response.put("status", "error");
 			response.put("message", "Error occurred while deleting Parameter: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+	
+	@PostMapping("/parameter/restoreParameter/{id}") 
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> restoreParameter(@PathVariable("id") Long id,
+	        @ModelAttribute("parameter") Parameter parameter) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			Parameter existingParameter = parameterService.getParameterById(id);
+			if (existingParameter == null) {
+				response.put("status", "error");
+				response.put("message", "Parameter not found");
+				return ResponseEntity.badRequest().body(response);
+			}
+
+			existingParameter.setStatus("ACTIVE");
+			parameterService.saveParameters(existingParameter);
+			response.put("status", "success");
+			response.put("message", "Parameter has been restore successfully");
+			
+			return ResponseEntity.ok(response);
+			
+		} catch (Exception e) {
+			log.error("Error deleting lesson: ", e);
+			response.put("status", "error");
+			response.put("message", "An error occurred while trying to restore the Parameter: " + e.getMessage());
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
