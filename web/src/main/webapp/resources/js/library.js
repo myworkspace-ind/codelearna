@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		certificateButton.className = 'btn btn-outline-success w-100 mt-2';
 		certificateButton.innerHTML = `
                     <i class="bi bi-trophy-fill me-2"></i>
-                    Xem chứng chỉ
+                    View certificate
                 `;
 
 		certificateButton.addEventListener('click', function(e) {

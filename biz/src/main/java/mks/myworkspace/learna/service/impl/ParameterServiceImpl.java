@@ -32,9 +32,14 @@ public class ParameterServiceImpl implements ParameterService {
     }
 
 	@Override
-	public List<String> getAllDistinctParamKeys() {
+	public List<String> getDistinctParamKeys() {
 		return repo.findDistinctParamKeys();
 	}
+	
+	@Override
+    public List<String> getAllDistinctParamKeys() {
+        return repo.findAllDistinctParamKeys();
+    }
 
 	@Override
 	public List<Parameter> getAllParams() {

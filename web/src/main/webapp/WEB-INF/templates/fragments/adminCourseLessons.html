@@ -12,7 +12,7 @@
 				th:data-course-id="${course.id}"
 				th:onclick="'fetchAddLessonHandsontablePage(event, this.dataset.courseId)'">
 				Add Lessons with Handsontable</button>
-			<button type="button" class="btn btn-outline-danger btn-sm"
+			<button type="button" class="btn btn-outline-danger btn-sm mx-3"
 				th:data-course-id="${course.id}"
 				th:onclick="'loadDeletedLessonsModal('+${course.id}+')'">
 				<i class="fas fa-trash-alt"></i> Deleted Lessons

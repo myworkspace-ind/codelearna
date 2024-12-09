@@ -25,6 +25,9 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
 
 	@Query("SELECT DISTINCT p.paramKey FROM Parameter p WHERE p.paramKey <> 'site_logo'")
 	List<String> findDistinctParamKeys();
+	
+	@Query("SELECT DISTINCT p.paramKey FROM Parameter p WHERE p.paramKey <> 'site_logo' AND p.paramKey <> 'category' AND p.paramKey <> 'subcategory'")
+    List<String> findAllDistinctParamKeys();
 
 	boolean existsByParamKey(String paramKey);
 }
