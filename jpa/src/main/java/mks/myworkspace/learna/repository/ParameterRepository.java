@@ -17,6 +17,8 @@ public interface ParameterRepository extends JpaRepository<Parameter, Long> {
 	Parameter findByParamValue(String paramValue);
 
 	List<Parameter> findByParamKeyOrderBySeqnoAsc(String paramKey);
+	
+	List<Parameter> findByParamKeyAndStatus(String paramKey, String status);
 
 	@Query("SELECT p FROM Parameter p WHERE p.paramKey = :paramKey ORDER BY seqno")
 	List<Parameter> listByParamKey(@Param("paramKey") String paramKey);
