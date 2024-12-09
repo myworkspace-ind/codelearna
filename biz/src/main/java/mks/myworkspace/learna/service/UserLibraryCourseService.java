@@ -14,4 +14,5 @@ public interface UserLibraryCourseService {
     void updateCourseProgressStatus(String userEid, Long courseId);
     int calculateCompletionPercentage(String userEid, Long courseId);
     List<String> findAllUniqueUserEids();
+    Long countTotalUserLibrary();
 }

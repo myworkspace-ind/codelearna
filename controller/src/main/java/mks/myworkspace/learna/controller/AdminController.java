@@ -82,26 +82,27 @@ public class AdminController extends BaseController{
 	@Autowired
 	private UserLibraryCourseService userLibraryCourseService;
 	@GetMapping
-	public String showAdminHomePage(Model model, HttpServletRequest request) {
-	    String currentUserEid = getCurrentUserEid();
+	public String showAdminHomePage(Model model) {
+  String currentUserEid = getCurrentUserEid();
 	    if (!"admin".equals(currentUserEid)) {
-	        return "accessDenied"; // Trả về trang không có quyền
+	        return "accessDenied"; 
 	    }
-
-	    int totalCourses = courseService.getTotalCourses();
-	    Double totalRevenues = revenueService.getTotalRevenue();
-	    model.addAttribute("totalCourses", totalCourses);
-	    model.addAttribute("totalUsers", 100);
-	    model.addAttribute("totalRevenue", totalRevenues);
-	    return "adminHome";
+		int totalCourses = courseService.getTotalCourses();
+		Double totalRevenues = revenueService.getTotalRevenue();
+		Long totalUsers = userLibraryCourseService.countTotalUserLibrary();
+		model.addAttribute("totalCourses", totalCourses);
+		model.addAttribute("totalUsers", totalUsers);
+		model.addAttribute("totalRevenue", totalRevenues);
+		return "adminHome";
 	}
 	
 	@GetMapping("/dashboard")
 	public String showDashBoard(Model model) {
 		int totalCourses = courseService.getTotalCourses();
 		Double totalRevenues = revenueService.getTotalRevenue();
+		Long totalUsers = userLibraryCourseService.countTotalUserLibrary();
 		model.addAttribute("totalCourses", totalCourses);
-		model.addAttribute("totalUsers", 100);
+		model.addAttribute("totalUsers", totalUsers);
 		model.addAttribute("totalRevenue", totalRevenues);
 		return "fragments/welcome :: welcome-section";
 	}
