@@ -105,6 +105,24 @@ public class ParameterJdbcRepository {
 		return paramKeys;
 	}
 
+	public List<String> getValues() {
+		String sql = "SELECT param_value FROM sakai.learna_parameter WHERE param_key = ? ORDER BY seqno ASC";
+		List<String> values = new ArrayList<>();
+		try (Connection conn = dataSource.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, paramKey);
+
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					values.add(rs.getString("param_value"));
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return values;
+	}
 	private void close(Connection conn) {
 		try {
 			conn.close();

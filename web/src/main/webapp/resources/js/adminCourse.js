@@ -412,7 +412,7 @@ function initializeCourseHandsontable() {
 					data: 'difficultyLevel',
 					type: 'dropdown',
 					source: function(query, process) {
-						fetch(_ctx + `/admin/values?paramKey=difficulty_level`)
+						fetch(_ctx + `/admin/values?paramKey=difficulty_level&orderBy=asc`)
 							.then((response) => response.json())
 							.then((data) => {
 								process(data);
@@ -471,7 +471,6 @@ function initializeCourseHandsontable() {
 		console.error('Error: Handsontable container not found.');
 	}
 }
-
 
 
 
