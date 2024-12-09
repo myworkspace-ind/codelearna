@@ -78,7 +78,7 @@ public class CourseServiceImpl implements CourseService {
 
 	@Override
     public List<Course> getCoursesNotInLibrary(String userEid) {
-        List<Course> allCourses = repo.findAll();
+        List<Course> allCourses = repo.findAllActiveCourse();
         List<Long> userCourseIds = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid)
                 .stream()
                 .map(userLibraryCourse -> userLibraryCourse.getCourse().getId())

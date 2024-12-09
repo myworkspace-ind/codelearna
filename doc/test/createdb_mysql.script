@@ -1,0 +1,4 @@
+CREATE database sakai_testing default character set utf8;
+CREATE user 'sakai_testing_user'@'%.%.%.%' identified by 'Sakai!123';
+GRANT ALL PRIVILEGES ON sakai_testing.* TO 'sakai_testing_user'@'%.%.%.%';
+

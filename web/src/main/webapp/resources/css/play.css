@@ -20,6 +20,18 @@ body {
     transition: grid-template-columns 0.3s ease;
 }
 
+.container-play.expanded {
+    grid-template-columns: 1fr; 
+}
+
+.container-play.expanded .video-list {
+    display: none; 
+}
+
+.container-play.expanded .main-video {
+    grid-column: span 2; 
+}
+
 /* Nút toggle-btn */
 #toggle-btn {
     position: absolute;
@@ -473,5 +485,22 @@ body {
     display: none; 
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
 
+.page-btn {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+}
+
+.page-btn.active {
+    background: #007bff;
+    color: white;
+}
 

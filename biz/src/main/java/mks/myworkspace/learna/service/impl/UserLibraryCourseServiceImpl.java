@@ -119,5 +119,8 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
         // Tính phần trăm hoàn thành
         return (int) ((completedLessons.doubleValue() / totalLessons.doubleValue()) * 100);
     }
-
+    @Override
+    public List<String> findAllUniqueUserEids() {
+        return userLibraryCourseRepository.findDistinctUserEids();
+    }
 }
