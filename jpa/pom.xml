@@ -39,6 +39,11 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.15.2</version>
 		</dependency>
+		<dependency>
+			<groupId>mks.assistant.codelearna</groupId>
+			<artifactId>codelearna-api</artifactId>
+			<version>23.2</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<!-- configure the build to use the standard maven structure -->

@@ -50,7 +50,7 @@ public class SignController extends BaseController {
             model.addObject("message", "Bạn đã đăng xuất thành công!");
         }
 
-        model.setViewName("/signInOut/signin");
+        model.setViewName("/signin");
         return model;
     }
 
@@ -63,11 +63,39 @@ public class SignController extends BaseController {
         }
         return "redirect:/home";
     }
+//    @GetMapping("/login")
+//    public ModelAndView showLoginPage(
+//            @RequestParam(value = "error", required = false) String error,
+//            @RequestParam(value = "logout", required = false) String logout) {
+//        
+//        ModelAndView model = new ModelAndView();
+//        
+//        if (error != null) {
+//            model.addObject("error", "Email hoặc mật khẩu không chính xác!");
+//        }
+//
+//        if (logout != null) {
+//            model.addObject("message", "Bạn đã đăng xuất thành công!");
+//        }
+//
+//        model.setViewName("/signInOut/signin");
+//        return model;
+//    }
+//
+//    // Logout
+//    @GetMapping("/logout")
+//    public String logout(HttpServletRequest request, HttpServletResponse response) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        if (auth != null) {
+//            new SecurityContextLogoutHandler().logout(request, response, auth);
+//        }
+//        return "redirect:/home";
+//    }
 
     // Show register form
     @GetMapping("/register")
     public ModelAndView showRegisterForm() {
-        ModelAndView mav = new ModelAndView("/signInOut/signup");
+        ModelAndView mav = new ModelAndView("/signup");
         return mav;
     }
 
@@ -90,24 +118,24 @@ public class SignController extends BaseController {
                 // Nếu không có key `user.register = 1`, sử dụng phương thức đăng ký mặc định
                 if (userService.isEmailExists(userDTO.getEmail())) {
                     mav.addObject("error", "Email đã tồn tại trong hệ thống");
-                    mav.setViewName("/signInOut/signup");
+                    mav.setViewName("/signup");
                     return mav;
                 }
 
                 if (!userDTO.getPassword().equals(userDTO.getConfirmPassword())) {
                     mav.addObject("error", "Mật khẩu xác nhận không khớp");
-                    mav.setViewName("/signInOut/signup");
+                    mav.setViewName("/signup");
                     return mav;
                 }
+            }           
 
                 User user = userService.createUser(userDTO.getFullName(), userDTO.getEmail(), 
                         passwordEncoder.encode(userDTO.getPassword()), userDTO.getPhone());
                 redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
-                mav.setViewName("redirect:/login");
-            }
+                mav.setViewName("redirect:/login");      
         } catch (Exception e) {
             mav.addObject("error", e.getMessage());
-            mav.setViewName("/signInOut/signup");
+            mav.setViewName("/signup");
         }
 
         return mav;
