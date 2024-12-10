@@ -1,5 +1,6 @@
 package mks.myworkspace.learna.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,17 @@ public class CommentServiceImpl implements CommentService {
         } catch (Exception e) {
             logger.error("Error finding comment with id: " + id, e);
             throw new RuntimeException("Comment not found with id: " + id);
+        }
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<Comment> findChildCommentsByParentId(Long parentId) {
+        try {
+            return commentJdbcRepository.findChildComments(parentId);
+        } catch (Exception e) {
+            logger.error("Error fetching child comments for parent id: " + parentId, e);
+            return Collections.emptyList(); // Return empty list instead of throwing exception
         }
     }
 }

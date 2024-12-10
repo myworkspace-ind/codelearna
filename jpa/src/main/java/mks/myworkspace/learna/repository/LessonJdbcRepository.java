@@ -19,8 +19,8 @@ public class LessonJdbcRepository {
     public Lesson save(Lesson lesson) {
         if (lesson.getId() == null) {
             // Insert mới
-            String sql = "INSERT INTO learna_lesson (title, video_url, course_id, created_dte, modified_dte, status) "
-                    + "VALUES (?, ?, ?, NOW(), NOW(), ?)";  // Thêm status khi tạo mới bài học
+            String sql = "INSERT INTO learna_lesson (title, video_url, course_id, activity_id, created_dte, modified_dte, status) "
+                    + "VALUES (?, ?, ?, ?, NOW(), NOW(), ?)";  // Thêm status khi tạo mới bài học
             
             KeyHolder keyHolder = new GeneratedKeyHolder();
             
@@ -30,6 +30,7 @@ public class LessonJdbcRepository {
                 ps.setString(paramIndex++, lesson.getTitle());
                 ps.setString(paramIndex++, lesson.getVideoUrl());
                 ps.setLong(paramIndex++, lesson.getCourse().getId());
+                ps.setString(paramIndex++, lesson.getActivityId());
                 ps.setString(paramIndex++, lesson.getStatus() != null ? lesson.getStatus() : "ACTIVE");  // Default status = "ACTIVE"
                 return ps;
             }, keyHolder);
@@ -40,12 +41,13 @@ public class LessonJdbcRepository {
         } else {
             // Update 
             String sql = "UPDATE learna_lesson SET title = ?, video_url = ?, "
-                    + "course_id = ?, modified_dte = NOW(), status = ? WHERE id = ?";
+                    + "course_id = ?, activity_id = ?, modified_dte = NOW(), status = ? WHERE id = ?";
                     
             int rowsAffected = jdbcTemplate.update(sql,
                 lesson.getTitle(),
                 lesson.getVideoUrl(), 
                 lesson.getCourse().getId(),
+                lesson.getActivityId(),
                 lesson.getStatus(),  // Cập nhật status
                 lesson.getId()
             );

@@ -144,39 +144,44 @@ function deleteCourse(courseId, modal) {
 }
 
 function toggleCourseStatus(courseId) {
-    showSpinnerLoading(); // Hiển thị spinner khi bắt đầu yêu cầu
-
     fetch(`${_ctx}admin/courses/toggleCourseStatus/${courseId}`, {
         method: 'POST',
         headers: {
+            'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ courseId: courseId })
     })
-    .then(response => response.json())
+    .then(response => {
+        // Kiểm tra xem phản hồi có phải JSON không
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json();
+        } else {
+            // Nếu không phải JSON, chuyển đổi sang text để debug
+            return response.text().then(text => {
+                throw new Error(`Server returned non-JSON response: ${text}`);
+            });
+        }
+    })
     .then(data => {
-        hideAllLoading(); // Ẩn spinner sau khi nhận được phản hồi
-
         if (data.status === 'success') {
             showSuccessToast(data.message || 'Thay đổi trạng thái khóa học thành công');
-            loadCoursesSection(); // Tải lại danh sách khóa học sau khi thay đổi trạng thái
+            loadCoursesSection();
 
             const statusChangeModal = bootstrap.Modal.getInstance(document.getElementById('statusChangeModal'));
             if (statusChangeModal) {
-                statusChangeModal.hide(); // Ẩn modal nếu có
+                statusChangeModal.hide();
             }
         } else {
-            alert('Lỗi: ' + data.message);
+            throw new Error(data.message || 'Lỗi không xác định');
         }
     })
     .catch(error => {
-        hideAllLoading(); // Đảm bảo spinner được ẩn ngay cả khi có lỗi
-
         console.error('Lỗi:', error);
-        alert("Đã xảy ra lỗi trong khi thay đổi trạng thái khóa học.");
+        showErrorToast(error.message || "Đã xảy ra lỗi trong khi thay đổi trạng thái khóa học.");
     });
 }
-
 
 function showCourseStatusChangeModal(courseId, currentStatus) {
 
@@ -436,7 +441,7 @@ function initializeCourseHandsontable() {
 					}
 				},
 				{
-					data: 'lessonType',
+					data: 'subcategory',
 					type: 'dropdown',
 					source: function(query, process) {
 						fetch(_ctx + `/admin/values?paramKey=subcategory`)
@@ -551,10 +556,107 @@ function submitCourseData(event) {
 		});
 }
 
+function loadDeletedCoursesModal() {
+    fetch(`${_ctx}admin/listDeletedCourse`)
+        .then(response => response.text())
+        .then(html => {
+            // Ensure the modal ID matches exactly
+            if (!document.getElementById('deletedCoursesModal')) {
+                document.body.insertAdjacentHTML('beforeend', html);
+            } else {
+                document.getElementById('deletedCoursesModal').outerHTML = html;
+            }
+            
+            // Safely create the modal
+            var deletedCourseModal = document.getElementById('deletedCoursesModal');
+            if (deletedCourseModal) {
+                deletedCourseModal = new bootstrap.Modal(deletedCourseModal);
+                deletedCourseModal.show();
+            } else {
+                console.error("Deleted lessons modal element not found");
+            }
+        })
+        .catch(error => console.error('Error loading deleted lessons modal:', error));
+}
+
+function showCourseRestoreConfirmModal(courseId) {
+    if (!courseId) {
+        console.error('No course ID provided');
+        showErrorToast('Error: Course ID is missing');
+        return;
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('restoreConfirmModal'));
+    const confirmBtn = document.getElementById('confirmRestoreBtn');
+
+    // Remove any existing event listeners to prevent multiple triggers
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    // Store the courseId on the button itself
+    newConfirmBtn.setAttribute('data-course-id', courseId);
+
+    // Add the event listener with the stored courseId
+    newConfirmBtn.addEventListener('click', () => {
+        const storedCourseId = newConfirmBtn.getAttribute('data-course-id');
+        restoreCourse(storedCourseId);
+    });
+
+    modal.show();
+}
+
+function restoreCourse(courseId) {
+    if (!courseId) {
+        console.error('No course ID provided to restore');
+        showErrorToast('Error: Course ID is missing');
+        return;
+    }
+
+    fetch(`${_ctx}admin/courses/restoreCourse/${courseId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Course restored successfully');
+            
+            // Close all modals
+            const restoreModal = bootstrap.Modal.getInstance(document.getElementById('restoreConfirmModal'));
+            const deletedCoursesModal = bootstrap.Modal.getInstance(document.getElementById('deletedCoursesModal'));
+            
+            if (restoreModal) restoreModal.hide();
+            if (deletedCoursesModal) deletedCoursesModal.hide();
+            
+            // Remove modal backdrops
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+            
+            // Reload the courses section
+            loadCoursesSection();
+        } else {
+            throw new Error(data.message || 'Failed to restore course');
+        }
+    })
+    .catch(error => {
+        console.error('Error restoring course:', error);
+        showErrorToast(error.message || 'An error occurred while restoring the course');
+    });
+}
 document.addEventListener('DOMContentLoaded', function() {
 	// Kiểm tra xem đang ở trang nào để khởi tạo phân trang phù hợp
 	if (document.getElementById('coursesContainer')) {
 		initializePagination('courses');
 	}
 });
+
+
+
 

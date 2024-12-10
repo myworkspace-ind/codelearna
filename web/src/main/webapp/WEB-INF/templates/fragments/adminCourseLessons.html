@@ -12,7 +12,23 @@
 				th:data-course-id="${course.id}"
 				th:onclick="'fetchAddLessonHandsontablePage(event, this.dataset.courseId)'">
 				Add Lessons with Handsontable</button>
+			<button type="button" class="btn btn-outline-danger btn-sm"
+				th:data-course-id="${course.id}"
+				th:onclick="'loadDeletedLessonsModal('+${course.id}+')'">
+				<i class="fas fa-trash-alt"></i> Deleted Lessons
+			</button>
 		</div>
+
+		<!-- Search functionality -->
+		<div class="d-flex justify-content-between align-items-center mb-3"
+			style="width: 300px;">
+			<input type="text" id="lessonSearchInput" class="form-control"
+				placeholder="Search lesson name..." aria-label="Search lesson name"
+				onkeypress="handleSearchLessonKeyPress(event)">
+			<button class="btn btn-outline-secondary ms-2" type="button"
+				onclick="searchLessons()">Search</button>
+		</div>
+
 		<div id="lessonsContainer">
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">
@@ -28,7 +44,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="lesson, iterStat : ${lessons}">
+						<tr th:each="lesson, iterStat : ${lessons}" th:if="${lesson.status == 'ACTIVE' or lesson.status == 'INACTIVE'}">
 							<th th:text="${iterStat.count}"></th>
 							<td th:text="${iterStat.index + 1}"></td>
 							<td th:text="${lesson.title}"></td>
@@ -63,7 +79,6 @@
 										th:disabled="${lesson.status == 'DELETED'}">Delete</button>
 								</div>
 							</td>
-
 						</tr>
 					</tbody>
 				</table>

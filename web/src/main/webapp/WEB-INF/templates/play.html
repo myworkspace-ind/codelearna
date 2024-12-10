@@ -13,7 +13,8 @@
 <body>
 	<th:block th:include="fragments/nav"></th:block>
 	<div id="userEid" th:data-user-eid="${userEId}" style="display: none;"></div>
-	<div id="userEmail" th:data-user-email="${userEmail}" style="display: none;"></div>
+	<div id="userEmail" th:data-user-email="${userEmail}"
+		style="display: none;"></div>
 	<div class="container-play">
 		<button id="toggle-btn">☰</button>
 
@@ -40,9 +41,10 @@
 			<div class="video-list-content">
 				<!-- Lesson search box -->
 				<div class="search-container">
-					<input type="text" placeholder="Search lessons..." id="search"
+					<input type="text" placeholder="Tìm kiếm bài học..." id="search"
 						onkeyup="searchLessons(this.value)"> <span
 						class="search-icon">&#128269;</span>
+					<!-- Icon tìm kiếm -->
 				</div>
 
 				<div th:each="lesson, lessonStat : ${lessons}" class="vid"

@@ -24,6 +24,12 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	// Tìm khóa học theo danh mục con
 	List<Course> findBySubcategoryId(Long subcategoryId);
 
+	 @Query("SELECT COUNT(c.id) FROM Course c")
+	    int getTotalCourses();
+
+	 
+	 @Query("SELECT c FROM Course c WHERE c.status = 'ACTIVE'")
+	 List<Course> findAllActiveCourse();
 	// Tìm kiếm khóa học với các bộ lọc (keyword, difficulty level, average rating)
 	@Query("SELECT c FROM Course c "
 			+ "WHERE (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "

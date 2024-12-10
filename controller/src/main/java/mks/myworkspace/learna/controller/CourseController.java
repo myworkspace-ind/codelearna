@@ -54,7 +54,6 @@ public class CourseController extends BaseController {
 		Course course = courseService.getCourseById(id);
 		Double balance = paymentService.getBalance(userEid);
 
-		// Pass the sortBy parameter to the service method to get sorted reviews
 		List<Review> filteredReviews = reviewService.getFilteredReviews(id, sortBy);
 
 		int pageSize = 5;

@@ -92,4 +92,3 @@ public class Course {
     private Double averageRating;
 
 }
-
