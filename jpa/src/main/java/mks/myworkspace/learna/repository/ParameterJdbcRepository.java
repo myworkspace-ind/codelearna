@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import mks.myworkspace.learna.entity.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.LoggingCacheErrorHandler;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,19 +20,24 @@ import lombok.extern.slf4j.Slf4j;
 @Repository
 @Slf4j
 public class ParameterJdbcRepository {
+	
+	@Autowired
+    private JdbcTemplate jdbcTemplate;
 	@Autowired
 	private DataSource dataSource;
 	
 	public Parameter save(Parameter parameter) {
-	    String sqlInsert = "INSERT INTO learna_parameter (param_key, param_value) VALUES (?, ?)";
-	    String sqlUpdate = "UPDATE learna_parameter SET param_key = ?, param_value = ? WHERE id = ?";
+		String sqlInsert = "INSERT INTO learna_parameter (param_key, param_value, status) VALUES (?, ?, ?)";
+	    String sqlUpdate = "UPDATE learna_parameter SET param_key = ?, param_value = ?, status = ? WHERE id = ?";
 
 	    try (Connection conn = dataSource.getConnection()) {
 	        if (parameter.getId() != null) {
 	            try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
 	                ps.setString(1, parameter.getParamKey());
 	                ps.setString(2, parameter.getParamValue());
-	                ps.setLong(3, parameter.getId());
+	                ps.setString(3, parameter.getStatus());
+	                ps.setLong(4, parameter.getId());
+	               
 	                int rowsUpdated = ps.executeUpdate();
 	               
 	                if (rowsUpdated == 0) {
@@ -49,9 +55,10 @@ public class ParameterJdbcRepository {
 	}
 
 	private void insertNewParameter(Parameter parameter, Connection conn, String sqlInsert) throws SQLException {
-	    try (PreparedStatement ps = conn.prepareStatement(sqlInsert, PreparedStatement.RETURN_GENERATED_KEYS)) {
+		try (PreparedStatement ps = conn.prepareStatement(sqlInsert, PreparedStatement.RETURN_GENERATED_KEYS)) {
 	        ps.setString(1, parameter.getParamKey());
 	        ps.setString(2, parameter.getParamValue());
+	        ps.setString(3, "ACTIVE");
 	        ps.executeUpdate();
 
 	        try (ResultSet rs = ps.getGeneratedKeys()) {
@@ -63,19 +70,11 @@ public class ParameterJdbcRepository {
 	}
 	
 	public void deleteById(Long id) {
-        String sql = "DELETE FROM learna_parameter WHERE id = ?";
-
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setLong(1, id);
-            int rowsAffected = ps.executeUpdate();
-            if (rowsAffected == 0) {
-                System.out.println("Không tìm thấy Parameter với id: " + id);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        String sql = "UPDATE learna_parameter SET status = 'DELETED' WHERE id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, id);
+        
+        if (rowsAffected == 0) {
+            throw new RuntimeException("Lesson not found with id: " + id);
         }
     }
 	

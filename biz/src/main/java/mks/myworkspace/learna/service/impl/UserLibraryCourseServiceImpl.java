@@ -123,4 +123,9 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
     public List<String> findAllUniqueUserEids() {
         return userLibraryCourseRepository.findDistinctUserEids();
     }
+    
+    @Override
+    public Long countTotalUserLibrary() {
+        return userLibraryCourseRepository.countDistinctUsers();
+    }
 }

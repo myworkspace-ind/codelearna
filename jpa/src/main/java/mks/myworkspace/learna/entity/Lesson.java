@@ -56,7 +56,6 @@ public class Lesson {
     }
     public enum status {
         ACTIVE,
-        INACTIVE,
         DELETED
     }
 }
