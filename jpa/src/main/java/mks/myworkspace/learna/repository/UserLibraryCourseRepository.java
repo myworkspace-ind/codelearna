@@ -53,6 +53,10 @@ public interface UserLibraryCourseRepository extends JpaRepository<UserLibraryCo
     
     @Query("SELECT DISTINCT u.userEid FROM UserLibraryCourse u")
     List<String> findDistinctUserEids();
+    
+    @Query("SELECT COUNT(DISTINCT ulc.userEid) FROM UserLibraryCourse ulc")
+    Long countDistinctUsers();
+
 
 }
 

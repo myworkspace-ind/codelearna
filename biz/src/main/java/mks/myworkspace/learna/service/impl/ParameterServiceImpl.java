@@ -80,5 +80,8 @@ public class ParameterServiceImpl implements ParameterService {
 	public List<String> getParamKeyDiff() {
 		return parameterJdbcRepository.getParamKeyDiff();
 	}
-
+	@Override
+	public List<Parameter> getListParamsByParamValueAndStatus(String paramValue, String status) {
+	    return repo.findByParamKeyAndStatus(paramValue, status);
+	}
 }
