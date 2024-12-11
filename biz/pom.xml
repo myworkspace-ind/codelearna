@@ -14,7 +14,7 @@
 		<dependency>
             <groupId>mks.assistant.codelearna</groupId>
             <artifactId>codelearna-jpa</artifactId>
-            <version>${module.version}</version>
+            <version>23.2</version>
         </dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -40,6 +40,13 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
         </dependency>
+        <dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-crypto</artifactId>
+		    <version>6.1.0</version> 
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
