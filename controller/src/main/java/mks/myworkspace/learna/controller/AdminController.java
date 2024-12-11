@@ -58,11 +58,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-
 @Controller
 @RequestMapping("/admin")
 @Slf4j
-public class AdminController extends BaseController{
+public class AdminController extends BaseController {
 
 	@Autowired
 	private CourseService courseService;
@@ -85,10 +84,10 @@ public class AdminController extends BaseController{
 
 	@GetMapping
 	public String showAdminHomePage(Model model) {
-  String currentUserEid = getCurrentUserEid();
-	    if (!"admin".equals(currentUserEid)) {
-	        return "accessDenied"; 
-	    }
+		String currentUserEid = getCurrentUserEid();
+		if (!"admin".equals(currentUserEid)) {
+			return "accessDenied";
+		}
 		int totalCourses = courseService.getTotalCourses();
 		Double totalRevenues = revenueService.getTotalRevenue();
 		Long totalUsers = userLibraryCourseService.countTotalUserLibrary();
@@ -124,13 +123,14 @@ public class AdminController extends BaseController{
 
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {
-	    ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
-	    List<Parameter> difficultyLevels = parameterService.getListParamsByParamValueAndStatus("difficulty_level", "ACTIVE");
-	    log.info("do kho" + difficultyLevels);
-	    List<Parameter> lessonTypes = parameterService.getListParamsByParamValueAndStatus("lesson_type", "ACTIVE");
-	    mav.addObject("difficultyLevels", difficultyLevels);
-	    mav.addObject("lessonTypes", lessonTypes);
-	    return mav;
+		ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
+		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValueAndStatus("difficulty_level",
+				"ACTIVE");
+		log.info("do kho" + difficultyLevels);
+		List<Parameter> lessonTypes = parameterService.getListParamsByParamValueAndStatus("lesson_type", "ACTIVE");
+		mav.addObject("difficultyLevels", difficultyLevels);
+		mav.addObject("lessonTypes", lessonTypes);
+		return mav;
 	}
 
 	@PostMapping("/addCourse")
@@ -226,9 +226,11 @@ public class AdminController extends BaseController{
 	@ResponseBody
 	@GetMapping("/values")
 	public List<String> getParamValues(@RequestParam String paramKey) {
-		return parameterService.getListParamsByParamValueAndStatus(paramKey, "ACTIVE").stream().map(Parameter::getParamValue)
-				.collect(Collectors.toList());
+		return parameterService.getListParamsByParamValueAndStatus(paramKey, "ACTIVE").stream()
+				.map(Parameter::getParamValue).collect(Collectors.toList());
 	}
+
+
 
 	@ResponseBody
 	@GetMapping("/paramKey")
@@ -700,63 +702,61 @@ public class AdminController extends BaseController{
 	}
 
 	@PostMapping("/saveLessonsHandsontable/{courseId}")
-	public ResponseEntity<Map<String, String>> saveLessonsHandsontable(
-	        @PathVariable("courseId") Long courseId,
-	        @RequestBody List<Map<String, Object>> lessonData) {
-	    log.info("Received request to save lessons for courseId: {}", courseId);
-	    Map<String, String> response = new HashMap<>();
-	    
-	    try {
-	        log.info("Received lesson data: {}", lessonData);
+	public ResponseEntity<Map<String, String>> saveLessonsHandsontable(@PathVariable("courseId") Long courseId,
+			@RequestBody List<Map<String, Object>> lessonData) {
+		log.info("Received request to save lessons for courseId: {}", courseId);
+		Map<String, String> response = new HashMap<>();
 
-	        if (lessonData == null || lessonData.isEmpty()) {
-	            response.put("status", "error");
-	            response.put("message", "Please fill all the values");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+		try {
+			log.info("Received lesson data: {}", lessonData);
 
-	        Course course = courseService.getCourseById(courseId);
-	        if (course == null) {
-	            response.put("status", "error");
-	            response.put("message", "Course not found");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+			if (lessonData == null || lessonData.isEmpty()) {
+				response.put("status", "error");
+				response.put("message", "Please fill all the values");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	        for (Map<String, Object> lessonMap : lessonData) {
-	            String title = (String) lessonMap.get("title");
-	            if (title == null || title.trim().isEmpty()) {
-	                response.put("status", "error");
-	                response.put("message", "Lesson title cannot be empty");
-	                return ResponseEntity.badRequest().body(response);
-	            }
-	            String activityId = (String) lessonMap.get("activityId");
-	            if (activityId == null || activityId.trim().isEmpty()) {
-	                response.put("status", "error");
-	                response.put("message", "Lesson activityId cannot be empty");
-	                return ResponseEntity.badRequest().body(response);
-	            }
-	            
+			Course course = courseService.getCourseById(courseId);
+			if (course == null) {
+				response.put("status", "error");
+				response.put("message", "Course not found");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	            Lesson lesson = new Lesson();
-	            lesson.setTitle(title);
-	            lesson.setVideoUrl((String) lessonMap.get("videoUrl"));
-	            lesson.setActivityId(activityId);
-	            lesson.setCourse(course);
-	            lesson.setStatus("INACTIVE");
-	            lessonService.saveLesson(lesson);
-	            log.info("Saved lesson: {}", lesson.getTitle());
-	        }
+			for (Map<String, Object> lessonMap : lessonData) {
+				String title = (String) lessonMap.get("title");
+				if (title == null || title.trim().isEmpty()) {
+					response.put("status", "error");
+					response.put("message", "Lesson title cannot be empty");
+					return ResponseEntity.badRequest().body(response);
+				}
+				String activityId = (String) lessonMap.get("activityId");
+				if (activityId == null || activityId.trim().isEmpty()) {
+					response.put("status", "error");
+					response.put("message", "Lesson activityId cannot be empty");
+					return ResponseEntity.badRequest().body(response);
+				}
 
-	        response.put("status", "success");
-	        response.put("message", "Lessons have been successfully added!");
-	        return ResponseEntity.ok(response);
+				Lesson lesson = new Lesson();
+				lesson.setTitle(title);
+				lesson.setVideoUrl((String) lessonMap.get("videoUrl"));
+				lesson.setActivityId(activityId);
+				lesson.setCourse(course);
+				lesson.setStatus("INACTIVE");
+				lessonService.saveLesson(lesson);
+				log.info("Saved lesson: {}", lesson.getTitle());
+			}
 
-	    } catch (Exception e) {
-	        log.error("Error saving lessons: ", e);
-	        response.put("status", "error");
-	        response.put("message", "Error saving lessons: " + e.getMessage());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+			response.put("status", "success");
+			response.put("message", "Lessons have been successfully added!");
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			log.error("Error saving lessons: ", e);
+			response.put("status", "error");
+			response.put("message", "Error saving lessons: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 
 	@PostMapping("/lessons/delete/{id}")
@@ -931,11 +931,11 @@ public class AdminController extends BaseController{
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
-	
-	@PostMapping("/parameter/restoreParameter/{id}") 
+
+	@PostMapping("/parameter/restoreParameter/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> restoreParameter(@PathVariable("id") Long id,
-	        @ModelAttribute("parameter") Parameter parameter) {
+			@ModelAttribute("parameter") Parameter parameter) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			Parameter existingParameter = parameterService.getParameterById(id);
@@ -949,9 +949,9 @@ public class AdminController extends BaseController{
 			parameterService.saveParameters(existingParameter);
 			response.put("status", "success");
 			response.put("message", "Parameter has been restore successfully");
-			
+
 			return ResponseEntity.ok(response);
-			
+
 		} catch (Exception e) {
 			log.error("Error deleting lesson: ", e);
 			response.put("status", "error");
