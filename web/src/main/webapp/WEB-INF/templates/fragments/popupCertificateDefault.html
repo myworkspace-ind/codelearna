@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quản lý Khóa học</title>
-<link
-	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css"
-	rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/css/bootstrap.min.css" rel="stylesheet">
 <style>
 /* Thêm CSS cho popup chứng chỉ */
 #certificatePopupOverlay {
@@ -102,27 +100,22 @@
 	<!-- Popup chứng chỉ -->
 	<div id="certificatePopupOverlay">
 		<div id="certificatePopupContainer">
-			<button class="close-popup" onclick="closeCertificatePopup()">&times;</button>
-			<div class="certificate-controls">
-				<button class="btn btn-primary me-2"
-					onclick="downloadCertificatePDF()">Tải xuống PDF</button>
-			</div>
+			<button class="close-popup text-light fs-4" onclick="closeCertificatePopup()">&times;</button>
 			<div class="dynamic-content" id="certificate">
-				<img id="background_img" src="https://i.imgur.com/fLjLZrZ.png"
-					alt="Certificate Background">
+				<img id="background_img" src="https://i.imgur.com/fLjLZrZ.png" alt="Certificate Background">
 				<h1 id="display_name">Tên học viên</h1>
 				<h2 id="course_name">Tên khóa học</h2>
 				<h3 id="issue_date">Ngày cấp</h3>
 			</div>
+			<div class="certificate-controls">
+				<button class="btn btn-outline-primary me-2" onclick="downloadCertificatePDF()">PDF Download</button>
+			</div>
 		</div>
 	</div>
 
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
 
 	<script>
     async function downloadCertificatePDF() {
