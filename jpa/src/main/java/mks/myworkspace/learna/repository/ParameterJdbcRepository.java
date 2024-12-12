@@ -104,6 +104,26 @@ public class ParameterJdbcRepository {
 		return paramKeys;
 	}
 
+	public List<Parameter> getListParamsByParamValueAndStatus(String paramKey, String status, String orderBy) {
+	    String sql = "SELECT * FROM sakai.learna_parameter WHERE param_key = ? AND status = ? ORDER BY seqno " + orderBy;
+	    List<Parameter> parameters = new ArrayList<>();
+	    try (Connection conn = dataSource.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, paramKey);
+	        ps.setString(2, status);
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            Parameter parameter = new Parameter();
+	            parameter.setParamValue(rs.getString("param_value"));
+	            parameter.setSeqno(rs.getInt("seqno"));
+	            parameters.add(parameter);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return parameters;
+	}
+
 	private void close(Connection conn) {
 		try {
 			conn.close();

@@ -82,6 +82,7 @@ public class ParameterServiceImpl implements ParameterService {
 	}
 	@Override
 	public List<Parameter> getListParamsByParamValueAndStatus(String paramValue, String status) {
-	    return repo.findByParamKeyAndStatus(paramValue, status);
+	    //return repo.findByParamKeyAndStatus(paramValue, status);
+		return parameterJdbcRepository.getListParamsByParamValueAndStatus(paramValue, status, "");
 	}
 }
