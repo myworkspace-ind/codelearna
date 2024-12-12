@@ -1,0 +1,20 @@
+<div th:fragment="addCampaignsContent">
+	<div class="container mt-5">
+		<h1 class="mb-4">Add Campaigns with Handsontable</h1>
+
+		<!-- Error Message Display -->
+		<div id="error-message-campaign-handsontable" class="alert alert-danger" style="display: none;">
+            <strong>Error!</strong> <span id="error-text-campaign-handsontable"></span>
+        </div>
+
+		<!-- File Input for Excel Files -->
+		<input type="file" id="campaignFileInput" class="form-control mb-3" accept=".xls,.xlsx" onchange="handleFileCampaign(event)">
+
+		<!-- Handsontable Container -->
+		<div id="handsontable-container" class="mb-3"></div>
+
+		<!-- Submit and Cancel Buttons -->
+		<button type="button" class="btn btn-primary" onclick="submitCampaignData(event)">Submit Campaigns</button>
+		<button type="button" class="btn btn-secondary" onclick="loadCampaignsSection(event)">Cancel</button>
+	</div>
+</div>

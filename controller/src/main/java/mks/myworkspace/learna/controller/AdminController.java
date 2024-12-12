@@ -1,12 +1,14 @@
 package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Campaign;
 import mks.myworkspace.learna.repository.CourseJdbcRepository;
 import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.entity.Subcategory;
 import mks.myworkspace.learna.entity.UserLibraryCourse;
+import mks.myworkspace.learna.service.CampaignService;
 import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
@@ -65,7 +67,8 @@ public class AdminController extends BaseController {
 
 	@Autowired
 	private CourseService courseService;
-
+	@Autowired
+	private CampaignService campaignService;
 	@Autowired
 	private ParameterService parameterService;
 
@@ -114,12 +117,95 @@ public class AdminController extends BaseController {
 		mav.addObject("courses", courseService.getAllCourses());
 		return mav;
 	}
-
+	@GetMapping("/listCampaign")
+	public ModelAndView loadCampaignsFragment() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListCampaign :: campaignsContent");
+	    mav.addObject("campaigns", campaignService.getAllCampaigns());
+	    return mav;
+	}
 	@GetMapping("/revenue")
 	public ModelAndView revenueFragment() {
 		ModelAndView mav = new ModelAndView("fragments/revenue :: revenue");
 		return mav;
 	}
+    @GetMapping("/addCampaign")
+    public ModelAndView showAddCampaignPage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddCampaign :: addCampaignContent");
+
+        // Lấy danh sách các tham số liên quan đến campaign (Ví dụ: campaign types, campaign statuses)
+        List<Parameter> campaignTypes = parameterService.getListParamsByParamValue("campaign_type");
+        List<Parameter> campaignStatuses = parameterService.getListParamsByParamValue("campaign_status");
+
+        // Truyền dữ liệu vào ModelAndView
+        mav.addObject("campaignTypes", campaignTypes);
+        mav.addObject("campaignStatuses", campaignStatuses);
+
+        return mav;
+    }
+
+    @PostMapping("/addCampaign")
+    @Transactional
+    public ResponseEntity<Map<String, String>> addCampaign(@Validated @ModelAttribute("campaign") Campaign campaign,
+                                                           BindingResult bindingResult) {
+        Map<String, String> response = new HashMap<>();
+
+        // Kiểm tra lỗi trong BindingResult
+        if (bindingResult.hasErrors()) {
+            response.put("status", "error");
+            response.put("message", "Invalid information.");
+            System.out.println(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // Kiểm tra các trường cần thiết
+        if (campaign.getName() == null || campaign.getName().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Campaign name is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getStartTime() == null) {
+            response.put("status", "error");
+            response.put("message", "Start time is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getEndTime() == null) {
+            response.put("status", "error");
+            response.put("message", "End time is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getShortDescription() == null || campaign.getShortDescription().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Short description is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getCoverImageUrl() == null || campaign.getCoverImageUrl().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Cover image URL is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // Lưu campaign
+        try {
+            campaignService.saveCampaign(campaign);
+            response.put("status", "success");
+            response.put("message", "The campaign has been added successfully!");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "System error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/addCampaignHandsontable")
+    public ModelAndView showAddCampaignHandsontablePage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddCampaignsHandsontable :: addCampaignsContent");
+        return mav;
+    }
 
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {
@@ -987,7 +1073,6 @@ public class AdminController extends BaseController {
 
 		return ResponseEntity.ok(Map.of("status", "success", "message", "Parameter updated successfully"));
 	}
-
 	@GetMapping("/listManageLearningProgress")
 	public ModelAndView loadUserLibraryFragment() {
 		ModelAndView mav = new ModelAndView("fragments/adminManageLearningProgress :: userLibraryContent");
