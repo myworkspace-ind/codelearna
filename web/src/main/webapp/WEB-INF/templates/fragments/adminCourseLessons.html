@@ -12,7 +12,7 @@
 				th:data-course-id="${course.id}"
 				th:onclick="'fetchAddLessonHandsontablePage(event, this.dataset.courseId)'">
 				Add Lessons with Handsontable</button>
-			<button type="button" class="btn btn-outline-danger btn-sm"
+			<button type="button" class="btn btn-outline-danger btn-sm mx-3"
 				th:data-course-id="${course.id}"
 				th:onclick="'loadDeletedLessonsModal('+${course.id}+')'">
 				<i class="fas fa-trash-alt"></i> Deleted Lessons
@@ -34,22 +34,24 @@
 				<table class="table table-bordered table-hover">
 					<thead class="thead-dark">
 						<tr>
-							<th style="width: 5%;">#</th>
-							<th style="width: 5%;">Lesson Number</th>
-							<th style="width: 25%;">Lesson Title</th>
-							<th style="width: 35%;">Video URL</th>
-							<th style="width: 15%;">Created Date</th>
-							<th style="width: 10%;">Status</th>
-							<th style="width: 20%;">Action</th>
+							<th>#</th>
+							<th>Lesson Number</th>
+							<th>Lesson Title</th>
+							<th>Video URL</th>
+							<th>Activity Id</th>
+							<th>Created Date</th>
+							<th>Status</th>
+							<th>Action</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr th:each="lesson, iterStat : ${lessons}" th:if="${lesson.status == 'ACTIVE' or lesson.status == 'INACTIVE'}">
 							<th th:text="${iterStat.count}"></th>
 							<td th:text="${iterStat.index + 1}"></td>
-							<td th:text="${lesson.title}"></td>
+							<td th:text="${lesson.title}"></td>							
 							<td><a th:href="${lesson.videoUrl}" target="_blank"
 								th:text="${lesson.videoUrl}"></a></td>
+							<td th:text="${lesson.activityId}"></td>
 							<td
 								th:text="${#dates.format(lesson.createdDate, 'dd-MM-yyyy HH:mm')}"></td>
 							<td th:text="${lesson.status}"></td>

@@ -12,19 +12,28 @@ import mks.myworkspace.learna.entity.Parameter;
 @Repository
 public interface ParameterRepository extends JpaRepository<Parameter, Long> {
 
-	Optional<Parameter> findByParamKey(String paramKey);
+    Optional<Parameter> findByParamKey(String paramKey);
 
-	Parameter findByParamValue(String paramValue);
+    Parameter findByParamValue(String paramValue);
 
-	List<Parameter> findByParamKeyOrderBySeqnoAsc(String paramKey);
+	  List<Parameter> findByParamKeyOrderBySeqnoAsc(String paramKey);
+	
+	  List<Parameter> findByParamKeyAndStatus(String paramKey, String status);
 
-	@Query("SELECT p FROM Parameter p WHERE p.paramKey = :paramKey ORDER BY seqno")
-	List<Parameter> listByParamKey(@Param("paramKey") String paramKey);
+    @Query("SELECT p FROM Parameter p WHERE p.paramKey = :paramKey ORDER BY seqno")
+    List<Parameter> listByParamKey(@Param("paramKey") String paramKey);
 
-	Parameter findByParamKeyAndParamValue(String paramKey, String paramValue);
+    Parameter findByParamKeyAndParamValue(String paramKey, String paramValue);
 
-	@Query("SELECT DISTINCT p.paramKey FROM Parameter p WHERE p.paramKey <> 'site_logo'")
-	List<String> findDistinctParamKeys();
+    @Query("SELECT DISTINCT p.paramKey FROM Parameter p WHERE p.paramKey <> 'site_logo'")
+    List<String> findDistinctParamKeys();
 
-	boolean existsByParamKey(String paramKey);
+    @Query("SELECT DISTINCT p.paramKey FROM Parameter p WHERE p.paramKey <> 'site_logo' AND p.paramKey <> 'category' AND p.paramKey <> 'subcategory'")
+    List<String> findAllDistinctParamKeys();
+
+    @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END " + "FROM Parameter p "
+            + "WHERE p.paramKey = :paramKey " + "AND p.paramKey <> 'site_logo' " + "AND p.paramKey <> 'category' "
+            + "AND p.paramKey <> 'subcategory'")
+    boolean existsByParamKey(@Param("paramKey") String paramKey);
+
 }
