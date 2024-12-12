@@ -79,7 +79,7 @@ public class ParameterJdbcRepository {
     }
 	
 	public List<String> getParamKeyDiff() {
-		String sql = "SELECT DISTINCT param_key FROM sakai.learna_parameter;";
+		String sql = "SELECT DISTINCT param_key FROM learna_parameter;";
 		List<String> paramKeys = new ArrayList<>();
 
 		Connection conn = null;
@@ -105,7 +105,7 @@ public class ParameterJdbcRepository {
 	}
 
 	public List<Parameter> getListParamsByParamValueAndStatus(String paramKey, String status, String orderBy) {
-	    String sql = "SELECT * FROM sakai.learna_parameter WHERE param_key = ? AND status = ? ORDER BY seqno " + orderBy;
+	    String sql = "SELECT * FROM learna_parameter WHERE param_key = ? AND status = ? ORDER BY seqno " + orderBy;
 	    List<Parameter> parameters = new ArrayList<>();
 	    try (Connection conn = dataSource.getConnection();
 	         PreparedStatement ps = conn.prepareStatement(sql)) {
