@@ -16,6 +16,43 @@ function loadCampaignsSection(event) {
 		})
 		.catch(error => console.error('Error loading campaigns section:', error));
 }
+function submitCampaignForm(event) {
+	event.preventDefault(); // Ngăn form submit mặc định
+
+	// Lấy form và dữ liệu form
+	const form = document.querySelector('#campaignForm');
+	const formData = new FormData(form);
+
+	// Gửi yêu cầu fetch đến endpoint thêm chiến dịch
+	fetch(`${_ctx}admin/addCampaign`, {
+		method: 'POST',
+		body: formData
+	})
+		.then(response => {
+			if (!response.ok) {
+				return response.json().then(data => {
+					throw new Error(data.message || 'Unknown error occurred');
+				});
+			}
+			return response.json();
+		})
+		.then(data => {
+			if (data.status === "success") {
+				// Hiển thị thông báo thành công
+				showSuccessToast('Campaign added successfully!');
+				loadCampaignsSection(event); // Load lại danh sách Campaign
+			} else {
+				throw new Error(data.message); // Ném lỗi nếu không thành công
+			}
+		})
+		.catch(error => {
+			// Xử lý lỗi
+			console.error('Error adding campaign:', error);
+			document.getElementById('error-text-campaign').innerText = error.message;
+			document.getElementById('error-message-campaign').style.display = 'block';
+		});
+}
+
 function submitCampaignData(event) {
 	event.preventDefault();
 
