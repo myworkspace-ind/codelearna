@@ -54,4 +54,8 @@ public class Lesson {
     public List<Comment> getComments() {
         return comments;
     }
+    public enum status {
+        ACTIVE,
+        DELETED
+    }
 }

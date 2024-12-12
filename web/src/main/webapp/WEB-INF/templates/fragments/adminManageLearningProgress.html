@@ -1,0 +1,32 @@
+<div th:fragment="userLibraryContent">
+    <div class="container mt-5">
+        <h1 class="mb-4 fw-bolder">User Library Courses</h1>
+        
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>User EID</th>
+                        <th>Completed Courses</th>
+                        <th>In-Progress Courses</th>
+                        <th>xAPI Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="userLibrary, iterStat : ${userLibraries}">
+                        <td th:text="${iterStat.count}"></td>
+                        <td th:text="${userLibrary.userEid}"></td>
+                        <td th:text="${userLibrary.completedCoursesCount}"></td>
+                        <td th:text="${userLibrary.inProgressCoursesCount}"></td>
+                        <td>
+                            <a th:href="${userLibrary.xapiLink}" target="_blank">
+                                xAPI Link
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

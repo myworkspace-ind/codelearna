@@ -135,7 +135,7 @@ public class PaymentController extends BaseController {
         
         int paymentStatus = paymentService.processReturnVnpay(fields, userEid);
 
-	    return "redirect: /codelearna-web";
+        return "redirect:/library";
 
     }
     

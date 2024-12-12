@@ -4,9 +4,9 @@
     <ul class="comment-list" id="comment-list">
         <li th:each="comment : ${comments}" class="comment-item parent-comment">
             <div class="comment-content">
-                <img th:src="'https://via.placeholder.com/150'" alt="Avatar" class="avatar parent-avatar">
+                <img th:src="'https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small/Basic_Ui__28186_29.jpg'" alt="Avatar" class="avatar parent-avatar">
                 <div class="comment-text">
-                    <span class="comment-username" th:text="${comment.userEid}">Username</span>
+                    <span class="comment-username" th:text="${comment.userEid ?: 'Anonymous'}">Username</span>
                     <p th:text="${comment.content}">Comment content</p>
                 </div>
                 <button class="reply-btn" th:attr="data-comment-id=${comment.id}">Reply</button>
@@ -22,9 +22,9 @@
             <ul class="child-comments" th:if="${comment.childComments}">
                 <li th:each="childComment : ${comment.childComments}" class="comment-item child-comment">
                     <div class="comment-content">
-                        <img th:src="'https://via.placeholder.com/150'" alt="Avatar" class="avatar child-avatar">
+                        <img th:src="'https://static.vecteezy.com/system/resources/thumbnails/000/439/863/small/Basic_Ui__28186_29.jpg'" alt="Avatar" class="avatar child-avatar">
                         <div class="comment-text">
-                            <span class="comment-username" th:text="${childComment.userEid}">Username</span>
+                            <span class="comment-username" th:text="${childComment.userEid ?: 'Anonymous'}">Username</span>
                             <p th:text="${childComment.content}">Comment content</p>
                         </div>
                     </div>

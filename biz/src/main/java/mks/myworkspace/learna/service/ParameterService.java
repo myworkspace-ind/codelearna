@@ -12,10 +12,12 @@ public interface ParameterService {
 	List<Parameter> getListParamsByParamValue(String paramKey);
 	Parameter getParameterById(Long id);
 	Parameter getParameterByParamKeyAndParamValue(String paramKey, String paramValue);
+	List<String> getDistinctParamKeys();
 	List<String> getAllDistinctParamKeys();
 	Parameter saveParameters(Parameter parameters);
 	boolean paramKeyExists(String paramKey);
 	void deleteParameter(Long id);
 	List<String> getParamKeyDiff();
 	List<Parameter> getParamValues(String paramKey);
+	List<Parameter> getListParamsByParamValueAndStatus(String paramKey, String status);
 }

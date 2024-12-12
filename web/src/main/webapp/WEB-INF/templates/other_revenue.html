@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue Statistics</title>
+    <!-- Bootstrap CSS -->
+    <link href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container-fluid {
+            max-width: 1200px;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        .pagination {
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .custom-select {
+            border-radius: 6px;
+        }
+        .temp-revenue {
+            background-color: #f0f0f0;
+            border-top: 2px solid #007bff;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        #custom-range {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        @media (max-width: 768px) {
+            .responsive-stack > * {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h3 text-center mb-0">Revenue Statistics</h1>
+                    </div>
+                    <div class="card-body">
+						<div class="row mb-4 responsive-stack">
+                            <div class="col-md-4">
+                                <label for="time-period" class="form-label">Select Time Period:</label>
+                                <select id="time-period" class="form-select custom-select">
+                                    <option value="all">All Time</option>
+                                    <option value="day">Last Day</option>
+                                    <option value="month">Last Month</option>
+                                    <option value="3month">Last 3 Months</option>
+                                    <option value="6month">Last 6 Months</option>
+                                    <option value="year">Last Year</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button id="fetch-button" class="btn btn-primary btn-custom" onclick="fetchRevenueStatistics()">
+                                    Fetch Data
+                                </button>
+                            </div>
+                        </div>
+						
+						<div id="custom-range" class="row mb-4" style="display:none;">
+						    <div class="col-md-2	">
+						        <label for="start-date" class="form-label">Start Date:</label>
+						        <input type="date" id="start-date" class="form-control">
+						    </div>
+						    <div class="col-md-2">
+						        <label for="end-date" class="form-label">End Date:</label>
+						        <input type="date" id="end-date" class="form-control">
+						    </div>
+						</div>
+
+                        <!-- Total Revenue -->
+                        <div class="alert alert-info" role="alert">
+                            <strong>Total Revenue:</strong> 
+                            <span id="total-revenue" class="h4 text-primary">Loading...</span>
+                        </div>
+                        
+                        <!-- Revenue Table by Course -->
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Course Name</th>
+                                        <th>Quantity Purchased</th>
+                                        <th>Revenue (VND)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="revenue-data">
+                                    <tr>
+                                        <td colspan="3" class="text-center">Loading data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="temp-revenue text-end">
+						    <div class="summary-item">
+						        <span>Temporary Revenue Calculation:</span>
+						        <strong id="temp-revenue">₫0</strong>
+						    </div>
+						</div>
+
+                        <!-- Pagination -->
+                        <nav>
+                            <ul class="pagination" id="pagination">
+                                <!-- Pagination buttons will be added dynamically -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="/library/webjars/jquery/dist/jquery.min.js"></script>
+    <script src="/library/webjars/popper.js/2.9.3/umd/popper.min.js"></script>
+    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        var currentPage = 1;
+        var pageSize = 5;
+        var totalPages = 1;
+
+        var _ctx = '[[@{/}]]';
+        
+        window.onload = function() {
+            // Get today's date
+            const today = new Date();
+            // Get yesterday's date
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+
+            // Format the dates to 'YYYY-MM-DD'
+            const formatDate = (date) => date.toISOString().split('T')[0];
+
+            // Set the default values for the start and end dates
+            document.getElementById('start-date').value = formatDate(yesterday);
+            document.getElementById('end-date').value = formatDate(today);
+        };
+
+        function formatCurrency(amount) {
+            if (amount) {
+                return new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                    maximumFractionDigits: 0
+                }).format(amount);
+            }
+            return 'N/A';
+        }
+
+        function fetchRevenueStatistics() {
+            var timePeriod = document.getElementById('time-period').value;
+            var startDate = document.getElementById('start-date').value;
+            var endDate = document.getElementById('end-date').value;
+
+            var url = `${_ctx}/api/revenue/statistics?page=${currentPage}&size=${pageSize}`;
+
+            if (timePeriod === 'custom' && startDate && endDate) {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            } else {
+                url += `&timePeriod=${timePeriod}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const totalRevenue = formatCurrency(data.totalRevenue);
+                    document.getElementById('total-revenue').innerText = totalRevenue;
+
+                    const tempRevenue = formatCurrency(data.tempRevenue);
+                    document.getElementById('temp-revenue').innerText = tempRevenue;
+                    
+                    const revenueData = data.revenueByCourse;
+                    const tbody = document.getElementById('revenue-data');
+                    tbody.innerHTML = '';
+
+                    if (revenueData && revenueData.length > 0) {
+                        revenueData.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.courseName}</td>
+                                <td>${item.purchaseCount}</td>
+                                <td>${formatCurrency(item.revenue)}</td>
+                            `;
+                            tbody.appendChild(row);
+                        });
+                    } else {
+                        tbody.innerHTML = `<tr><td colspan="3" class="text-center">No revenue data available</td></tr>`;
+                    }
+
+                    totalPages = data.totalPages;
+                    updatePagination();
+                })
+                .catch(error => {
+                    console.error('Error fetching revenue statistics:', error);
+                });
+        }
+
+        function updatePagination() {
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+
+            if (currentPage > 1) {
+                const prevButton = document.createElement('button');
+                prevButton.classList.add('btn', 'btn-primary');
+                prevButton.innerText = 'Previous';
+                prevButton.onclick = function() {
+                    currentPage--;
+                    fetchRevenueStatistics();
+                };
+                paginationContainer.appendChild(prevButton);
+            }
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.classList.add('btn', 'btn-secondary');
+                pageButton.innerText = i;
+                if (i === currentPage) {
+                    pageButton.disabled = true;
+                    pageButton.classList.add('active');
+                }
+                pageButton.onclick = function() {
+                    currentPage = i;
+                    fetchRevenueStatistics();
+                };
+                paginationContainer.appendChild(pageButton);
+            }
+
+            if (currentPage < totalPages) {
+                const nextButton = document.createElement('button');
+                nextButton.classList.add('btn', 'btn-primary');
+                nextButton.innerText = 'Next';
+                nextButton.onclick = function() {
+                    currentPage++;
+                    fetchRevenueStatistics();
+                };
+                paginationContainer.appendChild(nextButton);
+            }
+        }
+
+        document.getElementById('time-period').addEventListener('change', function() {
+            var selectedPeriod = this.value;
+            var customRangeDiv = document.getElementById('custom-range');
+            if (selectedPeriod === 'custom') {
+                customRangeDiv.style.display = 'block';
+            } else {
+                customRangeDiv.style.display = 'none';
+            }
+        });
+
+        fetchRevenueStatistics();
+    </script>
+</body>
+</html>
