@@ -1,28 +1,5 @@
 <div th:fragment="addCourseContent">
 	<div class="container mt-5">
-		<!-- Popup content -->
-		<div class="popupCertificate" id="popup">
-			<div class="certificate" id="certificate">
-				<h1>CODELEARN A</h1>
-				<p>CERTIFICATE</p>
-				<p class="name" contenteditable="true">"NAME"</p>
-				<p>Completed the course</p>
-				<p class="course" id="popup-course-name" contenteditable="true">"COURSE NAME"</p>
-				<p class="date" contenteditable="true">Completion date:
-					dd/mm/yyyy</p>
-				<p class="serial" contenteditable="true">Certification number: #</p>
-				<div class="qr" id="qr-container" onclick="triggerQRUpload()">
-					<span>QR code</span>
-				</div>
-				<input type="file" id="qr-upload" accept="image/*"
-					onchange="updateQR()">
-			</div>
-			<div class="buttons mt-3">
-				<button class="btn btn-primary" onclick="downloadPDF()">Download images</button>
-				<button class="btn btn-secondary" onclick="closePopup()">Close</button>
-			</div>
-		</div>
-		
 		<h1 class="mb-4 fw-bolder">Add New Course</h1>
 
 		<!-- Error Message Display -->
@@ -107,7 +84,8 @@
 				<input type="checkbox" class="form-check-input" id="isFree" name="isFree">
 				<label class="form-check-label" for="isFree">Is Free Course</label>
 			</div>
-			<button type="button"  class="btn btn-secondary" onclick="showPopup()">Show Certificate</button>
+
+			<!-- Submit and Cancel Buttons -->
 			<button type="submit" class="btn btn-primary">Add Course</button>
 			<button type="button" class="btn btn-secondary" onclick="loadCoursesSection(event)">Cancel</button>
 		</form>
