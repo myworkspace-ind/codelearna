@@ -1,5 +1,5 @@
 <div class="row mt-4 mb-4" id="coursesContainer">
-    <div th:each="course, iterStat : ${courses}"
+    <div th:each="course, iterStat : ${courses} " 
          th:id="'course-' + ${iterStat.index}" class="col-md-3"
          th:data-name="${course.name}" th:data-image-url="${course.imageUrl}"
          th:data-description="${course.description}"

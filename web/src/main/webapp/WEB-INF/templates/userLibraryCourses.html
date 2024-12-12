@@ -8,6 +8,7 @@
     <link rel="stylesheet" th:href="@{/resources/css/fragments/courseDetailPopup.css}">
 </head>
 <body>
+	<span id="user_eid" th:text="${userEId}" style="display: none;"></span>
     <!-- Navigation Bar fragment -->
     <th:block th:include="fragments/nav"></th:block>
     
@@ -25,19 +26,19 @@
     <div class="container mt-4">
         <ul class="nav nav-tabs" id="courseTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="all-courses-tab" data-bs-toggle="tab" data-bs-target="#all-courses" type="button" role="tab" aria-controls="all-courses" aria-selected="true">Tất cả</button>
+                <button class="nav-link active" id="all-courses-tab" data-bs-toggle="tab" data-bs-target="#all-courses" type="button" role="tab" aria-controls="all-courses" aria-selected="true">All Courses</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="purchased-courses-tab" data-bs-toggle="tab" data-bs-target="#purchased-courses" type="button" role="tab" aria-controls="purchased-courses" aria-selected="false">Đã mua</button>
+                <button class="nav-link" id="purchased-courses-tab" data-bs-toggle="tab" data-bs-target="#purchased-courses" type="button" role="tab" aria-controls="purchased-courses" aria-selected="false">Purchased</button>
             </li>
-            <li class="nav-item" role="presentation">
+<!--             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="trial-courses-tab" data-bs-toggle="tab" data-bs-target="#trial-courses" type="button" role="tab" aria-controls="trial-courses" aria-selected="false">Dùng thử</button>
+            </li> -->
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="in-progress-courses-tab" data-bs-toggle="tab" data-bs-target="#in-progress-courses" type="button" role="tab" aria-controls="in-progress-courses" aria-selected="false">On Progress</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="in-progress-courses-tab" data-bs-toggle="tab" data-bs-target="#in-progress-courses" type="button" role="tab" aria-controls="in-progress-courses" aria-selected="false">Đang học</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="completed-courses-tab" data-bs-toggle="tab" data-bs-target="#completed-courses" type="button" role="tab" aria-controls="completed-courses" aria-selected="false">Hoàn thành</button>
+                <button class="nav-link" id="completed-courses-tab" data-bs-toggle="tab" data-bs-target="#completed-courses" type="button" role="tab" aria-controls="completed-courses" aria-selected="false">Completed</button>
             </li>
         </ul>
         <div class="tab-content" id="courseTabsContent">
@@ -67,7 +68,7 @@
 
     <!-- Popup chi tiết khóa học -->
     <th:block th:include="fragments/popupDetailCourse"></th:block>
-    
+    <th:block th:include="fragments/popupCertificateDefault"></th:block>
 
     <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/resources/js/library.js}"></script>

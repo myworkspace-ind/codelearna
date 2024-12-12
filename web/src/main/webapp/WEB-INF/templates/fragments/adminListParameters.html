@@ -1,8 +1,6 @@
 <div th:fragment="parametersContent">
 	<div class="container mt-5">
-		<h1 class="mb-4">Parameters Manage</h1>
-		<!--Thêm mới filter  -->
-		<label for="filterKey" class="form-label">Filter by Parameter Key:</label>
+		<h1 class="mb-4 fw-bolder">Parameters Management</h1>
 		<!-- Add Parameters Button -->
 		<div class="d-flex justify-content-end mb-3">
 			<a class="btn btn-success" href="#"
@@ -10,6 +8,7 @@
 				Parameters with Handsontable</a>
 		</div>
 		<div id="parametersContainer">
+<<<<<<< HEAD
 		<div class="filter-container mb-3">
 		    <label for="parameterKey" class="form-label">Select Parameter Key:</label>
 	        <select id="filterKey" class="form-select" name="parameter">
@@ -46,6 +45,19 @@
 	        </select>
 		</div>
 
+=======
+			<div class="filter-container mb-3">
+				<label for="parameterKey" class="form-label">Select
+					Parameter Key:</label> <select id="filterKey" class="form-select"
+					name="parameter">
+					<option value="">All</option>
+					<option th:each="key, iterStat : ${parameterKeyDiff}"
+						th:value="${key}" th:text="${key}"
+						th:selected="${iterStat.index == 0 || key == selectedParameter}">
+					</option>
+				</select>
+			</div>
+>>>>>>> remotes/origin/develop
 
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">
@@ -54,6 +66,7 @@
 							<th>#</th>
 							<th>Parameter Key</th>
 							<th>Parameter Value</th>
+							<th>Status</th>
 							<th>Action</th>
 						</tr>
 					</thead>
@@ -62,12 +75,22 @@
 							<th th:text="${iterStat.count}"></th>
 							<td th:text="${parameter.paramKey}"></td>
 							<td th:text="${parameter.paramValue}"></td>
+							<td th:text="${parameter.status}"></td>
 							<td>
 								<div class="btn-group" role="group">
+									<!-- Edit button always visible -->
 									<a href="#" class="btn btn-warning btn-sm"
 										th:attr="onclick='loadEditParameterForm(' + ${parameter.id} + '); return false;'">Edit</a>
-									<a href="#" class="btn btn-danger btn-sm"
-										th:onclick="showDeleteParameterConfirmModal([[${parameter.id}]])">Delete</a>
+
+									<!-- Conditional Delete/Restore button based on status -->
+									<a th:if="${parameter.status == 'ACTIVE'}" href="#"
+										class="btn btn-danger btn-sm"
+										th:onclick="showDeleteParameterConfirmModal([[${parameter.id}]])">Disable</a>
+
+									<a th:if="${parameter.status == 'DELETED'}" href="#"
+										class="btn btn-success btn-sm"
+										th:data-parameter-id="${parameter.id}"
+                                            onclick="showParameterRestoreConfirmModal(this.getAttribute('data-parameter-id'))">Enable</a>
 								</div>
 							</td>
 						</tr>
@@ -75,6 +98,8 @@
 				</table>
 			</div>
 		</div>
+
+		<!-- Delete Confirmation Modal -->
 		<div class="modal fade" id="deleteConfirmModal" tabindex="-1"
 			aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
@@ -95,6 +120,27 @@
 						<button type="button" class="btn btn-secondary"
 							data-bs-dismiss="modal">Cancel</button>
 						<button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="restoreConfirmModal" tabindex="-1"
+			aria-labelledby="restoreConfirmModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="restoreConfirmModalLabel">Confirm
+							Restore</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">Are you sure you want to restore this
+						lesson?</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-success"
+							id="confirmRestoreBtn">Restore</button>
 					</div>
 				</div>
 			</div>
