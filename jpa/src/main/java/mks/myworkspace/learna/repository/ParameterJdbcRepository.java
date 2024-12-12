@@ -1,6 +1,5 @@
 package mks.myworkspace.learna.repository;
 
-import java.lang.System.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
-import mks.myworkspace.learna.entity.Parameter;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.interceptor.LoggingCacheErrorHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import lombok.extern.slf4j.Slf4j;
+import mks.myworkspace.learna.entity.Parameter;
 
 @Repository
 @Slf4j
@@ -48,8 +47,8 @@ public class ParameterJdbcRepository {
 	            insertNewParameter(parameter, conn, sqlInsert);
 	        }
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
+	    } catch (SQLException sqlEx) {
+	        log.error("Could not save parameter: " + parameter, sqlEx);
 	    }
 	    return parameter;
 	}
@@ -93,8 +92,8 @@ public class ParameterJdbcRepository {
 			while (rs.next()) {
 				paramKeys.add(rs.getString("param_key"));
 			}
-		} catch (SQLException e) {
-			log.error("Could not excute " + sql, e);
+		} catch (SQLException sqlEx) {
+			log.error("Could not excute " + sql, sqlEx);
 		} finally {
 			close(rs);
 			close(ps);
@@ -118,9 +117,10 @@ public class ParameterJdbcRepository {
 	            parameter.setSeqno(rs.getInt("seqno"));
 	            parameters.add(parameter);
 	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
+	    } catch (SQLException sqlEx) {
+	    	log.error("Could not get parameter by sql " + sql, sqlEx);
 	    }
+
 	    return parameters;
 	}
 
