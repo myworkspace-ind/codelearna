@@ -23,4 +23,5 @@ public interface ParameterService {
 	Parameter addParamValueToParamKey(Parameter parameter);
 	List<Parameter> getParamValues(String paramKey);
 	Parameter saveCategoryAndSubCategory(Parameter parameter, Long id);
+	List<Parameter> getListParamsByParamValueAndStatus(String paramKey, String status);
 }

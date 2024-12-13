@@ -328,4 +328,75 @@ function initializeFilterKeyListener() {
     });
 }
 
+function showParameterRestoreConfirmModal(parameterId) {
+    if (!parameterId) {
+        console.error('No parameter ID provided');
+        showErrorToast('Error: parameter ID is missing');
+        return;
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('restoreConfirmModal'));
+    const confirmBtn = document.getElementById('confirmRestoreBtn');
+
+    // Remove any existing event listeners to prevent multiple triggers
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    // Store the courseId on the button itself
+    newConfirmBtn.setAttribute('data-parameter-id', parameterId);
+
+    // Add the event listener with the stored courseId
+    newConfirmBtn.addEventListener('click', () => {
+        const storedParameterId = newConfirmBtn.getAttribute('data-parameter-id');
+        restoreParameter(storedParameterId);
+    });
+
+    modal.show();
+}
+
+function restoreParameter(parameterId) {
+    if (!parameterId) {
+        console.error('No parameter ID provided to restore');
+        showErrorToast('Error: parameter ID is missing');
+        return;
+    }
+
+    fetch(`${_ctx}admin/parameter/restoreParameter/${parameterId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Parameter restored successfully');
+            
+            // Close all modals
+            const restoreModal = bootstrap.Modal.getInstance(document.getElementById('restoreConfirmModal'));
+         
+            
+            if (restoreModal) restoreModal.hide();
+          
+            
+            // Remove modal backdrops
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+            // Reload the courses section
+            loadParametersManagePage();
+        } else {
+            throw new Error(data.message || 'Failed to restore course');
+        }
+    })
+    .catch(error => {
+        console.error('Error restoring course:', error);
+        showErrorToast(error.message || 'An error occurred while restoring the course');
+    });
+}
+
 document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);
