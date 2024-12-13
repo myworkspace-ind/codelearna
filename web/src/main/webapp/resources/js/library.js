@@ -227,7 +227,19 @@ function openCertificatePopup(userName, courseName, issueDate) {
 	} else {
 		console.error('Element #issue_date not found');
 	}
-
+	const cleanedCourseName = courseName.replace(/\s+/g, '');
+	const cleanedUserName = userName.replace(/\s+/g, '');
+	const link = `https://www.dropbox.com/scl/fo/0uk3zou3d0h28g1bt0nz3/ALaGzXfxvXHsMl_7iU8t69g?dl=0&e=1&preview=${cleanedUserName}_${cleanedCourseName}.pdf&rlkey=bk0nf4ndqkm7vydra1w033o7d&st=21k14ngo`
+	/*const link = `http://certificatelearna.ct.ws/${cleanedUserName}_${cleanedCourseName}.pdf`;*/
+	const qrCodeImage = document.getElementById('qr_code');
+	// Cập nhật mã QR vào phần tử img có id là qr_code
+	QRCode.toDataURL(link, { errorCorrectionLevel: 'H' }, function(err, url) {
+		if (err) {
+			console.error('Error generating QR code:', err);
+			return;
+		}
+		qrCodeImage.src = url;  // Cập nhật src của QR code
+	});
 	document.getElementById('certificatePopupOverlay').style.display = 'flex';
 }
 

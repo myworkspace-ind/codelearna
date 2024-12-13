@@ -94,6 +94,15 @@
 	color: #333;
 	z-index: 10;
 }
+#qr_code {
+    position: absolute;
+    top: 10%;
+    left: 81%;
+    transform: translateX(-50%);
+    max-width: 99px;
+    max-height: 99px;
+}
+
 </style>
 </head>
 <body>
@@ -106,6 +115,7 @@
 				<h1 id="display_name">Tên học viên</h1>
 				<h2 id="course_name">Tên khóa học</h2>
 				<h3 id="issue_date">Ngày cấp</h3>
+				<img id="qr_code" src="" alt="QR Code">
 			</div>
 			<div class="certificate-controls">
 				<button class="btn btn-outline-primary me-2" onclick="downloadCertificatePDF()">PDF Download</button>
@@ -116,6 +126,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0-alpha1/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+	
 
 	<script>
     async function downloadCertificatePDF() {
@@ -126,7 +138,8 @@
         }
         try {
             const dataUrl = await domtoimage.toPng(certificate);
-
+            const courseName = document.getElementById('course_name').innerText.replace(/\s+/g, '');
+            const displayName = document.getElementById('display_name').innerText.replace(/\s+/g, '');
             // Khởi tạo jsPDF
             const { jsPDF } = window.jspdf;
             const pdf = new jsPDF({
@@ -139,7 +152,7 @@
             pdf.addImage(dataUrl, 'PNG', 0, 0, certificate.offsetWidth, certificate.offsetHeight);
 
             // Tải PDF
-            pdf.save('certificate.pdf');
+            pdf.save(`${displayName}_${courseName}.pdf`);
         } catch (error) {
             console.error('Error generating PDF:', error);
             alert('Có lỗi xảy ra khi tạo PDF: ' + error.message);
