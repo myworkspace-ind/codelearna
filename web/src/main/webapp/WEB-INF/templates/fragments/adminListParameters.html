@@ -8,44 +8,6 @@
 				Parameters with Handsontable</a>
 		</div>
 		<div id="parametersContainer">
-<<<<<<< HEAD
-		<div class="filter-container mb-3">
-		    <label for="parameterKey" class="form-label">Select Parameter Key:</label>
-	        <select id="filterKey" class="form-select" name="parameter">
-	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
-	                    th:value="${key}" 
-	                    th:text="${key}" 
-	                    th:selected="${iterStat.index == 0 || key == selectedParameter}">
-	            </option>
-	        </select>
-		   
-		    <label for="parameterValue" class="form-label">Select Parameter Value:</label>
-	        <select id="filterValue" class="form-select" name="parameter" disabled>
-	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
-	        </select>
-	        
-	        <label for="parameterSite" class="form-label">Select Site:</label>
-	        <select id="filterSite" class="form-select" name="parameter">
-	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
-	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
-	                    th:value="${key}" 
-	                    th:text="${key}" 
-	                    th:selected="${iterStat.index == 0 || key == selectedParameter}">
-	            </option>
-	        </select>
-	        
-	        <label for="parameterTool" class="form-label">Select Tool:</label>
-	        <select id="filterTool" class="form-select" name="parameter">
-	            <!-- Hiển thị giá trị đầu tiên của parameterKeyDiff làm mặc định -->
-	            <option th:each="key, iterStat : ${parameterKeyDiff}" 
-	                    th:value="${key}" 
-	                    th:text="${key}" 
-	                    th:selected="${iterStat.index == 0 || key == selectedParameter}">
-	            </option>
-	        </select>
-		</div>
-
-=======
 			<div class="filter-container mb-3">
 				<label for="parameterKey" class="form-label">Select
 					Parameter Key:</label> <select id="filterKey" class="form-select"
@@ -57,7 +19,6 @@
 					</option>
 				</select>
 			</div>
->>>>>>> remotes/origin/develop
 
 			<div class="table-responsive">
 				<table class="table table-bordered table-hover">

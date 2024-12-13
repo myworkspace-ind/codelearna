@@ -143,19 +143,6 @@ function submitParameterData(event) {
     const rawData = hot.getData();
     console.log("rawData:", rawData);
 
-<<<<<<< HEAD
-	const parameterData = rawData
-		.map(row => ({
-			paramKey: row[0] !== null ? row[0].toString() : null,
-			paramValue: row[1] !== null ? row[1].toString() : null,
-			seqno: row[2] !== null && !isNaN(parseInt(row[2])) ? parseInt(row[2]) : null
-		}))
-		.filter(row => row.paramKey !== null || row.paramValue !== null);
-	if (parameterData.length === 0) {
-		showErrorToast('Please enter at least one parameter key and value.');
-		return;
-	}
-=======
     const parameterData = rawData
         .map(row => ({
             paramKey: row[0] !== null ? row[0].toString() : null,
@@ -167,7 +154,6 @@ function submitParameterData(event) {
         showErrorToast('Please enter at least one parameter key and value.');
         return;
     }
->>>>>>> remotes/origin/develop
 
     console.log('Parameter data to be sent:', parameterData);
 
@@ -311,100 +297,39 @@ document.addEventListener('DOMContentLoaded', function() {
         initializePagination('parameters');
     }
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    $('#filterKey').select2({
+        placeholder: 'Select or type to search',
+        allowClear: true,
+        width: 'resolve',
+    });
+});
+
+console.log($('#filterKey')); // Kiểm tra phần tử có tồn tại không
+console.log(typeof $.fn.select2); // Kiểm tra Select2 đã được tải chưa
+
 function initializeFilterKeyListener() {
     const filterKey = document.getElementById('filterKey');
-<<<<<<< HEAD
-    const filterValue = document.getElementById('filterValue');
-    
-    if (!filterKey || !filterValue) {
-        console.warn("Elements not found. Retrying...");
-=======
     if (!filterKey) {
         /*console.warn("Element with ID 'filterKey' not found. Retrying...");*/
->>>>>>> remotes/origin/develop
         setTimeout(initializeFilterKeyListener, 100);
         return;
     }
 
-<<<<<<< HEAD
-=======
     console.log("FilterKey found in DOM. Adding event listener.");
 
->>>>>>> remotes/origin/develop
     const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
+    console.log('Parameter rows:', parameterRows);
 
-<<<<<<< HEAD
-    filterKey.addEventListener('change', () => {
-=======
     filterKey.addEventListener('change', function() {
->>>>>>> remotes/origin/develop
         const selectedKey = filterKey.value;
         console.log('Selected Key:', selectedKey);
 
-        filterRowsByKey(parameterRows, selectedKey);
-
-<<<<<<< HEAD
-        updateFilterValueState(selectedKey, filterValue, parameterRows);
-        
-    });
-
-    filterValue.addEventListener('change', () => {
-        const selectedKey = filterKey.value;
-        const selectedValue = filterValue.value;
-        console.log('Selected Value:', selectedValue);
-
-        filterRowsByKeyAndValue(parameterRows, selectedKey, selectedValue);
-    });
-}
-
-function filterRowsByKey(rows, selectedKey) {
-    rows.forEach(row => {
-        const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-        row.style.display = (selectedKey === "All" || parameterKey === selectedKey) ? "" : "none";
-    });
-}
-
-function filterRowsByKeyAndValue(rows, selectedKey, selectedValue) {
-    rows.forEach(row => {
-        const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-        const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
-
-        if ((selectedKey === "All" || parameterKey === selectedKey) &&
-            (selectedValue === "All" || parameterValue === selectedValue)) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
-    });
-}
-
-function updateFilterValueState(selectedKey, filterValue, rows) {
-    filterValue.innerHTML = ""; 
-
-    if (selectedKey === "All") {
-        filterValue.disabled = true;
-    } else {
-        filterValue.disabled = false;
-
-        const uniqueValues = new Set();
-		uniqueValues.add("All");
-        rows.forEach(row => {
+        parameterRows.forEach(row => {
             const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-            const parameterValue = row.querySelector('td:nth-child(3)').innerText.trim();
-            if (parameterKey === selectedKey) {
-                uniqueValues.add(parameterValue);
-            }
-        });
+            console.log('Row Parameter Key:', parameterKey);
 
-        uniqueValues.forEach(value => {
-            const option = document.createElement("option");
-            option.value = value;
-            option.textContent = value;
-            filterValue.appendChild(option);
-        });
-    }
-}
-=======
             if (selectedKey === "" || parameterKey === selectedKey) {
                 row.style.display = "";
             } else {
@@ -485,5 +410,4 @@ function restoreParameter(parameterId) {
     });
 }
 
->>>>>>> remotes/origin/develop
 document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);

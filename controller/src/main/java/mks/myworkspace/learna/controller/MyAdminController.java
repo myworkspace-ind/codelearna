@@ -44,20 +44,11 @@ public class MyAdminController extends BaseController {
 
 	@GetMapping("/list-parameters")
 	public String loadParametersList(HttpServletRequest request, HttpSession httpSession, Model model) {
-<<<<<<< HEAD
-	    httpSession.setAttribute("currentMenu", "Parameters");
-	    model.addAttribute("parameters", parameterService.getAllParams()); 
-	    model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff());
-	    log.info("do kho" + parameterService.getAllParams());
-
-	    return "myadmin";
-=======
 		httpSession.setAttribute("currentMenu", "Parameters");
 		model.addAttribute("parameters", parameterService.getAllParams());
 		model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff());
 		log.info("do kho" + parameterService.getAllParams());
 		return "myadmin";
->>>>>>> remotes/origin/develop
 	}
 
 	@GetMapping("/course-management")
