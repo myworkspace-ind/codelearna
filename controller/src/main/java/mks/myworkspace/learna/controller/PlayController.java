@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -33,6 +34,12 @@ public class PlayController extends BaseController{
         String userEmail = getCurrentUserEmail();
         // Lấy danh sách các bài học thuộc khóa học
         List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
+        log.debug("Danh sách bài học trước khi lọc: {}", lessons);
+
+        lessons = lessons.stream()
+                         .filter(lesson -> "ACTIVE".equals(lesson.getStatus()))
+                         .collect(Collectors.toList());
+
         mav.addObject("lessons", lessons);
         
         log.debug("userEid: {}", userEid);

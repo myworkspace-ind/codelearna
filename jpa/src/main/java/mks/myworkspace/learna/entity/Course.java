@@ -77,7 +77,10 @@ public class Course {
     @UpdateTimestamp
     @Column(name = "modified_dte")
     private Date modifiedDate;
-
+    
+    @Column(name = "status", nullable = false)
+    private String status;  
+    
     @ManyToMany
     @JoinTable(
         name = "learna_course_lesson",
@@ -89,4 +92,3 @@ public class Course {
     private Double averageRating;
 
 }
-

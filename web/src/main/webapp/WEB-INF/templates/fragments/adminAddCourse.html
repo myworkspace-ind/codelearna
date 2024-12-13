@@ -1,6 +1,6 @@
 <div th:fragment="addCourseContent">
 	<div class="container mt-5">
-		<h1 class="mb-4">Add New Course</h1>
+		<h1 class="mb-4 fw-bolder">Add New Course</h1>
 
 		<!-- Error Message Display -->
 		<div id="error-message-course" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
@@ -21,18 +21,20 @@
 
 			<div class="row">
 				<div class="col-md-6 mb-3">
-					<label for="originalPrice" class="form-label">Original Price<span style="color:red">*</span></label> 
-					<input type="number" class="form-control" id="originalPrice" name="originalPrice" required step="1">
+					<label for="originalPrice" class="form-label">Original Price <span style="color:red">*</span></label>
+					<input type="number" class="form-control" id="originalPrice" name="originalPrice" required step="1" min="0">
+					<div class="invalid-feedback">Original price must be 0 or greater.</div>
 				</div>
 				<div class="col-md-6 mb-3">
-					<label for="discountedPrice" class="form-label">Discounted Price<span style="color:red">*</span></label> 
-					<input type="number" class="form-control" id="discountedPrice" name="discountedPrice" required step="1">
+					<label for="discountedPrice" class="form-label">Discounted Price <span style="color:red">*</span></label>
+					<input type="number" class="form-control" id="discountedPrice" name="discountedPrice" required step="1" min="0">
+					<div class="invalid-feedback">Discounted price must be 0 or greater.</div>
 				</div>
 			</div>
 
 			<!-- Image URL Input -->
 			<div class="mb-3">
-				<label for="image" class="form-label">Image URL</label> 
+				<label for="imageUrl" class="form-label">Image URL</label>
 				<input type="text" class="form-control" id="imageUrl" name="imageUrl" placeholder="Enter image URL" required>
 				<div class="invalid-feedback">Please enter an image URL.</div>
 			</div>
@@ -71,7 +73,7 @@
 			    </select>
 			</div>
 			<div class="mb-3">
-				<label for="subcategory" class="form-label">Subcategory<span style="color:red">*</span></label>
+				<label for="subcategory" class="form-label">Subcategory <span style="color:red">*</span></label>
 				<select class="form-select" id="subcategory" name="subcategory.id" disabled required onchange="handleAddNew(this, 'subcategory')">
 					<option value="">Choose a subcategory...</option>
 					<option th:each="subcategory : ${subcategories}" th:value="${subcategory.id}" th:data-category-id="${subcategory.category.id}" th:text="${subcategory.parameter.paramValue}"></option>
@@ -103,7 +105,7 @@
 
 			<!-- Free Course Checkbox -->
 			<div class="mb-3 form-check">
-				<input type="checkbox" class="form-check-input" id="isFree" name="isFree"> 
+				<input type="checkbox" class="form-check-input" id="isFree" name="isFree">
 				<label class="form-check-label" for="isFree">Is Free Course</label>
 			</div>
 

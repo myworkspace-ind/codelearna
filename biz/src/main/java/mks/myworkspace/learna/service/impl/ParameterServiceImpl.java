@@ -16,7 +16,7 @@ public class ParameterServiceImpl implements ParameterService {
 
 	@Autowired
 	private ParameterRepository repo;
-	
+
 	@Autowired
 	private ParameterJdbcRepository parameterJdbcRepository;
 
@@ -27,15 +27,25 @@ public class ParameterServiceImpl implements ParameterService {
 	}
 
 	@Override
-	public List<String> getAllDistinctParamKeys() {
+	public List<Parameter> getParamValues(String paramKey) {
+		return repo.findByParamKeyOrderBySeqnoAsc(paramKey);
+    }
+
+	@Override
+	public List<String> getDistinctParamKeys() {
 		return repo.findDistinctParamKeys();
 	}
 	
 	@Override
+    public List<String> getAllDistinctParamKeys() {
+        return repo.findAllDistinctParamKeys();
+    }
+
+	@Override
 	public List<Parameter> getAllParams() {
 		return repo.findAll();
 	}
-	
+
 	@Override
 	public Parameter saveParameters(Parameter parameters) {
 		return parameterJdbcRepository.save(parameters);
@@ -55,12 +65,12 @@ public class ParameterServiceImpl implements ParameterService {
 	public Parameter getParameterByParamKeyAndParamValue(String paramKey, String paramValue) {
 		return repo.findByParamKeyAndParamValue(paramKey, paramValue);
 	}
-	
+
 	@Override
-	 public boolean paramKeyExists(String paramKey) {
-        return repo.existsByParamKey(paramKey);
-    }
-	
+	public boolean paramKeyExists(String paramKey) {
+		return repo.existsByParamKey(paramKey);
+	}
+
 	@Override
 	public void deleteParameter(Long id) {
 		parameterJdbcRepository.deleteById(id);
@@ -74,4 +84,9 @@ public class ParameterServiceImpl implements ParameterService {
 	public Parameter saveCategoryAndSubCategory(Parameter parameter, Long id) {
 		return parameterJdbcRepository.save(parameter,id);
 	}
+	@Override
+	public List<String> getParamKeyDiff() {
+		return parameterJdbcRepository.getParamKeyDiff();
+	}
+
 }

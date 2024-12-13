@@ -11,9 +11,6 @@ function loadCourseLessons(courseId) {
 }
 
 
-
-
-
 function loadAddLessonForm(courseId) {
 	fetch(`${_ctx}admin/courses/${courseId}/lessons/add`)
 		.then(response => {
@@ -40,47 +37,53 @@ function initializeAddLessonForm() {
 }
 
 function submitLessonForm(event) {
-	event.preventDefault();
+    event.preventDefault();
 
-	const form = event.target;
-	const formData = new FormData(form);
-	const courseId = form.getAttribute('data-course-id');
+    const form = event.target;
+    const formData = new FormData(form);
+    const courseId = form.getAttribute('data-course-id');
 
-	// Basic form validation
-	const title = formData.get('title');
-	if (!title || title.trim() === '') {
-		showErrorToast('Please enter a lesson title');
-		return;
-	}
+    // Basic form validation
+    const title = formData.get('title');
+    if (!title || title.trim() === '') {
+        showErrorToast('Please enter a lesson title');
+        return;
+    }
 
-	fetch(form.action, {
-		method: 'POST',
-		body: formData,
-		headers: {
-			'Accept': 'application/json'
-		}
-	})
-		.then(response => {
-			if (!response.ok) {
-				return response.json().then(data => Promise.reject(data));
-			}
-			return response.json();
-		})
-		.then(data => {
-			if (data.status === 'success') {
-				showSuccessToast(data.message || 'Lesson added successfully!');
-				if (data.courseId) {
-					loadCourseLessons(data.courseId);
-				}
-			} else {
-				throw new Error(data.message || 'Failed to add lesson');
-			}
-		})
-		.catch(error => {
-			console.error('Error adding lesson:', error);
-			showErrorToast(error.message || 'An error occurred while adding the lesson');
-		});
+    // Set default status to 'INACTIVE' if not provided
+    if (!formData.has('status') || formData.get('status').trim() === '') {
+        formData.append('status', 'INACTIVE');
+    }
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Lesson added successfully!');
+            if (data.courseId) {
+                loadCourseLessons(data.courseId);
+            }
+        } else {
+            throw new Error(data.message || 'Failed to add lesson');
+        }
+    })
+    .catch(error => {
+        console.error('Error adding lesson:', error);
+        showErrorToast(error.message || 'An error occurred while adding the lesson');
+    });
 }
+
 
 function loadEditLessonForm(lessonId) {
 	fetch(`${_ctx}admin/lessons/edit/${lessonId}`)
@@ -187,6 +190,58 @@ function showLessonDeleteConfirmModal(lessonId, courseId) {
 	modal.show();
 }
 
+
+function toggleLessonStatus(lessonId, courseId) {
+    fetch(`${_ctx}admin/lessons/toggleLessonStatus/${lessonId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ courseId: courseId, lessonId: lessonId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+			showSuccessToast(data.message || 'Lesson toggle Status successfully');
+			const targetCourseId = data.courseId || courseId;
+			loadCourseLessons(targetCourseId);
+			const statusChangeModel = bootstrap.Modal.getInstance(document.getElementById('statusChangeModal'));
+			if (statusChangeModel) {
+				statusChangeModel.hide();
+			}
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("An error occurred while toggling lesson status.");
+    });
+}
+function showStatusChangeModal(lessonId, courseId, currentStatus) {
+    // Kiểm tra phần tử modal có tồn tại hay không
+    const modalElement = document.getElementById('statusChangeModal');
+    if (!modalElement) {
+        console.error("Modal element not found.");
+        return;
+    }
+
+    // Khởi tạo modal của Bootstrap
+    const modal = new bootstrap.Modal(modalElement);
+
+
+    document.getElementById('confirmStatusChangeBtn').dataset.lessonId = lessonId;
+    document.getElementById('confirmStatusChangeBtn').dataset.courseId = courseId;
+    document.getElementById('confirmStatusChangeBtn').dataset.currentStatus = currentStatus;
+	
+	document.getElementById('confirmStatusChangeBtn').addEventListener('click', () => {
+			toggleLessonStatus(lessonId, courseId);
+		});
+    // Hiển thị modal
+    modal.show();
+}
+
+
 let hotLessons;
 
 function fetchAddLessonHandsontablePage(event, courseId) {
@@ -205,10 +260,11 @@ function initializeHandsontable() {
 	if (container) {
 		hotLessons = new Handsontable(container, {
 			data: [],
-			colHeaders: ['Lesson Title', 'Video URL'],
+			colHeaders: ['Lesson Title', 'Video URL','Activity Id'],
 			columns: [
 				{ data: 'title', type: 'text' },
-				{ data: 'videoUrl', type: 'text' }
+				{ data: 'videoUrl', type: 'text' },
+				{ data: 'activityId', type: 'text' }
 			],
 			minRows: 1,
 			rowHeaders: true,
@@ -242,15 +298,16 @@ function handleFile(event) {
 			const firstSheetName = workbook.SheetNames[0];
 			const worksheet = workbook.Sheets[firstSheetName];
 
-			const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, range: 3 });
+			const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1});
 
 			console.log('Raw Excel data:', jsonData);
 
 			const handsontableData = jsonData
-				.filter(row => row.length >= 2 && row[0] && row[1])
+				.filter(row => row.length >= 3 && row[0] && row[1] && row[2])
 				.map(row => ({
 					title: row[0].toString(),
-					videoUrl: row[1].toString()
+					videoUrl: row[1].toString(),
+					activityId: row[2].toString()
 				}));
 
 			console.log('Processed Handsontable data:', handsontableData);
@@ -288,7 +345,8 @@ function submitLessonData(event, courseId) {
         .filter(row => row[0] && row[1])
         .map(row => ({
             title: row[0].toString(),
-            videoUrl: row[1].toString()
+            videoUrl: row[1].toString(),
+			activityId: row[2].toString()
         }));
 
     console.log('Lesson data to be submitted:', lessonData);
@@ -331,9 +389,90 @@ function submitLessonData(event, courseId) {
         });
 }
 
+function loadDeletedLessonsModal(courseId) {
+    fetch(`${_ctx}admin/courses/${courseId}/deletedLessons`)
+        .then(response => response.text())
+        .then(html => {
+            // Ensure the modal ID matches exactly
+            if (!document.getElementById('deletedLessonsModal')) {
+                document.body.insertAdjacentHTML('beforeend', html);
+            } else {
+                document.getElementById('deletedLessonsModal').outerHTML = html;
+            }
+            
+            // Safely create the modal
+            var deletedLessonModal = document.getElementById('deletedLessonsModal');
+            if (deletedLessonModal) {
+                deletedLessonModal = new bootstrap.Modal(deletedLessonModal);
+                deletedLessonModal.show();
+            } else {
+                console.error("Deleted lessons modal element not found");
+            }
+        })
+        .catch(error => console.error('Error loading deleted lessons modal:', error));
+}
+function restoreLesson(lessonId, courseId) {
+    fetch(`${_ctx}admin/lessons/restore/${lessonId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({ 
+            lessonId: lessonId, 
+            courseId: courseId 
+        })
+    })
+    .then(response => {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    throw new Error(data.message || 'Server error occurred');
+                }
+                return data;
+            });
+        } else {
+            throw new Error('Invalid response format from server');
+        }
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Lesson restored successfully');
+			const restoreModal = bootstrap.Modal.getInstance(document.getElementById('restoreConfirmModal'));
+			const deletedLessonsModal = bootstrap.Modal.getInstance(document.getElementById('deletedLessonsModal'));
+            // Explicitly close both modals
+			if (restoreModal) restoreModal.hide();
+			if (deletedLessonsModal) deletedLessonsModal.hide();
+            
+            // Reload the course lessons
+            loadCourseLessons(courseId);
+        } else {
+            throw new Error(data.message || 'Failed to restore lesson');
+        }
+    })
+    .catch(error => {
+        console.error('Error restoring lesson:', error);
+        showErrorToast(error.message || 'An error occurred while restoring the lesson');
+    });
+}
 
+function showLessonRestoreConfirmModal(lessonId, courseId) {
+    const modal = new bootstrap.Modal(document.getElementById('restoreConfirmModal'));
+    const confirmBtn = document.getElementById('confirmRestoreBtn');
+
+    // Remove any existing event listeners to prevent multiple triggers
+    confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+
+    // Re-add the event listener
+    document.getElementById('confirmRestoreBtn').addEventListener('click', () => {
+        restoreLesson(lessonId, courseId);
+    });
+
+    modal.show();
+}
 document.addEventListener('DOMContentLoaded', function() {
-	// Kiểm tra xem đang ở trang nào để khởi tạo phân trang phù hợp
+	
 	if (document.getElementById('lessonsContainer')) {
 		initializePagination('lessons');
 	}

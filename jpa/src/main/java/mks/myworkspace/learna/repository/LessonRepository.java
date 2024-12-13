@@ -14,5 +14,10 @@ public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
     @Query("SELECT l FROM Lesson l JOIN FETCH l.comments WHERE l.id = :lessonId")
     Optional<Lesson> findByIdWithComments(@Param("lessonId") Long lessonId);
+    
+    @Query("SELECT COUNT(l) FROM Lesson l WHERE l.course.id = :courseId AND l.status = 'ACTIVE'")
+    Long countLessonsByCourseIdAndStatusActive(@Param("courseId") Long courseId);
+
+
 
 }
