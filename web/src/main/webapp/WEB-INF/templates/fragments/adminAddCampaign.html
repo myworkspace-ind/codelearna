@@ -1,0 +1,61 @@
+<div th:fragment="addCampaignContent">
+	<div class="container mt-5">
+		<h1 class="mb-4">Add New Campaign</h1>
+
+		<!-- Error Message Display -->
+		<div id="error-message-campaign" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+			<strong>Error!</strong> <span id="error-text-campaign"></span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+		<!-- Campaign Form -->
+		<form id="campaignForm" method="post" enctype="multipart/form-data" class="needs-validation" onsubmit="submitCampaignForm(event)" novalidate>
+			<!-- Campaign Name Input -->
+			<div class="mb-3">
+				<label for="name" class="form-label">Campaign Name <span style="color:red">*</span></label>
+				<input type="text" class="form-control" id="name" name="name" required>
+				<div class="invalid-feedback">Please provide a campaign name.</div>
+			</div>
+
+			<!-- Start and End Time Inputs -->
+			<div class="row">
+				<div class="col-md-6 mb-3">
+					<label for="startTime" class="form-label">Start Time <span style="color:red">*</span></label>
+					<input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
+					<div class="invalid-feedback">Please provide a start time.</div>
+				</div>
+				<div class="col-md-6 mb-3">
+					<label for="endTime" class="form-label">End Time <span style="color:red">*</span></label>
+					<input type="datetime-local" class="form-control" id="endTime" name="endTime" required>
+					<div class="invalid-feedback">Please provide an end time.</div>
+				</div>
+			</div>
+
+			<!-- Short Description Input -->
+			<div class="mb-3">
+				<label for="shortDescription" class="form-label">Short Description <span style="color:red">*</span></label>
+				<textarea class="form-control" id="shortDescription" name="shortDescription" rows="2" maxlength="1000" required></textarea>
+				<div class="invalid-feedback">Please provide a short description (max 1000 characters).</div>
+			</div>
+
+			<!-- Description Input -->
+			<div class="mb-3">
+				<label for="description" class="form-label">Description</label>
+				<textarea class="form-control" id="description" name="description" rows="4"></textarea>
+			</div>
+
+			<!-- Cover Image URL Input -->
+			<div class="mb-3">
+				<label for="coverImageUrl" class="form-label">Cover Image URL <span style="color:red">*</span></label>
+				<input type="text" class="form-control" id="coverImageUrl" name="coverImageUrl" required>
+				<div class="invalid-feedback">Please provide a cover image URL.</div>
+			</div>
+
+			<!-- Submit and Cancel Buttons -->
+			<button type="submit" class="btn btn-primary">Add Campaign</button>
+			<button type="button" class="btn btn-secondary" onclick="loadCampaignsSection(event)">Cancel</button>
+		</form>
+	</div>
+</div>

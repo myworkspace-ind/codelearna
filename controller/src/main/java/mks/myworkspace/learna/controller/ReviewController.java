@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.entity.Review;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.PaymentService;
@@ -47,66 +48,80 @@ public class ReviewController extends BaseController {
 	@PostMapping("/course/{id}/review")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> addReview(@PathVariable Long id, @ModelAttribute Review review,
-	        Principal principal, HttpServletRequest request, HttpSession httpSession) {
-	    initSession(request, httpSession);
-	    String userId = getCurrentUserEid();
-	    Map<String, Object> response = new HashMap<>();
+			Principal principal, HttpServletRequest request, HttpSession httpSession) {
+		initSession(request, httpSession);
+		String userId = getCurrentUserEid();
+		Map<String, Object> response = new HashMap<>();
 
-	    try {
-	        review.setCourse(courseService.getCourseById(id));
-	        review.setUserEid(userId);
+		try {
+			review.setCourse(courseService.getCourseById(id));
+			review.setUserEid(userId);
 
-	        reviewService.addReview(review, id);
+			reviewService.addReview(review, id);
 
-	        response.put("success", true);
-	        response.put("message", "Review added successfully!");
+			response.put("success", true);
+			response.put("message", "Review added successfully!");
 
-	        return ResponseEntity.ok()
-	                             .header(HttpHeaders.CONTENT_TYPE, "application/json")
-	                             .body(response);
+			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "application/json").body(response);
 
-	    } catch (Exception e) {
-	        response.put("success", false);
-	        response.put("message", "Failed to add review. Please try again.");
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", "Failed to add review. Please try again.");
 
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                             .header(HttpHeaders.CONTENT_TYPE, "application/json")
-	                             .body(response);
-	    }
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.header(HttpHeaders.CONTENT_TYPE, "application/json").body(response);
+		}
 	}
-
 
 	// Delete review
 	@PostMapping("/course/{courseId}/review/{reviewId}/delete")
 	@ResponseBody
 	public ResponseEntity<Map<String, Object>> deleteReview(@PathVariable Long courseId, @PathVariable Long reviewId) {
-	    Map<String, Object> response = new HashMap<>();
+		Map<String, Object> response = new HashMap<>();
 
-	    try {
-	        reviewService.deleteReviewById(reviewId, courseId);
+		try {
+			reviewService.deleteReviewById(reviewId, courseId);
 
-	        response.put("success", true);
-	        response.put("message", "Review has been deleted successfully!");
-	        return ResponseEntity.ok()
-	                .header(HttpHeaders.CONTENT_TYPE, "application/json")
-	                .body(response);
-	    } catch (Exception e) {
-	        response.put("success", false);
-	        response.put("message", "Failed to delete review. Please try again.");
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-	                .header(HttpHeaders.CONTENT_TYPE, "application/json")
-	                .body(response);
-	    }
+			response.put("success", true);
+			response.put("message", "Review has been deleted successfully!");
+			return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "application/json").body(response);
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", "Failed to delete review. Please try again.");
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.header(HttpHeaders.CONTENT_TYPE, "application/json").body(response);
+		}
 	}
+	
+	@GetMapping("/course/{courseId}/review/edit/{reviewId}")
+	public ModelAndView showEditReviewForm(@PathVariable("reviewId") Long reviewId, @PathVariable("courseId") Long courseId) {
+		Review review = reviewService.getReviewById(reviewId);
 
+		ModelAndView mav = new ModelAndView("fragments/editReview :: editReviewModal");
+		mav.addObject("review", review);
+		mav.addObject("courseId", courseId);
+		return mav;
+	}
 
 	// Edit review
 	@PostMapping("/course/{courseId}/review/{reviewId}/edit")
-	public String updateReview(@PathVariable Long courseId, @PathVariable Long reviewId, @ModelAttribute Review review,
-			Model model) {
-
-		reviewService.updateReviewById(reviewId, review);
-
-		return "redirect:/course/" + courseId;
+	@ResponseBody
+	public ResponseEntity<Map<String, Object>> updateReview(@PathVariable Long courseId, @PathVariable Long reviewId,
+	        @ModelAttribute Review review) {
+	    Map<String, Object> response = new HashMap<>();
+	    
+	    try {
+	        reviewService.updateReviewById(reviewId, review);
+	        
+	        response.put("success", true);
+	        response.put("message", "Review updated successfully!");
+	        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "application/json").body(response);
+	        
+	    } catch (Exception e) {
+	        response.put("success", false);
+	        response.put("message", "Failed to update review. Please try again.");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                .header(HttpHeaders.CONTENT_TYPE, "application/json").body(response);
+	    }
 	}
 }

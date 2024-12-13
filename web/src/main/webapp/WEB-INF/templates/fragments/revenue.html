@@ -1,0 +1,102 @@
+<div th:fragment="revenue">
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h1 class="h3 text-center mb-0">Revenue Statistics</h1>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4 responsive-stack">
+                            <div class="col-md-4">
+                                <label for="time-period" class="form-label">Select Time Period:</label>
+                                <select id="time-period" class="form-select custom-select">
+                                    <option value="all">All Time</option>
+                                    <option value="day">Last Day</option>
+                                    <option value="month">Last Month</option>
+                                    <option value="3month">Last 3 Months</option>
+                                    <option value="6month">Last 6 Months</option>
+                                    <option value="year">Last Year</option>
+                                    <option value="custom">Custom Range</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button id="fetch-button" class="btn btn-primary btn-custom">
+                                    Fetch Data
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="custom-range" class="row mb-4" style="display:none;">
+                            <div class="col-md-2">
+                                <label for="start-date" class="form-label">Start Date:</label>
+                                <input type="date" id="start-date" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="end-date" class="form-label">End Date:</label>
+                                <input type="date" id="end-date" class="form-control">
+                            </div>
+                        </div>
+	
+	                        <!-- Total Revenue -->
+	                        <div class="alert alert-info" role="alert">
+	                            <strong>Total Revenue:</strong> 
+	                            <span id="total-revenue" class="h4 text-primary">Loading...</span>
+	                        </div>
+	                        
+	                        <!-- Revenue Table by Course -->
+	                        <div class="table-responsive">
+	                            <table class="table table-hover table-bordered">
+	                                <thead class="table-light">
+	                                    <tr>
+	                                        <th>Course Name</th>
+	                                        <th>Quantity Purchased</th>
+	                                        <th>Revenue (VND)</th>
+	                                    </tr>
+	                                </thead>
+	                                <tbody id="revenue-data">
+	                                    <tr>
+	                                        <td colspan="3" class="text-center">Loading data...</td>
+	                                    </tr>
+	                                </tbody>
+	                            </table>
+	                        </div>
+	                        
+	                        <div class="temp-revenue text-end">
+							    <div class="summary-item">
+							        <span>Temporary Revenue Calculation:</span>
+							        <strong id="temp-revenue">₫0</strong>
+							    </div>
+							</div>
+	
+	                        <!-- Pagination -->
+	                        <nav>
+	                            <ul class="pagination" id="pagination">
+	                                <!-- Pagination buttons will be added dynamically -->
+	                            </ul>
+	                        </nav>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	
+	    <!-- Bootstrap JS and dependencies -->
+	    <script src="/library/webjars/jquery/dist/jquery.min.js"></script>
+	    <script src="/library/webjars/popper.js/2.9.3/umd/popper.min.js"></script>
+	    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+	     <script th:inline="javascript">
+        // Thêm đoạn script để khởi tạo ngày mặc định
+        window.onload = function() {
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+
+            const formatDate = (date) => date.toISOString().split('T')[0];
+
+            document.getElementById('start-date').value = formatDate(yesterday);
+            document.getElementById('end-date').value = formatDate(today);
+        };
+    </script>
+	    
+</div>

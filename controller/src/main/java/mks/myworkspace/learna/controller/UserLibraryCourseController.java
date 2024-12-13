@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -81,7 +83,17 @@ public class UserLibraryCourseController extends BaseController{
 
         return mav;
     }
-
+    
+    @GetMapping("/course/progress")
+    @ResponseBody
+    public Map<String, Integer> getCourseProgress(@RequestParam Long courseId) {
+        String userEid = getCurrentUserEid(); // Method to get current user's ID
+        int completionPercentage = userLibraryCourseService.calculateCompletionPercentage(userEid, courseId);
+        
+        Map<String, Integer> response = new HashMap<>();
+        response.put("completionPercentage", completionPercentage);
+        return response;
+    }
 
     @PostMapping("/add")
     @ResponseBody

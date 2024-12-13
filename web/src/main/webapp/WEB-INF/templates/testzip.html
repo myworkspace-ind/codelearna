@@ -1,246 +1,146 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Demo: Play an xAPI lesson with iSpring</title>
-    <style>
-        /* Style definitions... */
-        * {
-            padding: 0;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        #upload-container {
-            margin: 20px;
-            text-align: center;
-        }
-        input[type="file"] {
-            margin-top: 10px;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            margin: 5px 0;
-            padding: 5px;
-            background: #f5f5f5;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #iframe-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 1000;
-        }
-        #preview-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .close-button {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1001;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Customization</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: #f9f9f9;
+    }
+    .controls {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    input[type="text"], input[type="file"], input[type="submit"] {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    .dynamic-content {
+      position: relative;
+      max-width: 950px;
+      max-height: 721px;
+    }
+    .dynamic-content img {
+      width: 100%;
+      height: auto;
+    }
+    #display_name {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 36px;
+      font-weight: bold;
+      color: #E1BA61;
+      text-align: center;
+      white-space: nowrap;
+    }
+    #course_name {
+      position: absolute;
+      top: 58%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      font-weight: bold;
+      color: #E1BA61;
+      text-align: center;
+      white-space: nowrap;
+    }
+    #issue_date {
+      position: absolute;
+      top: 75%;
+      left: 73%;
+      transform: translate(-50%, -50%);
+      font-size: 18px;
+      color: #E1BA61;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <div id="upload-container">
-        <h2>Upload và Xem File ZIP</h2>
-        <input type="file" id="zip-file" accept=".zip" />
-        <ul id="file-list"></ul>
-    </div>
+  <div class="controls">
+    <input type="file" id="background" accept="image/*" onchange="uploadBackground()" />
+    <input type="text" placeholder="Your name" id="name" onchange="updateName()" />
+    <input type="text" placeholder="Course name" id="course-name" onchange="updateCourseName()" />
+    <input type="text" placeholder="Issue date" id="issue-date" onchange="updateIssueDate()" />
+    <input type="submit" value="Submit" onclick="submitDetails()" />
+    <input type="submit" value="Download as PDF" onclick="downloadPDF()" />
+  </div>
 
-    <div id="iframe-container">
-        <button class="close-button">Đóng</button>
-        <iframe id="preview-iframe" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
-    </div>
+  <div class="dynamic-content" id="certificate">
+    <img id="background_img" src="https://i.imgur.com/fLjLZrZ.png" alt="Certificate Background">
+    <h1 id="display_name">Your name here</h1>
+    <h2 id="course_name">Course name here</h2>
+    <h3 id="issue_date">Issue date here</h3>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
-    <script>
-        const virtualFS = new Map();
-        let tincanData = null;
+  <script>
+    // Hàm upload và hiển thị nền mới
+    function uploadBackground() {
+      const fileInput = document.getElementById('background');
+      const imgElement = document.getElementById('background_img');
 
-        // Mock iSpring environment
-        window.iSpring = {
-            init: function() {
-                console.log("iSpring initialized");
-                return this;
-            },
-            create: function() {
-                console.log("iSpring player created");
-                return {
-                    init: function() { return this; },
-                    on: function() { return this; },
-                    off: function() { return this; },
-                    play: function() { return this; },
-                    pause: function() { return this; }
-                };
-            }
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          imgElement.src = e.target.result;
         };
+        reader.readAsDataURL(fileInput.files[0]);
+      }
+    }
 
-        function injectISpringEnvironment(htmlContent) {
-            const ispringScript = `
-                <script>
-                    window.iSpring = {
-                        init: function() {
-                            console.log("iSpring initialized in iframe");
-                            return this;
-                        },
-                        create: function() {
-                            console.log("iSpring player created in iframe");
-                            return {
-                                init: function() { return this; },
-                                on: function() { return this; },
-                                off: function() { return this; },
-                                play: function() { return this; },
-                                pause: function() { return this; }
-                            };
-                        }
-                    };
+    // Hàm cập nhật tên
+    function updateName() {
+      const nameInput = document.getElementById('name');
+      const nameElement = document.getElementById('display_name');
+      nameElement.textContent = nameInput.value;
+    }
 
-                    // Intercept resource requests
-                    const originalFetch = window.fetch;
-                    window.fetch = function(url, options) {
-                        window.parent.postMessage({
-                            type: 'getResource',
-                            path: url
-                        }, '*');
-                        return originalFetch(url, options);
-                    };
-                <\/script>
-            `;
+    // Hàm cập nhật tên khóa học
+    function updateCourseName() {
+      const courseNameInput = document.getElementById('course-name');
+      const courseNameElement = document.getElementById('course_name');
+      courseNameElement.textContent = courseNameInput.value;
+    }
 
-            // Add base path for relative URLs
-            const basePath = `
-                <base href="/">
-            `;
+    // Hàm cập nhật ngày cấp
+    function updateIssueDate() {
+      const issueDateInput = document.getElementById('issue-date');
+      const issueDateElement = document.getElementById('issue_date');
+      issueDateElement.textContent = issueDateInput.value;
+    }
 
-            return htmlContent.replace('</head>', `${basePath}${ispringScript}</head>`);
-        }
+    // Hàm tải xuống chứng chỉ dưới dạng PDF
+    async function downloadPDF() {
+      const certificate = document.getElementById('certificate');
 
-        document.getElementById('zip-file').addEventListener('change', async function(event) {
-            const file = event.target.files[0];
-            if (!file || !file.name.endsWith('.zip')) {
-                alert('Vui lòng chọn một file ZIP');
-                return;
-            }
+      // Chuyển đổi DOM sang hình ảnh
+      const dataUrl = await domtoimage.toPng(certificate);
 
-            try {
-                const zip = new JSZip();
-                const zipContent = await zip.loadAsync(file);
-                const fileList = document.getElementById('file-list');
-                fileList.innerHTML = '';
+      // Khởi tạo jsPDF
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'px', format: [certificate.offsetWidth, certificate.offsetHeight] });
 
-                // First load tincan.xml
-                if (zipContent.files['tincan.xml']) {
-                    const tincanContent = await zipContent.files['tincan.xml'].async('text');
-                    virtualFS.set('tincan.xml', tincanContent);
-                    
-                    // Parse tincan.xml
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(tincanContent, "application/xml");
-                    tincanData = {
-                        activities: Array.from(xmlDoc.getElementsByTagName("activity")).map(activity => ({
-                            id: activity.getAttribute("id"),
-                            type: activity.getAttribute("type"),
-                            name: activity.querySelector("name")?.textContent || "",
-                            description: activity.querySelector("description")?.textContent || "",
-                            launch: activity.querySelector("launch")?.textContent || ""
-                        }))
-                    };
-                }
+      // Thêm hình ảnh vào PDF
+      pdf.addImage(dataUrl, 'PNG', 0, 0, certificate.offsetWidth, certificate.offsetHeight);
 
-                // Then load all other files
-                for (const [relativePath, zipEntry] of Object.entries(zipContent.files)) {
-                    if (!zipEntry.dir) {
-                        let content;
-                        if (relativePath.match(/\.(png|jpg|gif|mp3|mp4|woff|ttf|cur)$/i)) {
-                            content = await zipEntry.async('blob');
-                        } else {
-                            content = await zipEntry.async('text');
-                            
-                            // If it's lms.js, store it specially
-                            if (relativePath === 'res/lms.js') {
-                                virtualFS.set('lms.js', content);
-                            }
-                        }
-                        virtualFS.set(relativePath, content);
-
-                        const li = document.createElement('li');
-                        li.textContent = relativePath;
-
-                        if (relativePath === 'res/index.html') {
-                            const openButton = document.createElement('button');
-                            openButton.textContent = "Mở";
-                            openButton.onclick = () => showPreview(relativePath);
-                            li.appendChild(openButton);
-                        }
-
-                        fileList.appendChild(li);
-                    }
-                }
-
-                console.log('Loaded files:', Array.from(virtualFS.keys()));
-            } catch (error) {
-                console.error('Error reading ZIP:', error);
-                alert('Có lỗi xảy ra khi đọc file ZIP');
-            }
-        });
-
-        async function showPreview(filePath) {
-            const content = virtualFS.get(filePath);
-            if (!content) {
-                alert('Không tìm thấy file!');
-                return;
-            }
-
-            const iframeContainer = document.getElementById('iframe-container');
-            const iframe = document.getElementById('preview-iframe');
-
-            // Inject iSpring environment and create blob URL
-            const modifiedContent = injectISpringEnvironment(content);
-            const blob = new Blob([modifiedContent], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-
-            // Setup message handling for resource requests
-            window.addEventListener('message', async function handleMessage(e) {
-                if (e.data?.type === 'getResource') {
-                    const resourcePath = e.data.path.replace(/^\//, '');
-                    const resource = virtualFS.get(resourcePath);
-                    
-                    if (resource) {
-                        const resourceUrl = URL.createObjectURL(
-                            resource instanceof Blob ? resource : new Blob([resource])
-                        );
-                        iframe.contentWindow.postMessage({
-                            type: 'resourceResponse',
-                            path: resourcePath,
-                            url: resourceUrl
-                        }, '*');
-                    }
-                }
-            });
-
-            iframe.src = url;
-            iframeContainer.style.display = 'block';
-        }
-
-        document.querySelector('.close-button').onclick = function() {
-            const iframeContainer = document.getElementById('iframe-container');
-            const iframe = document.getElementById('preview-iframe');
-            iframeContainer.style.display = 'none';
-            iframe.src = 'about:blank';
-        };
-    </script>
+      // Lưu file PDF
+      pdf.save('certificate.pdf');
+    }
+  </script>
 </body>
 </html>

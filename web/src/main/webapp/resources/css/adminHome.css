@@ -12,7 +12,17 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
 }
+/* Cấu hình màu nền và biên cho nút warning */
+.btn-warning {
+    background-color: #f0ad4e !important;
+    border-color: #eea236 !important;
+}
 
+/* Cấu hình màu nền và biên cho nút danger */
+.btn-danger {
+    background-color: #d9534f !important;
+    border-color: #c9302c !important;
+}
 .dashboard {
     display: flex;
     height: 100vh;
@@ -324,5 +334,44 @@ body {
 .sidebar nav {
     margin-top: 20px; 
 }
+
+.container-fluid {
+    max-width: 1200px;
+}
+
+/* Revenue */
+.card {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+.table-responsive {
+    margin-top: 20px;
+}
+.pagination {
+    justify-content: center;
+    margin-top: 20px;
+}
+.custom-select {
+    border-radius: 6px;
+}
+.temp-revenue {
+    background-color: #f0f0f0;
+    border-top: 2px solid #007bff;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+}
+#custom-range {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+@media (max-width: 768px) {
+    .responsive-stack > * {
+        margin-bottom: 10px;
+    }
+}
+
 
 
