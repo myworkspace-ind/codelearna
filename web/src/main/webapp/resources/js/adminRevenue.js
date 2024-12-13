@@ -6,7 +6,7 @@ function loadRevenueSection(event) {
     if (event) {
         event.preventDefault();
     }
-    const dynamicContent = document.getElementById('dynamic-content');
+    const dynamicContent = document.getElementById('dynamic-content-revenue');
     if (!dynamicContent) {
         console.error("Phần tử 'dynamic-content' không tồn tại trên trang.");
         return;
