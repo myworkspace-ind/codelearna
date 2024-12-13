@@ -5,13 +5,13 @@
         <!-- Add Campaign Button -->
         <div class="d-flex justify-content-end mb-3">
             <button type="button" class="btn btn-success mx-3" onclick="fetchAddCampaignPage(event)">Add Campaign</button>
-            <a class="btn btn-success" href="#" th:onclick="'fetchAddCampaignHandsontablePage(event)'">Add Campaigns with Handsontable</a>
+            <a class="btn btn-primary" href="#" th:onclick="'fetchAddCampaignHandsontablePage(event)'">Add Campaigns with Handsontable</a>
         </div>
 
         <div id="campaignsContainer">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
-                    <thead class="thead-dark">
+                    <thead class="thead-dark text-dark">
                         <tr>
                             <th>#</th>
                             <th>Image</th>
@@ -23,7 +23,7 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="text-dark">
                         <tr th:each="campaign, iterStat : ${campaigns}">
                             <th th:text="${iterStat.count}"></th>
                             <td><img th:src="${campaign.coverImageUrl}" alt="campaign image" style="max-width: 100px;" /></td>
