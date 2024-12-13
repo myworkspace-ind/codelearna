@@ -120,10 +120,12 @@ function fetchRevenueStatistics() {
             } else {
                 revenueDataElement.innerHTML = `<tr><td colspan="3" class="text-center">No revenue data available</td></tr>`;
             }
-
+				
             // Update pagination
             totalPages = data.totalPages;
             updatePagination();
+			createChart(revenueData);
+			createChartRevenue(revenueData);
         })
         .catch(error => {
             console.error('Error fetching revenue statistics:', error);
@@ -180,4 +182,137 @@ function updatePagination() {
         paginationContainer.appendChild(nextButton);
     }
 }
+function createChart(revenueData)
+{
+	const courseNames = [];
+    const purchaseCounts = [];
+	
+	const courseCountMap = {}; // Object để đếm số lượng
 
+    // Duyệt qua revenueData và cập nhật số lượng từng courseName
+    revenueData.forEach(item => {
+        if (courseCountMap[item.courseName]) {
+            courseCountMap[item.courseName] += item.purchaseCount;
+        } else {
+            courseCountMap[item.courseName] = item.purchaseCount;
+        }
+    });
+	Object.entries(courseCountMap).forEach(([courseName, totalCount]) => {
+	        courseNames.push(courseName);
+	        purchaseCounts.push(totalCount);
+	    });
+		// Tạo biểu đồ tròn
+		    const ctx = document.getElementById('visitorChart').getContext('2d');
+		    new Chart(ctx, {
+		        type: 'pie', // Loại biểu đồ tròn
+		        data: {
+		            labels: courseNames, // Tên khóa học
+		            datasets: [{
+		                label: 'Tỷ lệ đơn hàng',
+		                data: purchaseCounts, // Số lượng đơn hàng
+		                backgroundColor: [
+		                    'rgba(255, 99, 132, 0.5)',
+		                    'rgba(54, 162, 235, 0.5)',
+		                    'rgba(255, 206, 86, 0.5)',
+		                    'rgba(75, 192, 192, 0.5)',
+		                    'rgba(153, 102, 255, 0.5)',
+		                    'rgba(255, 159, 64, 0.5)'
+		                ], // Màu sắc khác nhau cho từng phần
+		                borderColor: [
+		                    'rgba(255, 99, 132, 1)',
+		                    'rgba(54, 162, 235, 1)',
+		                    'rgba(255, 206, 86, 1)',
+		                    'rgba(75, 192, 192, 1)',
+		                    'rgba(153, 102, 255, 1)',
+		                    'rgba(255, 159, 64, 1)'
+		                ],
+		                borderWidth: 1
+		            }]
+		        },
+		        options: {
+		            responsive: true,
+		            plugins: {
+		                legend: {
+		                    position: 'top', // Vị trí của chú thích
+		                },
+		                tooltip: {
+		                    callbacks: {
+		                        label: function (tooltipItem) {
+		                            const total = purchaseCounts.reduce((sum, value) => sum + value, 0);
+		                            const percentage = ((tooltipItem.raw / total) * 100).toFixed(2);
+		                            return `${tooltipItem.label}: ${tooltipItem.raw} courses (${percentage}%)`;
+		                        }
+		                    }
+		                }
+		            }
+		        }
+		    });
+			
+}
+function createChartRevenue(revenueData){
+	const courseNames = [];
+	    const revenues = [];
+
+	    // Xử lý dữ liệu
+	    const courseRevenueMap = {};
+	    revenueData.forEach(item => {
+	        if (courseRevenueMap[item.courseName]) {
+	            courseRevenueMap[item.courseName] += item.revenue;
+	        } else {
+	            courseRevenueMap[item.courseName] = item.revenue;
+	        }
+	    });
+
+	    // Chuyển dữ liệu vào mảng
+	    Object.entries(courseRevenueMap).forEach(([courseName, totalRevenue]) => {
+	        courseNames.push(courseName);
+	        revenues.push(totalRevenue);
+	    });
+
+	    // Tạo biểu đồ tròn thống kê doanh thu
+	    const ctx = document.getElementById('revenueChart').getContext('2d');
+	    new Chart(ctx, {
+	        type: 'pie', // Loại biểu đồ tròn
+	        data: {
+	            labels: courseNames, // Tên khóa học
+	            datasets: [{
+	                label: 'Doanh thu',
+	                data: revenues, // Doanh thu của từng khóa học
+	                backgroundColor: [
+	                    'rgba(255, 99, 132, 0.5)',
+	                    'rgba(54, 162, 235, 0.5)',
+	                    'rgba(255, 206, 86, 0.5)',
+	                    'rgba(75, 192, 192, 0.5)',
+	                    'rgba(153, 102, 255, 0.5)',
+	                    'rgba(255, 159, 64, 0.5)'
+	                ], // Màu sắc khác nhau cho từng phần
+	                borderColor: [
+	                    'rgba(255, 99, 132, 1)',
+	                    'rgba(54, 162, 235, 1)',
+	                    'rgba(255, 206, 86, 1)',
+	                    'rgba(75, 192, 192, 1)',
+	                    'rgba(153, 102, 255, 1)',
+	                    'rgba(255, 159, 64, 1)'
+	                ],
+	                borderWidth: 1
+	            }]
+	        },
+	        options: {
+	            responsive: true,
+	            plugins: {
+	                legend: {
+	                    position: 'top', // Vị trí của chú thích
+	                },
+	                tooltip: {
+	                    callbacks: {
+	                        label: function (tooltipItem) {
+	                            const totalRevenue = revenues.reduce((sum, value) => sum + value, 0);
+	                            const percentage = ((tooltipItem.raw / totalRevenue) * 100).toFixed(2);
+	                            return `${tooltipItem.label}: ${formatCurrency(tooltipItem.raw)} (${percentage}%)`;
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	    });
+}
