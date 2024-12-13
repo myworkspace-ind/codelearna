@@ -68,6 +68,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${payment.vnpay.secretKey}")
     private String secretKey;
 
+    @Value("${payment.vnpay.url}")
+    private String vnpayUrl;
+    
     @Override
     public Double getBalance(String userEid) {
         Wallet wallet = walletRepository.findByUserEid(userEid);
@@ -157,9 +160,9 @@ public class PaymentServiceImpl implements PaymentService {
     //tao url thanh toan vnpay
 	@Override
 	public String generatePaymentUrlVnpay(BigDecimal amount, String orderCode, String urlReturn, String ipAddress) {
-		String vnp_PayUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+		String vnp_PayUrl = vnpayUrl;
         String vnp_HashSecret = secretKey; // Khóa bí mật (secret key) của VNPAY khi đăng ký dịch vụ thanh toán thử nghiệm
-        String vnp_TmnCode = tmnCode ; 
+        String vnp_TmnCode = tmnCode; 
 
         Map<String, String> vnp_Params = new HashMap<>();
         vnp_Params.put("vnp_Version", "2.1.0");// Phiên bản của cổng thanh toán VNPAY
@@ -268,17 +271,23 @@ public class PaymentServiceImpl implements PaymentService {
             return "";
         }
     }
-	
-	 //Xử lý phản hồi từ VNPay khi thanh toán hoàn tất
+
+    /**
+     * Xử lý phản hồi từ VNPay khi thanh toán hoàn tất
+     * @param fields
+     * @param userEid
+     * @return
+     */
 	@Override
 	public int processReturnVnpay(Map<String, String> fields, String userEid) {
 		// Lấy giá trị chữ ký (secure hash) được trả về từ VNPay
 		String vnp_SecureHash = fields.get("vnp_SecureHash");
 
-		//Loại bỏ các trường không cần thiết khỏi Map để tính lại chữ ký
+		// Loại bỏ các trường không cần thiết khỏi Map để tính lại chữ ký
 	    if (fields.containsKey("vnp_SecureHashType")) {
 	        fields.remove("vnp_SecureHashType");
 	    }
+
 	    if (fields.containsKey("vnp_SecureHash")) {
 	        fields.remove("vnp_SecureHash");
 	    }
@@ -289,7 +298,7 @@ public class PaymentServiceImpl implements PaymentService {
 	    
 	    //So sánh chữ ký đã tính toán với chữ ký được trả về từ VNPay
 	    String signValue = hashAllFields(fields);
-	    
+
 	    //Nếu chữ ký khớp, kiểm tra trạng thái giao dịch từ trường "vnp_TransactionStatus".
         if (signValue.equals(vnp_SecureHash)) {
             if ("00".equals(fields.get("vnp_TransactionStatus"))) {
