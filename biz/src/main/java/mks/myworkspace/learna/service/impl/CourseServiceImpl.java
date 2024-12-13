@@ -152,9 +152,9 @@ public class CourseServiceImpl implements CourseService {
 //	        return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue);
 //	    }
 	    if (subcategoryId != null) {
-	        return repo.findCoursesBySubcategoryAndFilters_Fix(subcategoryId, keyword, difficultyLevelParameter, ratingValue,pageable).getContent();
+	        return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevelParameter, ratingValue,pageable).getContent();
 	    } else {
-	        return repo.findCoursesByFilters_Fix(keyword, difficultyLevelParameter, ratingValue, pageable).getContent();
+	        return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue, pageable).getContent();
 	    }
 	}
 	

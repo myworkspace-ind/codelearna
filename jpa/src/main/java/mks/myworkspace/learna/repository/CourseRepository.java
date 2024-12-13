@@ -30,32 +30,30 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	 
 	 @Query("SELECT c FROM Course c WHERE c.status = 'ACTIVE'")
 	 List<Course> findAllActiveCourse();
-	// Tìm kiếm khóa học với các bộ lọc (keyword, difficulty level, average rating)
-	@Query("SELECT c FROM Course c "
-			+ "WHERE (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
-			+ "AND (:level IS NULL OR c.difficultyLevel = :level) "
-			+ "AND (:averageRating IS NULL OR c.averageRating >= :averageRating) " + "AND c.status = 'active'")
-	List<Course> findCoursesByFilters(@Param("keyword") String keyword, @Param("level") Parameter level,
-			@Param("averageRating") Double averageRating);
-
-	// Tìm kiếm khóa học trong danh mục con với các bộ lọc
-	@Query("SELECT c FROM Course c JOIN c.subcategory s " + "WHERE s.id = :subcategoryId "
-			+ "AND (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
-			+ "AND (:level IS NULL OR c.difficultyLevel = :level) "
-			+ "AND (:averageRating IS NULL OR c.averageRating >= :averageRating) " + "AND c.status = 'active'")
-	List<Course> findCoursesBySubcategoryAndFilters(@Param("subcategoryId") Long subcategoryId,
-			@Param("keyword") String keyword, @Param("level") Parameter level,
-			@Param("averageRating") Double averageRating);
+//	// Tìm kiếm khóa học với các bộ lọc (keyword, difficulty level, average rating)
+//	@Query("SELECT c FROM Course c "
+//			+ "WHERE (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
+//			+ "AND (:level IS NULL OR c.difficultyLevel = :level) "
+//			+ "AND (:averageRating IS NULL OR c.averageRating >= :averageRating) " + "AND c.status = 'active'")
+//	List<Course> findCoursesByFilters(@Param("keyword") String keyword, @Param("level") Parameter level,
+//			@Param("averageRating") Double averageRating);
+//
+//	// Tìm kiếm khóa học trong danh mục con với các bộ lọc
+//	@Query("SELECT c FROM Course c JOIN c.subcategory s " + "WHERE s.id = :subcategoryId "
+//			+ "AND (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
+//			+ "AND (:level IS NULL OR c.difficultyLevel = :level) "
+//			+ "AND (:averageRating IS NULL OR c.averageRating >= :averageRating) " + "AND c.status = 'active'")
+//	List<Course> findCoursesBySubcategoryAndFilters(@Param("subcategoryId") Long subcategoryId,
+//			@Param("keyword") String keyword, @Param("level") Parameter level,
+//			@Param("averageRating") Double averageRating);
 	
-	
-	///////////////////Fix
 	
 	// Tìm kiếm khóa học với các bộ lọc (keyword, difficulty level, average rating)
 		@Query("SELECT c FROM Course c "
 				+ "WHERE (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
 				+ "AND (:level IS NULL OR c.difficultyLevel = :level) "
 				+ "AND (:averageRating IS NULL OR c.averageRating >= :averageRating) " + "AND c.status = 'active'")
-		Page<Course> findCoursesByFilters_Fix(@Param("keyword") String keyword, @Param("level") Parameter level,
+		Page<Course> findCoursesByFilters(@Param("keyword") String keyword, @Param("level") Parameter level,
 				@Param("averageRating") Double averageRating, Pageable pageable);
 
 		// Tìm kiếm khóa học trong danh mục con với các bộ lọc
@@ -63,7 +61,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 				+ "AND (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
 				+ "AND (:level IS NULL OR c.difficultyLevel = :level) "
 				+ "AND (:averageRating IS NULL OR c.averageRating >= :averageRating) " + "AND c.status = 'active'")
-		Page<Course> findCoursesBySubcategoryAndFilters_Fix(@Param("subcategoryId") Long subcategoryId,
+		Page<Course> findCoursesBySubcategoryAndFilters(@Param("subcategoryId") Long subcategoryId,
 				@Param("keyword") String keyword, @Param("level") Parameter level,
 				@Param("averageRating") Double averageRating, Pageable pageable);
 
