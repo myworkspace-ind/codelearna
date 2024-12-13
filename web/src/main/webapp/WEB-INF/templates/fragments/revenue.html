@@ -99,30 +99,30 @@
 	        };
 	    </script>
 	    
-	    <div class="col-md-3" style = "height: 470px;">
-         <div class="card mb-4 h-100">
-             <div class="card-body">
-                 <h1 class="chart-title">Thống kê đơn hàng</h1>
-				<h1 id="daGiao" style="display: none;">${DaGiao}</h1>
-				<h1 id="dangGiao" style="display: none;">${DangGiao}</h1>
-				<div style="max-width: 100%; height: 400px; overflow: hidden; position: relative;">
-				    <canvas id="visitorChart"></canvas>
-				</div>
-             </div>
-         </div>
-     </div>
-     <div class="col-md-3" style = "height: 470px;">
-         <div class="card mb-4 h-100">
-             <div class="card-body">
-                 <h1 class="chart-title">Thống kê đơn hàng</h1>
-				<h1 id="daGiao" style="display: none;">${DaGiao}</h1>
-				<h1 id="dangGiao" style="display: none;">${DangGiao}</h1>
-				<div style="max-width: 100%; height: 400px; overflow: hidden; position: relative;">
-				    <canvas id="revenueChart"></canvas>
-				</div>
-             </div>
-         </div>
-     </div>
+<div class="row">
+    <div class="col-md-6" style="height: 470px; display: flex; justify-content: center; align-items: center;">
+        <div class="card mb-4 h-100" style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div class="card-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <h1 class="chart-title">Thống kê số lượng khóa học</h1>
+                <div style="max-width: 100%; height: 400px; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center;">
+                    <canvas id="visitorChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6" style="height: 470px; display: flex; justify-content: center; align-items: center;">
+        <div class="card mb-6 h-100" style="width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div class="card-body" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <h1 class="chart-title">Thống kê doanh thu theo khóa học</h1>
+                <div style="max-width: 100%; height: 400px; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
      
 </div>
