@@ -114,7 +114,7 @@ public class ParameterJdbcRepository {
 	        while (rs.next()) {
 	            Parameter parameter = new Parameter();
 	            parameter.setParamValue(rs.getString("param_value"));
-	            parameter.setSeqno(rs.getInt("seqno"));
+	            parameter.setId(rs.getLong("id"));
 	            parameters.add(parameter);
 	        }
 	    } catch (SQLException sqlEx) {
