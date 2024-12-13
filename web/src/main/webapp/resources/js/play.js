@@ -185,33 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	        console.error("Element with id 'course' not found");
 	    }
 	}
-
-	function convertYoutubeLinkToEmbed(youtubeLink) {
-	    try {
-	        const url = new URL(youtubeLink);
-			
-			if (url.hostname === "www.youtube.com" && url.pathname.startsWith("/embed")) {
-	            return youtubeLink;
-	        }
-
-	        if (url.hostname === "youtu.be") {
-	            return `https://www.youtube.com/embed/${url.pathname.slice(1)}`;
-	        }
-
-	        if (url.hostname === "www.youtube.com" && url.pathname === "/watch") {
-	            const videoId = url.searchParams.get("v");
-	            if (videoId) {
-	                return `https://www.youtube.com/embed/${videoId}`;
-	            }
-	        }
-
-	        console.error("URL không đúng định dạng hợp lệ của YouTube.");
-	        return null;
-	    } catch (error) {
-	        console.error("Định dạng URL không hợp lệ:", error);
-	        return null;
-	    }
-	}
 	
 	function loadLesson(index) {
 	    const lesson = lessons[index];
