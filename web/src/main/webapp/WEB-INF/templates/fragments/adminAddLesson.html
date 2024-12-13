@@ -1,39 +1,52 @@
 <div th:fragment="addLessonForm">
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Add New Lesson</h3>
-                        <h5 th:text="${'Course: ' + course.name}" class="text-muted"></h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="lessonForm" th:action="@{/admin/courses/{courseId}/lessons/add(courseId=${course.id})}" 
-                              method="post" th:object="${lesson}" data-course-id="${course.id}">
-                            
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Lesson Title</label>
-                                <input type="text" class="form-control" id="title" name="title" 
-                                       th:field="*{title}" required>
-                                <div class="invalid-feedback">Please enter a lesson title.</div>
-                            </div>
+	<div class="container mt-4">
+		<div class="row">
+			<div class="col-md-8 offset-md-2">
+				<div class="card">
+					<div class="card-header">
+						<h3>Add New Lesson</h3>
+						<h5 th:text="${'Course: ' + course.name}" class="text-muted"></h5>
+					</div>
+					<div class="card-body">
+						<form id="lessonForm"
+							th:action="@{/admin/courses/{courseId}/lessons/add(courseId=${course.id})}"
+							method="post" th:object="${lesson}" data-course-id="${course.id}">
 
-                            <div class="mb-3">
-                                <label for="videoUrl" class="form-label">Video URL</label>
-                                <input type="text" class="form-control" id="videoUrl" name="videoUrl" 
-                                       th:field="*{videoUrl}">
-                                <div class="invalid-feedback">Please enter a valid video URL.</div>
-                            </div>
+							<div class="mb-3">
+								<label for="title" class="form-label">Lesson Title</label> <input
+									type="text" class="form-control" id="title" name="title"
+									th:field="*{title}" required>
+								<div class="invalid-feedback">Please enter a lesson title.</div>
+							</div>
 
-                            <div class="d-flex justify-content-between">
-                                <button type="button" class="btn btn-secondary" 
-                                       th:attr="onclick='loadCourseLessons(' + ${course.id} + ')'">Back to Lessons</button>
-                                <button type="submit" class="btn btn-primary">Add Lesson</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+							<div class="mb-3">
+								<label for="videoUrl" class="form-label">Video URL</label> <input
+									type="text" class="form-control" id="videoUrl" name="videoUrl"
+									th:field="*{videoUrl}" required>
+								<div class="invalid-feedback">Please enter a valid video
+									URL.</div>
+							</div>
+
+							<div class="mb-3">
+								<label for="activityId" class="form-label">Video
+									ActivityId</label> <input type="text" class="form-control"
+									id="activityId" name="activityId" th:field="*{activityId}"
+									required>
+								<div class="invalid-feedback">Please enter a valid video
+									activity ID.</div>
+							</div>
+
+							<div class="d-flex justify-content-between">
+								<button type="button" class="btn btn-secondary"
+									th:attr="onclick='loadCourseLessons(' + ${course.id} + ')'">Back
+									to Lessons</button>
+								<button type="submit" class="btn btn-primary">Add
+									Lesson</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

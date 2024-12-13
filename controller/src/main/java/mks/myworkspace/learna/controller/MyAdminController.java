@@ -23,43 +23,45 @@ import mks.myworkspace.learna.service.ParameterService;
 public class MyAdminController extends BaseController {
 	@Autowired
 	private ParameterService parameterService;
-	
+
 	@Autowired
 	private CourseService courseService;
+
 	@GetMapping("")
 	public String showSettings(HttpServletRequest request, HttpSession httpSession) {
 		super.initSession(request, httpSession);
-		
+
 		httpSession.setAttribute("currentMenu", "Settings");
 		return "myadmin";
 	}
 
 	@GetMapping("/current-users")
 	public String showCurrentUser(HttpServletRequest request, HttpSession httpSession) {
-		
+
 		httpSession.setAttribute("currentMenu", "CurrentUsers");
 		return "myadmin";
 	}
 
 	@GetMapping("/list-parameters")
 	public String loadParametersList(HttpServletRequest request, HttpSession httpSession, Model model) {
-	    httpSession.setAttribute("currentMenu", "Parameters");
-	    model.addAttribute("parameters", parameterService.getAllParams()); 
-	    model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff());
-	    log.info("do kho" + parameterService.getAllParams());
-	    return "myadmin";
+		httpSession.setAttribute("currentMenu", "Parameters");
+		model.addAttribute("parameters", parameterService.getAllParams());
+		model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff());
+		log.info("do kho" + parameterService.getAllParams());
+		return "myadmin";
 	}
 
 	@GetMapping("/course-management")
 	public String loadCourseList(HttpServletRequest request, HttpSession httpSession, Model model) {
-	    httpSession.setAttribute("currentMenu", "Course"); 
-	    model.addAttribute("courses", courseService.getAllCourses()); 
-	    return "myadmin";
+		httpSession.setAttribute("currentMenu", "Course");
+		model.addAttribute("courses", courseService.getAllCourses());
+		return "myadmin";
 	}
+
 	@GetMapping("/revenue-statistics")
 	public String loadRevenueStatistics(HttpServletRequest request, HttpSession httpSession, Model model) {
-	    httpSession.setAttribute("currentMenu", "RevenueStatistics"); 
-	    // model.addAttribute("courses", courseService.getAllCourses()); 
-	    return "myadmin";
+		httpSession.setAttribute("currentMenu", "RevenueStatistics");
+		// model.addAttribute("courses", courseService.getAllCourses());
+		return "myadmin";
 	}
 }
