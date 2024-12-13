@@ -130,7 +130,7 @@ public class CourseServiceImpl implements CourseService {
 	public List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId, String rating) {
 	    Sort sort = Sort.by(sortField);
 	    sort = "desc".equalsIgnoreCase(sortOrder) ? sort.descending() : sort.ascending();
-//	    Pageable pageable = PageRequest.of(0, 20, sort);
+	    Pageable pageable = PageRequest.of(0, 20, sort);
 
 	    Parameter difficultyLevelParameter = null;
 	    if (level != null) {
@@ -146,10 +146,15 @@ public class CourseServiceImpl implements CourseService {
 	        }
 	    }
 
+//	    if (subcategoryId != null) {
+//	        return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevelParameter, ratingValue);
+//	    } else {
+//	        return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue);
+//	    }
 	    if (subcategoryId != null) {
-	        return repo.findCoursesBySubcategoryAndFilters(subcategoryId, keyword, difficultyLevelParameter, ratingValue);
+	        return repo.findCoursesBySubcategoryAndFilters_Fix(subcategoryId, keyword, difficultyLevelParameter, ratingValue,pageable).getContent();
 	    } else {
-	        return repo.findCoursesByFilters(keyword, difficultyLevelParameter, ratingValue);
+	        return repo.findCoursesByFilters_Fix(keyword, difficultyLevelParameter, ratingValue, pageable).getContent();
 	    }
 	}
 	
