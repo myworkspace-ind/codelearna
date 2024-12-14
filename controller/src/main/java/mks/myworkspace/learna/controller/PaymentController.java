@@ -95,7 +95,12 @@ public class PaymentController extends BaseController {
         }
     }
     
-    //xử lý thanh toán 
+
+    /**
+     * Xử lý thanh toán 
+     * @param request
+     * @return vnpayUrl đường dẫn redirect đến vnpay
+     */
     @PostMapping("/vnpay")
     public String processPaymentWithVnpay(HttpServletRequest request) {
     	
@@ -109,14 +114,20 @@ public class PaymentController extends BaseController {
         log.info("Generated VNPay URL: {}", vnpayUrl);
         return "redirect: " + vnpayUrl;
     }
-    
-    // Sau khi hoàn tất thanh toán, VNPAY sẽ chuyển hướng trình duyệt về URL này
+
+    /**
+     * Sau khi hoàn tất thanh toán, VNPAY sẽ chuyển hướng trình duyệt về URL này
+     * @param request
+     * @param httpSession
+     * @param model
+     * @return
+     */
     @GetMapping("/vnpay-payment-return")
     public String paymentCompletedVnpay(HttpServletRequest request,HttpSession httpSession, Model model){
-    	
+
     	initSession(request, httpSession);
     	String userEid = getCurrentUserEid();
-    	
+
     	log.warn(userEid+ "-------");
     	Map fields = new HashMap();
         for (Enumeration params = request.getParameterNames(); params.hasMoreElements();) {
