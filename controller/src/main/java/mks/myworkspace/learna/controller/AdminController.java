@@ -561,17 +561,9 @@ public class AdminController extends BaseController {
 		}
 	}
 
-//	@GetMapping("/listDeletedCourse")
-//	public ModelAndView showDeletedCourses() {
-//		List<Course> courses = courseService.getAllCourses();
-//		ModelAndView mav = new ModelAndView("fragments/adminListDeletedCourse :: deletedCourseModal");
-//		// Initialize with empty list if null
-//		mav.addObject("courses", courses != null ? courses : new ArrayList<>());
-//		return mav;
-//	}
-
 	@GetMapping("/listDeletedCourse")
 	public ModelAndView showDeletedCourses() {
+//		List<Course> courses = courseService.getAllCourses();
 		List<Course> courses = courseService.getCoursesByStatus("DELETED");
 		ModelAndView mav = new ModelAndView("fragments/adminListDeletedCourse :: deletedCourseModal");
 		// Initialize with empty list if null
