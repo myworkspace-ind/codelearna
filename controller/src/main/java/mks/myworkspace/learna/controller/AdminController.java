@@ -561,15 +561,24 @@ public class AdminController extends BaseController {
 		}
 	}
 
+//	@GetMapping("/listDeletedCourse")
+//	public ModelAndView showDeletedCourses() {
+//		List<Course> courses = courseService.getAllCourses();
+//		ModelAndView mav = new ModelAndView("fragments/adminListDeletedCourse :: deletedCourseModal");
+//		// Initialize with empty list if null
+//		mav.addObject("courses", courses != null ? courses : new ArrayList<>());
+//		return mav;
+//	}
+
 	@GetMapping("/listDeletedCourse")
 	public ModelAndView showDeletedCourses() {
-		List<Course> courses = courseService.getAllCourses();
+		List<Course> courses = courseService.getCoursesByStatus("DELETED");
 		ModelAndView mav = new ModelAndView("fragments/adminListDeletedCourse :: deletedCourseModal");
 		// Initialize with empty list if null
 		mav.addObject("courses", courses != null ? courses : new ArrayList<>());
 		return mav;
 	}
-
+	
 	@PostMapping("/courses/restoreCourse/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> restoreCourse(@PathVariable("id") Long id,
@@ -617,8 +626,8 @@ public class AdminController extends BaseController {
 	@GetMapping("/courses/{id}/deletedLessons")
 	public ModelAndView showDeletedLessonOfCourse(@PathVariable("id") Long courseId) {
 		Course course = courseService.getCourseById(courseId);
-		List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
-
+//		List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
+		List<Lesson> lessons = playService.getLessonsByCourseIdAndStatus(courseId, "DELETED");
 		/*
 		 * if (lessons == null || lessons.isEmpty()) { return new
 		 * ModelAndView("redirect:/admin/listCourse"); }
