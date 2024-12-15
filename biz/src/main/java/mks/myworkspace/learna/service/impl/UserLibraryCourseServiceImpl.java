@@ -128,4 +128,10 @@ public class UserLibraryCourseServiceImpl implements UserLibraryCourseService {
     public Long countTotalUserLibrary() {
         return userLibraryCourseRepository.countDistinctUsers();
     }
+
+	@Override
+	public Object getUserLibraries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

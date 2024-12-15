@@ -400,26 +400,3 @@ function restoreParameter(parameterId) {
 }
 
 document.addEventListener('DOMContentLoaded', initializeFilterKeyListener);
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Khởi tạo Tom Select
-    new TomSelect("#filterKey", {
-        plugins: ['dropdown_input'], 
-        maxOptions: 10,            
-        allowEmptyOption: true,    
-        placeholder: "Select Parameter", 
-    });
-
-    // Bắt sự kiện khi thay đổi giá trị
-    document.getElementById('filterKey').addEventListener('change', function () {
-        const selectedValue = this.value;
-        console.log("Selected value:", selectedValue);
-
-        // Lọc bảng theo giá trị đã chọn
-        const parameterRows = document.querySelectorAll('#parametersContainer tbody tr');
-        parameterRows.forEach(row => {
-            const parameterKey = row.querySelector('td:nth-child(2)').innerText.trim();
-            row.style.display = selectedValue === "" || parameterKey === selectedValue ? "" : "none";
-        });
-    });
-});

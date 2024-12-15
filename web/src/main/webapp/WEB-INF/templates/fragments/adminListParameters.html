@@ -10,22 +10,14 @@
 		<div id="parametersContainer">
 			<div class="filter-container mb-3">
 				<label for="parameterKey" class="form-label">Select
-					Parameter Key:</label> 
-				<!-- <select id="filterKey" class="form-select">
-			        <option value="">All</option>
+					Parameter Key:</label> <select id="filterKey" class="form-select"
+					name="parameter">
+					<option value="">All</option>
 					<option th:each="key, iterStat : ${parameterKeyDiff}"
 						th:value="${key}" th:text="${key}"
 						th:selected="${iterStat.index == 0 || key == selectedParameter}">
 					</option>
-			    </select> -->
-			    <select id="filterKey" class="form-select" aria-label="Select Parameter Key">
-			        <option value="" disabled selected>Select Parameter</option>
-			        <option value="category">category</option>
-			        <option value="difficulty_level">difficulty_level</option>
-			        <option value="lesson_type">lesson_type</option>
-			        <option value="site_logo">site_logo</option>
-			        <option value="subcategory">subcategory</option>
-			    </select>
+				</select>
 			</div>
 
 			<div class="table-responsive">
