@@ -175,7 +175,7 @@ header {
 }
 
 .filter-container .form-select {
-    width: auto; 
+    width: 200px; 
 }
 
 /* Admin sidebar css */
@@ -374,4 +374,16 @@ body {
 }
 
 
+.tom-select {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+    width: 100%;
+}
+
+.tom-select .ts-control {
+    padding: 10px;
+    border: none;
+}
 
