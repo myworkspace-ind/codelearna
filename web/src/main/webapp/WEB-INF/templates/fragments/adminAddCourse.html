@@ -50,7 +50,7 @@
 					<label for="difficultyLevel" class="form-label">Difficulty Level <span style="color:red">*</span></label>
 					<select class="form-select" id="difficultyLevel" name="difficultyLevel.id" required>
 						<option value="">Choose difficulty level...</option>
-						<option th:each="difficultyLevel : ${difficultyLevels}" th:value="${difficultyLevel.id}" th:text="${difficultyLevel.paramValue}"></option>
+						<option th:each="difficultyLevel : ${difficultyLevels}" th:value="${difficultyLevel.Id}" th:text="${difficultyLevel.paramValue}"></option>
 					</select>
 				</div>
 				<div class="col-md-6 mb-3">
