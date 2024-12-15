@@ -27,6 +27,8 @@
 					<li><input type="radio" name="level" value="INTERMEDIATE" th:checked="${level == 'INTERMEDIATE'}" onchange="applyFilter()"> For
 						intermediate</li>
 					<li><input type="radio" name="level" value="ADVANCED" th:checked="${level == 'ADVANCED'}" onchange="applyFilter()"> For advanced</li>
+					<li><input type="radio" name="level" value="EXPERT" th:checked="${level == 'EXPERT'}" onchange="applyFilter()"> For expert</li>
+					<li><input type="radio" name="level" value="MASTER" th:checked="${level == 'MASTER'}" onchange="applyFilter()"> For master</li>
 				</ul>
 				
 				<!-- Filter by Rating -->
@@ -36,6 +38,8 @@
 					<li><input type="radio" name="rating" value="4.0" th:checked="${rating == '4.0'}" onchange="applyFilter()"> 4.0 & up</li>
 					<li><input type="radio" name="rating" value="3.5" th:checked="${rating == '3.5'}" onchange="applyFilter()"> 3.5 & up</li>
 					<li><input type="radio" name="rating" value="3.0" th:checked="${rating == '3.0'}" onchange="applyFilter()"> 3.0 & up</li>
+					<li><input type="radio" name="rating" value="2.0" th:checked="${rating == '2.0'}" onchange="applyFilter()"> 2.0 & up</li>
+					<li><input type="radio" name="rating" value="1.0" th:checked="${rating == '1.0'}" onchange="applyFilter()"> 1.0 & up</li>
 				</ul>
 			</div>
 

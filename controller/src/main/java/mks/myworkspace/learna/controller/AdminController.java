@@ -274,13 +274,14 @@ public class AdminController extends BaseController {
 		if (course.getStatus() == null || course.getStatus().isEmpty()) {
 			course.setStatus("INACTIVE");
 		}
-
+		 //|| course.getDifficultyLevel().getId() == null
+		System.out.println(course.getDifficultyLevel());
 		if (course.getDifficultyLevel() == null || course.getDifficultyLevel().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Difficulty Level is required and must be valid.");
 			return ResponseEntity.badRequest().body(response);
 		}
-
+		//|| course.getLessonType().getId() == null
 		if (course.getLessonType() == null || course.getLessonType().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Lesson Type is required and must be valid.");
@@ -304,6 +305,7 @@ public class AdminController extends BaseController {
 
 		course.setDifficultyLevel(difficultyLevel);
 		course.setLessonType(lessonType);
+		
 
 		if (course.getSubcategory() == null || course.getSubcategory().getId() == null) {
 			response.put("status", "error");
