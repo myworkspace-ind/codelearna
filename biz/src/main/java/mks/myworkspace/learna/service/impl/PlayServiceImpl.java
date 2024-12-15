@@ -22,6 +22,11 @@ public class PlayServiceImpl implements PlayService {
     public List<Lesson> getLessonsByCourseId(Long courseId) {
         return lessonRepository.findByCourseId(courseId);
     }
+    
+    @Override
+    public List<Lesson> getLessonsByCourseIdAndStatus(Long courseId, String status) {
+        return lessonRepository.findByCourseIdAndStatus(courseId, status);
+    }
 
     @Override
     public Lesson getLessonById(Long lessonId) {
