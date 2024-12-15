@@ -36,7 +36,8 @@
                                 <div class="btn-group" role="group">
                                     <a href="#" class="btn btn-primary btn-sm" th:attr="onclick='loadCampaignDetails(' + ${campaign.id} + '); return false;'">View</a>
                                     <a href="#" class="btn btn-warning btn-sm" th:attr="onclick='loadEditCampaignForm(' + ${campaign.id} + '); return false;'">Edit</a>
-                                    <a href="#" class="btn btn-danger btn-sm" th:onclick="showDeleteConfirmModal([[${campaign.id}]])" title="Delete Campaign">Delete</a>
+                                    <!-- <a href="#" class="btn btn-danger btn-sm" th:onclick="showDeleteConfirmModal([[${campaign.id}]])" title="Delete Campaign">Delete</a> -->
+                                    <a href="#" class="btn btn-danger btn-sm" th:onclick="showDeleteConfirmModal_campaign([[${campaign.id}]])" title="Delete Campaign">Delete</a>
                                 </div>
                             </td>
                         </tr>
