@@ -108,7 +108,7 @@ public class AdminController extends BaseController {
 		model.addAttribute("totalCourses", totalCourses);
 		model.addAttribute("totalUsers", totalUsers);
 		model.addAttribute("totalRevenue", totalRevenues);
-		return "fragments/welcome :: welcome-section";
+		return "fragments/dashboard :: dashboard";
 	}
 
 	@GetMapping("/listCourse")
