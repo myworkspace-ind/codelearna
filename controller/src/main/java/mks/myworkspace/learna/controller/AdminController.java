@@ -123,11 +123,32 @@ public class AdminController extends BaseController {
 	    mav.addObject("campaigns", campaignService.getAllCampaigns());
 	    return mav;
 	}
+	@GetMapping("/listVoucher")
+	public ModelAndView loadVouchersFragment() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListVoucher :: vouchersContent");
+	    mav.addObject("campaigns", campaignService.getAllCampaigns());
+	    return mav;
+	}
 	@GetMapping("/revenue")
 	public ModelAndView revenueFragment() {
 		ModelAndView mav = new ModelAndView("fragments/revenue :: revenue");
 		return mav;
 	}
+    @GetMapping("/addVoucher")
+    public ModelAndView showAddVoucherPage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
+
+//        // Lấy danh sách các tham số liên quan đến campaign (Ví dụ: campaign types, campaign statuses)
+//        List<Parameter> campaignTypes = parameterService.getListParamsByParamValue("campaign_type");
+//        List<Parameter> campaignStatuses = parameterService.getListParamsByParamValue("campaign_status");
+//
+//        // Truyền dữ liệu vào ModelAndView
+//        mav.addObject("campaignTypes", campaignTypes);
+//        mav.addObject("campaignStatuses", campaignStatuses);
+
+        return mav;
+    }
+    //Còn phần POST của Voucher chưa làm
     @GetMapping("/addCampaign")
     public ModelAndView showAddCampaignPage() {
         ModelAndView mav = new ModelAndView("fragments/adminAddCampaign :: addCampaignContent");
