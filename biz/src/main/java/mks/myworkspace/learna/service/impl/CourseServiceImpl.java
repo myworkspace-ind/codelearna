@@ -75,6 +75,18 @@ public class CourseServiceImpl implements CourseService {
 		}
 		return courses;
 	}
+	
+	/**Xử lý lọc status khóa học ở tầng truy vấn
+	 * 
+	 */
+	@Override
+	public List<Course> getCoursesByStatus(String status) {
+		List<Course> courses = repo.findCourseByStatus(status);
+		for(Course course : courses) {
+			reviewService.updateAverageRating(course.getId());
+		}
+		return courses;
+	}
 
 	@Override
     public List<Course> getCoursesNotInLibrary(String userEid) {

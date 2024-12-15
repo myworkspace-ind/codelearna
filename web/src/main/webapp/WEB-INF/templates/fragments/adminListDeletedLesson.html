@@ -26,8 +26,8 @@
 							<tbody id="deletedLessonsTableBody">
 								<!-- Dynamically populated with deleted lessons -->
 								<tr
-									th:each="lesson, iterStat : ${lessons.?[status == 'DELETED']}"
-									th:if="${not #lists.isEmpty(lessons.?[status == 'DELETED'])}">
+									th:each="lesson, iterStat : ${lessons}"
+									th:if="${not #lists.isEmpty(lessons)}">
 									<th th:text="${iterStat.count}"></th>
 									<td th:text="${iterStat.index + 1}"></td>
 									<td th:text="${lesson.title}"></td>
@@ -44,7 +44,7 @@
 											Restore</button>
 									</td>
 								</tr>
-								<tr th:if="${#lists.isEmpty(lessons.?[status == 'DELETED'])}">
+								<tr th:if="${#lists.isEmpty(lessons)}">
 									<td colspan="7" class="text-center">No deleted lessons
 										found</td>
 								</tr>
