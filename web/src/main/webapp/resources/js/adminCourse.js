@@ -110,6 +110,7 @@ function showDeleteConfirmModal(courseId) {
 
 	modal.show();
 }
+
 function deleteCourse(courseId, modal) {
 	fetch(`${_ctx}admin/courses/delete/${courseId}`, {
 		method: 'POST', // Chuyển từ DELETE sang POST

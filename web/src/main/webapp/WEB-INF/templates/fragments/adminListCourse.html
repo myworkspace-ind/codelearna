@@ -62,7 +62,7 @@
 									<a href="#" class="btn btn-primary btn-sm"
 										th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View/Edit</a>
 <!-- 									<a href="#" class="btn btn-warning btn-sm"
-										th:attr="onclick=' (' + ${course.id} + '); return false;'">Edit</a>  comment lại bởi Minh Nhật, lý do: nút không gọi cụ thể hàm nào-->
+										th:attr="onclick=' (' + ${course.id} + '); return false;'">Edit</a> lý do comment : nút không gọi cụ thể hàm nào-->
 									<button type="button" class="btn btn-sm"
 										th:class="${course.status == 'ACTIVE' ? 'btn-secondary' : 'btn-success'}"
 										th:data-course-id="${course.id}"

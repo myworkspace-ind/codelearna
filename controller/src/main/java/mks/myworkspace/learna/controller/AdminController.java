@@ -450,6 +450,29 @@ public class AdminController extends BaseController {
 		}
 	}
 
+	@PostMapping("/campaigns/delete/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteCampaign(@PathVariable("id") Long id) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			Campaign course = campaignService.getCampaignById(id);
+			if (course != null) {
+				campaignService.deleteCampaign(id);
+				response.put("status", "success");
+				response.put("message", "campaign has been deleted successfully.");
+				return ResponseEntity.ok(response);
+			} else {
+				response.put("status", "error");
+				response.put("message", "campaign not found.");
+				return ResponseEntity.badRequest().body(response);
+			}
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "An error occurred while trying to delete the campaign: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+
 	@PostMapping("/courses/toggleCourseStatus/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> toggleCourseStatus(@PathVariable("id") Long id,
