@@ -62,7 +62,7 @@
 									<a href="#" class="btn btn-primary btn-sm"
 										th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View</a>
 									<a href="#" class="btn btn-warning btn-sm"
-										th:attr="onclick=' (' + ${course.id} + '); return false;'">Edit</a>
+										th:attr="onclick='loadEditCourseForm(' + ${course.id} + '); return false;'">Edit</a>
 									<button type="button" class="btn btn-sm"
 										th:class="${course.status == 'ACTIVE' ? 'btn-secondary' : 'btn-success'}"
 										th:data-course-id="${course.id}"
