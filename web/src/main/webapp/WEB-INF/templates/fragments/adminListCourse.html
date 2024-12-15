@@ -7,7 +7,7 @@
 			<button type="button" class="btn btn-primary mx-3"
 				onclick="fetchAddCoursePage(event)">Add Course</button>
 			<button type="button" class="btn btn-success"
-				th:onclick="fetchAddCourseHandsontablePage(event)">Add
+				th:onclick="fetchAddCourseHandsontablePage(event)" style="text-decoration: none; ">Add
 				Courses with Handsontable</button>
 			<button type="button" class="btn btn-outline-danger btn-sm mx-3"
 				th:onclick="'loadDeletedCoursesModal()'">
@@ -60,9 +60,9 @@
 							<td>
 								<div class="btn-group" role="group">
 									<a href="#" class="btn btn-primary btn-sm"
-										th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View</a>
-									<a href="#" class="btn btn-warning btn-sm"
-										th:attr="onclick='loadEditCourseForm(' + ${course.id} + '); return false;'">Edit</a>
+										th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View/Edit</a>
+<!-- 									<a href="#" class="btn btn-warning btn-sm"
+										th:attr="onclick=' (' + ${course.id} + '); return false;'">Edit</a> lý do comment : nút không gọi cụ thể hàm nào-->
 									<button type="button" class="btn btn-sm"
 										th:class="${course.status == 'ACTIVE' ? 'btn-secondary' : 'btn-success'}"
 										th:data-course-id="${course.id}"
@@ -127,8 +127,8 @@
 			</div>
 		</div>
 		<!-- Pagination -->
-		<nav>
+ 		<nav>
 			<ul class="pagination justify-content-center" id="coursesPagination"></ul>
-		</nav>
+		</nav> 
 	</div>
 </div>

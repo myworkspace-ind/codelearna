@@ -12,6 +12,7 @@ function loadDashboard(event) {
 		.then(response => response.text())
 		.then(html => {
 			dynamicContent.innerHTML = html;
+			return loadRevenueSection();
 		})
 		.catch(error => console.error('Error loading courses section:', error));
 }
