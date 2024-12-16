@@ -8,6 +8,7 @@ import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.repository.WalletRepository;
 import mks.myworkspace.learna.service.OrderService;
 import mks.myworkspace.learna.service.PaymentService;
+import mks.myworkspace.learna.service.TransactionService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 import java.io.UnsupportedEncodingException;
@@ -54,6 +55,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private UserLibraryCourseService userLibraryCourseService;
+    @Autowired
+    private TransactionService transactionService;
     
     @Autowired
     private OrderService orderService;
@@ -147,6 +150,10 @@ public class PaymentServiceImpl implements PaymentService {
                         if (order.isPresent() && order.get().getAmount().compareTo(transactionAmount) == 0) {
                             orderService.updateOrderStatus(order.get().getOrderCode(), Order.OrderStatus.COMPLETED);
                             userLibraryCourseService.addCourseToLibrary(userEid, order.get().getCourseId(), UserLibraryCourse.PaymentStatus.PURCHASED, UserLibraryCourse.ProgressStatus.IN_PROGRESS);
+                            
+                            // Lưu lại thông tin giao dịch nhằm kiểm tra sau này nếu có vấn đề phát sinh
+                            transactionService.saveTransaction(transaction);
+                            
                             return "PAID";
                         }
                     }
