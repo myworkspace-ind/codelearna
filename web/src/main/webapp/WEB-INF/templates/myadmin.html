@@ -23,7 +23,7 @@
             <div th:replace="~{fragments/myadmin/current_users :: current_user_form}"></div>
         </div>
         <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
-        <div id="dynamic-content" class="main-content" th:case="Parameters">
+        <div id="dynamic-content" th:case="Parameters">
         <!-- <div id="main-content" class="main-content"> -->
             <main>
                 <div >
@@ -39,7 +39,7 @@
 		
 			<!-- <div th:replace="fragments/adminSidebar"></div> -->
 	
-			<div id="main-content" class="main-content">
+			<div id="main-content">
 			
 				<main>
 					<div id="dynamic-content" th:case="'Course'">
