@@ -2,8 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <body>
-	<div th:fragment="sidebar">
-		<div id="sidebar" class="sidebar">
+    <div th:fragment="sidebar">
+        <div id="sidebar" class="sidebar">
 			<a class="sidebar-header" th:href="@{/admin}"> <img th:src="${logoUrl}" alt="Site Logo">
 			</a>
 			<nav>
@@ -11,11 +11,13 @@
 				</a> <a href="#" data-section="courses" onclick="loadCoursesSection(event)"> <span class="text">Courses Management</span>
 				</a> <a href="#" data-section="users" onclick="loadParametersManagePage(event)"> <span class="text">Parameters Management</span>
 				</a> <a href="#" data-section="learning" onclick="loadManageLearningProgress(event)"> <span class="text">Manage learning progress</span>
-				</a> <a href="#" data-section="revenue" onclick="loadRevenueSection(event)"> <span class="text">Revenue Statistics</span>
-				</a>
+				</a> 
+                <a href="#" data-section="campaigns" onclick="loadCampaignsSection(event)"><span class="text">Campaign Management</span></a>
+                <a href="#" data-section="vouchers" onclick="loadVouchersSection(event)"><span class="text">Voucher Management</span></a>
 			</nav>
 		</div>
 	</div>
+
 </body>
 
 </html>

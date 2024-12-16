@@ -30,7 +30,7 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public void deleteCampaign(Long id) {
-        repo.deleteById(id);
+        repo.deleteCampaignById(id);
     }
 
     @Override

@@ -1,29 +1,29 @@
-<div th:fragment="coursesContent">
+<div th:fragment="vouchersContent">
 	<div class="container mt-5">
-		<h1 class="mb-4 fw-bolder">Course Management</h1>
+		<h1 class="mb-4 fw-bolder">Voucher Management</h1>
 
 		<!-- Add Course Button -->
 		<div class="d-flex justify-content-end mb-3">
 			<button type="button" class="btn btn-primary mx-3"
-				onclick="fetchAddCoursePage(event)">Add Course</button>
-			<button type="button" class="btn btn-success"
-				th:onclick="fetchAddCourseHandsontablePage(event)" style="text-decoration: none; ">Add
-				Courses with Handsontable</button>
-			<button type="button" class="btn btn-outline-danger btn-sm mx-3"
+				onclick="fetchAddVoucherPage(event)">Add Voucher</button>
+<!-- 			<button type="button" class="btn btn-success"
+				th:onclick="fetchAddVoucherHandsontablePage(event)" style="text-decoration: none; ">Add
+				Vouchers with Handsontable</button>
+ 			<button type="button" class="btn btn-outline-danger btn-sm mx-3"
 				th:onclick="'loadDeletedCoursesModal()'">
-				<i class="fas fa-trash-alt"></i> Deleted Course
-			</button>
+				<i class="fas fa-trash-alt"></i> Deleted Voucher
+			</button> -->
 		</div>
 
-		<div class="d-flex justify-content-between align-items-center mb-3"
+<!-- 		<div class="d-flex justify-content-between align-items-center mb-3"
 			style="width: 300px;">
 			<input type="text" id="courseSearchInput" class="form-control"
-				placeholder="Search course name..." aria-label="Search course name"
-				onkeypress="handleSearchCourseKeyPress(event)">
+				placeholder="Search voucher name..." aria-label="Search voucher name"
+				onkeypress="handleSearchVoucherKeyPress(event)">
 			<button class="btn btn-outline-secondary ms-2" type="button"
-				onclick="searchCourses()">Search</button>
-		</div>
-
+				onclick="searchVoucher()">Search</button>
+		</div> -->
+<!-- 
 		<div id="loadingContainer"></div>
 		<div id="coursesContainer">
 			<div class="table-responsive">
@@ -61,8 +61,8 @@
 								<div class="btn-group" role="group">
 									<a href="#" class="btn btn-primary btn-sm"
 										th:attr="onclick='loadCourseLessons(' + ${course.id} + '); return false;'">View/Edit</a>
-<!-- 									<a href="#" class="btn btn-warning btn-sm"
-										th:attr="onclick=' (' + ${course.id} + '); return false;'">Edit</a> lý do comment : nút không gọi cụ thể hàm nào-->
+									<a href="#" class="btn btn-warning btn-sm"
+										th:attr="onclick=' (' + ${course.id} + '); return false;'">Edit</a> lý do comment : nút không gọi cụ thể hàm nào
 									<button type="button" class="btn btn-sm"
 										th:class="${course.status == 'ACTIVE' ? 'btn-secondary' : 'btn-success'}"
 										th:data-course-id="${course.id}"
@@ -126,9 +126,9 @@
 				</div>
 			</div>
 		</div>
-		<!-- Pagination -->
+		Pagination
  		<nav>
 			<ul class="pagination justify-content-center" id="coursesPagination"></ul>
-		</nav> 
+		</nav>  -->
 	</div>
 </div>

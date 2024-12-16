@@ -1,12 +1,14 @@
 package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Campaign;
 import mks.myworkspace.learna.repository.CourseJdbcRepository;
 import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.entity.Subcategory;
 import mks.myworkspace.learna.entity.UserLibraryCourse;
+import mks.myworkspace.learna.service.CampaignService;
 import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
@@ -65,7 +67,8 @@ public class AdminController extends BaseController {
 
 	@Autowired
 	private CourseService courseService;
-
+	@Autowired
+	private CampaignService campaignService;
 	@Autowired
 	private ParameterService parameterService;
 
@@ -105,7 +108,7 @@ public class AdminController extends BaseController {
 		model.addAttribute("totalCourses", totalCourses);
 		model.addAttribute("totalUsers", totalUsers);
 		model.addAttribute("totalRevenue", totalRevenues);
-		return "fragments/welcome :: welcome-section";
+		return "fragments/dashboard :: dashboard";
 	}
 
 	@GetMapping("/listCourse")
@@ -114,12 +117,116 @@ public class AdminController extends BaseController {
 		mav.addObject("courses", courseService.getAllCourses());
 		return mav;
 	}
-
+	@GetMapping("/listCampaign")
+	public ModelAndView loadCampaignsFragment() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListCampaign :: campaignsContent");
+	    mav.addObject("campaigns", campaignService.getAllCampaigns());
+	    return mav;
+	}
+	@GetMapping("/listVoucher")
+	public ModelAndView loadVouchersFragment() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListVoucher :: vouchersContent");
+	    mav.addObject("campaigns", campaignService.getAllCampaigns());
+	    return mav;
+	}
 	@GetMapping("/revenue")
 	public ModelAndView revenueFragment() {
 		ModelAndView mav = new ModelAndView("fragments/revenue :: revenue");
 		return mav;
 	}
+    @GetMapping("/addVoucher")
+    public ModelAndView showAddVoucherPage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
+
+//        // Lấy danh sách các tham số liên quan đến campaign (Ví dụ: campaign types, campaign statuses)
+//        List<Parameter> campaignTypes = parameterService.getListParamsByParamValue("campaign_type");
+//        List<Parameter> campaignStatuses = parameterService.getListParamsByParamValue("campaign_status");
+//
+//        // Truyền dữ liệu vào ModelAndView
+//        mav.addObject("campaignTypes", campaignTypes);
+//        mav.addObject("campaignStatuses", campaignStatuses);
+
+        return mav;
+    }
+    //Còn phần POST của Voucher chưa làm
+    @GetMapping("/addCampaign")
+    public ModelAndView showAddCampaignPage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddCampaign :: addCampaignContent");
+
+        // Lấy danh sách các tham số liên quan đến campaign (Ví dụ: campaign types, campaign statuses)
+        List<Parameter> campaignTypes = parameterService.getListParamsByParamValue("campaign_type");
+        List<Parameter> campaignStatuses = parameterService.getListParamsByParamValue("campaign_status");
+
+        // Truyền dữ liệu vào ModelAndView
+        mav.addObject("campaignTypes", campaignTypes);
+        mav.addObject("campaignStatuses", campaignStatuses);
+
+        return mav;
+    }
+
+    @PostMapping("/addCampaign")
+    @Transactional
+    public ResponseEntity<Map<String, String>> addCampaign(@Validated @ModelAttribute("campaign") Campaign campaign,
+                                                           BindingResult bindingResult) {
+        Map<String, String> response = new HashMap<>();
+
+        // Kiểm tra lỗi trong BindingResult
+        if (bindingResult.hasErrors()) {
+            response.put("status", "error");
+            response.put("message", "Invalid information.");
+            System.out.println(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // Kiểm tra các trường cần thiết
+        if (campaign.getName() == null || campaign.getName().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Campaign name is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getStartTime() == null) {
+            response.put("status", "error");
+            response.put("message", "Start time is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getEndTime() == null) {
+            response.put("status", "error");
+            response.put("message", "End time is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getShortDescription() == null || campaign.getShortDescription().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Short description is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getCoverImageUrl() == null || campaign.getCoverImageUrl().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Cover image URL is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // Lưu campaign
+        try {
+            campaignService.saveCampaign(campaign);
+            response.put("status", "success");
+            response.put("message", "The campaign has been added successfully!");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "System error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/addCampaignHandsontable")
+    public ModelAndView showAddCampaignHandsontablePage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddCampaignsHandsontable :: addCampaignsContent");
+        return mav;
+    }
 
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {
@@ -167,13 +274,14 @@ public class AdminController extends BaseController {
 		if (course.getStatus() == null || course.getStatus().isEmpty()) {
 			course.setStatus("INACTIVE");
 		}
-
+		 //|| course.getDifficultyLevel().getId() == null
+		System.out.println(course.getDifficultyLevel());
 		if (course.getDifficultyLevel() == null || course.getDifficultyLevel().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Difficulty Level is required and must be valid.");
 			return ResponseEntity.badRequest().body(response);
 		}
-
+		//|| course.getLessonType().getId() == null
 		if (course.getLessonType() == null || course.getLessonType().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Lesson Type is required and must be valid.");
@@ -197,6 +305,7 @@ public class AdminController extends BaseController {
 
 		course.setDifficultyLevel(difficultyLevel);
 		course.setLessonType(lessonType);
+		
 
 		if (course.getSubcategory() == null || course.getSubcategory().getId() == null) {
 			response.put("status", "error");
@@ -364,6 +473,29 @@ public class AdminController extends BaseController {
 		}
 	}
 
+	@PostMapping("/campaigns/delete/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteCampaign(@PathVariable("id") Long id) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			Campaign course = campaignService.getCampaignById(id);
+			if (course != null) {
+				campaignService.deleteCampaign(id);
+				response.put("status", "success");
+				response.put("message", "campaign has been deleted successfully.");
+				return ResponseEntity.ok(response);
+			} else {
+				response.put("status", "error");
+				response.put("message", "campaign not found.");
+				return ResponseEntity.badRequest().body(response);
+			}
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "An error occurred while trying to delete the campaign: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+
 	@PostMapping("/courses/toggleCourseStatus/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> toggleCourseStatus(@PathVariable("id") Long id,
@@ -477,13 +609,14 @@ public class AdminController extends BaseController {
 
 	@GetMapping("/listDeletedCourse")
 	public ModelAndView showDeletedCourses() {
-		List<Course> courses = courseService.getAllCourses();
+//		List<Course> courses = courseService.getAllCourses();
+		List<Course> courses = courseService.getCoursesByStatus("DELETED");
 		ModelAndView mav = new ModelAndView("fragments/adminListDeletedCourse :: deletedCourseModal");
 		// Initialize with empty list if null
 		mav.addObject("courses", courses != null ? courses : new ArrayList<>());
 		return mav;
 	}
-
+	
 	@PostMapping("/courses/restoreCourse/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> restoreCourse(@PathVariable("id") Long id,
@@ -531,8 +664,8 @@ public class AdminController extends BaseController {
 	@GetMapping("/courses/{id}/deletedLessons")
 	public ModelAndView showDeletedLessonOfCourse(@PathVariable("id") Long courseId) {
 		Course course = courseService.getCourseById(courseId);
-		List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
-
+//		List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
+		List<Lesson> lessons = playService.getLessonsByCourseIdAndStatus(courseId, "DELETED");
 		/*
 		 * if (lessons == null || lessons.isEmpty()) { return new
 		 * ModelAndView("redirect:/admin/listCourse"); }
@@ -987,7 +1120,6 @@ public class AdminController extends BaseController {
 
 		return ResponseEntity.ok(Map.of("status", "success", "message", "Parameter updated successfully"));
 	}
-
 	@GetMapping("/listManageLearningProgress")
 	public ModelAndView loadUserLibraryFragment() {
 		ModelAndView mav = new ModelAndView("fragments/adminManageLearningProgress :: userLibraryContent");

@@ -1,6 +1,8 @@
 package mks.myworkspace.learna.entity;
 
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Data;
 
 @Entity
@@ -24,9 +28,11 @@ public class Campaign {
     private String name;
 
     @Column(name = "start_time", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startTime;
 
     @Column(name = "end_time", nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date endTime;
 
     @Column(name = "short_description", length = 1000)
@@ -45,4 +51,9 @@ public class Campaign {
     @UpdateTimestamp
     @Column(name = "modified_dte")
     private Date modifiedDate;
+
+	public static List<Campaign> getAllCampaigns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

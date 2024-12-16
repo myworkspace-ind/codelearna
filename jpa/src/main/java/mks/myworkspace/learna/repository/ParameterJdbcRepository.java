@@ -114,6 +114,7 @@ public class ParameterJdbcRepository {
 	        ResultSet rs = ps.executeQuery();
 	        while (rs.next()) {
 	            Parameter parameter = new Parameter();
+	            parameter.setId(rs.getLong("id"));
 	            parameter.setParamValue(rs.getString("param_value"));
 	            parameter.setSeqno(rs.getInt("seqno"));
 	            parameters.add(parameter);
@@ -121,7 +122,6 @@ public class ParameterJdbcRepository {
 	    } catch (SQLException sqlEx) {
 	    	log.error("Could not get parameter by sql " + sql, sqlEx);
 	    }
-
 	    return parameters;
 	}
 

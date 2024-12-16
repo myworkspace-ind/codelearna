@@ -1,0 +1,75 @@
+<div th:fragment="addVoucherContent">
+	<div class="container mt-5">
+		<h1 class="mb-4 fw-bolder">Add New Voucher</h1>
+
+		<!-- Error Message Display -->
+		<div id="error-message-voucher" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+			<strong>Error!</strong> <span id="error-text-voucher"></span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+		<!-- Voucher Form -->
+		<form id="voucherForm" method="post" class="needs-validation" onsubmit="submitVoucherForm(event)" novalidate>
+			<!-- Voucher Name Input -->
+			<div class="mb-3">
+				<label for="name" class="form-label">Voucher Name <span style="color:red">*</span></label>
+				<input type="text" class="form-control" id="name" name="name" required>
+				<div class="invalid-feedback">Please provide a voucher name.</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6 mb-3">
+					<label for="discountValue" class="form-label">Discount Value <span style="color:red">*</span></label>
+					<input type="number" class="form-control" id="discountValue" name="discountValue" required step="0.01" min="0">
+					<div class="invalid-feedback">Discount value must be greater than or equal to 0.</div>
+				</div>
+				<div class="col-md-6 mb-3">
+					<label for="valueType" class="form-label">Value Type <span style="color:red">*</span></label>
+					<select class="form-select" id="valueType" name="valueType" required>
+						<option value="">Choose value type...</option>
+						<option value="percentage">Percentage</option>
+						<option value="fixed">Fixed</option>
+					</select>
+					<div class="invalid-feedback">Please select a value type.</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6 mb-3">
+					<label for="maxValue" class="form-label">Max Value</label>
+					<input type="number" class="form-control" id="maxValue" name="maxValue" step="0.01" min="0">
+					<div class="invalid-feedback">Max value must be greater than or equal to 0.</div>
+				</div>
+				<div class="col-md-6 mb-3">
+					<label for="maxQuantity" class="form-label">Max Quantity <span style="color:red">*</span></label>
+					<input type="number" class="form-control" id="maxQuantity" name="maxQuantity" required step="1" min="1">
+					<div class="invalid-feedback">Max quantity must be greater than or equal to 1.</div>
+				</div>
+			</div>
+
+			<!-- Used Quantity (Disabled) -->
+			<div class="mb-3">
+				<label for="usedQuantity" class="form-label">Used Quantity</label>
+				<input type="number" class="form-control" id="usedQuantity" name="usedQuantity" step="1" min="0" value="0" disabled>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6 mb-3">
+					<label for="createDate" class="form-label">Create Date</label>
+					<input type="datetime-local" class="form-control" id="createDate" name="createDate" value="">
+				</div>
+				<div class="col-md-6 mb-3">
+					<label for="endDate" class="form-label">End Date <span style="color:red">*</span></label>
+					<input type="datetime-local" class="form-control" id="endDate" name="endDate" required>
+					<div class="invalid-feedback">Please provide an end date.</div>
+				</div>
+			</div>
+
+			<!-- Submit and Cancel Buttons -->
+			<button type="button" class="btn btn-primary" onclick="">Add Voucher</button>
+			<button type="button" class="btn btn-secondary" onclick="loadVouchersSection(event)">Cancel</button>
+		</form>
+	</div>
+</div>

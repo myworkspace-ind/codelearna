@@ -28,7 +28,7 @@
 							<tbody id="deletedLessonsTableBody">
 								<!-- Combined conditions into a single th:if -->
 								<tr th:each="course, iterStat : ${courses}"
-									th:if="${courses != null and course.status == 'DELETED'}">
+									th:if="${courses != null}">
 									<th th:text="${iterStat.count}"></th>
 									<td><img th:src="${course.imageUrl}" alt="course image"
 										style="max-width: 100px;" /></td>
@@ -48,7 +48,7 @@
 								</tr>
 								<!-- Show message if no deleted courses found -->
 								<tr
-									th:if="${courses == null or #lists.isEmpty(courses) or #lists.isEmpty(courses.?[status == 'DELETED'])}">
+									th:if="${courses == null or #lists.isEmpty(courses)}">
 									<td colspan="9" class="text-center">No deleted lessons
 										found</td>
 								</tr>
