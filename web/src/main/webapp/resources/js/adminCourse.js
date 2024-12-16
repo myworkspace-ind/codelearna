@@ -305,7 +305,7 @@ function submitCourseForm(event) {
 
 	const form = document.querySelector('#courseForm');
 	const formData = new FormData(form);
-
+	
 	fetch(`${_ctx}admin/addCourse`, {
 		method: 'POST',
 		body: formData
