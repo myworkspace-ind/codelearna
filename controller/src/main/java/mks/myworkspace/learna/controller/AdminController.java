@@ -123,11 +123,32 @@ public class AdminController extends BaseController {
 	    mav.addObject("campaigns", campaignService.getAllCampaigns());
 	    return mav;
 	}
+	@GetMapping("/listVoucher")
+	public ModelAndView loadVouchersFragment() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListVoucher :: vouchersContent");
+	    mav.addObject("campaigns", campaignService.getAllCampaigns());
+	    return mav;
+	}
 	@GetMapping("/revenue")
 	public ModelAndView revenueFragment() {
 		ModelAndView mav = new ModelAndView("fragments/revenue :: revenue");
 		return mav;
 	}
+    @GetMapping("/addVoucher")
+    public ModelAndView showAddVoucherPage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
+
+//        // Lấy danh sách các tham số liên quan đến campaign (Ví dụ: campaign types, campaign statuses)
+//        List<Parameter> campaignTypes = parameterService.getListParamsByParamValue("campaign_type");
+//        List<Parameter> campaignStatuses = parameterService.getListParamsByParamValue("campaign_status");
+//
+//        // Truyền dữ liệu vào ModelAndView
+//        mav.addObject("campaignTypes", campaignTypes);
+//        mav.addObject("campaignStatuses", campaignStatuses);
+
+        return mav;
+    }
+    //Còn phần POST của Voucher chưa làm
     @GetMapping("/addCampaign")
     public ModelAndView showAddCampaignPage() {
         ModelAndView mav = new ModelAndView("fragments/adminAddCampaign :: addCampaignContent");
@@ -253,13 +274,14 @@ public class AdminController extends BaseController {
 		if (course.getStatus() == null || course.getStatus().isEmpty()) {
 			course.setStatus("INACTIVE");
 		}
-
+		 //|| course.getDifficultyLevel().getId() == null
+		System.out.println(course.getDifficultyLevel());
 		if (course.getDifficultyLevel() == null || course.getDifficultyLevel().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Difficulty Level is required and must be valid.");
 			return ResponseEntity.badRequest().body(response);
 		}
-
+		//|| course.getLessonType().getId() == null
 		if (course.getLessonType() == null || course.getLessonType().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Lesson Type is required and must be valid.");
@@ -283,6 +305,7 @@ public class AdminController extends BaseController {
 
 		course.setDifficultyLevel(difficultyLevel);
 		course.setLessonType(lessonType);
+		
 
 		if (course.getSubcategory() == null || course.getSubcategory().getId() == null) {
 			response.put("status", "error");
