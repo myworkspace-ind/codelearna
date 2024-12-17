@@ -333,6 +333,10 @@ function submitCourseForm(event) {
 		});
 }
 
+function closeError(event){
+	document.getElementById('error-message-course').style.display = 'none';
+}
+
 // Add course with Handsontable
 function fetchAddCourseHandsontablePage(event) {
 	event.preventDefault();
