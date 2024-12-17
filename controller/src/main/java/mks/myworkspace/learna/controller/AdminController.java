@@ -1,8 +1,10 @@
 package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Voucher;
 import mks.myworkspace.learna.entity.Campaign;
 import mks.myworkspace.learna.repository.CourseJdbcRepository;
+import mks.myworkspace.learna.repository.VoucherJdbcRespository;
 import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.entity.Parameter;
@@ -12,20 +14,24 @@ import mks.myworkspace.learna.service.CampaignService;
 import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
+import mks.myworkspace.learna.service.VoucherService;
 import mks.myworkspace.learna.service.ParameterService;
 import mks.myworkspace.learna.service.PlayService;
 import mks.myworkspace.learna.service.RevenueService;
 import mks.myworkspace.learna.service.SubcategoryService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
 
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,11 +70,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/admin")
 @Slf4j
 public class AdminController extends BaseController {
-
 	@Autowired
 	private CourseService courseService;
 	@Autowired
 	private CampaignService campaignService;
+	@Autowired
+    private VoucherService voucherService;
 	@Autowired
 	private ParameterService parameterService;
 
@@ -123,10 +130,11 @@ public class AdminController extends BaseController {
 	    mav.addObject("campaigns", campaignService.getAllCampaigns());
 	    return mav;
 	}
+	
 	@GetMapping("/listVoucher")
 	public ModelAndView loadVouchersFragment() {
 	    ModelAndView mav = new ModelAndView("fragments/adminListVoucher :: vouchersContent");
-	    mav.addObject("campaigns", campaignService.getAllCampaigns());
+	    mav.addObject("vouchers", voucherService.getAllVouchers());
 	    return mav;
 	}
 	@GetMapping("/revenue")
@@ -137,18 +145,60 @@ public class AdminController extends BaseController {
     @GetMapping("/addVoucher")
     public ModelAndView showAddVoucherPage() {
         ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
-
-//        // Lấy danh sách các tham số liên quan đến campaign (Ví dụ: campaign types, campaign statuses)
-//        List<Parameter> campaignTypes = parameterService.getListParamsByParamValue("campaign_type");
-//        List<Parameter> campaignStatuses = parameterService.getListParamsByParamValue("campaign_status");
-//
-//        // Truyền dữ liệu vào ModelAndView
-//        mav.addObject("campaignTypes", campaignTypes);
-//        mav.addObject("campaignStatuses", campaignStatuses);
+        
+        List<Campaign> campaignList = campaignService.getAllCampaigns();
+        // Truyền dữ liệu vào ModelAndView
+        mav.addObject("campaignList", campaignList);
 
         return mav;
     }
-    //Còn phần POST của Voucher chưa làm
+    @PostMapping("/addVoucher")
+    @Transactional
+    public ResponseEntity<Map<String, Object>> addVoucher(@RequestBody Map<String, Object> formData) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Lấy dữ liệu từ formData
+            String name = (String) formData.get("name");
+            Long campaignId = Long.valueOf(formData.get("campaign").toString());
+            Double discountValue = Double.valueOf(formData.get("discountValue").toString());
+            String valueType = (String) formData.get("valueType");
+            Double maxValue = formData.containsKey("maxValue") ? Double.valueOf(formData.get("maxValue").toString()) : null;
+            Integer quantity = Integer.valueOf(formData.get("quantity").toString());
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse((String) formData.get("startDate"));
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse((String) formData.get("endDate"));
+            String description = (String) formData.get("description");
+
+            // Chuyển đổi giá trị type cho voucher
+            Voucher.ValueType type = Voucher.ValueType.fromValue(valueType);
+
+            // Tìm campaign từ ID
+            Campaign campaign = campaignService.getCampaignById(campaignId);
+
+            // Tạo đối tượng Voucher mới
+            Voucher voucher = new Voucher();
+            voucher.setName(name);
+            voucher.setCampaign(campaign);
+            voucher.setDiscountValue(discountValue);
+            voucher.setValueType(type);
+            voucher.setMaxValue(maxValue);
+            voucher.setQuantity(quantity);
+            voucher.setStartDate(startDate);
+            voucher.setEndDate(endDate);
+            voucher.setDescription(description);
+
+            // Lưu voucher vào database
+            voucherService.saveVoucher(voucher);
+
+            response.put("success", true);
+            response.put("message", "Voucher added successfully!");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Failed to add voucher: " + e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+
     @GetMapping("/addCampaign")
     public ModelAndView showAddCampaignPage() {
         ModelAndView mav = new ModelAndView("fragments/adminAddCampaign :: addCampaignContent");
@@ -494,6 +544,29 @@ public class AdminController extends BaseController {
 			response.put("message", "An error occurred while trying to delete the campaign: " + e.getMessage());
 			return ResponseEntity.badRequest().body(response);
 		}
+	}
+
+	@PostMapping("/vouchers/delete/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteVoucher(@PathVariable("id") Long id) {
+	    Map<String, String> response = new HashMap<>();
+	    try {
+	        Voucher voucher = voucherService.getVoucherById(id);
+	        if (voucher != null) {
+	            voucherService.deleteVoucher(id); // Xóa voucher
+	            response.put("status", "success");
+	            response.put("message", "Voucher has been deleted successfully.");
+	            return ResponseEntity.ok(response);
+	        } else {
+	            response.put("status", "error");
+	            response.put("message", "Voucher not found.");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+	    } catch (Exception e) {
+	        response.put("status", "error");
+	        response.put("message", "An error occurred while trying to delete the voucher: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 
 	@PostMapping("/courses/toggleCourseStatus/{id}")

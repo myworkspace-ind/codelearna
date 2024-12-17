@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Quản lý doanh nghiệp</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script
+	src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div th:fragment="business_form">
+
+		<div class="container my-5">
+			<h1>Quản lý doanh nghiệp</h1>
+			<a href="/add" class="btn btn-primary mb-3">Thêm mới doanh nghiệp</a>
+
+			<table class="table table-bordered table-hover">
+				<thead class="thead-dark">
+					<tr>
+						<th>#</th>
+						<th>Logo</th>
+						<th>Tên doanh nghiệp</th>
+						<th>Mô tả</th>
+						<th>Địa chỉ</th>
+						<th>Số điện thoại</th>
+						<th>Email</th>
+						<th>Ngày thành lập</th>
+						<th>Ngày tạo</th>
+						<th>Ngày chỉnh sửa</th>
+						<th>Hành động</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr th:each="business : ${businesses}">
+						<td th:text="${business.id}"></td>
+						<td><img th:src="${business.logoUrl}" alt="Business Logo"
+							style="max-width: 100px;"></td>
+
+						<td th:text="${business.name}"></td>
+						<td th:text="${business.description}"></td>
+						<td th:text="${business.address}"></td>
+						<td th:text="${business.phone}"></td>
+						<td th:text="${business.email}"></td>
+						<td
+							th:text="${#dates.format(business.establishmentDate, 'dd/MM/yyyy')}"></td>
+						<td
+							th:text="${#dates.format(business.createdDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
+						<td
+							th:text="${#dates.format(business.modifiedDate, 'dd/MM/yyyy HH:mm:ss')}"></td>
+						<td>
+							<div class="btn-group" role="group">
+								<a th:href="@{/business/{id}(id=${business.id})}"
+									class="btn btn-primary btn-sm">Xem</a> <a
+									th:href="@{/business/edit/{id}(id=${business.id})}"
+									class="btn btn-warning btn-sm">Chỉnh sửa</a> <a
+									th:href="@{/business/delete/{id}(id=${business.id})}"
+									class="btn btn-danger btn-sm"
+									onclick="return confirm('Bạn có chắc muốn xóa doanh nghiệp này?');">Xóa</a>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</body>
+</html>
