@@ -62,6 +62,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${payment.sepay.apiKey}")
     private String bearerToken;
     
+    @Value("${payment.sepay.transactionEndpoint}")
+    private String transactionEndpoint;
+    
     @Value("${payment.vnpay.tmnCode}")
     private String tmnCode;
 
@@ -120,7 +123,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public String processPayment(String orderCode, String userEid) {
-        String url = "https://my.sepay.vn/userapi/transactions/list?limit=20";
+        String url = transactionEndpoint;
         
         try {
             HttpHeaders headers = new HttpHeaders();
