@@ -301,37 +301,43 @@ function submitNewParamValue() {
 }
 
 function submitCourseForm(event) {
-	event.preventDefault();
+    event.preventDefault();
 
-	const form = document.querySelector('#courseForm');
-	const formData = new FormData(form);
+    const form = document.querySelector('#courseForm');
+    const formData = new FormData(form);
 
-	fetch(`${_ctx}admin/addCourse`, {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => {
-			if (!response.ok) {
-				return response.json().then(data => {
-					throw new Error(data.message || 'Unknown error occurred');
-				});
-			}
-			return response.json();
-		})
-		.then(data => {
-			if (data.status === "success") {
-				showSuccessToast('Course added successfully!');
-				loadCoursesSection(event);
-			} else {
-				throw new Error(data.message);
-			}
-		})
-		.catch(error => {
-			console.error('Error adding course:', error);
-			document.getElementById('error-text-course').innerText = error.message;
-			document.getElementById('error-message-course').style.display = 'block';
-		});
+    fetch(`${_ctx}admin/addCourse`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => {
+                    throw new Error(data.message || 'Unknown error occurred');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === "success") {
+                showSuccessToast('Course added successfully!');
+                loadCoursesSection(event);
+            } else {
+                throw new Error(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error adding course:', error);
+            document.getElementById('error-text-course').innerText = error.message;
+            document.getElementById('error-message-course').style.display = 'block';
+
+            // Lắng nghe sự kiện đóng
+            document.querySelector('#error-message-course .close').addEventListener('click', () => {
+                document.getElementById('error-message-course').style.display = 'none';
+            });
+        });
 }
+
 
 // Add course with Handsontable
 function fetchAddCourseHandsontablePage(event) {

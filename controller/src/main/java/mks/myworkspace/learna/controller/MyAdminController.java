@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import lombok.extern.slf4j.Slf4j;
-<<<<<<< HEAD
+/*<<<<<<< HEAD*/
 import mks.myworkspace.learna.service.BusinessService;
-=======
+/*=======*/
 import mks.myworkspace.learna.entity.Parameter;
->>>>>>> fa2652c790cdf30f1ce5ccc59120a5ddd4772cd6
+/*>>>>>>> fa2652c790cdf30f1ce5ccc59120a5ddd4772cd6*/
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ParameterService;
 
@@ -61,12 +61,12 @@ public class MyAdminController extends BaseController {
 		model.addAttribute("courses", courseService.getAllCourses());
 		return "myadmin";
 	}
-<<<<<<< HEAD
+/*<<<<<<< HEAD
 	
 	
 =======
 
->>>>>>> fa2652c790cdf30f1ce5ccc59120a5ddd4772cd6
+>>>>>>> fa2652c790cdf30f1ce5ccc59120a5ddd4772cd6*/
 	@GetMapping("/revenue-statistics")
 	public String loadRevenueStatistics(HttpServletRequest request, HttpSession httpSession, Model model) {
 		httpSession.setAttribute("currentMenu", "RevenueStatistics");
