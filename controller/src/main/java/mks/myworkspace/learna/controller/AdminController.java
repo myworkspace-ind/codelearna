@@ -1,8 +1,10 @@
 package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Voucher;
 import mks.myworkspace.learna.entity.Campaign;
 import mks.myworkspace.learna.repository.CourseJdbcRepository;
+import mks.myworkspace.learna.repository.VoucherJdbcRespository;
 import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.entity.Parameter;
@@ -12,11 +14,13 @@ import mks.myworkspace.learna.service.CampaignService;
 import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
+import mks.myworkspace.learna.service.VoucherService;
 import mks.myworkspace.learna.service.ParameterService;
 import mks.myworkspace.learna.service.PlayService;
 import mks.myworkspace.learna.service.RevenueService;
 import mks.myworkspace.learna.service.SubcategoryService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -64,11 +68,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/admin")
 @Slf4j
 public class AdminController extends BaseController {
-
 	@Autowired
 	private CourseService courseService;
 	@Autowired
 	private CampaignService campaignService;
+	@Autowired
+    private VoucherService voucherService;
 	@Autowired
 	private ParameterService parameterService;
 
@@ -123,10 +128,11 @@ public class AdminController extends BaseController {
 	    mav.addObject("campaigns", campaignService.getAllCampaigns());
 	    return mav;
 	}
+	
 	@GetMapping("/listVoucher")
 	public ModelAndView loadVouchersFragment() {
 	    ModelAndView mav = new ModelAndView("fragments/adminListVoucher :: vouchersContent");
-	    mav.addObject("campaigns", campaignService.getAllCampaigns());
+	    mav.addObject("vouchers", voucherService.getAllVouchers());
 	    return mav;
 	}
 	@GetMapping("/revenue")
