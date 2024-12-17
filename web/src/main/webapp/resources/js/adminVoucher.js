@@ -36,6 +36,47 @@ function fetchAddVoucherPage(event) {
 		})
 		.catch(error => console.error('Error loading add course page: ', error));
 }
+
+function toggleDiscountValue() {
+    const valueType = document.getElementById("valueType").value; // Lấy giá trị của Value Type
+    const discountValueInput = document.getElementById("discountValue"); // Ô Discount Value
+    const maxValueInput = document.getElementById("maxValue"); // Ô Max Value
+
+    if (valueType) {
+        // Nếu có giá trị trong Value Type, enable Discount Value
+        discountValueInput.disabled = false;
+
+        if (valueType === "percentage") {
+            // Nếu Value Type là Percentage
+            discountValueInput.max = 100;
+
+            // Kiểm tra và đặt lại Discount Value nếu vượt quá 100
+            if (parseFloat(discountValueInput.value) > 100) {
+                discountValueInput.value = 100;
+            }
+
+            // Enable ô Max Value
+            maxValueInput.disabled = false;
+        } else if (valueType === "fixed") {
+            // Nếu Value Type là Fixed
+            discountValueInput.removeAttribute("max");
+
+            // Disable ô Max Value và gán giá trị bằng Discount Value
+            maxValueInput.disabled = true;
+            maxValueInput.value = discountValueInput.value;
+        }
+    } else {
+        // Nếu không chọn Value Type, disable Discount Value và Max Value
+        discountValueInput.disabled = true;
+        discountValueInput.value = "";
+        discountValueInput.removeAttribute("max");
+
+        maxValueInput.disabled = true;
+        maxValueInput.value = "";
+    }
+}
+
+
 // Phần bên dưới copy tham khảo, chưa dùng được
 /*function loadEditCourseForm(courseId) {
 	fetch(`${_ctx}admin/courses/edit/${courseId}`)

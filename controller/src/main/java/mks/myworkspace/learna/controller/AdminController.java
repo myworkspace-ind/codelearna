@@ -137,14 +137,10 @@ public class AdminController extends BaseController {
     @GetMapping("/addVoucher")
     public ModelAndView showAddVoucherPage() {
         ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
-
-//        // Lấy danh sách các tham số liên quan đến campaign (Ví dụ: campaign types, campaign statuses)
-//        List<Parameter> campaignTypes = parameterService.getListParamsByParamValue("campaign_type");
-//        List<Parameter> campaignStatuses = parameterService.getListParamsByParamValue("campaign_status");
-//
-//        // Truyền dữ liệu vào ModelAndView
-//        mav.addObject("campaignTypes", campaignTypes);
-//        mav.addObject("campaignStatuses", campaignStatuses);
+        
+        List<Campaign> campaignList = campaignService.getAllCampaigns();
+        // Truyền dữ liệu vào ModelAndView
+        mav.addObject("campaignList", campaignList);
 
         return mav;
     }
