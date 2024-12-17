@@ -110,6 +110,7 @@ function showDeleteConfirmModal(courseId) {
 
 	modal.show();
 }
+
 function deleteCourse(courseId, modal) {
 	fetch(`${_ctx}admin/courses/delete/${courseId}`, {
 		method: 'POST', // Chuyển từ DELETE sang POST
@@ -243,12 +244,68 @@ function filterSubcategories(categoryId) {
 	}
 }
 
+function handleAddNew(selectElement) {
+    if (selectElement.value === "add-new") {
+        document.getElementById("addNewModal").style.display = "block";
+    }
+	else if(selectElement.value !== "add-new"){
+		const select = document.getElementById("difficultyLevel");
+		select.value = select.options[0].value;
+		document.getElementById("addNewModal").style.display = "none";
+	}
+}
+
+function closeModal() {
+    document.getElementById("addNewModal").style.display = "none";
+    document.getElementById("difficultyLevel").value = ""; // Reset selection
+}
+
+function submitNewParamValue() {
+    const newValue = document.getElementById("newParamValue").value.trim();
+    const paramKey = "difficultyLevel"; // Key tương ứng cho danh mục này
+
+    if (newValue) {
+        fetch(`/parameter/addParamValue/${paramKey}/${newValue}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error("Failed to add new parameter value.");
+                }
+            })
+            .then(data => {
+                // Thêm giá trị mới vào dropdown
+                const select = document.getElementById("difficultyLevel");
+                const newOption = document.createElement("option");
+                newOption.value = data.id;
+                newOption.textContent = data.paramValue;
+                select.appendChild(newOption);
+
+                // Đặt giá trị mới làm lựa chọn hiện tại
+                select.value = data.id;
+
+                // Đóng modal
+                closeModal();
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+    } else {
+        alert("Please enter a valid value.");
+    }
+}
+
 function submitCourseForm(event) {
 	event.preventDefault();
 
 	const form = document.querySelector('#courseForm');
 	const formData = new FormData(form);
-
+	
 	fetch(`${_ctx}admin/addCourse`, {
 		method: 'POST',
 		body: formData
@@ -274,6 +331,10 @@ function submitCourseForm(event) {
 			document.getElementById('error-text-course').innerText = error.message;
 			document.getElementById('error-message-course').style.display = 'block';
 		});
+}
+
+function closeError(event){
+	document.getElementById('error-message-course').style.display = 'none';
 }
 
 // Add course with Handsontable
@@ -396,80 +457,80 @@ function handleFileCourse(event) {
 */
 
 function initializeCourseHandsontable() {
-	const containerHandsontable = document.getElementById('handsontable-container');
+    const containerHandsontable = document.getElementById('handsontable-container');
 
-	if (containerHandsontable) {
-		hot = new Handsontable(containerHandsontable, {
-			data: [],
-			colHeaders: ['Course Name', 'Original Price', 'Discounted Price', 'Image URL', 'Description', 'Difficulty Level', 'Lesson Type', 'Subcategory', 'Is Free'],
-			columns: [
-				{ data: 'name', type: 'text' },
-				{ data: 'originalPrice', type: 'numeric' },
-				{ data: 'discountedPrice', type: 'numeric' },
-				{ data: 'imageUrl', type: 'text' },
-				{ data: 'description', type: 'text' },
-				{
-					data: 'difficultyLevel',
-					type: 'dropdown',
-					source: function(query, process) {
-						fetch(_ctx + `/admin/values?paramKey=difficulty_level`)
-							.then((response) => response.json())
-							.then((data) => {
-								process(data);
-								console.log("Call api successfully")
-							})
-							.catch((error) => {
-								console.error('Error fetching difficulty levels:', error);
-								process([]);
-							});
-					}
-				},
-				{
-					data: 'lessonType',
-					type: 'dropdown',
-					source: function(query, process) {
-						fetch(_ctx + `/admin/values?paramKey=lesson_type`)
-							.then((response) => response.json())
-							.then((data) => {
-								process(data);
-								console.log("Call api successfully")
-							})
-							.catch((error) => {
-								console.error('Error fetching difficulty levels:', error);
-								process([]);
-							});
-					}
-				},
-				{
-					data: 'subcategory',
-					type: 'dropdown',
-					source: function(query, process) {
-						fetch(_ctx + `/admin/values?paramKey=subcategory`)
-							.then((response) => response.json())
-							.then((data) => {
-								process(data);
-								console.log("Call api successfully")
-							})
-							.catch((error) => {
-								console.error('Error fetching difficulty levels:', error);
-								process([]);
-							});
-					}
-				},
-				{ data: 'isFree', type: 'checkbox' }
-			],
-			minRows: 1,
-			rowHeaders: true,
-			contextMenu: true,
-			height: 200,
-			stretchH: 'all',
-			colWidths: [, , , 100],
-			licenseKey: 'non-commercial-and-evaluation'
-		});
-		console.log('Handsontable initialized');
-	} else {
-		console.error('Error: Handsontable container not found.');
-	}
+    if (containerHandsontable) {
+        hot = new Handsontable(containerHandsontable, {
+            data: [],
+            colHeaders: ['Course Name', 'Original Price', 'Discounted Price', 'Image URL', 'Description', 'Difficulty Level', 'Lesson Type', 'Subcategory', 'Is Free'],
+            columns: [
+                { data: 'name', type: 'text' },
+                { data: 'originalPrice', type: 'numeric' },
+                { data: 'discountedPrice', type: 'numeric' },
+                { data: 'imageUrl', type: 'text' },
+                { data: 'description', type: 'text' },
+                {
+                    data: 'difficultyLevel',
+                    type: 'dropdown',
+                    source: function(query, process) {
+                        fetch(_ctx + `/admin/values?paramKey=difficulty_level`)
+                            .then((response) => response.json())
+                            .then((data) => {
+                                process(data); 
+                                console.log("API call successful");
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching difficulty levels:', error);
+                                process([]); 
+                            });
+                    }
+                },
+                {
+                    data: 'lessonType',
+                    type: 'dropdown',
+                    source: function(query, process) {
+                        fetch(_ctx + `/admin/values?paramKey=lesson_type`)
+                            .then((response) => response.json())
+                            .then((data) => {
+                                process(data); 
+                                console.log("API call successful");
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching lesson types:', error);
+                                process([]); 
+                            });
+                    }
+                },
+                {
+                    data: 'subcategory',
+                    type: 'dropdown',
+                    source: function(query, process) {
+                        fetch(_ctx + `/admin/values?paramKey=subcategory`)
+                            .then((response) => response.json())
+                            .then((data) => {
+                                process(data); 
+                                console.log("API call successful");
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching subcategories:', error);
+                                process([]); 
+                            });
+                    }
+                },
+                { data: 'isFree', type: 'checkbox' }
+            ],
+            minRows: 1,
+            rowHeaders: true,
+            contextMenu: true,
+            height: 200,
+            stretchH: 'all',
+            colWidths: [, , , 100],
+            licenseKey: 'non-commercial-and-evaluation'
+        });
+        console.log('Handsontable initialized');
+    } else {
+        console.error('Error: Handsontable container not found.');
+    }
 }
 
 

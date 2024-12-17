@@ -94,7 +94,7 @@ public class BaseController {
             // Demo for Web App
             httpSession.setAttribute("currentSiteId", "Defaultsession");
             httpSession.setAttribute("userDisplayName", "Huynh Nam 123");
-            httpSession.setAttribute("userEid", "Duy123");
+            httpSession.setAttribute("userEid", "admin");
             httpSession.setAttribute("userEmail", "21110152@student.hcmute.edu.vnsession");
             httpSession.setAttribute("userFirstName", "Huynh Namsession");
             httpSession.setAttribute("userLastName", "Duysession");            
@@ -103,7 +103,7 @@ public class BaseController {
 
 
     public String getCurrentUserEid() {
-        return (sakaiProxy != null) ? sakaiProxy.getCurrentUserEid(): "Duy123";
+        return (sakaiProxy != null) ? sakaiProxy.getCurrentUserEid(): "admin";
     }
 
 

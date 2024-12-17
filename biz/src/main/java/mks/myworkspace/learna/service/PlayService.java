@@ -7,6 +7,9 @@ public interface PlayService {
 
     // Lấy danh sách bài học theo courseId
     List<Lesson> getLessonsByCourseId(Long courseId);
+    
+    // Lấy danh sách bài học theo courseId và status
+    List<Lesson> getLessonsByCourseIdAndStatus(Long courseId, String status);
 
     // Lấy bài học theo lessonId
     Lesson getLessonById(Long lessonId);

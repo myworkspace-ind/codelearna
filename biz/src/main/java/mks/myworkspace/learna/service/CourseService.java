@@ -13,7 +13,7 @@ public interface CourseService {
     List<Course> getAllCourses();
     List<Course> getRandomCourses(); 
     List<Course> getCoursesBySubcategory(Long id);
-    
+    List<Course> getCoursesByStatus(String status);
     //Search filter
 //    List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, String averageRating);
     List<Course> searchCoursesByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId, String averageRating);
