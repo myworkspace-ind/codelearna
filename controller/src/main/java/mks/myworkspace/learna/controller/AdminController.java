@@ -546,6 +546,29 @@ public class AdminController extends BaseController {
 		}
 	}
 
+	@PostMapping("/vouchers/delete/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteVoucher(@PathVariable("id") Long id) {
+	    Map<String, String> response = new HashMap<>();
+	    try {
+	        Voucher voucher = voucherService.getVoucherById(id);
+	        if (voucher != null) {
+	            voucherService.deleteVoucher(id); // Xóa voucher
+	            response.put("status", "success");
+	            response.put("message", "Voucher has been deleted successfully.");
+	            return ResponseEntity.ok(response);
+	        } else {
+	            response.put("status", "error");
+	            response.put("message", "Voucher not found.");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+	    } catch (Exception e) {
+	        response.put("status", "error");
+	        response.put("message", "An error occurred while trying to delete the voucher: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
+	}
+
 	@PostMapping("/courses/toggleCourseStatus/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> toggleCourseStatus(@PathVariable("id") Long id,
@@ -594,6 +617,65 @@ public class AdminController extends BaseController {
 		mav.addObject("lessonTypes", parameterService.getListParamsByParamValue("lesson_type"));
 		mav.addObject("difficultyLevel", parameterService.getListParamsByParamValue("difficulty_level"));
 		return mav;
+	}
+
+	@GetMapping("/campaigns/edit/{id}")
+	public ModelAndView showEditCampaignForm(@PathVariable("id") Long id) {
+	    Campaign campaign = campaignService.getCampaignById(id);
+	    if (campaign == null) {
+	        return new ModelAndView("redirect:/admin/campaigns"); 
+	    }
+
+	    ModelAndView mav = new ModelAndView("fragments/adminEditCampaign :: editCampaignModal");
+	    mav.addObject("campaign", campaign);
+	    return mav;
+	}
+
+	@PostMapping("/campaigns/edit/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> editCampaign(@PathVariable("id") Long id,
+	                                                        @ModelAttribute("campaign") Campaign campaign) {
+	    Map<String, String> response = new HashMap<>();
+
+	    try {
+	        // Lấy campaign hiện tại từ database
+	        Campaign existingCampaign = campaignService.getCampaignById(id);
+	        if (existingCampaign == null) {
+	            response.put("status", "error");
+	            response.put("message", "Campaign not found");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+
+	        // Validate input
+	        if (campaign.getName() == null || campaign.getName().trim().isEmpty()) {
+	            response.put("status", "error");
+	            response.put("message", "Campaign name is required");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+
+	        // Cập nhật thông tin campaign
+	        existingCampaign.setName(campaign.getName());
+	        existingCampaign.setDescription(campaign.getDescription());
+	        existingCampaign.setShortDescription(campaign.getShortDescription());
+	        existingCampaign.setStartTime(campaign.getStartTime());
+	        existingCampaign.setEndTime(campaign.getEndTime());
+	        existingCampaign.setCoverImageUrl(campaign.getCoverImageUrl());
+
+	        // Lưu campaign
+	        campaignService.saveCampaign(existingCampaign);
+
+	        // Trả về phản hồi thành công
+	        response.put("status", "success");
+	        response.put("message", "Campaign updated successfully");
+	        response.put("campaignId", existingCampaign.getId().toString());
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        log.error("Error updating campaign: ", e);
+	        response.put("status", "error");
+	        response.put("message", e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 
 	@PostMapping("/courses/edit/{id}")

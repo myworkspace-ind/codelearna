@@ -19,7 +19,6 @@ public class VoucherJdbcRespository {
 
     public Voucher save(Voucher voucher) {
         if (voucher.getId() == null) {
-            // INSERT nếu id == null
             String sql = "INSERT INTO learna_voucher (campaign_id, name, discount_value, value_type, max_value, quantity, "
                     + "start_date, end_date, description, `condition`) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -46,7 +45,6 @@ public class VoucherJdbcRespository {
             voucher.setId(generatedId);
 
         } else {
-            // UPDATE nếu id != null
             String sql = "UPDATE learna_voucher SET campaign_id = ?, name = ?, discount_value = ?, value_type = ?, "
                     + "max_value = ?, quantity = ?, start_date = ?, end_date = ?, description = ?, `condition` = ? "
                     + "WHERE id = ?";

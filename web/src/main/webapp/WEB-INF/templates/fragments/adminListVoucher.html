@@ -7,10 +7,6 @@
             <button type="button" class="btn btn-primary mx-3" onclick="fetchAddVoucherPage(event)">
                 Add Voucher
             </button>
-            <button type="button" class="btn btn-outline-danger btn-sm mx-3"
-                th:onclick="'loadDeletedVouchersModal()'">
-                <i class="fas fa-trash-alt"></i> Deleted Vouchers
-            </button>
         </div>
 
         <!-- Search Input -->
@@ -42,7 +38,7 @@
                 </thead>
                 <tbody>
                     <tr th:each="voucher, iterStat : ${vouchers}">
-                        <th th:text="${iterStat.count}"></th>
+                        <th th:text="${voucher.id}"></th>
                         <td th:text="${voucher.campaign.id}"></td>
                         <td th:text="${voucher.name}"></td>
                         <td th:text="${voucher.discountValue}"></td>
@@ -53,7 +49,9 @@
                         <td th:text="${#dates.format(voucher.endDate, 'yyyy-MM-dd HH:mm')}"></td>
                         <td>
                             <a href="#" class="btn btn-warning btn-sm">Edit</a>
-                            <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                            <a href="#" class="btn btn-danger btn-sm"
+							   th:onclick="showDeleteConfirmModal_voucher([[${voucher.id}]])"
+							   title="Delete Voucher"> Delete </a>
                         </td>
                     </tr>
                 </tbody>
@@ -78,27 +76,6 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Status Change Confirmation Modal -->
-        <div class="modal fade" id="statusChangeModal" tabindex="-1" aria-labelledby="statusChangeModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="statusChangeModalLabel">Confirm Status Change</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to change the status of this voucher? This action will update its current
-                        status.
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" id="confirmStatusChangeBtn">Change Status</button>
                     </div>
                 </div>
             </div>

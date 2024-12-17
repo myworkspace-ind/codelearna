@@ -23,7 +23,7 @@
             <div th:replace="~{fragments/myadmin/current_users :: current_user_form}"></div>
         </div>
         <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
-        <div id="dynamic-content" class="main-content" th:case="Parameters">
+        <div id="dynamic-content" th:case="Parameters">
         <!-- <div id="main-content" class="main-content"> -->
             <main>
                 <div >
@@ -39,7 +39,7 @@
 		
 			<!-- <div th:replace="fragments/adminSidebar"></div> -->
 	
-			<div id="main-content" class="main-content">
+			<div id="main-content" class="mx-auto">
 			
 				<main>
 					<div id="dynamic-content" th:case="'Course'">
@@ -59,8 +59,18 @@
 	</nav>
     <th:block th:include="fragments/about_dialog"></th:block>
     <script type="module" th:src="@{/resources/js/adminHome.js}"></script>
-    <script th:src="@{/resources/js/adminCourse.js}"></script>
-    <script th:src="@{/resources/js/adminLesson.js}"></script>
-    <script th:src="@{/resources/js/adminParameters.js}"></script>
+	<script th:src="@{/resources/js/adminDashboard.js}"></script>
+	<script th:src="@{/resources/js/adminCourse.js}"></script>
+	<script th:src="@{/resources/js/searchCourseAdmin.js}"></script>
+	<script th:src="@{/resources/js/searchCampaignAdmin.js}"></script>
+	<script th:src="@{/resources/js/adminLesson.js}"></script>
+	<script th:src="@{/resources/js/searchLessonAdmin.js}"></script>
+	<script th:src="@{/resources/js/adminParameters.js}"></script>
+	<script th:src="@{/resources/js/adminRevenue.js}"></script>
+	<script th:src="@{/resources/js/adminCampaign.js}"></script>
+	<script th:src="@{/resources/js/adminVoucher.js}"></script>
+	<script th:src="@{/resources/js/revenueFetchData.js}"></script>
+	<script th:src="@{/resources/js/adminManageProcess.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>   
 </body>
 </html>
