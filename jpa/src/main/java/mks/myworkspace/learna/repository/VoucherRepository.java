@@ -11,7 +11,6 @@ import mks.myworkspace.learna.entity.Voucher;
 @Repository
 public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
-    // Tìm voucher theo campaign_id
     List<Voucher> findByCampaignId(Long campaignId);
 
     // Đếm tổng số lượng voucher

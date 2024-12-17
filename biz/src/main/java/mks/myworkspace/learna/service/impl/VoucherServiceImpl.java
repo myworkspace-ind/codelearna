@@ -16,10 +16,10 @@ import mks.myworkspace.learna.service.VoucherService;
 public class VoucherServiceImpl implements VoucherService {
 
     @Autowired
-    private VoucherRepository repo; // Sử dụng JPA Repository
+    private VoucherRepository repo;
 
     @Autowired
-    private VoucherJdbcRespository voucherJdbcRepository; // Sử dụng JDBC
+    private VoucherJdbcRespository voucherJdbcRepository;
 
     @Override
     public VoucherRepository getRepo() {
@@ -28,19 +28,16 @@ public class VoucherServiceImpl implements VoucherService {
 
     @Override
     public Voucher saveVoucher(Voucher voucher) {
-        // Nếu id null -> INSERT, ngược lại -> UPDATE
         return voucherJdbcRepository.save(voucher);
     }
 
     @Override
     public Voucher getVoucherById(Long id) {
-        // Trả về voucher theo id, hoặc null nếu không tìm thấy
         return repo.findById(id).orElse(null);
     }
 
     @Override
     public void deleteVoucher(Long id) {
-        // Xóa voucher bằng JDBC
         voucherJdbcRepository.deleteById(id);
     }
 
@@ -48,12 +45,6 @@ public class VoucherServiceImpl implements VoucherService {
     public List<Voucher> getAllVouchers() {
         // Trả về danh sách tất cả voucher
         return repo.findAll();
-    }
-
-    @Override
-    public List<Voucher> getVouchersByStatus(String status) {
-        // Tìm voucher theo status
-        return repo.findByValueType(Voucher.ValueType.valueOf(status.toUpperCase()));
     }
 
     @Override

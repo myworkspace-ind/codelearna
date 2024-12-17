@@ -502,6 +502,29 @@ public class AdminController extends BaseController {
 		}
 	}
 
+	@PostMapping("/vouchers/delete/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteVoucher(@PathVariable("id") Long id) {
+	    Map<String, String> response = new HashMap<>();
+	    try {
+	        Voucher voucher = voucherService.getVoucherById(id);
+	        if (voucher != null) {
+	            voucherService.deleteVoucher(id); // Xóa voucher
+	            response.put("status", "success");
+	            response.put("message", "Voucher has been deleted successfully.");
+	            return ResponseEntity.ok(response);
+	        } else {
+	            response.put("status", "error");
+	            response.put("message", "Voucher not found.");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+	    } catch (Exception e) {
+	        response.put("status", "error");
+	        response.put("message", "An error occurred while trying to delete the voucher: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
+	}
+
 	@PostMapping("/courses/toggleCourseStatus/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> toggleCourseStatus(@PathVariable("id") Long id,

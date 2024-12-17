@@ -108,51 +108,52 @@ function submitEditCourseForm(event, courseId) {
 			showErrorToast(error.message || 'An error occurred while updating the course');
 		});
 }
-function showDeleteConfirmModal(courseId) {
-	const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
-	const confirmBtn = document.getElementById('confirmDeleteBtn');
-
-	// Xóa event listener cũ (nếu có)
-	const newConfirmBtn = confirmBtn.cloneNode(true);
-	confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-
-	// Thêm event listener mới
-	newConfirmBtn.addEventListener('click', () => {
-		deleteCourse(courseId, modal);
-	});
-
-	modal.show();
-}
-function deleteCourse(courseId, modal) {
-	fetch(`${_ctx}admin/courses/delete/${courseId}`, {
-		method: 'POST', // Chuyển từ DELETE sang POST
-		headers: {
-			'Accept': 'application/json'
-		}
-	})
-		.then(response => {
-			if (!response.ok) {
-				return response.json().then(data => Promise.reject(data));
-			}
-			return response.json();
-		})
-		.then(data => {
-			if (data.status === 'success') {
-				showSuccessToast(data.message || 'Lesson deleted successfully');
-				loadCoursesSection(null);;
-
-				// Đóng modal nếu nó đang mở
-				const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
-				if (deleteModal) {
-					deleteModal.hide();
-				}
-			} else {
-				throw new Error(data.message || 'Failed to delete course');
-			}
-		})
-		.catch(error => {
-			console.error('Error deleting course:', error);
-			showErrorToast(error.message || 'An error occurred while deleting the course');
-		});
-}
 */
+function showDeleteConfirmModal_voucher(voucherId) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+
+    // Xóa event listener cũ (nếu có)
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    // Thêm event listener mới
+    newConfirmBtn.addEventListener('click', () => {
+        deleteVoucher(voucherId, modal);
+    });
+
+    modal.show();
+}
+function deleteVoucher(voucherId, modal) {
+    fetch(`${_ctx}admin/vouchers/delete/${voucherId}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Voucher deleted successfully');
+            loadVouchersSection(null); // Reload danh sách voucher
+
+            // Đóng modal nếu nó đang mở
+            const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal'));
+            if (deleteModal) {
+                deleteModal.hide();
+            }
+        } else {
+            throw new Error(data.message || 'Failed to delete voucher');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting voucher:', error);
+        showErrorToast(error.message || 'An error occurred while deleting the voucher');
+    });
+}
+
