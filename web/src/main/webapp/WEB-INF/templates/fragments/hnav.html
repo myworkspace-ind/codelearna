@@ -31,4 +31,9 @@
             <a th:href="@{/myadmin/course-management}">Course Management</a>
         </span>
     </li>
+    <li>
+        <span title="Business" th:class="${session.currentMenu == 'CurrentBusiness' ? 'current' : ''}">
+            <a th:href="@{/myadmin/business}">Business</a>
+        </span>
+    </li>
 </ul>
