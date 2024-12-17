@@ -45,3 +45,9 @@ function applySorting() {
     window.location.href = window.location.pathname + '?sortBy='
         + sortValue;
 }
+
+
+function selectVoucher(voucherId) {
+    document.getElementById(voucherId).checked = true;
+}
+
