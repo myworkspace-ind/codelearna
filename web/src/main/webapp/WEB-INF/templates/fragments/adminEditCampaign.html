@@ -1,0 +1,64 @@
+<div th:fragment="editCampaignModal">
+    <div class="modal fade" id="editCampaignModal" tabindex="-1" aria-labelledby="editCampaignModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCampaignModalLabel">Edit Campaign</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form id="editCampaignForm" 
+                          th:action="@{/admin/campaigns/edit/{id}(id=${campaign.id})}" 
+                          method="post" th:object="${campaign}">
+
+                        <!-- Campaign Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Campaign Name</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" th:field="*{description}" required></textarea>
+                        </div>
+
+                        <!-- Short Description -->
+                        <div class="mb-3">
+                            <label for="shortDescription" class="form-label">Short Description</label>
+                            <textarea class="form-control" id="shortDescription" rows="2" th:field="*{shortDescription}" required></textarea>
+                        </div>
+
+                        <!-- Start Time -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="startTime" class="form-label">Start Time</label>
+                                <input type="datetime-local" class="form-control" id="startTime" th:field="*{startTime}" required>
+                            </div>
+
+                            <!-- End Time -->
+                            <div class="col-md-6 mb-3">
+                                <label for="endTime" class="form-label">End Time</label>
+                                <input type="datetime-local" class="form-control" id="endTime" th:field="*{endTime}" required>
+                            </div>
+                        </div>
+
+                        <!-- Cover Image -->
+                        <div class="mb-3">
+                            <label for="coverImageUrl" class="form-label">Cover Image URL</label>
+                            <input type="url" class="form-control" id="coverImageUrl" th:field="*{coverImageUrl}" placeholder="https://example.com/image.jpg" required>
+                        </div>
+
+                    </form>
+                </div>
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="editCampaignForm" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
