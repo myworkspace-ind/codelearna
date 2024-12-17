@@ -8,6 +8,15 @@
             <a class="btn btn-primary" href="#" th:onclick="'fetchAddCampaignHandsontablePage(event)'">Add Campaigns with Handsontable</a>
         </div>
 
+        <div class="d-flex justify-content-between align-items-center mb-3"
+			style="width: 300px;">
+			<input type="text" id="campaignSearchInput" class="form-control"
+				placeholder="Search campaign name..." aria-label="Search campaign name"
+				onkeypress="handleSearchCampaignKeyPress(event)">
+			<button class="btn btn-outline-secondary ms-2" type="button"
+				onclick="searchCampaigns()">Search</button>
+		</div>
+        
         <div id="campaignsContainer">
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
@@ -34,7 +43,7 @@
                             <td th:text="${campaign.shortDescription}"></td>
                             <td>
                                 <div class="btn-group" role="group">
-                                   <!--  <a href="#" class="btn btn-primary btn-sm" th:attr="onclick='loadCampaignDetails(' + ${campaign.id} + '); return false;'">View</a> -->
+                                    <a href="#" class="btn btn-primary btn-sm" th:attr="onclick='addVoucherById(' + ${campaign.id} + '); return false;'">Add voucher</a>
                                     <a href="#" class="btn btn-warning btn-sm" th:attr="onclick='loadEditCampaignForm(' + ${campaign.id} + '); return false;'">Edit</a>
                                     <!-- <a href="#" class="btn btn-danger btn-sm" th:onclick="showDeleteConfirmModal([[${campaign.id}]])" title="Delete Campaign">Delete</a> -->
                                     <a href="#" class="btn btn-danger btn-sm" th:onclick="showDeleteConfirmModal_campaign([[${campaign.id}]])" title="Delete Campaign">Delete</a>

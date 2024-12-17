@@ -575,6 +575,65 @@ public class AdminController extends BaseController {
 		return mav;
 	}
 
+	@GetMapping("/campaigns/edit/{id}")
+	public ModelAndView showEditCampaignForm(@PathVariable("id") Long id) {
+	    Campaign campaign = campaignService.getCampaignById(id);
+	    if (campaign == null) {
+	        return new ModelAndView("redirect:/admin/campaigns"); 
+	    }
+
+	    ModelAndView mav = new ModelAndView("fragments/adminEditCampaign :: editCampaignModal");
+	    mav.addObject("campaign", campaign);
+	    return mav;
+	}
+
+	@PostMapping("/campaigns/edit/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> editCampaign(@PathVariable("id") Long id,
+	                                                        @ModelAttribute("campaign") Campaign campaign) {
+	    Map<String, String> response = new HashMap<>();
+
+	    try {
+	        // Lấy campaign hiện tại từ database
+	        Campaign existingCampaign = campaignService.getCampaignById(id);
+	        if (existingCampaign == null) {
+	            response.put("status", "error");
+	            response.put("message", "Campaign not found");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+
+	        // Validate input
+	        if (campaign.getName() == null || campaign.getName().trim().isEmpty()) {
+	            response.put("status", "error");
+	            response.put("message", "Campaign name is required");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+
+	        // Cập nhật thông tin campaign
+	        existingCampaign.setName(campaign.getName());
+	        existingCampaign.setDescription(campaign.getDescription());
+	        existingCampaign.setShortDescription(campaign.getShortDescription());
+	        existingCampaign.setStartTime(campaign.getStartTime());
+	        existingCampaign.setEndTime(campaign.getEndTime());
+	        existingCampaign.setCoverImageUrl(campaign.getCoverImageUrl());
+
+	        // Lưu campaign
+	        campaignService.saveCampaign(existingCampaign);
+
+	        // Trả về phản hồi thành công
+	        response.put("status", "success");
+	        response.put("message", "Campaign updated successfully");
+	        response.put("campaignId", existingCampaign.getId().toString());
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        log.error("Error updating campaign: ", e);
+	        response.put("status", "error");
+	        response.put("message", e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
+	}
+
 	@PostMapping("/courses/edit/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> editCourse(@PathVariable("id") Long id,
