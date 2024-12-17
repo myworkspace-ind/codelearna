@@ -42,7 +42,6 @@ public class CourseController extends BaseController {
 
 	@Autowired
 	private UserLibraryCourseService userLibraryCourseService;
-	
 
 	@GetMapping("/course/{id}")
 	public ModelAndView getCourseDetail(@PathVariable Long id, @RequestParam(defaultValue = "0") int page,

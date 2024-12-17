@@ -5,18 +5,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
-import lombok.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.beans.factory.annotation.Value;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Order;
-import mks.myworkspace.learna.entity.UserLibraryCourse;
+import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.repository.OrderRepository;
 import mks.myworkspace.learna.service.OrderService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
-import mks.myworkspace.learna.repository.CourseRepository;
 
 @Service
 public class OrderServiceImpl implements OrderService{
@@ -28,15 +26,23 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     private CourseRepository courseRepository; 
+    
+    @Value("${payment.sepay.generateQrEndpoint}")
+    private String generateQrEndpoint;
+    
+    @Value("${payment.sepay.accountNumber}")
+    private String accountNumber;
+    
+    @Value("${payment.sepay.bankCode}")
+    private String bankCode;
 
     public String generateQrCodeUrl(String orderCode, BigDecimal amount) {
-        String accountNumber = "0834643661";
-        String bankCode = "MB";
         String template = "qronly";
         boolean download = false;
 
         return String.format(
-                "https://qr.sepay.vn/img?acc=%s&bank=%s&amount=%s&des=%s&template=%s&download=%s",
+                "%s/img?acc=%s&bank=%s&amount=%s&des=%s&template=%s&download=%s",
+                generateQrEndpoint,
                 accountNumber,
                 bankCode,
                 amount,

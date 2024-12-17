@@ -27,6 +27,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	 @Query("SELECT COUNT(c.id) FROM Course c")
 	    int getTotalCourses();
 
+	 @Query("SELECT c FROM Course c WHERE c.status = :status")
+	 List<Course> findCourseByStatus(@Param("status") String status);
 	 
 	 @Query("SELECT c FROM Course c WHERE c.status = 'ACTIVE'")
 	 List<Course> findAllActiveCourse();

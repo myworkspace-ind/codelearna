@@ -15,5 +15,4 @@ public interface UserLibraryCourseService {
     int calculateCompletionPercentage(String userEid, Long courseId);
     List<String> findAllUniqueUserEids();
     Long countTotalUserLibrary();
-	Object getUserLibraries();
 }

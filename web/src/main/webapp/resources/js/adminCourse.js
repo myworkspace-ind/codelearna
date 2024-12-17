@@ -110,6 +110,7 @@ function showDeleteConfirmModal(courseId) {
 
 	modal.show();
 }
+
 function deleteCourse(courseId, modal) {
 	fetch(`${_ctx}admin/courses/delete/${courseId}`, {
 		method: 'POST', // Chuyển từ DELETE sang POST
@@ -304,7 +305,7 @@ function submitCourseForm(event) {
 
 	const form = document.querySelector('#courseForm');
 	const formData = new FormData(form);
-
+	
 	fetch(`${_ctx}admin/addCourse`, {
 		method: 'POST',
 		body: formData
@@ -330,6 +331,10 @@ function submitCourseForm(event) {
 			document.getElementById('error-text-course').innerText = error.message;
 			document.getElementById('error-message-course').style.display = 'block';
 		});
+}
+
+function closeError(event){
+	document.getElementById('error-message-course').style.display = 'none';
 }
 
 // Add course with Handsontable
