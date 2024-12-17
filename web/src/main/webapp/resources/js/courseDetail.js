@@ -51,3 +51,38 @@ function selectVoucher(voucherId) {
     document.getElementById(voucherId).checked = true;
 }
 
+
+document.getElementById('voucherApplyForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Ngăn form submit mặc định
+
+    const formData = new FormData(this);
+
+    fetch('/voucher/apply', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Cập nhật giá trên trang
+            document.getElementById('originalPrice').innerHTML = `₫ ${data.originalPrice}`;
+            document.getElementById('finalPrice').innerHTML = `₫ ${data.discountedPrice}`;
+            
+            // Ẩn thông báo lỗi nếu có
+            document.getElementById('voucherError').style.display = 'none';
+
+            // Đóng modal (cách chắc chắn hoạt động)
+            const modalElement = document.getElementById('voucherModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.hide();
+
+        } else {
+            // Hiển thị lỗi
+            document.getElementById('voucherError').innerText = data.error;
+            document.getElementById('voucherError').style.display = 'block';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
