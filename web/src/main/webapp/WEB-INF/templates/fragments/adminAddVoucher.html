@@ -11,7 +11,7 @@
 		</div>
 
 		<!-- Voucher Form -->
-		<form id="voucherForm" method="post" class="needs-validation" onsubmit="submitVoucherForm(event)" novalidate>
+		<form id="voucherForm" enctype="multipart/form-data" class="needs-validation" onsubmit="submitVoucherForm(event)" novalidate>
 			<!-- Voucher Name Input -->
 			<div class="mb-3">
 				<label for="name" class="form-label">Voucher Name <span style="color:red">*</span></label>
@@ -35,7 +35,7 @@
 			<div class="row">
 				<div class="col-md-6 mb-3">
 				    <label for="discountValue" class="form-label">Discount Value <span style="color:red">*</span></label>
-				    <input type="number" class="form-control" id="discountValue" name="discountValue" required step="1" min="0" disabled>
+				    <input type="number" class="form-control" id="discountValue" name="discountValue" required step="1" min="0" max="100" disabled>
 				    <div class="invalid-feedback">Discount value must be valid.</div>
 				</div>
 				<div class="col-md-6 mb-3">
@@ -78,7 +78,7 @@
 			</div>
 
 			<!-- Submit and Cancel Buttons -->
-			<button type="button" class="btn btn-primary" onclick="">Add Voucher</button>
+			<button type="submit" class="btn btn-primary">Add Voucher</button>
 			<button type="button" class="btn btn-secondary" onclick="loadVouchersSection(event)">Cancel</button>
 		</form>
 	</div>

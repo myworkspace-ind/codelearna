@@ -51,12 +51,6 @@ public class VoucherServiceImpl implements VoucherService {
     }
 
     @Override
-    public List<Voucher> getVouchersByStatus(String status) {
-        // Tìm voucher theo status
-        return repo.findByValueType(Voucher.ValueType.valueOf(status.toUpperCase()));
-    }
-
-    @Override
     public int getTotalVouchers() {
         // Đếm tổng số lượng voucher
         return repo.getTotalVouchers();

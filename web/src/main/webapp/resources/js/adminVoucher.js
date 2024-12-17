@@ -76,7 +76,59 @@ function toggleDiscountValue() {
         maxValueInput.value = "";
     }
 }
+function submitVoucherForm(event) {
+    event.preventDefault(); // Ngăn form reload trang
 
+    // Tạo đối tượng FormData để lấy toàn bộ dữ liệu từ form
+    const formData = new FormData(document.getElementById('voucherForm'));
+
+    // Chuẩn bị dữ liệu JSON để gửi đi
+    const data = {
+        name: formData.get('name'),
+        campaign: formData.get('campaign'),
+        discountValue: formData.get('discountValue'),
+        valueType: formData.get('valueType'),
+        maxValue: formData.get('maxValue'),
+        quantity: formData.get('quantity'),
+        startDate: formData.get('startDate'),
+        endDate: formData.get('endDate'),
+        description: formData.get('description'),
+    };
+    // Gửi dữ liệu đến API (controller)
+    fetch('/codelearna-web/admin/addVoucher', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+    .then(response => {
+        if (response.ok) {
+            alert('Voucher added successfully!');
+            loadVouchersSection(); // Gọi hàm load lại danh sách vouchers
+        } else {
+            return response.json().then(errorData => {
+                throw new Error(errorData.message || 'Something went wrong!');
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('error-text-voucher').innerText = error.message;
+        document.getElementById('error-message-voucher').style.display = 'block';
+    });
+}
+
+
+
+
+
+function showError(message) {
+    const errorMessage = document.getElementById('error-message-voucher');
+    const errorText = document.getElementById('error-text-voucher');
+    errorText.textContent = message;
+    errorMessage.style.display = 'block';
+}
 
 // Phần bên dưới copy tham khảo, chưa dùng được
 /*function loadEditCourseForm(courseId) {
@@ -105,48 +157,6 @@ function toggleDiscountValue() {
 		.catch(error => {
 			console.error('Error loading edit course form:', error);
 			showErrorToast('Error loading course form');
-		});
-}
-function submitEditCourseForm(event, courseId) {
-	event.preventDefault();
-	const form = event.target;
-	const formData = new FormData(form);
-
-	// Basic validation
-	const name = formData.get('name');
-	if (!name || name.trim() === '') {
-		showErrorToast('Please enter a course name');
-		return;
-	}
-
-	fetch(form.action, {
-		method: 'POST',
-		body: formData,
-		headers: {
-			'Accept': 'application/json'
-		}
-	})
-		.then(response => {
-			if (!response.ok) {
-				return response.json().then(data => Promise.reject(data));
-			}
-			return response.json();
-		})
-		.then(data => {
-			if (data.status === "success") {
-				showSuccessToast(data.message || 'Course updated successfully!');
-				const modal = bootstrap.Modal.getInstance(document.getElementById('editCourseModal'));
-				if (modal) {
-					modal.hide();
-				}
-				loadCoursesSection();
-			} else {
-				throw new Error(data.message || 'Failed to update course');
-			}
-		})
-		.catch(error => {
-			console.error('Error updating course:', error);
-			showErrorToast(error.message || 'An error occurred while updating the course');
 		});
 }
 function showDeleteConfirmModal(courseId) {

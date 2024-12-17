@@ -27,9 +27,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,7 +152,53 @@ public class AdminController extends BaseController {
 
         return mav;
     }
-    //Còn phần POST của Voucher chưa làm
+    @PostMapping("/addVoucher")
+    @Transactional
+    public ResponseEntity<Map<String, Object>> addVoucher(@RequestBody Map<String, Object> formData) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Lấy dữ liệu từ formData
+            String name = (String) formData.get("name");
+            Long campaignId = Long.valueOf(formData.get("campaign").toString());
+            Double discountValue = Double.valueOf(formData.get("discountValue").toString());
+            String valueType = (String) formData.get("valueType");
+            Double maxValue = formData.containsKey("maxValue") ? Double.valueOf(formData.get("maxValue").toString()) : null;
+            Integer quantity = Integer.valueOf(formData.get("quantity").toString());
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse((String) formData.get("startDate"));
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse((String) formData.get("endDate"));
+            String description = (String) formData.get("description");
+
+            // Chuyển đổi giá trị type cho voucher
+            Voucher.ValueType type = Voucher.ValueType.fromValue(valueType);
+
+            // Tìm campaign từ ID
+            Campaign campaign = campaignService.getCampaignById(campaignId);
+
+            // Tạo đối tượng Voucher mới
+            Voucher voucher = new Voucher();
+            voucher.setName(name);
+            voucher.setCampaign(campaign);
+            voucher.setDiscountValue(discountValue);
+            voucher.setValueType(type);
+            voucher.setMaxValue(maxValue);
+            voucher.setQuantity(quantity);
+            voucher.setStartDate(startDate);
+            voucher.setEndDate(endDate);
+            voucher.setDescription(description);
+
+            // Lưu voucher vào database
+            voucherService.saveVoucher(voucher);
+
+            response.put("success", true);
+            response.put("message", "Voucher added successfully!");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Failed to add voucher: " + e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+
+
     @GetMapping("/addCampaign")
     public ModelAndView showAddCampaignPage() {
         ModelAndView mav = new ModelAndView("fragments/adminAddCampaign :: addCampaignContent");

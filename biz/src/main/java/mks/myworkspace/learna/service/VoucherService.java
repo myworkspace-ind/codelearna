@@ -12,7 +12,6 @@ public interface VoucherService {
     
     List<Voucher> getAllVouchers();
 //    List<Voucher> getVouchersBySubcategory(Long id);
-    List<Voucher> getVouchersByStatus(String status);
     //Search filter
 //    List<Course> searchVouchersByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, String averageRating);
     //List<Voucher> searchVouchersByKeywordAndFilters(String keyword, String sortOrder, String sortField, String level, Long subcategoryId, String averageRating);

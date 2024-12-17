@@ -18,7 +18,7 @@ public class Voucher {
 
     @ManyToOne
     @JoinColumn(name = "campaign_id", nullable = false)
-    private Campaign campaign; // Giả sử đã có entity Campaign
+    private Campaign campaign; 
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -47,14 +47,6 @@ public class Voucher {
 
     @Column(name = "`condition`", columnDefinition = "TEXT")
     private String condition;
-
-    @CreationTimestamp
-    @Column(name = "created_date", updatable = false)
-    private Date createdDate;
-
-    @UpdateTimestamp
-    @Column(name = "modified_date")
-    private Date modifiedDate;
 
     public enum ValueType {
         PERCENTAGE("percentage"),
