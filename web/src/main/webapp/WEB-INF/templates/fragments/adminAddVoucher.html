@@ -35,7 +35,7 @@
 			<div class="row">
 				<div class="col-md-6 mb-3">
 				    <label for="discountValue" class="form-label">Discount Value <span style="color:red">*</span></label>
-				    <input type="number" class="form-control" id="discountValue" name="discountValue" required step="1" min="0" max="100" disabled>
+				    <input type="number" class="form-control" id="discountValue" name="discountValue" required step="1" min="0" max="100" oninput="validateDiscountValue()" disabled>
 				    <div class="invalid-feedback">Discount value must be valid.</div>
 				</div>
 				<div class="col-md-6 mb-3">
@@ -65,11 +65,11 @@
 			<div class="row">
 			    <div class="col-md-6 mb-3">
 			        <label for="startDate" class="form-label">Start Date</label>
-			        <input type="datetime-local" class="form-control" id="startDate" name="startDate">
+			        <input type="date" class="form-control" id="startDate" name="startDate">
 			    </div>
 			    <div class="col-md-6 mb-3">
 			        <label for="endDate" class="form-label">End Date</label>
-			        <input type="datetime-local" class="form-control" id="endDate" name="endDate">
+			        <input type="date" class="form-control" id="endDate" name="endDate">
 			    </div>
 			</div>
 			<div class="mb-3">

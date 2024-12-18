@@ -149,7 +149,6 @@ public class AdminController extends BaseController {
         List<Campaign> campaignList = campaignService.getAllCampaigns();
         // Truyền dữ liệu vào ModelAndView
         mav.addObject("campaignList", campaignList);
-
         return mav;
     }
     @PostMapping("/addVoucher")
@@ -162,10 +161,18 @@ public class AdminController extends BaseController {
             Long campaignId = Long.valueOf(formData.get("campaign").toString());
             Double discountValue = Double.valueOf(formData.get("discountValue").toString());
             String valueType = (String) formData.get("valueType");
-            Double maxValue = formData.containsKey("maxValue") ? Double.valueOf(formData.get("maxValue").toString()) : null;
+            Double maxValue = null;
+            Object maxValueObj = formData.get("maxValue");
+
+            if (maxValueObj != null && !maxValueObj.toString().isEmpty()) {
+                maxValue = Double.valueOf(maxValueObj.toString());
+            } else {
+                maxValue = null; // Chắc chắn rằng maxValue là null nếu không có giá trị
+            }
+
             Integer quantity = Integer.valueOf(formData.get("quantity").toString());
-            Date startDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse((String) formData.get("startDate"));
-            Date endDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse((String) formData.get("endDate"));
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("startDate"));
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("endDate"));
             String description = (String) formData.get("description");
 
             // Chuyển đổi giá trị type cho voucher
@@ -197,6 +204,80 @@ public class AdminController extends BaseController {
         }
         return ResponseEntity.ok(response);
     }
+	@GetMapping("/vouchers/edit/{voucherId}")
+	public ModelAndView showEditVoucherForm(@PathVariable("voucherId") Long voucherId) {
+		Voucher voucher = voucherService.getVoucherById(voucherId);
+		if (voucher == null) {
+			return new ModelAndView("redirect:/admin/listVoucher");
+		}
+		 List<Campaign> campaigns = campaignService.getAllCampaigns(); // Lấy danh sách Campaign từ database
+		ModelAndView mav = new ModelAndView("fragments/adminEditVoucher :: editVoucherModal");
+		mav.addObject("voucher", voucher);
+		mav.addObject("campaigns", campaigns);
+		return mav;
+	}
+
+	@PostMapping("/vouchers/edit/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> editVoucher(@PathVariable("id") Long voucherId,
+			@RequestBody Map<String, Object> formData) {
+		Map<String, String> response = new HashMap<>();
+		try {
+            // Lấy dữ liệu từ formData
+            String name = (String) formData.get("name");
+            Long campaignId = Long.valueOf(formData.get("campaign").toString());
+            Double discountValue = Double.valueOf(formData.get("discountValue").toString());
+            String valueType = (String) formData.get("valueType");
+            Double maxValue = null;
+            Object maxValueObj = formData.get("maxValue");
+
+            if (maxValueObj != null && !maxValueObj.toString().isEmpty()) {
+                maxValue = Double.valueOf(maxValueObj.toString());
+            } else {
+                maxValue = null; // Chắc chắn rằng maxValue là null nếu không có giá trị
+            }
+            Integer quantity = Integer.valueOf(formData.get("quantity").toString());
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("startDate"));
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("endDate"));
+            String description = (String) formData.get("description");
+            // Chuyển đổi giá trị type cho voucher
+            Voucher.ValueType type = Voucher.ValueType.fromValue(valueType);
+
+            // Tìm campaign từ ID
+            Campaign campaign = campaignService.getCampaignById(campaignId);
+
+            // Tạo đối tượng Voucher mới
+            Voucher voucher = new Voucher();
+            voucher.setId(voucherId);
+            voucher.setName(name);
+            voucher.setCampaign(campaign);
+            voucher.setDiscountValue(discountValue);
+            voucher.setValueType(type);
+            voucher.setMaxValue(maxValue);
+            voucher.setQuantity(quantity);
+            voucher.setStartDate(startDate);
+            voucher.setEndDate(endDate);
+            voucher.setDescription(description);
+			Voucher existingVoucher = voucherService.getVoucherById(voucherId);
+			if (existingVoucher == null) {
+				response.put("status", "error");
+				response.put("message", "Voucher not found");
+				return ResponseEntity.badRequest().body(response);
+			}
+			existingVoucher = voucher;
+			voucherService.saveVoucher(existingVoucher);
+
+			response.put("status", "success");
+			response.put("message", "Voucher updated successfully");
+//			response.put("courseId", existingVoucher.getCourse().getId().toString());
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "Error updating voucher: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
 
 
     @GetMapping("/addCampaign")
