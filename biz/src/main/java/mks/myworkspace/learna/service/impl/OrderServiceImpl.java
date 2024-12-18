@@ -6,8 +6,13 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Random;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Value;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Order;
@@ -17,6 +22,7 @@ import mks.myworkspace.learna.service.OrderService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService{
 	@Autowired
 	private OrderRepository orderRepository;
@@ -52,36 +58,53 @@ public class OrderServiceImpl implements OrderService{
         );
     }
 
+    @Transactional
     public Order createOrder(String paymentMethod, String userEid, Long courseId) {
-        if (paymentMethod == null || paymentMethod.isEmpty()) {
-            throw new RuntimeException("Payment method must not be null or empty");
-        }
-        if (userEid == null) {
-            throw new RuntimeException("User ID must not be null");
-        }
+	    try {
+	        if (paymentMethod == null || paymentMethod.isEmpty()) {
+	            throw new RuntimeException("Payment method must not be null or empty");
+	        }
+	        if (userEid == null) {
+	            throw new RuntimeException("User ID must not be null");
+	        }
+//	        log.info("userEid::::" + userEid);
+//	        log.info("paymentMethod::::" + paymentMethod);
+//	        log.info("courseId::::" + courseId);
+	        
+	        Course course = courseRepository.findById(courseId).orElse(null);
+	        if (course == null) {
+	            throw new RuntimeException("Course not found with ID: " + courseId);
+	        }
+	        
+	        BigDecimal amount = new BigDecimal(course.getDiscountedPrice().toString());
+	        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+	            throw new RuntimeException("Amount must be greater than zero");
+	        }
+	
+	        boolean isExistingCourse = userLibraryCourseService.isCoursePurchased(userEid, courseId);
+	        if (isExistingCourse) {
+	            throw new RuntimeException("Course already purchased!"); 
+	        }
+	
+	        Order order = Order.builder()
+	                .paymentMethod(paymentMethod)
+	                .amount(amount)
+	                .userEid(userEid)
+	                .courseId(courseId)
+	                .orderCode(generateOrderCode())
+	                .build();
+	
+	        Order savedOrder2 = orderRepository.save(order);
+	        // orderRepository.flush();
+	    	log.error("Order successfully persisted with ID: " + savedOrder2.getOrderCode());
+	
+	        return order;
+	    } catch (Exception e) {
+	        log.error("Error occurred while creating order: " + e.getMessage(), e);
+	        throw new RuntimeException("Failed to create order: " + e.getMessage());
+	    }
+}
 
-        Course course = courseRepository.findById(courseId).orElse(null);
-        BigDecimal amount = new BigDecimal(course.getDiscountedPrice().toString());
-        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("Amount must be greater than zero");
-        }
-
-        boolean isExistingCourse = userLibraryCourseService.isCoursePurchased(userEid, courseId);
-        if (isExistingCourse) {
-            throw new RuntimeException("Course already purchased!"); 
-        }
-
-        Order order = Order.builder()
-                .paymentMethod(paymentMethod)
-                .amount(amount)
-                .userEid(userEid)
-                .courseId(courseId)
-                .orderCode(generateOrderCode())
-                .build();
-
-        orderRepository.save(order);
-        return order;
-    }
 
 
     public String generateOrderCode() {
