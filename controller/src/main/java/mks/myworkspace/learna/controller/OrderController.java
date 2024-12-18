@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -64,5 +65,13 @@ public class OrderController extends BaseController {
             httpSession.setAttribute("alertType", "danger");
         }
     	return "redirect:/library";
+    }
+    
+    @GetMapping("/myorders")
+    public String getOrderHistory(Model model) {
+        String userEid = getCurrentUserEid();
+        List<Order> orders = orderService.getOrdersByUserEid(userEid);
+        model.addAttribute("orders", orders);
+        return "orderHistory";
     }
 }

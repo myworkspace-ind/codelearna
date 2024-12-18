@@ -3,6 +3,7 @@ package mks.myworkspace.learna.service.impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -103,7 +104,7 @@ public class OrderServiceImpl implements OrderService{
 	        log.error("Error occurred while creating order: " + e.getMessage(), e);
 	        throw new RuntimeException("Failed to create order: " + e.getMessage());
 	    }
-}
+    }
 
 
 
@@ -130,5 +131,9 @@ public class OrderServiceImpl implements OrderService{
         }
 
         return false;
+    }
+    
+    public List<Order> getOrdersByUserEid(String userEid) {
+        return orderRepository.findByUserEid(userEid);
     }
 }
