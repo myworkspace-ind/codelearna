@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Order;
 import mks.myworkspace.learna.repository.CourseRepository;
+import mks.myworkspace.learna.repository.OrderJdbcRepository;
 import mks.myworkspace.learna.repository.OrderRepository;
 import mks.myworkspace.learna.service.OrderService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
@@ -33,6 +34,9 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     private CourseRepository courseRepository; 
+    
+    @Autowired
+    private OrderJdbcRepository orderJdbcRepository;
     
     @Value("${payment.sepay.generateQrEndpoint}")
     private String generateQrEndpoint;
@@ -95,9 +99,9 @@ public class OrderServiceImpl implements OrderService{
 	                .orderCode(generateOrderCode())
 	                .build();
 	
-	        Order savedOrder2 = orderRepository.save(order);
+	        Order savedOrder2 = orderJdbcRepository.save(order);
 	        // orderRepository.flush();
-	    	log.error("Order successfully persisted with ID: " + savedOrder2.getOrderCode());
+	    	// log.error("Order successfully persisted with ID: " + savedOrder2.getOrderCode());
 	
 	        return order;
 	    } catch (Exception e) {

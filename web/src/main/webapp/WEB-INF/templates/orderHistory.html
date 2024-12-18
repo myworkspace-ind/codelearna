@@ -17,8 +17,7 @@
                 <tr>
                     <th>#</th>
                     <th>Order Code</th>
-                    <th>User</th>
-                    <th>Course ID</th>
+                    <th>Course Name</th>
                     <th>Payment Method</th>
                     <th>Amount</th>
                     <th>Status</th>
@@ -30,20 +29,20 @@
                 <tr th:each="order, iterStat : ${orders}">
                     <td th:text="${iterStat.index + 1}"></td>
                     <td th:text="${order.orderCode}"></td>
-                    <td th:text="${order.userEid}"></td>
                     <td th:text="${order.courseId}"></td>
                     <td th:text="${order.paymentMethod}"></td>
-                    <td th:text="${#numbers.formatDecimal(order.amount, 1, 'COMMA', 2, 'POINT')}"></td>
+					<td th:text="${#numbers.formatDecimal(order.amount, 1, 'DEFAULT', 0, 'DEFAULT')} + ' VNĐ'"></td>
                     <td>
-                        <span th:classappend="${order.status == 'COMPLETED'} ? 'text-success' : ''" th:text="${order.status == 'COMPLETED' ? 'Completed' : ''}"></span>
-                        <span th:classappend="${order.status == 'PENDING'} ? 'text-warning' : ''" th:text="${order.status == 'PENDING' ? 'Pending' : ''}"></span>
-                        <span th:classappend="${order.status == 'CANCELLED'} ? 'text-danger' : ''" th:text="${order.status == 'CANCELLED' ? 'Cancelled' : ''}"></span>
+                        <span th:classappend="${order.status.name() == 'COMPLETED'} ? 'text-success fw-bold' : ''" th:text="${order.status.name() == 'COMPLETED' ? 'Completed' : ''}"></span>
+                        <span th:classappend="${order.status.name() == 'PENDING'} ? 'text-warning fw-bold' : ''" th:text="${order.status.name() == 'PENDING' ? 'Pending' : ''}"></span>
+                        <span th:classappend="${order.status.name() == 'CANCELLED'} ? 'text-danger fw-bold' : ''" th:text="${order.status.name() == 'CANCELLED' ? 'Cancelled' : ''}"></span>
                     </td>
-                    <td th:text="${#dates.format(order.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <td th:text="${order.createdAt}"></td>
                     <td>
-                        <button class="btn btn-sm btn-danger me-2" th:if="${order.status == 'PENDING'}" th:onclick="|cancelOrder('${order.orderCode}')|">Cancel</button>
-                        <button class="btn btn-sm btn-primary" th:if="${order.status == 'CANCELLED'}" th:onclick="|retryPayment('${order.orderCode}')|">Retry Payment</button>
-                    </td>
+					    <a class="btn btn-sm btn-danger me-2" th:if="${order.status.name() == 'PENDING'}" th:href="@{/orders/cancel/{orderCode}(orderCode=${order.orderCode})}">Cancel</a>
+					    <a class="btn btn-sm btn-primary" th:if="${order.status.name() == 'PENDING'}" th:href="@{/orders/retry/{orderCode}(orderCode=${order.orderCode})}">Retry Payment</a>
+					    <a class="btn btn-sm btn-primary" th:if="${order.status.name() == 'COMPLETED'}" th:href="@{/course/{courseId}(courseId=${order.courseId})}">Go to Course</a>
+					</td>
                 </tr>
             </tbody>
         </table>
