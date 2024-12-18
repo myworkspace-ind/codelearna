@@ -40,7 +40,11 @@
                     <td th:text="${order.createdAt}"></td>
                     <td>
 					    <a class="btn btn-sm btn-danger me-2" th:if="${order.status.name() == 'PENDING'}" th:href="@{/orders/cancel/{orderCode}(orderCode=${order.orderCode})}">Cancel</a>
-					    <a class="btn btn-sm btn-primary" th:if="${order.status.name() == 'PENDING'}" th:href="@{/orders/retry/{orderCode}(orderCode=${order.orderCode})}">Retry Payment</a>
+					    <a class="btn btn-sm btn-primary" 
+						   th:if="${order.status.name() == 'PENDING'}" 
+						   th:href="@{/orders/retry/{orderCode}(orderCode=${order.orderCode}, method=${order.paymentMethod})}">
+						   Retry Payment
+						</a>
 					    <a class="btn btn-sm btn-primary" th:if="${order.status.name() == 'COMPLETED'}" th:href="@{/course/{courseId}(courseId=${order.courseId})}">Go to Course</a>
 					</td>
                 </tr>
