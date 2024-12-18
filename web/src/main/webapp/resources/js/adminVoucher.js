@@ -64,7 +64,7 @@ function toggleDiscountValue() {
 
             // Disable ô Max Value và gán giá trị bằng Discount Value
             maxValueInput.disabled = true;
-            maxValueInput.value = discountValueInput.value;
+			maxValueInput.value = '';
         }
     } else {
         // Nếu không chọn Value Type, disable Discount Value và Max Value
@@ -74,6 +74,30 @@ function toggleDiscountValue() {
 
         maxValueInput.disabled = true;
         maxValueInput.value = "";
+    }
+}
+function validateDiscountValue() {
+    const valueType = document.getElementById('valueType').value;
+    const discountValue = document.getElementById('discountValue');
+
+    // Nếu valueType là "percentage", kiểm tra giá trị discountValue
+    if (valueType === "percentage") {
+        let value = parseFloat(discountValue.value);
+
+        // Kiểm tra xem giá trị có trong khoảng từ 1 đến 100 không
+        if (value < 1 || value > 100 || isNaN(value)) {
+            if (value < 1) {
+				discountValue.value = 1;
+			}
+			else if (value > 100) {
+				discountValue.value = 100;
+			}
+        } else {
+            discountValue.setCustomValidity(""); // Nếu hợp lệ, loại bỏ lỗi
+        }
+    } else {
+        // Nếu không phải percentage, không có kiểm tra giá trị
+        discountValue.setCustomValidity(""); // Loại bỏ lỗi nếu có
     }
 }
 function submitVoucherForm(event) {
@@ -120,9 +144,6 @@ function submitVoucherForm(event) {
 }
 
 
-
-
-
 function showError(message) {
     const errorMessage = document.getElementById('error-message-voucher');
     const errorText = document.getElementById('error-text-voucher');
@@ -130,36 +151,82 @@ function showError(message) {
     errorMessage.style.display = 'block';
 }
 
-// Phần bên dưới copy tham khảo, chưa dùng được
-/*function loadEditCourseForm(courseId) {
-	fetch(`${_ctx}admin/courses/edit/${courseId}`)
-		.then(response => {
-			if (!response.ok) {
-				throw new Error('Failed to load edit course form');
-			}
-			return response.text();
-		})
+function loadEditVoucherForm(voucherId) {
+	fetch(`${_ctx}admin/vouchers/edit/${voucherId}`)
+		.then(response => response.text())
 		.then(html => {
-			if (!document.getElementById('editCourseModal')) {
+			if (!document.getElementById('editVoucherModal')) {
 				document.body.insertAdjacentHTML('beforeend', html);
 			} else {
-				document.getElementById('editCourseModal').outerHTML = html;
+				document.getElementById('editVoucherModal').outerHTML = html;
 			}
-
-			const editCourseModal = new bootstrap.Modal(document.getElementById('editCourseModal'));
-			editCourseModal.show();
-
-			document.getElementById('editCourseForm').addEventListener('submit', function(event) {
+			const editVoucherModal = new bootstrap.Modal(document.getElementById('editVoucherModal'));
+			editVoucherModal.show();
+			document.getElementById('editVoucherForm').addEventListener('submit', function(event) {
 				event.preventDefault();
-				submitEditCourseForm(event, courseId);
+				submitEditVoucherForm(event, voucherId);
+			});
+			document.getElementById('valueType').addEventListener('change', function () {
+			    var valueType = this.value;
+			    var maxValueInput = document.getElementById('maxValue');
+			    
+			    if (valueType === 'percentage') {
+			        maxValueInput.disabled = false;
+			    } else {
+			        maxValueInput.disabled = true;
+					maxValueInput.value = '';
+			    }
 			});
 		})
+		.catch(error => console.error('Error loading edit lesson form:', error));
+}
+
+function submitEditVoucherForm(event, voucherId) {
+	event.preventDefault();
+	const form = event.target;
+	const formData = new FormData(form);
+	// Chuẩn bị dữ liệu JSON để gửi đi
+	const data = {
+	    name: formData.get('name'),
+	    campaign: formData.get('campaign'),
+	    discountValue: formData.get('discountValue'),
+	    valueType: formData.get('valueType'),
+	    maxValue: formData.get('maxValue'),
+	    quantity: formData.get('quantity'),
+	    startDate: formData.get('startDate'),
+	    endDate: formData.get('endDate'),
+	    description: formData.get('description'),
+	};
+	fetch(form.action, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(data),
+	})
+		.then(response => {
+			if (!response.ok) {
+				return response.json().then(data => Promise.reject(data));
+			}
+			return response.json();
+		})
+		.then(data => {
+			if (data.status === "success") {
+				showSuccessToast(data.message || 'Voucher updated successfully!');
+				const modal = bootstrap.Modal.getInstance(document.getElementById('editVoucherModal'));
+				if (modal) {
+					modal.hide();
+				}
+				loadVouchersSection();
+			} else {
+				showErrorToast(data.message || 'Failed to update voucher');
+			}
+		})
 		.catch(error => {
-			console.error('Error loading edit course form:', error);
-			showErrorToast('Error loading course form');
+			console.error('Error updating voucher:', error);
+			showErrorToast(error.message || 'An error occurred while updating the voucher');
 		});
 }
-*/
 function showDeleteConfirmModal_voucher(voucherId) {
     const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
     const confirmBtn = document.getElementById('confirmDeleteBtn');

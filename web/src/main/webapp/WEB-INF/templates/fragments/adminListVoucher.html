@@ -45,10 +45,13 @@
                         <td th:text="${voucher.valueType}"></td>
                         <td th:text="${voucher.maxValue != null ? voucher.maxValue : 'N/A'}"></td>
                         <td th:text="${voucher.quantity}"></td>
-                        <td th:text="${#dates.format(voucher.startDate, 'yyyy-MM-dd HH:mm')}"></td>
-                        <td th:text="${#dates.format(voucher.endDate, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${#dates.format(voucher.startDate, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${#dates.format(voucher.endDate, 'yyyy-MM-dd')}"></td>
                         <td>
-                            <a href="#" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="#" class="btn btn-warning btn-sm"
+							   th:data-voucher-id="${voucher.id}"
+							   th:onclick="'loadEditVoucherForm(this.dataset.voucherId)'"
+							   title="Edit Voucher">Edit</a>
                             <a href="#" class="btn btn-danger btn-sm"
 							   th:onclick="showDeleteConfirmModal_voucher([[${voucher.id}]])"
 							   title="Delete Voucher"> Delete </a>

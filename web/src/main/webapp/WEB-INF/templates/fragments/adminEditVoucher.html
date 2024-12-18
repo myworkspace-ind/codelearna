@@ -1,0 +1,84 @@
+<div th:fragment="editVoucherModal">
+    <div class="modal fade" id="editVoucherModal" tabindex="-1" aria-labelledby="editVoucherModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editVoucherModalLabel">Edit Voucher</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editVoucherForm" th:action="@{/admin/vouchers/edit/{id}(id=${voucher.id})}" method="post" th:object="${voucher}">
+                        <!-- Voucher Name -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Voucher Name</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                        </div>
+                        
+                        <!-- Campaign -->
+						<div class="mb-3">
+						    <label for="campaign" class="form-label">Campaign</label>
+						    <select class="form-select" id="campaign" name="campaign" th:field="*{campaign}">
+						        <option value="" disabled>-- Select Campaign --</option>
+						        <option th:each="campaign : ${campaigns}" 
+						                th:value="${campaign.id}" 
+						                th:text="${campaign.name}" 
+						                th:selected="${campaign.id} == ${voucher.campaign.id}"></option>
+						    </select>
+						</div>
+                        
+                        <!-- Discount Value -->
+                        <div class="mb-3">
+                            <label for="discountValue" class="form-label">Discount Value</label>
+                            <input type="number" step="1" class="form-control" id="discountValue" th:field="*{discountValue}" oninput="validateDiscountValue()" required>
+                        </div>
+
+                        <!-- Value Type -->
+                        <div class="mb-3">
+                            <label for="valueType" class="form-label">Value Type</label>
+                            <select class="form-select" id="valueType" th:field="*{valueType}">
+                                <option th:each="type : ${T(mks.myworkspace.learna.entity.Voucher.ValueType).values()}" 
+                                        th:value="${type}" 
+                                        th:text="${type}"></option>
+                            </select>
+                        </div>
+                        
+                        <!-- Max Value -->
+						<div class="mb-3">
+						    <label for="maxValue" class="form-label">Max Value</label>
+						    <input type="number" class="form-control" id="maxValue" name="maxValue" th:field="*{maxValue}" step="1" min="0" required>
+						    <div class="invalid-feedback">Max value must be valid.</div>
+						</div>
+
+                        <!-- Quantity -->
+                        <div class="mb-3">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" th:field="*{quantity}" required>
+                        </div>
+
+                        <!-- Start Date -->
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" th:value="${#dates.format(voucher.startDate, 'yyyy-MM-dd')}" required>
+                        </div>
+
+                        <!-- End Date -->
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">End Date</label>
+							<input type="date" class="form-control" id="endDate" name="endDate" th:value="${#dates.format(voucher.endDate, 'yyyy-MM-dd')}" required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" th:field="*{description}"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" form="editVoucherForm" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
