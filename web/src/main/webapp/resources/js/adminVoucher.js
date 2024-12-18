@@ -276,3 +276,19 @@ function deleteVoucher(voucherId, modal) {
     });
 }
 
+function loadCampaignDates(event) {
+    const campaignId = event.target.value;
+    if (!campaignId) return;
+
+    fetch(`${_ctx}admin/getCampaignDates?id=${campaignId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.startDate && data.endDate) {
+                document.getElementById('startDate').value = data.startDate;
+                document.getElementById('endDate').value = data.endDate;
+            } else {
+                console.error("Invalid campaign data:", data);
+            }
+        })
+        .catch(error => console.error('Error fetching campaign dates:', error));
+}

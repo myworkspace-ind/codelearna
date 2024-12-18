@@ -20,14 +20,14 @@
 			</div>
 			<div class="mb-3">
 			    <label for="campaign" class="form-label">Campaign <span style="color:red">*</span></label>
-			    <select class="form-select" id="campaign" name="campaign" required>
-			        <option value="">Choose a campaign...</option>
-			        <!-- Dữ liệu được load từ database -->
-			        <option th:each="campaign : ${campaignList}" 
-			                th:value="${campaign.id}" 
-			                th:text="${campaign.name}">
-			        </option>
-			    </select>
+			    <select class="form-select" id="campaign" name="campaign" required onchange="loadCampaignDates(event)">
+					<option value="">Choose a campaign...</option>
+					<option th:each="campaign : ${campaignList}" 
+							th:value="${campaign.id}" 
+							th:text="${campaign.name}" 
+							th:selected="${campaign.id == selectedCampaignId}">
+					</option>
+				</select>
 			    <div class="invalid-feedback">Please select a campaign.</div>
 			</div>
 			

@@ -263,3 +263,30 @@ function submitEditCampaignForm(event, campaignId) {
             showErrorToast(error.message || 'An error occurred while updating the campaign');
         });
 }
+
+function addVoucherById(campaignId) {
+    const dynamicContent = document.getElementById('dynamic-content');
+    if (!dynamicContent) {
+        console.error("Phần tử 'dynamic-content' không tồn tại trên trang.");
+        return;
+    }
+
+    fetch(`${_ctx}admin/addVoucher?campaignId=${campaignId}`)
+        .then(response => response.text())
+        .then(html => {
+            dynamicContent.innerHTML = html;
+
+            fetch(`${_ctx}admin/getCampaignDates?id=${campaignId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.startDate && data.endDate) {
+                        document.getElementById("startDate").value = data.startDate;
+                        document.getElementById("endDate").value = data.endDate;
+                    } else {
+                        console.warn("Không thể tải ngày bắt đầu và kết thúc.");
+                    }
+                })
+                .catch(error => console.error('Error fetching campaign dates: ', error));
+        })
+        .catch(error => console.error('Error loading add voucher page: ', error));
+}

@@ -28,6 +28,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -43,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -142,15 +146,64 @@ public class AdminController extends BaseController {
 		ModelAndView mav = new ModelAndView("fragments/revenue :: revenue");
 		return mav;
 	}
-    @GetMapping("/addVoucher")
-    public ModelAndView showAddVoucherPage() {
-        ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
+    // @GetMapping("/addVoucher")
+    // public ModelAndView showAddVoucherPage() {
+    //     ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
         
-        List<Campaign> campaignList = campaignService.getAllCampaigns();
-        // Truyền dữ liệu vào ModelAndView
-        mav.addObject("campaignList", campaignList);
-        return mav;
+    //     List<Campaign> campaignList = campaignService.getAllCampaigns();
+    //     // Truyền dữ liệu vào ModelAndView
+    //     mav.addObject("campaignList", campaignList);
+    //     return mav;
+    // }
+	@GetMapping("/addVoucher")
+	public ModelAndView showAddVoucherPage(@RequestParam(required = false) Long campaignId) {
+		ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
+
+		List<Campaign> campaignList = campaignService.getAllCampaigns();
+		mav.addObject("campaignList", campaignList);
+
+		// Truyền ID chiến dịch đã chọn nếu có
+		if (campaignId != null) {
+			mav.addObject("selectedCampaignId", campaignId);
+		}
+
+		return mav;
+	}
+	@GetMapping("/getCampaignDates")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> getCampaignDates(@RequestParam Long id) {
+		Campaign campaign = campaignService.getCampaignById(id);
+		if (campaign != null) {
+        Map<String, String> response = new HashMap<>();
+
+        // Chuyển đổi java.util.Date sang LocalDateTime
+        Date startTime = campaign.getStartTime();
+        Date endTime = campaign.getEndTime();
+
+        if (startTime != null) {
+            LocalDateTime localStartTime = startTime.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+            response.put("startDate", localStartTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        } else {
+            response.put("startDate", "N/A");
+        }
+
+        if (endTime != null) {
+            LocalDateTime localEndTime = endTime.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+            response.put("endDate", localEndTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        } else {
+            response.put("endDate", "N/A");
+        }
+
+        return ResponseEntity.ok(response);
     }
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	}
+
     @PostMapping("/addVoucher")
     @Transactional
     public ResponseEntity<Map<String, Object>> addVoucher(@RequestBody Map<String, Object> formData) {
