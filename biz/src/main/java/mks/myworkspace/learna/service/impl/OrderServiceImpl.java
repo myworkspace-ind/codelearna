@@ -110,8 +110,6 @@ public class OrderServiceImpl implements OrderService{
 	    }
     }
 
-
-
     public String generateOrderCode() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
         String currentDate = dateFormat.format(new Date());
@@ -119,7 +117,6 @@ public class OrderServiceImpl implements OrderService{
         int randomNumber = random.nextInt(90000000) + 10000000;
         return "LA" + currentDate + randomNumber;
     }
-
 
     public Optional<Order> getOrder(String orderCode) {
         return orderRepository.findByOrderCode(orderCode);

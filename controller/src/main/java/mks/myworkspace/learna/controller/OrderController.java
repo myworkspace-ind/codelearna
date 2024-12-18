@@ -1,5 +1,7 @@
 package mks.myworkspace.learna.controller;
 import mks.myworkspace.learna.entity.Order;
+import mks.myworkspace.learna.entity.Order.OrderStatus;
+import mks.myworkspace.learna.repository.OrderJdbcRepository;
 import mks.myworkspace.learna.service.OrderService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -19,6 +22,8 @@ import javax.servlet.http.HttpSession;
 public class OrderController extends BaseController {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderJdbcRepository orderJdbcRepository;
 
     @RequestMapping
     public String show(Model model) {
@@ -73,5 +78,38 @@ public class OrderController extends BaseController {
         List<Order> orders = orderService.getOrdersByUserEid(userEid);
         model.addAttribute("orders", orders);
         return "orderHistory";
+    }
+    
+    @GetMapping("/cancel/{orderCode}")
+    public String cancelOrder(@PathVariable String orderCode) {
+        Optional<Order> orderOptional = orderService.getOrder(orderCode);
+        if(orderOptional.isPresent()) {
+        	Order order = orderOptional.get();
+        	order.setStatus(OrderStatus.CANCELLED);
+            orderJdbcRepository.save(order);
+            return "redirect:/orders/myorders";
+        } else throw new RuntimeException("Cannot find order with OrderCode: " + orderCode);
+    }
+    
+    @GetMapping("/retry/{orderCode}")
+    public String retryOrderPayment( Model model, @PathVariable String orderCode, 
+    		@RequestParam("method") String paymentMethod) {
+    	
+    	Optional<Order> orderOptional = orderService.getOrder(orderCode);
+    	if(orderOptional.isEmpty()) {
+    		throw new RuntimeException("Cannot find order with OrderCode: " + orderCode); 
+    	}
+    	Order order = orderOptional.get();
+    	if(paymentMethod.equals("transfer")) {
+    		String qrCodeUrl = orderService.generateQrCodeUrl(order.getOrderCode(), order.getAmount());
+            model.addAttribute("orderId", order.getOrderCode());
+            model.addAttribute("qrCodeUrl", qrCodeUrl);
+            model.addAttribute("orderAmount", order.getAmount());
+            model.addAttribute("accountNumber", accountNumber);
+            model.addAttribute("bankCode", bankCode);
+            model.addAttribute("cardholder", cardholder);
+            return "fragments/qr-code-payment";
+    	}
+    	return "redirect:/library";
     }
 }
