@@ -52,12 +52,12 @@
 			<div class="row">
 				<div class="col-md-6 mb-3">
 				    <label for="maxValue" class="form-label">Max Value</label>
-				    <input type="number" class="form-control" id="maxValue" name="maxValue" step="1" min="0" disabled>
+				    <input type="number" class="form-control" id="maxValue" name="maxValue" step="1" min="0" oninput="validateMaxValue()">
 				    <div class="invalid-feedback">Max value must be valid.</div>
 				</div>
 				<div class="col-md-6 mb-3">
 					<label for="quantity" class="form-label">Quantity <span style="color:red">*</span></label>
-					<input type="number" class="form-control" id="quantity" name="quantity" required step="1" min="1">
+					<input type="number" class="form-control" id="quantity" name="quantity" required step="1" min="1" oninput="validateQuantity()">
 					<div class="invalid-feedback">Quantity must be greater than or equal to 1.</div>
 				</div>
 			</div>

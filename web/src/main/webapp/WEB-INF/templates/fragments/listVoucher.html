@@ -1,0 +1,45 @@
+<!-- Fragment để hiển thị danh sách voucher -->
+<div th:fragment="vouchersContent">
+	<!-- Voucher Modal -->
+	<div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
+	    <div class="modal-dialog modal-lg">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="voucherModalLabel">Chọn Voucher</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	            </div>
+	            <div class="modal-body">
+	                <!-- Danh sách Voucher -->
+	                <form id="voucherForm" th:action="@{/voucher/apply}" method="POST">
+	                   <!--  <input type="hidden" name="courseId" th:value="${course.id}" />    -->     
+					    <div id="voucher-container">
+					        <div th:each="voucher : ${vouchers}" class="voucher-method mt-3" th:onclick="'selectVoucher(' + voucher.id + ')'">
+					            <div class="d-flex align-items-center">
+					                <div class="form-check">
+					                    <input class="form-check-input" type="radio" name="voucher" 
+					                           th:value="${voucher.id}" 
+					                           th:id="'voucher-' + ${voucher.id}" required>
+					                </div>
+					                <div>
+					                    <label class="form-check-label fw-bold" 
+					                           th:for="'voucher-' + ${voucher.id}" 
+					                           th:text="${voucher.name}">Voucher Name</label>
+					                    <p class="mb-0 text-muted" th:text="${voucher.description}">Voucher Description</p>
+					                    <p class="mb-0 text-muted">
+					                        Giảm 
+					                        <span th:text="${voucher.discountValue}"></span>
+					                        <span th:text="${voucher.valueType == 'PERCENTAGE' ? '%' : 'VNĐ'}"></span>
+					                    </p>
+					                </div>
+					            </div>
+					        </div>
+					    </div>
+	                    <div class="mt-4">
+	                        <button type="submit" class="btn btn-primary w-100 py-2">Xác nhận Voucher</button>
+	                    </div>
+	                </form>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</div>

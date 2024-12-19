@@ -51,3 +51,21 @@ function selectVoucher(voucherId) {
     document.getElementById(voucherId).checked = true;
 }
 
+function loadVouchersSection() {
+    fetch( `${_ctx}voucher/applyVoucher`)
+        .then(response => response.text())
+		.then(html => {
+			if (!document.getElementById('voucherModal')) {
+				document.body.insertAdjacentHTML('beforeend', html);
+			} else {
+				document.getElementById('voucherModal').outerHTML = html;
+			}
+			var voucherModal = new bootstrap.Modal(document.getElementById('voucherModal'));
+			voucherModal.show();
+/*			document.getElementById('voucherModal').addEventListener('submit', function(event) {
+				event.preventDefault();
+				submitEditLessonForm(event, lessonId);
+			});*/
+		})
+        .catch(error => console.error('Error loading vouchers section:', error));
+}

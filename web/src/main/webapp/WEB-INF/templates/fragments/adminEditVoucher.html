@@ -52,7 +52,7 @@
                         <!-- Quantity -->
                         <div class="mb-3">
                             <label for="quantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="quantity" th:field="*{quantity}" required>
+                            <input type="number" class="form-control" id="quantity" th:field="*{quantity}" min="1" oninput="validateQuantity()" required>
                         </div>
 
                         <!-- Start Date -->

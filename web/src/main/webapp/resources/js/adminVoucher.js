@@ -100,6 +100,19 @@ function validateDiscountValue() {
         discountValue.setCustomValidity(""); // Loại bỏ lỗi nếu có
     }
 }
+function validateQuantity() {
+    const quantity = document.getElementById('quantity');
+	notNegative(quantity);
+}
+function validateMaxValue(){
+	const maxValue = document.getElementById('maxValue');
+	notNegative(maxValue);
+}
+function notNegative(element){
+	if (element.value < 1) {
+		element.value = 1;
+	}
+}
 function submitVoucherForm(event) {
     event.preventDefault(); // Ngăn form reload trang
 
