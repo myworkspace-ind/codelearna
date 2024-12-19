@@ -51,38 +51,61 @@ function selectVoucher(voucherId) {
     document.getElementById(voucherId).checked = true;
 }
 
+function loadVouchersSection() {
+    fetch( `${_ctx}voucher/applyVoucher`)
+        .then(response => response.text())
+		.then(html => {
+			if (!document.getElementById('voucherModal')) {
+				document.body.insertAdjacentHTML('beforeend', html);
+			} else {
+				document.getElementById('voucherModal').outerHTML = html;
+			}
+			var voucherModal = new bootstrap.Modal(document.getElementById('voucherModal'));
+			voucherModal.show();
+/*			document.getElementById('voucherModal').addEventListener('submit', function(event) {
+				event.preventDefault();
+				submitEditLessonForm(event, lessonId);
+			});*/
+		})
+        .catch(error => console.error('Error loading vouchers section:', error));
+}
 
-document.getElementById('voucherApplyForm').addEventListener('submit', function (event) {
-    event.preventDefault(); // Ngăn form submit mặc định
 
-    const formData = new FormData(this);
+function applySelectedVoucher() {
+    const voucherIdInput = document.querySelector('input[name="voucherId"]:checked');
+    if (!voucherIdInput) {
+        alert('Vui lòng chọn một voucher!');
+        return;
+    }
+    const voucherId = voucherIdInput.value;
+
+    const courseIdInput = document.querySelector('input[name="courseId"]');
+    const courseId = courseIdInput ? courseIdInput.value : null;
+
+    if (!courseId) {
+        alert('Không tìm thấy Course ID!');
+        return;
+    }
 
     fetch('/voucher/apply', {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `voucherId=${voucherId}&courseId=${courseId}`,
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Cập nhật giá trên trang
-            document.getElementById('originalPrice').innerHTML = `₫ ${data.originalPrice}`;
-            document.getElementById('finalPrice').innerHTML = `₫ ${data.discountedPrice}`;
-            
-            // Ẩn thông báo lỗi nếu có
-            document.getElementById('voucherError').style.display = 'none';
-
-            // Đóng modal (cách chắc chắn hoạt động)
-            const modalElement = document.getElementById('voucherModal');
-            const modal = new bootstrap.Modal(modalElement);
-            modal.hide();
-
-        } else {
-            // Hiển thị lỗi
-            document.getElementById('voucherError').innerText = data.error;
-            document.getElementById('voucherError').style.display = 'block';
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-});
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to apply voucher');
+            }
+            return response.text();
+        })
+        .then(() => {
+            alert('Voucher đã được áp dụng thành công!');
+            location.reload(); // Reload trang để cập nhật giá
+        })
+        .catch(error => {
+            console.error('Error applying voucher:', error);
+            alert('Không thể áp dụng voucher!');
+        });
+}

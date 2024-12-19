@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -67,9 +66,6 @@ public class CourseController extends BaseController {
 
 		boolean hasPurchased = userLibraryCourseService.isCoursePurchased(userEid, id);
 		boolean hasReviewed = reviewService.hasUserReviewedCourse(id, userEid);
-		
-		Object discountedPrice = httpSession.getAttribute("discountedPrice");
-	    Object voucherCode = httpSession.getAttribute("voucherCode");
 
 		mav.addObject("course", course);
 		mav.addObject("reviews", paginatedReviews);
@@ -79,54 +75,8 @@ public class CourseController extends BaseController {
 		mav.addObject("balance", balance);
 		mav.addObject("hasPurchased", hasPurchased);
 		mav.addObject("hasReviewed", hasReviewed);
-		
-		if (discountedPrice != null) {
-	        mav.addObject("discountedPrice", discountedPrice);
-	        mav.addObject("voucherApplied", true);
-	    }
+
 		return mav;
 	}
-	
-	@PostMapping("/voucher/apply")
-    @ResponseBody
-    public Map<String, Object> applyVoucher(@RequestParam("courseId") Long courseId,
-                                            @RequestParam("voucher") String voucherCode, HttpSession httpSession) {
-        Map<String, Object> response = new HashMap<>();
-        Course course = courseService.getCourseById(courseId);
 
-        if (course == null) {
-            response.put("success", false);
-            response.put("error", "Course not found!");
-            return response;
-        }
-
-        double originalPrice = course.getOriginalPrice();
-        double discountedPrice = originalPrice;
-
-        // Xử lý mã giảm giá
-        switch (voucherCode) {
-            case "voucher1":
-                discountedPrice = originalPrice * 0.9; // Giảm 10%
-                break;
-            case "voucher2":
-                discountedPrice = originalPrice - 50000; // Giảm 50,000 VNĐ
-                break;
-            default:
-                response.put("success", false);
-                response.put("error", "Invalid voucher code!");
-                return response;
-        }
-
-        discountedPrice = Math.max(discountedPrice, 0);
-
-        // Lưu thông tin vào session
-        httpSession.setAttribute("discountedPrice", discountedPrice);
-        httpSession.setAttribute("voucherCode", voucherCode);
-
-        // Trả về JSON
-        response.put("success", true);
-        response.put("originalPrice", String.format("%.0f", originalPrice));
-        response.put("discountedPrice", String.format("%.0f", discountedPrice));
-        return response;
-    }
 }

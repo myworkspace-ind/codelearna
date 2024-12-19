@@ -47,23 +47,11 @@
 					<p>
 						Lesson type: <span th:text="${course.lessonType.paramValue}">Video</span>
 					</p>
-					<!-- <div th:if="${!hasPurchased}">
-						<p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}" style="text-decoration: line-through;"></p>
-						<h5 class="text-danger" th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
-					</div> -->
-					<div id="priceDisplay">
-				        <p id="originalPrice" style="text-decoration: line-through;">
-				            ₫ <span th:text="${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}">0</span>
-				        </p>
-				        <h5 id="finalPrice" class="text-danger">
-				            ₫ <span th:text="${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}">0</span>
-				        </h5>
-				    </div>
-                    
-                    <div id="voucherError" class="alert alert-danger mt-3" style="display: none;"></div>
-
-					
-					
+					<div th:if="${!hasPurchased}">
+						 <p id="originalPrice" th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}" style="text-decoration: line-through;"></p>
+					    <h5 id="discountedPrice" class="text-danger" th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
+					</div>
+					</div>
 					<div th:if="${hasPurchased}">
 						<!-- Nếu đã mua khóa học, hiện nút "Learn Now" -->
 						<button class="btn btn-success mt-3 learn-now-btn"
@@ -156,49 +144,11 @@
 						</div>
 						
 						<!-- Nút "Apply voucher" -->
-						<!-- <form id="voucherForm" th:action="@{/voucher/apply}" method="post">
+						<form id="voucherForm">
 						    <input type="hidden" name="courseId" th:value="${course.id}" />
-						    <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#voucherModal">
-						        Apply voucher
-						    </button>
-						</form> -->
-						<button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#voucherModal">
-					        Apply voucher
-					    </button>
-						
-						<!-- Voucher Modal -->
-						<div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
-						    <div class="modal-dialog modal-lg">
-						        <div class="modal-content">
-						            <div class="modal-header">
-						                <h5 class="modal-title" id="voucherModalLabel">Chọn Voucher</h5>
-						                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-						            </div>
-						            <div class="modal-body">
-						                <!-- Form chọn voucher -->
-						                <form id="voucherApplyForm">
-						                    <input type="hidden" name="courseId" th:value="${course.id}" />
-						
-						                    <!-- Voucher 1 -->
-						                    <div class="form-check mb-3">
-						                        <input class="form-check-input" type="radio" name="voucher" value="voucher1" id="voucher1" required>
-						                        <label class="form-check-label" for="voucher1">Voucher Giảm 10%</label>
-						                    </div>
-						
-						                    <!-- Voucher 2 -->
-						                    <div class="form-check mb-3">
-						                        <input class="form-check-input" type="radio" name="voucher" value="voucher2" id="voucher2" required>
-						                        <label class="form-check-label" for="voucher2">Voucher Giảm 50K</label>
-						                    </div>
-						
-						                    <!-- Nút xác nhận -->
-						                    <button type="submit" class="btn btn-primary w-100">Xác nhận Voucher</button>
-						                </form>
-						            </div>
-						        </div>
-						    </div>
-						</div>
-							
+						    <button type="button" class="btn btn-primary mt-3" onclick="loadVouchersSection()">Apply Voucher</button>
+						</form>
+						<div id="dynamic-content"></div>
 					</div>
 				</div>
 			</div>

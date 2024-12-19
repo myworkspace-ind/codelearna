@@ -14,4 +14,6 @@ public interface VoucherService {
     
     List<Voucher> getAllVouchers();
     int getTotalVouchers();
+
+	boolean applyVoucherToCourse(Long voucherId, Long courseId);
 }
