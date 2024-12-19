@@ -49,6 +49,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	           const videoId = match[1];
 	           return `https://www.youtube.com/embed/${videoId}`;
 	       }
+		   
+		   const facebookRegex = /(?:https?:\/\/)?(?:www\.)?(?:facebook\.com\/(?:watch\?v=|[^\/]+\/videos\/)([0-9]+)|fb\.watch\/[a-zA-Z0-9]+\/?)/;
+   	       const match_1 = url.match(facebookRegex);
+
+   	       if (match_1) {
+   	           return `https://www.facebook.com/plugins/video.php?href=${url}`;
+   	       }
 
 	       // If not a YouTube URL, return the original URL
 	       return url;
@@ -178,8 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	        console.error("Element with id 'course' not found");
 	    }
 	}
-
-
 	
 	function loadLesson(index) {
 	    const lesson = lessons[index];

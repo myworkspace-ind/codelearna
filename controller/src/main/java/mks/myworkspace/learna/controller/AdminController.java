@@ -1,29 +1,40 @@
 package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Voucher;
+import mks.myworkspace.learna.entity.Campaign;
 import mks.myworkspace.learna.repository.CourseJdbcRepository;
+import mks.myworkspace.learna.repository.VoucherJdbcRespository;
 import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.entity.Subcategory;
 import mks.myworkspace.learna.entity.UserLibraryCourse;
+import mks.myworkspace.learna.service.CampaignService;
 import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
+import mks.myworkspace.learna.service.VoucherService;
 import mks.myworkspace.learna.service.ParameterService;
 import mks.myworkspace.learna.service.PlayService;
 import mks.myworkspace.learna.service.RevenueService;
 import mks.myworkspace.learna.service.SubcategoryService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
 
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,11 +73,13 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/admin")
 @Slf4j
-public class AdminController extends BaseController{
-
+public class AdminController extends BaseController {
 	@Autowired
 	private CourseService courseService;
-
+	@Autowired
+	private CampaignService campaignService;
+	@Autowired
+    private VoucherService voucherService;
 	@Autowired
 	private ParameterService parameterService;
 
@@ -81,12 +95,13 @@ public class AdminController extends BaseController{
 	private RevenueService revenueService;
 	@Autowired
 	private UserLibraryCourseService userLibraryCourseService;
+
 	@GetMapping
 	public String showAdminHomePage(Model model) {
-  String currentUserEid = getCurrentUserEid();
-	    if (!"admin".equals(currentUserEid)) {
-	        return "accessDenied"; 
-	    }
+		String currentUserEid = getCurrentUserEid();
+		if (!"admin".equals(currentUserEid)) {
+			return "accessDenied";
+		}
 		int totalCourses = courseService.getTotalCourses();
 		Double totalRevenues = revenueService.getTotalRevenue();
 		Long totalUsers = userLibraryCourseService.countTotalUserLibrary();
@@ -95,7 +110,7 @@ public class AdminController extends BaseController{
 		model.addAttribute("totalRevenue", totalRevenues);
 		return "adminHome";
 	}
-	
+
 	@GetMapping("/dashboard")
 	public String showDashBoard(Model model) {
 		int totalCourses = courseService.getTotalCourses();
@@ -104,7 +119,7 @@ public class AdminController extends BaseController{
 		model.addAttribute("totalCourses", totalCourses);
 		model.addAttribute("totalUsers", totalUsers);
 		model.addAttribute("totalRevenue", totalRevenues);
-		return "fragments/welcome :: welcome-section";
+		return "fragments/dashboard :: dashboard";
 	}
 
 	@GetMapping("/listCourse")
@@ -113,22 +128,300 @@ public class AdminController extends BaseController{
 		mav.addObject("courses", courseService.getAllCourses());
 		return mav;
 	}
+	@GetMapping("/listCampaign")
+	public ModelAndView loadCampaignsFragment() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListCampaign :: campaignsContent");
+	    mav.addObject("campaigns", campaignService.getAllCampaigns());
+	    return mav;
+	}
 	
+	@GetMapping("/listVoucher")
+	public ModelAndView loadVouchersFragment() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListVoucher :: vouchersContent");
+	    mav.addObject("vouchers", voucherService.getAllVouchers());
+	    return mav;
+	}
 	@GetMapping("/revenue")
 	public ModelAndView revenueFragment() {
 		ModelAndView mav = new ModelAndView("fragments/revenue :: revenue");
 		return mav;
 	}
+    // @GetMapping("/addVoucher")
+    // public ModelAndView showAddVoucherPage() {
+    //     ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
+        
+    //     List<Campaign> campaignList = campaignService.getAllCampaigns();
+    //     // Truyền dữ liệu vào ModelAndView
+    //     mav.addObject("campaignList", campaignList);
+    //     return mav;
+    // }
+	@GetMapping("/addVoucher")
+	public ModelAndView showAddVoucherPage(@RequestParam(required = false) Long campaignId) {
+		ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
+
+		List<Campaign> campaignList = campaignService.getAllCampaigns();
+		mav.addObject("campaignList", campaignList);
+
+		// Truyền ID chiến dịch đã chọn nếu có
+		if (campaignId != null) {
+			mav.addObject("selectedCampaignId", campaignId);
+		}
+
+		return mav;
+	}
+	@GetMapping("/getCampaignDates")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> getCampaignDates(@RequestParam Long id) {
+		Campaign campaign = campaignService.getCampaignById(id);
+		if (campaign != null) {
+        Map<String, String> response = new HashMap<>();
+
+        // Chuyển đổi java.util.Date sang LocalDateTime
+        Date startTime = campaign.getStartTime();
+        Date endTime = campaign.getEndTime();
+
+        if (startTime != null) {
+            LocalDateTime localStartTime = startTime.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+            response.put("startDate", localStartTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        } else {
+            response.put("startDate", "N/A");
+        }
+
+        if (endTime != null) {
+            LocalDateTime localEndTime = endTime.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+            response.put("endDate", localEndTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        } else {
+            response.put("endDate", "N/A");
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	}
+
+    @PostMapping("/addVoucher")
+    @Transactional
+    public ResponseEntity<Map<String, Object>> addVoucher(@RequestBody Map<String, Object> formData) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Lấy dữ liệu từ formData
+            String name = (String) formData.get("name");
+            Long campaignId = Long.valueOf(formData.get("campaign").toString());
+            Double discountValue = Double.valueOf(formData.get("discountValue").toString());
+            String valueType = (String) formData.get("valueType");
+            Double maxValue = null;
+            Object maxValueObj = formData.get("maxValue");
+
+            if (maxValueObj != null && !maxValueObj.toString().isEmpty()) {
+                maxValue = Double.valueOf(maxValueObj.toString());
+            } else {
+                maxValue = null; // Chắc chắn rằng maxValue là null nếu không có giá trị
+            }
+
+            Integer quantity = Integer.valueOf(formData.get("quantity").toString());
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("startDate"));
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("endDate"));
+            String description = (String) formData.get("description");
+
+            // Chuyển đổi giá trị type cho voucher
+            Voucher.ValueType type = Voucher.ValueType.fromValue(valueType);
+
+            // Tìm campaign từ ID
+            Campaign campaign = campaignService.getCampaignById(campaignId);
+
+            // Tạo đối tượng Voucher mới
+            Voucher voucher = new Voucher();
+            voucher.setName(name);
+            voucher.setCampaign(campaign);
+            voucher.setDiscountValue(discountValue);
+            voucher.setValueType(type);
+            voucher.setMaxValue(maxValue);
+            voucher.setQuantity(quantity);
+            voucher.setStartDate(startDate);
+            voucher.setEndDate(endDate);
+            voucher.setDescription(description);
+
+            // Lưu voucher vào database
+            voucherService.saveVoucher(voucher);
+
+            response.put("success", true);
+            response.put("message", "Voucher added successfully!");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Failed to add voucher: " + e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+	@GetMapping("/vouchers/edit/{voucherId}")
+	public ModelAndView showEditVoucherForm(@PathVariable("voucherId") Long voucherId) {
+		Voucher voucher = voucherService.getVoucherById(voucherId);
+		if (voucher == null) {
+			return new ModelAndView("redirect:/admin/listVoucher");
+		}
+		 List<Campaign> campaigns = campaignService.getAllCampaigns(); // Lấy danh sách Campaign từ database
+		ModelAndView mav = new ModelAndView("fragments/adminEditVoucher :: editVoucherModal");
+		mav.addObject("voucher", voucher);
+		mav.addObject("campaigns", campaigns);
+		return mav;
+	}
+
+	@PostMapping("/vouchers/edit/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> editVoucher(@PathVariable("id") Long voucherId,
+			@RequestBody Map<String, Object> formData) {
+		Map<String, String> response = new HashMap<>();
+		try {
+            // Lấy dữ liệu từ formData
+            String name = (String) formData.get("name");
+            Long campaignId = Long.valueOf(formData.get("campaign").toString());
+            Double discountValue = Double.valueOf(formData.get("discountValue").toString());
+            String valueType = (String) formData.get("valueType");
+            Double maxValue = null;
+            Object maxValueObj = formData.get("maxValue");
+
+            if (maxValueObj != null && !maxValueObj.toString().isEmpty()) {
+                maxValue = Double.valueOf(maxValueObj.toString());
+            } else {
+                maxValue = null; // Chắc chắn rằng maxValue là null nếu không có giá trị
+            }
+            Integer quantity = Integer.valueOf(formData.get("quantity").toString());
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("startDate"));
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("endDate"));
+            String description = (String) formData.get("description");
+            // Chuyển đổi giá trị type cho voucher
+            Voucher.ValueType type = Voucher.ValueType.fromValue(valueType);
+
+            // Tìm campaign từ ID
+            Campaign campaign = campaignService.getCampaignById(campaignId);
+
+            // Tạo đối tượng Voucher mới
+            Voucher voucher = new Voucher();
+            voucher.setId(voucherId);
+            voucher.setName(name);
+            voucher.setCampaign(campaign);
+            voucher.setDiscountValue(discountValue);
+            voucher.setValueType(type);
+            voucher.setMaxValue(maxValue);
+            voucher.setQuantity(quantity);
+            voucher.setStartDate(startDate);
+            voucher.setEndDate(endDate);
+            voucher.setDescription(description);
+			Voucher existingVoucher = voucherService.getVoucherById(voucherId);
+			if (existingVoucher == null) {
+				response.put("status", "error");
+				response.put("message", "Voucher not found");
+				return ResponseEntity.badRequest().body(response);
+			}
+			existingVoucher = voucher;
+			voucherService.saveVoucher(existingVoucher);
+
+			response.put("status", "success");
+			response.put("message", "Voucher updated successfully");
+//			response.put("courseId", existingVoucher.getCourse().getId().toString());
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "Error updating voucher: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+
+
+    @GetMapping("/addCampaign")
+    public ModelAndView showAddCampaignPage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddCampaign :: addCampaignContent");
+
+        // Lấy danh sách các tham số liên quan đến campaign (Ví dụ: campaign types, campaign statuses)
+        List<Parameter> campaignTypes = parameterService.getListParamsByParamValue("campaign_type");
+        List<Parameter> campaignStatuses = parameterService.getListParamsByParamValue("campaign_status");
+
+        // Truyền dữ liệu vào ModelAndView
+        mav.addObject("campaignTypes", campaignTypes);
+        mav.addObject("campaignStatuses", campaignStatuses);
+
+        return mav;
+    }
+
+    @PostMapping("/addCampaign")
+    @Transactional
+    public ResponseEntity<Map<String, String>> addCampaign(@Validated @ModelAttribute("campaign") Campaign campaign,
+                                                           BindingResult bindingResult) {
+        Map<String, String> response = new HashMap<>();
+
+        // Kiểm tra lỗi trong BindingResult
+        if (bindingResult.hasErrors()) {
+            response.put("status", "error");
+            response.put("message", "Invalid information.");
+            System.out.println(bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // Kiểm tra các trường cần thiết
+        if (campaign.getName() == null || campaign.getName().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Campaign name is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getStartTime() == null) {
+            response.put("status", "error");
+            response.put("message", "Start time is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getEndTime() == null) {
+            response.put("status", "error");
+            response.put("message", "End time is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getShortDescription() == null || campaign.getShortDescription().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Short description is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if (campaign.getCoverImageUrl() == null || campaign.getCoverImageUrl().isEmpty()) {
+            response.put("status", "error");
+            response.put("message", "Cover image URL is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // Lưu campaign
+        try {
+            campaignService.saveCampaign(campaign);
+            response.put("status", "success");
+            response.put("message", "The campaign has been added successfully!");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "System error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/addCampaignHandsontable")
+    public ModelAndView showAddCampaignHandsontablePage() {
+        ModelAndView mav = new ModelAndView("fragments/adminAddCampaignsHandsontable :: addCampaignsContent");
+        return mav;
+    }
 
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {
-	    ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
-	    List<Parameter> difficultyLevels = parameterService.getListParamsByParamValueAndStatus("difficulty_level", "ACTIVE");
-	    log.info("do kho" + difficultyLevels);
-	    List<Parameter> lessonTypes = parameterService.getListParamsByParamValueAndStatus("lesson_type", "ACTIVE");
-	    mav.addObject("difficultyLevels", difficultyLevels);
-	    mav.addObject("lessonTypes", lessonTypes);
-	    return mav;
+		ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
+		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValueAndStatus("difficulty_level",
+				"ACTIVE");
+		log.info("do kho" + difficultyLevels);
+		List<Parameter> lessonTypes = parameterService.getListParamsByParamValueAndStatus("lesson_type", "ACTIVE");
+		mav.addObject("difficultyLevels", difficultyLevels);
+		mav.addObject("lessonTypes", lessonTypes);
+		return mav;
 	}
 
 	@PostMapping("/addCourse")
@@ -162,16 +455,17 @@ public class AdminController extends BaseController{
 
 		}
 
-    if (course.getStatus() == null || course.getStatus().isEmpty()) {
-          course.setStatus("INACTIVE");
-      }
-
+		if (course.getStatus() == null || course.getStatus().isEmpty()) {
+			course.setStatus("INACTIVE");
+		}
+		 //|| course.getDifficultyLevel().getId() == null
+		System.out.println(course.getDifficultyLevel());
 		if (course.getDifficultyLevel() == null || course.getDifficultyLevel().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Difficulty Level is required and must be valid.");
 			return ResponseEntity.badRequest().body(response);
 		}
-
+		//|| course.getLessonType().getId() == null
 		if (course.getLessonType() == null || course.getLessonType().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Lesson Type is required and must be valid.");
@@ -195,6 +489,7 @@ public class AdminController extends BaseController{
 
 		course.setDifficultyLevel(difficultyLevel);
 		course.setLessonType(lessonType);
+		
 
 		if (course.getSubcategory() == null || course.getSubcategory().getId() == null) {
 			response.put("status", "error");
@@ -224,15 +519,17 @@ public class AdminController extends BaseController{
 	@ResponseBody
 	@GetMapping("/values")
 	public List<String> getParamValues(@RequestParam String paramKey) {
-		return parameterService.getListParamsByParamValueAndStatus(paramKey, "ACTIVE").stream().map(Parameter::getParamValue)
-				.collect(Collectors.toList());
+		return parameterService.getListParamsByParamValueAndStatus(paramKey, "ACTIVE").stream()
+				.map(Parameter::getParamValue).collect(Collectors.toList());
 	}
-	
+
+
+
 	@ResponseBody
-    @GetMapping("/paramKey")
-    public List<String> getParamKeys() {
-        return parameterService.getAllDistinctParamKeys();
-    }
+	@GetMapping("/paramKey")
+	public List<String> getParamKeys() {
+		return parameterService.getAllDistinctParamKeys();
+	}
 
 	@PostMapping("/saveCoursesHandsontable")
 	@Transactional
@@ -360,6 +657,52 @@ public class AdminController extends BaseController{
 		}
 	}
 
+	@PostMapping("/campaigns/delete/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteCampaign(@PathVariable("id") Long id) {
+		Map<String, String> response = new HashMap<>();
+		try {
+			Campaign course = campaignService.getCampaignById(id);
+			if (course != null) {
+				campaignService.deleteCampaign(id);
+				response.put("status", "success");
+				response.put("message", "campaign has been deleted successfully.");
+				return ResponseEntity.ok(response);
+			} else {
+				response.put("status", "error");
+				response.put("message", "campaign not found.");
+				return ResponseEntity.badRequest().body(response);
+			}
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "An error occurred while trying to delete the campaign: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+
+	@PostMapping("/vouchers/delete/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteVoucher(@PathVariable("id") Long id) {
+	    Map<String, String> response = new HashMap<>();
+	    try {
+	        Voucher voucher = voucherService.getVoucherById(id);
+	        if (voucher != null) {
+	            voucherService.deleteVoucher(id); // Xóa voucher
+	            response.put("status", "success");
+	            response.put("message", "Voucher has been deleted successfully.");
+	            return ResponseEntity.ok(response);
+	        } else {
+	            response.put("status", "error");
+	            response.put("message", "Voucher not found.");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+	    } catch (Exception e) {
+	        response.put("status", "error");
+	        response.put("message", "An error occurred while trying to delete the voucher: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
+	}
+
 	@PostMapping("/courses/toggleCourseStatus/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> toggleCourseStatus(@PathVariable("id") Long id,
@@ -408,6 +751,65 @@ public class AdminController extends BaseController{
 		mav.addObject("lessonTypes", parameterService.getListParamsByParamValue("lesson_type"));
 		mav.addObject("difficultyLevel", parameterService.getListParamsByParamValue("difficulty_level"));
 		return mav;
+	}
+
+	@GetMapping("/campaigns/edit/{id}")
+	public ModelAndView showEditCampaignForm(@PathVariable("id") Long id) {
+	    Campaign campaign = campaignService.getCampaignById(id);
+	    if (campaign == null) {
+	        return new ModelAndView("redirect:/admin/campaigns"); 
+	    }
+
+	    ModelAndView mav = new ModelAndView("fragments/adminEditCampaign :: editCampaignModal");
+	    mav.addObject("campaign", campaign);
+	    return mav;
+	}
+
+	@PostMapping("/campaigns/edit/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> editCampaign(@PathVariable("id") Long id,
+	                                                        @ModelAttribute("campaign") Campaign campaign) {
+	    Map<String, String> response = new HashMap<>();
+
+	    try {
+	        // Lấy campaign hiện tại từ database
+	        Campaign existingCampaign = campaignService.getCampaignById(id);
+	        if (existingCampaign == null) {
+	            response.put("status", "error");
+	            response.put("message", "Campaign not found");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+
+	        // Validate input
+	        if (campaign.getName() == null || campaign.getName().trim().isEmpty()) {
+	            response.put("status", "error");
+	            response.put("message", "Campaign name is required");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+
+	        // Cập nhật thông tin campaign
+	        existingCampaign.setName(campaign.getName());
+	        existingCampaign.setDescription(campaign.getDescription());
+	        existingCampaign.setShortDescription(campaign.getShortDescription());
+	        existingCampaign.setStartTime(campaign.getStartTime());
+	        existingCampaign.setEndTime(campaign.getEndTime());
+	        existingCampaign.setCoverImageUrl(campaign.getCoverImageUrl());
+
+	        // Lưu campaign
+	        campaignService.saveCampaign(existingCampaign);
+
+	        // Trả về phản hồi thành công
+	        response.put("status", "success");
+	        response.put("message", "Campaign updated successfully");
+	        response.put("campaignId", existingCampaign.getId().toString());
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        log.error("Error updating campaign: ", e);
+	        response.put("status", "error");
+	        response.put("message", e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 
 	@PostMapping("/courses/edit/{id}")
@@ -470,18 +872,21 @@ public class AdminController extends BaseController{
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
+
 	@GetMapping("/listDeletedCourse")
 	public ModelAndView showDeletedCourses() {
-	    List<Course> courses = courseService.getAllCourses();
-	    ModelAndView mav = new ModelAndView("fragments/adminListDeletedCourse :: deletedCourseModal");
-	    // Initialize with empty list if null
-	    mav.addObject("courses", courses != null ? courses : new ArrayList<>());
-	    return mav;
+//		List<Course> courses = courseService.getAllCourses();
+		List<Course> courses = courseService.getCoursesByStatus("DELETED");
+		ModelAndView mav = new ModelAndView("fragments/adminListDeletedCourse :: deletedCourseModal");
+		// Initialize with empty list if null
+		mav.addObject("courses", courses != null ? courses : new ArrayList<>());
+		return mav;
 	}
-	@PostMapping("/courses/restoreCourse/{id}") 
+	
+	@PostMapping("/courses/restoreCourse/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> restoreCourse(@PathVariable("id") Long id,
-	        @ModelAttribute("course") Course course) {
+			@ModelAttribute("course") Course course) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			Course existingCourse = courseService.getCourseById(id);
@@ -491,13 +896,13 @@ public class AdminController extends BaseController{
 				return ResponseEntity.badRequest().body(response);
 			}
 
-	        existingCourse.setStatus("INACTIVE");
-	        courseService.saveCourse(existingCourse);
+			existingCourse.setStatus("INACTIVE");
+			courseService.saveCourse(existingCourse);
 			response.put("status", "success");
 			response.put("message", "Course has been restore successfully");
-			//response.put("courseId", courseId.toString());
+			// response.put("courseId", courseId.toString());
 			return ResponseEntity.ok(response);
-			
+
 		} catch (Exception e) {
 			log.error("Error deleting lesson: ", e);
 			response.put("status", "error");
@@ -505,7 +910,7 @@ public class AdminController extends BaseController{
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
-	
+
 	@GetMapping("/courses/{id}/lessons")
 	public ModelAndView showLessonsByCourse(@PathVariable("id") Long courseId) {
 		Course course = courseService.getCourseById(courseId);
@@ -521,11 +926,12 @@ public class AdminController extends BaseController{
 		mav.addObject("lessons", lessons);
 		return mav;
 	}
+
 	@GetMapping("/courses/{id}/deletedLessons")
 	public ModelAndView showDeletedLessonOfCourse(@PathVariable("id") Long courseId) {
 		Course course = courseService.getCourseById(courseId);
-		List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
-
+//		List<Lesson> lessons = playService.getLessonsByCourseId(courseId);
+		List<Lesson> lessons = playService.getLessonsByCourseIdAndStatus(courseId, "DELETED");
 		/*
 		 * if (lessons == null || lessons.isEmpty()) { return new
 		 * ModelAndView("redirect:/admin/listCourse"); }
@@ -539,7 +945,8 @@ public class AdminController extends BaseController{
 		mav.addObject("lessons", lessons);
 		return mav;
 	}
-	@PostMapping("/lessons/restore/{id}") 
+
+	@PostMapping("/lessons/restore/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> restoreLesson(@PathVariable("id") Long lessonId,
 			@ModelAttribute("lesson") Lesson lesson) {
@@ -553,12 +960,10 @@ public class AdminController extends BaseController{
 			}
 
 			Long courseId = existingLesson.getCourse().getId();
-	        
-	        existingLesson.setStatus("INACTIVE");
-	      
-	        
-	   
-	         lessonService.saveLesson(existingLesson);
+
+			existingLesson.setStatus("INACTIVE");
+
+			lessonService.saveLesson(existingLesson);
 			response.put("status", "success");
 			response.put("message", "Lesson has been restore successfully");
 			response.put("courseId", courseId.toString());
@@ -571,7 +976,7 @@ public class AdminController extends BaseController{
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
-	
+
 	@GetMapping("/courses/{id}/lessons/add")
 	public ModelAndView showAddLessonForm(@PathVariable("id") Long courseId) {
 		ModelAndView mav = new ModelAndView("fragments/adminAddLesson :: addLessonForm");
@@ -590,53 +995,53 @@ public class AdminController extends BaseController{
 		return mav;
 	}
 
-  @PostMapping("/courses/{courseId}/lessons/add")
+	@PostMapping("/courses/{courseId}/lessons/add")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> addLesson(@PathVariable("courseId") Long courseId,
-	        @ModelAttribute("lesson") Lesson lesson) {
-	    Map<String, String> response = new HashMap<>();
+			@ModelAttribute("lesson") Lesson lesson) {
+		Map<String, String> response = new HashMap<>();
 
-	    try {
-	        // Validate course existence
-	        Course course = courseService.getCourseById(courseId);
-	        if (course == null) {
-	            response.put("status", "error");
-	            response.put("message", "Course not found");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+		try {
+			// Validate course existence
+			Course course = courseService.getCourseById(courseId);
+			if (course == null) {
+				response.put("status", "error");
+				response.put("message", "Course not found");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	        // Validate lesson data
-	        if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
-	            response.put("status", "error");
-	            response.put("message", "Lesson title is required");
-	            return ResponseEntity.badRequest().body(response);
-	        }
-	        // Set default status to INACTIVE if not set
-	        if (lesson.getActivityId() == null || lesson.getStatus().isEmpty()) {
-	        	response.put("status", "error");
-	            response.put("message", "Lesson activity id is required");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+			// Validate lesson data
+			if (lesson.getTitle() == null || lesson.getTitle().trim().isEmpty()) {
+				response.put("status", "error");
+				response.put("message", "Lesson title is required");
+				return ResponseEntity.badRequest().body(response);
+			}
+			// Set default status to INACTIVE if not set
+			if (lesson.getActivityId() == null || lesson.getStatus().isEmpty()) {
+				response.put("status", "error");
+				response.put("message", "Lesson activity id is required");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	        // Set default status to INACTIVE if not set
-	        if (lesson.getStatus() == null || lesson.getStatus().isEmpty()) {
-	            lesson.setStatus("INACTIVE");
-	        }
+			// Set default status to INACTIVE if not set
+			if (lesson.getStatus() == null || lesson.getStatus().isEmpty()) {
+				lesson.setStatus("INACTIVE");
+			}
 
-	        lesson.setCourse(course);
-	        lessonService.saveLesson(lesson);
+			lesson.setCourse(course);
+			lessonService.saveLesson(lesson);
 
-	        response.put("status", "success");
-	        response.put("message", "Lesson added successfully");
-	        response.put("courseId", courseId.toString());
-	        return ResponseEntity.ok(response);
+			response.put("status", "success");
+			response.put("message", "Lesson added successfully");
+			response.put("courseId", courseId.toString());
+			return ResponseEntity.ok(response);
 
-	    } catch (Exception e) {
-	        log.error("Error adding lesson: ", e);
-	        response.put("status", "error");
-	        response.put("message", "Error adding lesson: " + e.getMessage());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+		} catch (Exception e) {
+			log.error("Error adding lesson: ", e);
+			response.put("status", "error");
+			response.put("message", "Error adding lesson: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 
 	@GetMapping("/lessons/edit/{id}")
@@ -667,7 +1072,7 @@ public class AdminController extends BaseController{
 			existingLesson.setTitle(lesson.getTitle());
 			existingLesson.setVideoUrl(lesson.getVideoUrl());
 			existingLesson.setActivityId(lesson.getActivityId());
-			
+
 			lessonService.saveLesson(existingLesson);
 
 			response.put("status", "success");
@@ -695,64 +1100,62 @@ public class AdminController extends BaseController{
 		return mav;
 	}
 
-  @PostMapping("/saveLessonsHandsontable/{courseId}")
-	public ResponseEntity<Map<String, String>> saveLessonsHandsontable(
-	        @PathVariable("courseId") Long courseId,
-	        @RequestBody List<Map<String, Object>> lessonData) {
-	    log.info("Received request to save lessons for courseId: {}", courseId);
-	    Map<String, String> response = new HashMap<>();
-	    
-	    try {
-	        log.info("Received lesson data: {}", lessonData);
+	@PostMapping("/saveLessonsHandsontable/{courseId}")
+	public ResponseEntity<Map<String, String>> saveLessonsHandsontable(@PathVariable("courseId") Long courseId,
+			@RequestBody List<Map<String, Object>> lessonData) {
+		log.info("Received request to save lessons for courseId: {}", courseId);
+		Map<String, String> response = new HashMap<>();
 
-	        if (lessonData == null || lessonData.isEmpty()) {
-	            response.put("status", "error");
-	            response.put("message", "Please fill all the values");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+		try {
+			log.info("Received lesson data: {}", lessonData);
 
-	        Course course = courseService.getCourseById(courseId);
-	        if (course == null) {
-	            response.put("status", "error");
-	            response.put("message", "Course not found");
-	            return ResponseEntity.badRequest().body(response);
-	        }
+			if (lessonData == null || lessonData.isEmpty()) {
+				response.put("status", "error");
+				response.put("message", "Please fill all the values");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	        for (Map<String, Object> lessonMap : lessonData) {
-	            String title = (String) lessonMap.get("title");
-	            if (title == null || title.trim().isEmpty()) {
-	                response.put("status", "error");
-	                response.put("message", "Lesson title cannot be empty");
-	                return ResponseEntity.badRequest().body(response);
-	            }
-	            String activityId = (String) lessonMap.get("activityId");
-	            if (activityId == null || activityId.trim().isEmpty()) {
-	                response.put("status", "error");
-	                response.put("message", "Lesson activityId cannot be empty");
-	                return ResponseEntity.badRequest().body(response);
-	            }
-	            
+			Course course = courseService.getCourseById(courseId);
+			if (course == null) {
+				response.put("status", "error");
+				response.put("message", "Course not found");
+				return ResponseEntity.badRequest().body(response);
+			}
 
-	            Lesson lesson = new Lesson();
-	            lesson.setTitle(title);
-	            lesson.setVideoUrl((String) lessonMap.get("videoUrl"));
-	            lesson.setActivityId(activityId);
-	            lesson.setCourse(course);
-	            lesson.setStatus("INACTIVE");
-	            lessonService.saveLesson(lesson);
-	            log.info("Saved lesson: {}", lesson.getTitle());
-	        }
+			for (Map<String, Object> lessonMap : lessonData) {
+				String title = (String) lessonMap.get("title");
+				if (title == null || title.trim().isEmpty()) {
+					response.put("status", "error");
+					response.put("message", "Lesson title cannot be empty");
+					return ResponseEntity.badRequest().body(response);
+				}
+				String activityId = (String) lessonMap.get("activityId");
+				if (activityId == null || activityId.trim().isEmpty()) {
+					response.put("status", "error");
+					response.put("message", "Lesson activityId cannot be empty");
+					return ResponseEntity.badRequest().body(response);
+				}
 
-	        response.put("status", "success");
-	        response.put("message", "Lessons have been successfully added!");
-	        return ResponseEntity.ok(response);
+				Lesson lesson = new Lesson();
+				lesson.setTitle(title);
+				lesson.setVideoUrl((String) lessonMap.get("videoUrl"));
+				lesson.setActivityId(activityId);
+				lesson.setCourse(course);
+				lesson.setStatus("INACTIVE");
+				lessonService.saveLesson(lesson);
+				log.info("Saved lesson: {}", lesson.getTitle());
+			}
 
-	    } catch (Exception e) {
-	        log.error("Error saving lessons: ", e);
-	        response.put("status", "error");
-	        response.put("message", "Error saving lessons: " + e.getMessage());
-	        return ResponseEntity.badRequest().body(response);
-	    }
+			response.put("status", "success");
+			response.put("message", "Lessons have been successfully added!");
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			log.error("Error saving lessons: ", e);
+			response.put("status", "error");
+			response.put("message", "Error saving lessons: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
 	}
 
 	@PostMapping("/lessons/delete/{id}")
@@ -927,11 +1330,11 @@ public class AdminController extends BaseController{
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
-	
-	@PostMapping("/parameter/restoreParameter/{id}") 
+
+	@PostMapping("/parameter/restoreParameter/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> restoreParameter(@PathVariable("id") Long id,
-	        @ModelAttribute("parameter") Parameter parameter) {
+			@ModelAttribute("parameter") Parameter parameter) {
 		Map<String, String> response = new HashMap<>();
 		try {
 			Parameter existingParameter = parameterService.getParameterById(id);
@@ -945,9 +1348,9 @@ public class AdminController extends BaseController{
 			parameterService.saveParameters(existingParameter);
 			response.put("status", "success");
 			response.put("message", "Parameter has been restore successfully");
-			
+
 			return ResponseEntity.ok(response);
-			
+
 		} catch (Exception e) {
 			log.error("Error deleting lesson: ", e);
 			response.put("status", "error");
@@ -965,7 +1368,7 @@ public class AdminController extends BaseController{
 
 		ModelAndView mav = new ModelAndView("fragments/adminEditParameter :: editParameterModal");
 		mav.addObject("parameter", parameter);
-		mav.addObject("parametersKeyDistinct", parameterService.getDistinctParamKeys());
+		mav.addObject("parametersKeyDistinct", parameterService.getAllDistinctParamKeys());
 		return mav;
 	}
 
@@ -984,50 +1387,46 @@ public class AdminController extends BaseController{
 		return ResponseEntity.ok(Map.of("status", "success", "message", "Parameter updated successfully"));
 	}
 	@GetMapping("/listManageLearningProgress")
-    public ModelAndView loadUserLibraryFragment() {
-        ModelAndView mav = new ModelAndView("fragments/adminManageLearningProgress :: userLibraryContent");
-        
-        // Fetch all unique user EIDs from user library courses
-        List<String> uniqueUserEids = userLibraryCourseService.findAllUniqueUserEids();
-        
-        // Prepare a list to hold user library information
-        List<UserLibraryDTO> userLibraryData = new ArrayList<>();
-        
-        for (String userEid : uniqueUserEids) {
-            // Get all courses for this user
-            List<UserLibraryCourse> userCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid);
-            
-            // Calculate completed and in-progress courses
-            long completedCourses = userCourses.stream()
-                .filter(course -> course.getProgressStatus() == UserLibraryCourse.ProgressStatus.COMPLETE)
-                .count();
-            
-            long inProgressCourses = userCourses.stream()
-                .filter(course -> course.getProgressStatus() == UserLibraryCourse.ProgressStatus.IN_PROGRESS)
-                .count();
-            
-            // Create DTO for this user
-            UserLibraryDTO userDto = new UserLibraryDTO();
-            userDto.setUserEid(userEid);
-            userDto.setCompletedCoursesCount(completedCourses);
-            userDto.setInProgressCoursesCount(inProgressCourses);
-            userDto.setXapiLink("https://mksol.vn/xapi-lrs/" + userEid + "/course");
-            
-            userLibraryData.add(userDto);
-        }
-        
-        mav.addObject("userLibraries", userLibraryData);
-        return mav;
-    }
-	
+	public ModelAndView loadUserLibraryFragment() {
+		ModelAndView mav = new ModelAndView("fragments/adminManageLearningProgress :: userLibraryContent");
+
+		// Fetch all unique user EIDs from user library courses
+		List<String> uniqueUserEids = userLibraryCourseService.findAllUniqueUserEids();
+
+		// Prepare a list to hold user library information
+		List<UserLibraryDTO> userLibraryData = new ArrayList<>();
+
+		for (String userEid : uniqueUserEids) {
+			// Get all courses for this user
+			List<UserLibraryCourse> userCourses = userLibraryCourseService.getUserLibraryCoursesByUserEid(userEid);
+
+			// Calculate completed and in-progress courses
+			long completedCourses = userCourses.stream()
+					.filter(course -> course.getProgressStatus() == UserLibraryCourse.ProgressStatus.COMPLETE).count();
+
+			long inProgressCourses = userCourses.stream()
+					.filter(course -> course.getProgressStatus() == UserLibraryCourse.ProgressStatus.IN_PROGRESS)
+					.count();
+
+			// Create DTO for this user
+			UserLibraryDTO userDto = new UserLibraryDTO();
+			userDto.setUserEid(userEid);
+			userDto.setCompletedCoursesCount(completedCourses);
+			userDto.setInProgressCoursesCount(inProgressCourses);
+			userDto.setXapiLink("https://mksol.vn/xapi-lrs/" + userEid + "/course");
+
+			userLibraryData.add(userDto);
+		}
+
+		mav.addObject("userLibraries", userLibraryData);
+		return mav;
+	}
+
 	@Data
 	public class UserLibraryDTO {
-	    private String userEid;
-	    private long completedCoursesCount;
-	    private long inProgressCoursesCount;
-	    private String xapiLink;
+		private String userEid;
+		private long completedCoursesCount;
+		private long inProgressCoursesCount;
+		private String xapiLink;
 	}
 }
-	
-	
-

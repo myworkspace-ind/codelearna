@@ -1,6 +1,5 @@
 package mks.myworkspace.learna.repository;
 
-import java.lang.System.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
-import mks.myworkspace.learna.entity.Parameter;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.interceptor.LoggingCacheErrorHandler;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import lombok.extern.slf4j.Slf4j;
+import mks.myworkspace.learna.entity.Parameter;
 
 @Repository
 @Slf4j
@@ -48,8 +47,8 @@ public class ParameterJdbcRepository {
 	            insertNewParameter(parameter, conn, sqlInsert);
 	        }
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
+	    } catch (SQLException sqlEx) {
+	        log.error("Could not save parameter: " + parameter, sqlEx);
 	    }
 	    return parameter;
 	}
@@ -79,7 +78,7 @@ public class ParameterJdbcRepository {
     }
 	
 	public List<String> getParamKeyDiff() {
-		String sql = "SELECT DISTINCT param_key FROM sakai.learna_parameter;";
+		String sql = "SELECT DISTINCT param_key FROM learna_parameter;";
 		List<String> paramKeys = new ArrayList<>();
 
 		Connection conn = null;
@@ -93,8 +92,8 @@ public class ParameterJdbcRepository {
 			while (rs.next()) {
 				paramKeys.add(rs.getString("param_key"));
 			}
-		} catch (SQLException e) {
-			log.error("Could not excute " + sql, e);
+		} catch (SQLException sqlEx) {
+			log.error("Could not excute " + sql, sqlEx);
 		} finally {
 			close(rs);
 			close(ps);
@@ -102,6 +101,27 @@ public class ParameterJdbcRepository {
 		}
 
 		return paramKeys;
+	}
+
+	public List<Parameter> getListParamsByParamValueAndStatus(String paramKey, String status, String orderBy) {
+	    String sql = "SELECT * FROM learna_parameter WHERE param_key = ? AND status = ? ORDER BY seqno " + orderBy;
+	    List<Parameter> parameters = new ArrayList<>();
+	    try (Connection conn = dataSource.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, paramKey);
+	        ps.setString(2, status);
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            Parameter parameter = new Parameter();
+	            parameter.setId(rs.getLong("id"));
+	            parameter.setParamValue(rs.getString("param_value"));
+	            parameter.setSeqno(rs.getInt("seqno"));
+	            parameters.add(parameter);
+	        }
+	    } catch (SQLException sqlEx) {
+	    	log.error("Could not get parameter by sql " + sql, sqlEx);
+	    }
+	    return parameters;
 	}
 
 	private void close(Connection conn) {

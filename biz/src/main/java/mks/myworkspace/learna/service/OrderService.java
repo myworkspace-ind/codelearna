@@ -13,4 +13,5 @@ public interface OrderService {
 	public Order createOrder(String paymentMethod, String userEid, Long courseId);
 	public Optional<Order> getOrder(String orderCode);
 	public boolean updateOrderStatus(String orderCode, Order.OrderStatus status);
+	public List<Order> getOrdersByUserEid(String userEid);
 }

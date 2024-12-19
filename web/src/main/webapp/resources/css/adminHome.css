@@ -12,7 +12,17 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
 }
+/* Cấu hình màu nền và biên cho nút warning */
+.btn-warning {
+    background-color: #f0ad4e !important;
+    border-color: #eea236 !important;
+}
 
+/* Cấu hình màu nền và biên cho nút danger */
+.btn-danger {
+    background-color: #d9534f !important;
+    border-color: #c9302c !important;
+}
 .dashboard {
     display: flex;
     height: 100vh;

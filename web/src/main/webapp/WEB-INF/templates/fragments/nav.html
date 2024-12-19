@@ -44,9 +44,28 @@
 					<!-- <li class="nav-item mx-2">
 						<span class="nav-link">Balance: <span th:text="${#numbers.formatDecimal(session.userBalance, 2, 'DEFAULT', 0, 'DEFAULT')}"></span></span>
 					</li> -->
-					<li class="nav-item ms-3">
-						<button class="btn btn-outline-secondary" th:text="${session.userDisplayName}"></button>
-					</li>
+                    <li class="nav-item dropdown ms-3">
+                        <button 
+                            class="btn btn-outline-secondary dropdown-toggle" 
+                            type="button" 
+                            id="userMenuButton" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false"
+                            th:text="${session.userDisplayName}">
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="userMenuButton">
+                            <li>
+                                <a class="dropdown-item" th:href="@{/admin}">Dashboard</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/orders/myorders}">My Orders</a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+                            </li>
+                        </ul>
+                    </li>
 				</ul>
 			</div>
 		</div>

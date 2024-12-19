@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History</title>
+    <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
+</head>
+<body>
+	<!-- Navigation Bar fragment -->
+    <th:block th:include="fragments/nav"></th:block>
+    
+    <div class="container mt-3">
+        <h2 class="mb-4 text-center">Order History</h2>
+        <table class="table table-bordered table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>#</th>
+                    <th>Order Code</th>
+                    <th>Course Name</th>
+                    <th>Payment Method</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="order, iterStat : ${orders}">
+                    <td th:text="${iterStat.index + 1}"></td>
+                    <td th:text="${order.orderCode}"></td>
+                    <td th:text="${order.courseId}"></td>
+                    <td th:text="${order.paymentMethod}"></td>
+					<td th:text="${#numbers.formatDecimal(order.amount, 1, 'DEFAULT', 0, 'DEFAULT')} + ' VNĐ'"></td>
+                    <td>
+                        <span th:classappend="${order.status.name() == 'COMPLETED'} ? 'text-success fw-bold' : ''" th:text="${order.status.name() == 'COMPLETED' ? 'Completed' : ''}"></span>
+                        <span th:classappend="${order.status.name() == 'PENDING'} ? 'text-warning fw-bold' : ''" th:text="${order.status.name() == 'PENDING' ? 'Pending' : ''}"></span>
+                        <span th:classappend="${order.status.name() == 'CANCELLED'} ? 'text-danger fw-bold' : ''" th:text="${order.status.name() == 'CANCELLED' ? 'Cancelled' : ''}"></span>
+                    </td>
+                    <td th:text="${order.createdAt}"></td>
+                    <td>
+					    <a class="btn btn-sm btn-danger me-2" th:if="${order.status.name() == 'PENDING'}" th:href="@{/orders/cancel/{orderCode}(orderCode=${order.orderCode})}">Cancel</a>
+					    <a class="btn btn-sm btn-primary" 
+						   th:if="${order.status.name() == 'PENDING'}" 
+						   th:href="@{/orders/retry/{orderCode}(orderCode=${order.orderCode}, method=${order.paymentMethod})}">
+						   Retry Payment
+						</a>
+					    <a class="btn btn-sm btn-primary" th:if="${order.status.name() == 'COMPLETED'}" th:href="@{/course/{courseId}(courseId=${order.courseId})}">Go to Course</a>
+					</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/resources/js/library.js}"></script>
+    <!-- Determine the root context of the application. -->
+	<script th:inline="javascript">
+	    var _ctx = /*[[@{/}]]*/ '';
+	</script>
+	<script src="/library/webjars/jquery/dist/jquery.min.js"></script>
+	<script src="/library/webjars/popper.js/2.9.3/umd/popper.min.js"></script>
+	<script src="/library/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+	
+	<!-- For Sakai only -->
+	<script type="text/javascript" src="/library/js/headscripts.js"></script>
+</body>
+</html>
