@@ -160,7 +160,8 @@ public class PaymentServiceImpl implements PaymentService {
 
                         if (order.isPresent() && order.get().getAmount().compareTo(transactionAmount) == 0) {
                             // Cập nhật trạng thái đơn hàng
-                            orderService.updateOrderStatus(order.get().getOrderCode(), Order.OrderStatus.COMPLETED);
+                        	orderService.updateOrderStatusJdbc(order.get().getOrderCode(), Order.OrderStatus.COMPLETED);
+                            //orderService.updateOrderStatus(order.get().getOrderCode(), Order.OrderStatus.COMPLETED);
 //                            log.warn("Order Code:::::" + order.get().getOrderCode());
 //                            log.warn("Sepay Code:::::" + code);
                             // Thêm khóa học vào thư viện người dùng

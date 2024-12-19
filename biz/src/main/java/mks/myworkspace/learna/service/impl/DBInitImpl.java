@@ -22,8 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import mks.myworkspace.learna.entity.Category;
 import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.entity.Subcategory;
+import mks.myworkspace.learna.repository.CategoryJdbcRepository;
 import mks.myworkspace.learna.repository.CategoryRepository;
+import mks.myworkspace.learna.repository.ParameterJdbcRepository;
 import mks.myworkspace.learna.repository.ParameterRepository;
+import mks.myworkspace.learna.repository.SubcategoryJdbcRepository;
 import mks.myworkspace.learna.repository.SubcategoryRepository;
 import mks.myworkspace.learna.service.DBInit;
 
@@ -36,6 +39,12 @@ public class DBInitImpl implements DBInit {
 	private CategoryRepository categoryRepository;
 	@Autowired
 	private SubcategoryRepository subcategoryRepository;
+	@Autowired
+	private ParameterJdbcRepository parameterJdbcRepository;
+	@Autowired
+	private CategoryJdbcRepository categoryJdbcRepository;
+	@Autowired
+	private SubcategoryJdbcRepository subcategoryJdbcRepository;
 	@Value("classpath:initDB/data.json")
     private Resource resource;
 	
@@ -62,7 +71,7 @@ public class DBInitImpl implements DBInit {
                     parameter.setSeqno(paramJson.optInt("seqno", 0));
                     parameter.setStatus(paramJson.getString("status"));
 
-                    parameterRepository.save(parameter);
+                    parameterJdbcRepository.save(parameter);
                 }
 
                 // Lưu Categories
@@ -71,12 +80,11 @@ public class DBInitImpl implements DBInit {
                     JSONObject categoryJson = categoriesArray.getJSONObject(i);
 
                     Category category = new Category();
-                    category.setId(categoryJson.getLong("id"));
 
                     Parameter parameter = parameterRepository.findById(categoryJson.getLong("parameter_id")).orElse(null);
                     category.setParameter(parameter);  // Thiết lập Parameter cho Category
 
-                    categoryRepository.save(category);
+                    categoryJdbcRepository.save(category);
                 }
 
                 // Lưu Subcategories
@@ -85,7 +93,6 @@ public class DBInitImpl implements DBInit {
                     JSONObject subcategoryJson = subcategoriesArray.getJSONObject(i);
 
                     Subcategory subcategory = new Subcategory();
-                    subcategory.setId(subcategoryJson.getLong("id"));
 
                     // Lấy các đối tượng liên quan
                     Category category = categoryRepository.findById(subcategoryJson.optLong("category_id", 0)).orElse(null);
@@ -93,7 +100,7 @@ public class DBInitImpl implements DBInit {
                     subcategory.setCategory(category);
                     subcategory.setParameter(parameter);
 
-                    subcategoryRepository.save(subcategory);
+                    subcategoryJdbcRepository.save(subcategory);
                 }
 
                 log.info("Data loaded successfully!");
