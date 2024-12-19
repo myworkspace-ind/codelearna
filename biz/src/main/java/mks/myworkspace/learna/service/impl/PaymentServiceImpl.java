@@ -8,6 +8,7 @@ import mks.myworkspace.learna.repository.CourseRepository;
 import mks.myworkspace.learna.repository.WalletRepository;
 import mks.myworkspace.learna.service.OrderService;
 import mks.myworkspace.learna.service.PaymentService;
+import mks.myworkspace.learna.service.TransactionService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 import java.io.UnsupportedEncodingException;
@@ -32,6 +33,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +56,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private UserLibraryCourseService userLibraryCourseService;
+    @Autowired
+    private TransactionService transactionService;
     
     @Autowired
     private OrderService orderService;
@@ -61,6 +65,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Value("${payment.sepay.apiKey}")
     private String bearerToken;
+    
+    @Value("${payment.sepay.transactionEndpoint}")
+    private String transactionEndpoint;
     
     @Value("${payment.vnpay.tmnCode}")
     private String tmnCode;
@@ -120,42 +127,78 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public String processPayment(String orderCode, String userEid) {
-        String url = "https://my.sepay.vn/userapi/transactions/list?limit=20";
-        
+        String url = transactionEndpoint;  
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "Bearer " + bearerToken);
-            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            ResponseEntity<Map> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+            // Log thông tin chi tiết request
+            // log.warn("Requesting transaction endpoint");
+            // log.warn("Request URL: {}", url);
+            // log.warn("Request Headers: {}", headers);
+
+            // Thực hiện HTTP GET
+            ResponseEntity<Map> responseEntity = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), Map.class);
+
+            // Log thông tin response
+            // log.warn("Response Status Code: {}", responseEntity.getStatusCode());
+            // log.warn("Response Headers: {}", responseEntity.getHeaders());
+            // log.warn("Response Body: {}", responseEntity.getBody());
+
             Map<String, Object> response = responseEntity.getBody();
-
             List<Map<String, Object>> transactions = (List<Map<String, Object>>) response.get("transactions");
 
             if (transactions != null && !transactions.isEmpty()) {
-//            	log.info("Transaction {}", transactions);
-            	// Lưu lại thông tin để đảm bảo giao dịch thành công nhằm audit
+                log.info("Transactions found: {}", transactions);
+
                 for (Map<String, Object> transaction : transactions) {
                     String code = (String) transaction.get("code");
 
                     if (code != null && code.equals(orderCode)) {
                         Optional<Order> order = orderService.getOrder(code);
                         BigDecimal transactionAmount = new BigDecimal((String) transaction.get("amount_in"));
+
                         if (order.isPresent() && order.get().getAmount().compareTo(transactionAmount) == 0) {
+                            // Cập nhật trạng thái đơn hàng
                             orderService.updateOrderStatus(order.get().getOrderCode(), Order.OrderStatus.COMPLETED);
-                            userLibraryCourseService.addCourseToLibrary(userEid, order.get().getCourseId(), UserLibraryCourse.PaymentStatus.PURCHASED, UserLibraryCourse.ProgressStatus.IN_PROGRESS);
+//                            log.warn("Order Code:::::" + order.get().getOrderCode());
+//                            log.warn("Sepay Code:::::" + code);
+                            // Thêm khóa học vào thư viện người dùng
+                            userLibraryCourseService.addCourseToLibrary(
+                                userEid,
+                                order.get().getCourseId(),
+                                UserLibraryCourse.PaymentStatus.PURCHASED,
+                                UserLibraryCourse.ProgressStatus.IN_PROGRESS
+                            );
+
+                            // Lưu thông tin giao dịch
+                            transactionService.saveTransaction(transaction);
+
+                            log.info("Payment successfully processed for order code: {}", orderCode);
                             return "PAID";
                         }
                     }
                 }
             }
 
+            log.warn("No matching transactions found for order code: {}", orderCode);
             return orderCode + " not found";
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("An error occurred: " + e.getMessage());
-        }
+
+        } catch (HttpClientErrorException e) {
+            // Xử lý lỗi HTTP cụ thể (401 Unauthorized)
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                log.error("Unauthorized access (401) when accessing the endpoint: {}", url);
+                log.error("API Key::::", bearerToken);
+                log.error("Response Body: {}", e.getResponseBodyAsString());
+            } else {
+                log.error("HTTP error occurred: {}", e.getStatusCode());
+                log.error("Response Body: {}", e.getResponseBodyAsString());
+            }
+            throw new RuntimeException("An error occurred during payment processing: " + e.getMessage(), e);
+        } 
     }
+
+
 
     //tao url thanh toan vnpay
 	@Override

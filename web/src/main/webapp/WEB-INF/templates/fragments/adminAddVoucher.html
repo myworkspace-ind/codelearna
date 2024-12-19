@@ -1,0 +1,85 @@
+<div th:fragment="addVoucherContent">
+	<div class="container mt-5">
+		<h1 class="mb-4 fw-bolder">Add New Voucher</h1>
+
+		<!-- Error Message Display -->
+		<div id="error-message-voucher" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+			<strong>Error!</strong> <span id="error-text-voucher"></span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+		<!-- Voucher Form -->
+		<form id="voucherForm" enctype="multipart/form-data" class="needs-validation" onsubmit="submitVoucherForm(event)" novalidate>
+			<!-- Voucher Name Input -->
+			<div class="mb-3">
+				<label for="name" class="form-label">Voucher Name <span style="color:red">*</span></label>
+				<input type="text" class="form-control" id="name" name="name" required>
+				<div class="invalid-feedback">Please provide a voucher name.</div>
+			</div>
+			<div class="mb-3">
+			    <label for="campaign" class="form-label">Campaign <span style="color:red">*</span></label>
+			    <select class="form-select" id="campaign" name="campaign" required onchange="loadCampaignDates(event)">
+					<option value="">Choose a campaign...</option>
+					<option th:each="campaign : ${campaignList}" 
+							th:value="${campaign.id}" 
+							th:text="${campaign.name}" 
+							th:selected="${campaign.id == selectedCampaignId}">
+					</option>
+				</select>
+			    <div class="invalid-feedback">Please select a campaign.</div>
+			</div>
+			
+
+			<div class="row">
+				<div class="col-md-6 mb-3">
+				    <label for="discountValue" class="form-label">Discount Value <span style="color:red">*</span></label>
+				    <input type="number" class="form-control" id="discountValue" name="discountValue" required step="1" min="0" max="100" oninput="validateDiscountValue()" disabled>
+				    <div class="invalid-feedback">Discount value must be valid.</div>
+				</div>
+				<div class="col-md-6 mb-3">
+				    <label for="valueType" class="form-label">Value Type <span style="color:red">*</span></label>
+				    <select class="form-select" id="valueType" name="valueType" required onchange="toggleDiscountValue()">
+				        <option value="">Choose value type...</option>
+				        <option value="percentage">Percentage</option>
+				        <option value="fixed">Fixed</option>
+				    </select>
+				    <div class="invalid-feedback">Please select a value type.</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-6 mb-3">
+				    <label for="maxValue" class="form-label">Max Value</label>
+				    <input type="number" class="form-control" id="maxValue" name="maxValue" step="1" min="0" disabled>
+				    <div class="invalid-feedback">Max value must be valid.</div>
+				</div>
+				<div class="col-md-6 mb-3">
+					<label for="quantity" class="form-label">Quantity <span style="color:red">*</span></label>
+					<input type="number" class="form-control" id="quantity" name="quantity" required step="1" min="1">
+					<div class="invalid-feedback">Quantity must be greater than or equal to 1.</div>
+				</div>
+			</div>
+
+			<div class="row">
+			    <div class="col-md-6 mb-3">
+			        <label for="startDate" class="form-label">Start Date</label>
+			        <input type="date" class="form-control" id="startDate" name="startDate">
+			    </div>
+			    <div class="col-md-6 mb-3">
+			        <label for="endDate" class="form-label">End Date</label>
+			        <input type="date" class="form-control" id="endDate" name="endDate">
+			    </div>
+			</div>
+			<div class="mb-3">
+			    <label for="description" class="form-label">Description</label>
+			    <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter voucher description..."></textarea>
+			</div>
+
+			<!-- Submit and Cancel Buttons -->
+			<button type="submit" class="btn btn-primary">Add Voucher</button>
+			<button type="button" class="btn btn-secondary" onclick="loadVouchersSection(event)">Cancel</button>
+		</form>
+	</div>
+</div>

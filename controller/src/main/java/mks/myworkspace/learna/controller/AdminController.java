@@ -1,8 +1,10 @@
 package mks.myworkspace.learna.controller;
 
 import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Voucher;
 import mks.myworkspace.learna.entity.Campaign;
 import mks.myworkspace.learna.repository.CourseJdbcRepository;
+import mks.myworkspace.learna.repository.VoucherJdbcRespository;
 import mks.myworkspace.learna.repository.ParameterRepository;
 import mks.myworkspace.learna.entity.Lesson;
 import mks.myworkspace.learna.entity.Parameter;
@@ -12,20 +14,27 @@ import mks.myworkspace.learna.service.CampaignService;
 import mks.myworkspace.learna.service.CategoryService;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.LessonService;
+import mks.myworkspace.learna.service.VoucherService;
 import mks.myworkspace.learna.service.ParameterService;
 import mks.myworkspace.learna.service.PlayService;
 import mks.myworkspace.learna.service.RevenueService;
 import mks.myworkspace.learna.service.SubcategoryService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
 
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,11 +74,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/admin")
 @Slf4j
 public class AdminController extends BaseController {
-
 	@Autowired
 	private CourseService courseService;
 	@Autowired
 	private CampaignService campaignService;
+	@Autowired
+    private VoucherService voucherService;
 	@Autowired
 	private ParameterService parameterService;
 
@@ -123,11 +134,205 @@ public class AdminController extends BaseController {
 	    mav.addObject("campaigns", campaignService.getAllCampaigns());
 	    return mav;
 	}
+	
+	@GetMapping("/listVoucher")
+	public ModelAndView loadVouchersFragment() {
+	    ModelAndView mav = new ModelAndView("fragments/adminListVoucher :: vouchersContent");
+	    mav.addObject("vouchers", voucherService.getAllVouchers());
+	    return mav;
+	}
 	@GetMapping("/revenue")
 	public ModelAndView revenueFragment() {
 		ModelAndView mav = new ModelAndView("fragments/revenue :: revenue");
 		return mav;
 	}
+    // @GetMapping("/addVoucher")
+    // public ModelAndView showAddVoucherPage() {
+    //     ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
+        
+    //     List<Campaign> campaignList = campaignService.getAllCampaigns();
+    //     // Truyền dữ liệu vào ModelAndView
+    //     mav.addObject("campaignList", campaignList);
+    //     return mav;
+    // }
+	@GetMapping("/addVoucher")
+	public ModelAndView showAddVoucherPage(@RequestParam(required = false) Long campaignId) {
+		ModelAndView mav = new ModelAndView("fragments/adminAddVoucher :: addVoucherContent");
+
+		List<Campaign> campaignList = campaignService.getAllCampaigns();
+		mav.addObject("campaignList", campaignList);
+
+		// Truyền ID chiến dịch đã chọn nếu có
+		if (campaignId != null) {
+			mav.addObject("selectedCampaignId", campaignId);
+		}
+
+		return mav;
+	}
+	@GetMapping("/getCampaignDates")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> getCampaignDates(@RequestParam Long id) {
+		Campaign campaign = campaignService.getCampaignById(id);
+		if (campaign != null) {
+        Map<String, String> response = new HashMap<>();
+
+        // Chuyển đổi java.util.Date sang LocalDateTime
+        Date startTime = campaign.getStartTime();
+        Date endTime = campaign.getEndTime();
+
+        if (startTime != null) {
+            LocalDateTime localStartTime = startTime.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+            response.put("startDate", localStartTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        } else {
+            response.put("startDate", "N/A");
+        }
+
+        if (endTime != null) {
+            LocalDateTime localEndTime = endTime.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+            response.put("endDate", localEndTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        } else {
+            response.put("endDate", "N/A");
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	}
+
+    @PostMapping("/addVoucher")
+    @Transactional
+    public ResponseEntity<Map<String, Object>> addVoucher(@RequestBody Map<String, Object> formData) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Lấy dữ liệu từ formData
+            String name = (String) formData.get("name");
+            Long campaignId = Long.valueOf(formData.get("campaign").toString());
+            Double discountValue = Double.valueOf(formData.get("discountValue").toString());
+            String valueType = (String) formData.get("valueType");
+            Double maxValue = null;
+            Object maxValueObj = formData.get("maxValue");
+
+            if (maxValueObj != null && !maxValueObj.toString().isEmpty()) {
+                maxValue = Double.valueOf(maxValueObj.toString());
+            } else {
+                maxValue = null; // Chắc chắn rằng maxValue là null nếu không có giá trị
+            }
+
+            Integer quantity = Integer.valueOf(formData.get("quantity").toString());
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("startDate"));
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("endDate"));
+            String description = (String) formData.get("description");
+
+            // Chuyển đổi giá trị type cho voucher
+            Voucher.ValueType type = Voucher.ValueType.fromValue(valueType);
+
+            // Tìm campaign từ ID
+            Campaign campaign = campaignService.getCampaignById(campaignId);
+
+            // Tạo đối tượng Voucher mới
+            Voucher voucher = new Voucher();
+            voucher.setName(name);
+            voucher.setCampaign(campaign);
+            voucher.setDiscountValue(discountValue);
+            voucher.setValueType(type);
+            voucher.setMaxValue(maxValue);
+            voucher.setQuantity(quantity);
+            voucher.setStartDate(startDate);
+            voucher.setEndDate(endDate);
+            voucher.setDescription(description);
+
+            // Lưu voucher vào database
+            voucherService.saveVoucher(voucher);
+
+            response.put("success", true);
+            response.put("message", "Voucher added successfully!");
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "Failed to add voucher: " + e.getMessage());
+        }
+        return ResponseEntity.ok(response);
+    }
+	@GetMapping("/vouchers/edit/{voucherId}")
+	public ModelAndView showEditVoucherForm(@PathVariable("voucherId") Long voucherId) {
+		Voucher voucher = voucherService.getVoucherById(voucherId);
+		if (voucher == null) {
+			return new ModelAndView("redirect:/admin/listVoucher");
+		}
+		 List<Campaign> campaigns = campaignService.getAllCampaigns(); // Lấy danh sách Campaign từ database
+		ModelAndView mav = new ModelAndView("fragments/adminEditVoucher :: editVoucherModal");
+		mav.addObject("voucher", voucher);
+		mav.addObject("campaigns", campaigns);
+		return mav;
+	}
+
+	@PostMapping("/vouchers/edit/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> editVoucher(@PathVariable("id") Long voucherId,
+			@RequestBody Map<String, Object> formData) {
+		Map<String, String> response = new HashMap<>();
+		try {
+            // Lấy dữ liệu từ formData
+            String name = (String) formData.get("name");
+            Long campaignId = Long.valueOf(formData.get("campaign").toString());
+            Double discountValue = Double.valueOf(formData.get("discountValue").toString());
+            String valueType = (String) formData.get("valueType");
+            Double maxValue = null;
+            Object maxValueObj = formData.get("maxValue");
+
+            if (maxValueObj != null && !maxValueObj.toString().isEmpty()) {
+                maxValue = Double.valueOf(maxValueObj.toString());
+            } else {
+                maxValue = null; // Chắc chắn rằng maxValue là null nếu không có giá trị
+            }
+            Integer quantity = Integer.valueOf(formData.get("quantity").toString());
+            Date startDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("startDate"));
+            Date endDate = new SimpleDateFormat("yyyy-MM-dd").parse((String) formData.get("endDate"));
+            String description = (String) formData.get("description");
+            // Chuyển đổi giá trị type cho voucher
+            Voucher.ValueType type = Voucher.ValueType.fromValue(valueType);
+
+            // Tìm campaign từ ID
+            Campaign campaign = campaignService.getCampaignById(campaignId);
+
+            // Tạo đối tượng Voucher mới
+            Voucher voucher = new Voucher();
+            voucher.setId(voucherId);
+            voucher.setName(name);
+            voucher.setCampaign(campaign);
+            voucher.setDiscountValue(discountValue);
+            voucher.setValueType(type);
+            voucher.setMaxValue(maxValue);
+            voucher.setQuantity(quantity);
+            voucher.setStartDate(startDate);
+            voucher.setEndDate(endDate);
+            voucher.setDescription(description);
+			Voucher existingVoucher = voucherService.getVoucherById(voucherId);
+			if (existingVoucher == null) {
+				response.put("status", "error");
+				response.put("message", "Voucher not found");
+				return ResponseEntity.badRequest().body(response);
+			}
+			existingVoucher = voucher;
+			voucherService.saveVoucher(existingVoucher);
+
+			response.put("status", "success");
+			response.put("message", "Voucher updated successfully");
+//			response.put("courseId", existingVoucher.getCourse().getId().toString());
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			response.put("status", "error");
+			response.put("message", "Error updating voucher: " + e.getMessage());
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+
+
     @GetMapping("/addCampaign")
     public ModelAndView showAddCampaignPage() {
         ModelAndView mav = new ModelAndView("fragments/adminAddCampaign :: addCampaignContent");
@@ -253,13 +458,14 @@ public class AdminController extends BaseController {
 		if (course.getStatus() == null || course.getStatus().isEmpty()) {
 			course.setStatus("INACTIVE");
 		}
-
+		 //|| course.getDifficultyLevel().getId() == null
+		System.out.println(course.getDifficultyLevel());
 		if (course.getDifficultyLevel() == null || course.getDifficultyLevel().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Difficulty Level is required and must be valid.");
 			return ResponseEntity.badRequest().body(response);
 		}
-
+		//|| course.getLessonType().getId() == null
 		if (course.getLessonType() == null || course.getLessonType().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Lesson Type is required and must be valid.");
@@ -283,6 +489,7 @@ public class AdminController extends BaseController {
 
 		course.setDifficultyLevel(difficultyLevel);
 		course.setLessonType(lessonType);
+		
 
 		if (course.getSubcategory() == null || course.getSubcategory().getId() == null) {
 			response.put("status", "error");
@@ -473,6 +680,29 @@ public class AdminController extends BaseController {
 		}
 	}
 
+	@PostMapping("/vouchers/delete/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> deleteVoucher(@PathVariable("id") Long id) {
+	    Map<String, String> response = new HashMap<>();
+	    try {
+	        Voucher voucher = voucherService.getVoucherById(id);
+	        if (voucher != null) {
+	            voucherService.deleteVoucher(id); // Xóa voucher
+	            response.put("status", "success");
+	            response.put("message", "Voucher has been deleted successfully.");
+	            return ResponseEntity.ok(response);
+	        } else {
+	            response.put("status", "error");
+	            response.put("message", "Voucher not found.");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+	    } catch (Exception e) {
+	        response.put("status", "error");
+	        response.put("message", "An error occurred while trying to delete the voucher: " + e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
+	}
+
 	@PostMapping("/courses/toggleCourseStatus/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> toggleCourseStatus(@PathVariable("id") Long id,
@@ -521,6 +751,65 @@ public class AdminController extends BaseController {
 		mav.addObject("lessonTypes", parameterService.getListParamsByParamValue("lesson_type"));
 		mav.addObject("difficultyLevel", parameterService.getListParamsByParamValue("difficulty_level"));
 		return mav;
+	}
+
+	@GetMapping("/campaigns/edit/{id}")
+	public ModelAndView showEditCampaignForm(@PathVariable("id") Long id) {
+	    Campaign campaign = campaignService.getCampaignById(id);
+	    if (campaign == null) {
+	        return new ModelAndView("redirect:/admin/campaigns"); 
+	    }
+
+	    ModelAndView mav = new ModelAndView("fragments/adminEditCampaign :: editCampaignModal");
+	    mav.addObject("campaign", campaign);
+	    return mav;
+	}
+
+	@PostMapping("/campaigns/edit/{id}")
+	@ResponseBody
+	public ResponseEntity<Map<String, String>> editCampaign(@PathVariable("id") Long id,
+	                                                        @ModelAttribute("campaign") Campaign campaign) {
+	    Map<String, String> response = new HashMap<>();
+
+	    try {
+	        // Lấy campaign hiện tại từ database
+	        Campaign existingCampaign = campaignService.getCampaignById(id);
+	        if (existingCampaign == null) {
+	            response.put("status", "error");
+	            response.put("message", "Campaign not found");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+
+	        // Validate input
+	        if (campaign.getName() == null || campaign.getName().trim().isEmpty()) {
+	            response.put("status", "error");
+	            response.put("message", "Campaign name is required");
+	            return ResponseEntity.badRequest().body(response);
+	        }
+
+	        // Cập nhật thông tin campaign
+	        existingCampaign.setName(campaign.getName());
+	        existingCampaign.setDescription(campaign.getDescription());
+	        existingCampaign.setShortDescription(campaign.getShortDescription());
+	        existingCampaign.setStartTime(campaign.getStartTime());
+	        existingCampaign.setEndTime(campaign.getEndTime());
+	        existingCampaign.setCoverImageUrl(campaign.getCoverImageUrl());
+
+	        // Lưu campaign
+	        campaignService.saveCampaign(existingCampaign);
+
+	        // Trả về phản hồi thành công
+	        response.put("status", "success");
+	        response.put("message", "Campaign updated successfully");
+	        response.put("campaignId", existingCampaign.getId().toString());
+	        return ResponseEntity.ok(response);
+
+	    } catch (Exception e) {
+	        log.error("Error updating campaign: ", e);
+	        response.put("status", "error");
+	        response.put("message", e.getMessage());
+	        return ResponseEntity.badRequest().body(response);
+	    }
 	}
 
 	@PostMapping("/courses/edit/{id}")

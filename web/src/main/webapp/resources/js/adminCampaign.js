@@ -191,3 +191,102 @@ function deleteCampaign(campaignId, modal) {
 			showErrorToast(error.message || 'An error occurred while deleting the course');
 		});
 }
+
+function loadEditCampaignForm(campaignId) {
+    fetch(`${_ctx}admin/campaigns/edit/${campaignId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load edit campaign form');
+            }
+            return response.text();
+        })
+        .then(html => {
+            if (!document.getElementById('editCampaignModal')) {
+                document.body.insertAdjacentHTML('beforeend', html);
+            } else {
+                document.getElementById('editCampaignModal').outerHTML = html;
+            }
+
+            const editCampaignModal = new bootstrap.Modal(document.getElementById('editCampaignModal'));
+            editCampaignModal.show();
+
+            document.getElementById('editCampaignForm').addEventListener('submit', function(event) {
+                event.preventDefault(); 
+                submitEditCampaignForm(event, campaignId); 
+            });
+        })
+        .catch(error => {
+            console.error('Error loading edit campaign form:', error);
+            showErrorToast('Error loading campaign form'); 
+        });
+}
+
+function submitEditCampaignForm(event, campaignId) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    // Basic validation
+    const name = formData.get('name');
+    if (!name || name.trim() === '') {
+        showErrorToast('Please enter a campaign name');
+        return;
+    }
+
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(data => Promise.reject(data));
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === "success") {
+                showSuccessToast(data.message || 'Campaign updated successfully!');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editCampaignModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                loadCampaignsSection(); // Reload danh sách campaign
+            } else {
+                throw new Error(data.message || 'Failed to update campaign');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating campaign:', error);
+            showErrorToast(error.message || 'An error occurred while updating the campaign');
+        });
+}
+
+function addVoucherById(campaignId) {
+    const dynamicContent = document.getElementById('dynamic-content');
+    if (!dynamicContent) {
+        console.error("Phần tử 'dynamic-content' không tồn tại trên trang.");
+        return;
+    }
+
+    fetch(`${_ctx}admin/addVoucher?campaignId=${campaignId}`)
+        .then(response => response.text())
+        .then(html => {
+            dynamicContent.innerHTML = html;
+
+            fetch(`${_ctx}admin/getCampaignDates?id=${campaignId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.startDate && data.endDate) {
+                        document.getElementById("startDate").value = data.startDate;
+                        document.getElementById("endDate").value = data.endDate;
+                    } else {
+                        console.warn("Không thể tải ngày bắt đầu và kết thúc.");
+                    }
+                })
+                .catch(error => console.error('Error fetching campaign dates: ', error));
+        })
+        .catch(error => console.error('Error loading add voucher page: ', error));
+}
