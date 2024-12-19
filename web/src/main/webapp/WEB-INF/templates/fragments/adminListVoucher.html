@@ -17,50 +17,51 @@
         </div>
 
         <!-- Loading Container -->
-        <div id="loadingContainer"></div>
+        <div id="loadingContainer">
 
-        <!-- Vouchers Table -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-dark">
-                    <tr>
-                        <th>#</th>
-                        <th>Campaign ID</th>
-                        <th>Name</th>
-                        <th>Discount Value</th>
-                        <th>Value Type</th>
-                        <th>Max Value</th>
-                        <th>Quantity</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="voucher, iterStat : ${vouchers}">
-                        <th th:text="${voucher.id}"></th>
-                        <td th:text="${voucher.campaign.id}"></td>
-                        <td th:text="${voucher.name}"></td>
-                        <td th:text="${voucher.discountValue}"></td>
-                        <td th:text="${voucher.valueType}"></td>
-                        <td th:text="${voucher.maxValue != null ? voucher.maxValue : 'N/A'}"></td>
-                        <td th:text="${voucher.quantity}"></td>
-                        <td th:text="${#dates.format(voucher.startDate, 'yyyy-MM-dd')}"></td>
-                        <td th:text="${#dates.format(voucher.endDate, 'yyyy-MM-dd')}"></td>
-                        <td>
-                            <a href="#" class="btn btn-warning btn-sm"
-							   th:data-voucher-id="${voucher.id}"
-							   th:onclick="'loadEditVoucherForm(this.dataset.voucherId)'"
-							   title="Edit Voucher">Edit</a>
-                            <a href="#" class="btn btn-danger btn-sm"
-							   th:onclick="showDeleteConfirmModal_voucher([[${voucher.id}]])"
-							   title="Delete Voucher"> Delete </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <!-- Vouchers Table -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Campaign ID</th>
+                            <th>Name</th>
+                            <th>Discount Value</th>
+                            <th>Value Type</th>
+                            <th>Max Value</th>
+                            <th>Quantity</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="voucher, iterStat : ${vouchers}">
+                            <th th:text="${voucher.id}"></th>
+                            <td th:text="${voucher.campaign.id}"></td>
+                            <td th:text="${voucher.name}"></td>
+                            <td th:text="${voucher.discountValue}"></td>
+                            <td th:text="${voucher.valueType}"></td>
+                            <td th:text="${voucher.maxValue != null ? voucher.maxValue : 'N/A'}"></td>
+                            <td th:text="${voucher.quantity}"></td>
+                            <td th:text="${#dates.format(voucher.startDate, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${#dates.format(voucher.endDate, 'yyyy-MM-dd')}"></td>
+                            <td>
+                                <a href="#" class="btn btn-warning btn-sm"
+                                th:data-voucher-id="${voucher.id}"
+                                th:onclick="'loadEditVoucherForm(this.dataset.voucherId)'"
+                                title="Edit Voucher">Edit</a>
+                                <a href="#" class="btn btn-danger btn-sm"
+                                th:onclick="showDeleteConfirmModal_voucher([[${voucher.id}]])"
+                                title="Delete Voucher"> Delete </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-
+        
         <!-- Delete Confirmation Modal -->
         <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
             aria-hidden="true">
