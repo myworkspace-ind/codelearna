@@ -61,6 +61,8 @@ public class CourseController extends BaseController {
 		Double balance = paymentService.getBalance(userEid);
 		
 		List<Voucher> vouchers = voucherService.getAllVouchers();
+		
+		List<Voucher> course_vouchers = voucherService.getAllVoucherByCourseId(id);
 
 		List<Review> filteredReviews = reviewService.getFilteredReviews(id, sortBy);
 
@@ -77,6 +79,7 @@ public class CourseController extends BaseController {
 
 		mav.addObject("course", course);
 		mav.addObject("vouchers", vouchers);
+		mav.addObject("course_vouchers", course_vouchers);
 		mav.addObject("reviews", paginatedReviews);
 		mav.addObject("userEid", userEid);
 		mav.addObject("currentPage", page);

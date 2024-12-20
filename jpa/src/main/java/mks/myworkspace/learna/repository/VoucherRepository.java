@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 
 import mks.myworkspace.learna.entity.Voucher;
 
@@ -19,4 +21,12 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
 
     // Tìm voucher theo loại giảm giá (percentage hoặc fixed)
     List<Voucher> findByValueType(Voucher.ValueType valueType);
+    
+    //Tìm voucher theo khóa học
+    @Query(value = "SELECT * FROM learna_voucher v join learna_voucher_course vc on v.id = vc.voucher_id where course_id = :courseId", nativeQuery = true)
+    List<Voucher> findByCourseId(@Param("courseId") Long courseId);
+    
+    
 }
+
+

@@ -161,8 +161,10 @@
 						                <form id="voucherForm" th:action="@{/voucher/apply}" method="POST">
 						                	
 						                    <input type="hidden" name="courseId" th:value="${course.id}" />
-						                    <div th:each = "voucher, iterStat : ${vouchers}" class="voucher-method" >
-						                        <div class="d-flex align-items-center" th:classappend="${iterStat.first ? '' : 'mt-3'}">
+						                    
+						                    
+						                    <div th:each = "voucher, iterStat : ${course_vouchers}">
+						                     	<div class="d-flex align-items-center" th:classappend="${iterStat.first ? '' : 'mt-3'}">
 						                            <div class="form-check">
 						                                <input class="form-check-input" type="radio" name="voucher" th:value="${voucher.id}" required>
 						                            </div>
