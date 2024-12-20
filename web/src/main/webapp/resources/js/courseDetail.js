@@ -62,7 +62,7 @@ function loadVouchersSection() {
 			}
 			var voucherModal = new bootstrap.Modal(document.getElementById('voucherModal'));
 			voucherModal.show();
-/*			document.getElementById('voucherModal').addEventListener('submit', function(event) {
+			/*document.getElementById('voucherModal').addEventListener('submit', function(event) {
 				event.preventDefault();
 				submitEditLessonForm(event, lessonId);
 			});*/
@@ -70,6 +70,16 @@ function loadVouchersSection() {
         .catch(error => console.error('Error loading vouchers section:', error));
 }
 
+
+
+
+
+
+function getCourseIdFromUrl() {
+    const url = window.location.href; // Lấy URL hiện tại
+    const match = url.match(/\/course\/(\d+)/); // Tìm ID trong URL
+    return match ? match[1] : null;
+}
 
 function applySelectedVoucher() {
     const voucherIdInput = document.querySelector('input[name="voucherId"]:checked');
@@ -79,15 +89,15 @@ function applySelectedVoucher() {
     }
     const voucherId = voucherIdInput.value;
 
-    const courseIdInput = document.querySelector('input[name="courseId"]');
-    const courseId = courseIdInput ? courseIdInput.value : null;
-
+    // Lấy courseId từ URL
+    const courseId = document.querySelector('input[name="voucherId"]');
     if (!courseId) {
-        alert('Không tìm thấy Course ID!');
+        alert('Không tìm thấy Course ID từ URL!');
         return;
     }
+	alert(courseId)
 
-    fetch('/voucher/apply', {
+    fetch('voucher/apply', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
