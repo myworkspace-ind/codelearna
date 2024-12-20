@@ -40,6 +40,11 @@ public class VoucherServiceImpl implements VoucherService {
     public List<Voucher> getAllVoucherByCourseId(Long courseId){
     	return repo.findByCourseId(courseId);
     }
+    
+    @Override 
+    public List<Voucher> getAllVoucherByUserId(Long userId){
+    	return repo.findByUserId(userId);
+    }
 
     @Override
     public void deleteVoucher(Long id) {

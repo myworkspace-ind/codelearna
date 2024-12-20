@@ -26,6 +26,9 @@ public interface VoucherRepository extends JpaRepository<Voucher, Long> {
     @Query(value = "SELECT * FROM learna_voucher v join learna_voucher_course vc on v.id = vc.voucher_id where course_id = :courseId", nativeQuery = true)
     List<Voucher> findByCourseId(@Param("courseId") Long courseId);
     
+    //Tìm voucher theo người dùng
+    @Query(value = "SELECT * FROM learna_voucher v join learna_voucher_user vu on v.id = vu.voucher_id where user_id = :userId", nativeQuery = true)
+    List<Voucher> findByUserId(@Param("userId") Long userId);
     
 }
 

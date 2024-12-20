@@ -16,6 +16,7 @@ function loadParametersManagePage(event) {
             initializePagination("parameters");
         })
         .catch(error => console.error('Error loading courses section:', error));
+	initializeFilterKeyListener()
 }
 
 function fetchAddParamValueHandsontablePage(event) {
