@@ -63,4 +63,14 @@ public class OrderJdbcRepository {
 
         return order;
     }
+    
+    public boolean updateOrderStatusJdbc(String orderCode, Order.OrderStatus status) {
+    	String sql = "UPDATE learna_orders SET status = ? WHERE order_code = ?";
+    	int rowsAffected = jdbcTemplate.update(sql,status.name(),orderCode);
+
+    	if (rowsAffected == 0) {
+    	    throw new RuntimeException("Order not found with order_code: " + orderCode);
+    	}
+    	return true;
+    }
 }
