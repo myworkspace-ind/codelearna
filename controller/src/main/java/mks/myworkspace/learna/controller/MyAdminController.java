@@ -21,6 +21,7 @@ import mks.myworkspace.learna.entity.Parameter;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.ParameterService;
 
+
 @Controller
 @RequestMapping("/myadmin")
 @Slf4j
@@ -54,7 +55,6 @@ public class MyAdminController extends BaseController {
 		log.info("do kho" + parameterService.getAllParams());
 		return "myadmin";
 	}
-
 	@GetMapping("/course-management")
 	public String loadCourseList(HttpServletRequest request, HttpSession httpSession, Model model) {
 		httpSession.setAttribute("currentMenu", "Course");
