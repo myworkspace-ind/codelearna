@@ -52,9 +52,10 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 	
 	// Tìm kiếm khóa học với các bộ lọc (keyword, difficulty level, average rating)
 		@Query("SELECT c FROM Course c "
-				+ "WHERE (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
-				+ "AND (:level IS NULL OR c.difficultyLevel = :level) "
-				+ "AND (:averageRating IS NULL OR c.averageRating >= :averageRating) " + "AND c.status = 'active'")
+		+ "WHERE (:keyword IS NULL OR c.name LIKE %:keyword% OR c.description LIKE %:keyword%) "
+		+ "AND (:level IS NULL OR c.difficultyLevel = :level) "
+		+ "AND (:averageRating IS NULL OR ((c.averageRating >= :averageRating) AND (c.averageRating <= :averageRating + 1 )) )" 
+		+ "AND c.status = 'active'")
 		Page<Course> findCoursesByFilters(@Param("keyword") String keyword, @Param("level") Parameter level,
 				@Param("averageRating") Double averageRating, Pageable pageable);
 
