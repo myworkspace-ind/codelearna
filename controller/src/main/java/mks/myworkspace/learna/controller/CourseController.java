@@ -23,10 +23,12 @@ import org.springframework.web.servlet.ModelAndView;
 import lombok.extern.slf4j.Slf4j;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Review;
+import mks.myworkspace.learna.entity.Voucher;
 import mks.myworkspace.learna.service.CourseService;
 import mks.myworkspace.learna.service.PaymentService;
 import mks.myworkspace.learna.service.ReviewService;
 import mks.myworkspace.learna.service.UserLibraryCourseService;
+import mks.myworkspace.learna.service.VoucherService;
 
 @Slf4j
 @Controller
@@ -39,6 +41,9 @@ public class CourseController extends BaseController {
 
 	@Autowired
 	private PaymentService paymentService;
+	
+	@Autowired
+	private VoucherService voucherService;
 
 	@Autowired
 	private UserLibraryCourseService userLibraryCourseService;
@@ -52,7 +57,12 @@ public class CourseController extends BaseController {
 		ModelAndView mav = new ModelAndView("courseDetail");
 
 		Course course = courseService.getCourseById(id);
+		
 		Double balance = paymentService.getBalance(userEid);
+		
+		List<Voucher> vouchers = voucherService.getAllVouchers();
+		
+		List<Voucher> course_vouchers = voucherService.getAllVoucherByCourseId(id);
 
 		List<Review> filteredReviews = reviewService.getFilteredReviews(id, sortBy);
 
@@ -68,6 +78,8 @@ public class CourseController extends BaseController {
 		boolean hasReviewed = reviewService.hasUserReviewedCourse(id, userEid);
 
 		mav.addObject("course", course);
+		mav.addObject("vouchers", vouchers);
+		mav.addObject("course_vouchers", course_vouchers);
 		mav.addObject("reviews", paginatedReviews);
 		mav.addObject("userEid", userEid);
 		mav.addObject("currentPage", page);

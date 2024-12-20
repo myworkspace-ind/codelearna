@@ -143,13 +143,11 @@
 						</div>
 						
 						<!-- Nút "Apply voucher" -->
-						<form th:action="@{/voucher/apply}" method="post" id="voucherForm">
 							<input type="hidden" name="courseId" th:value="${course.id}" />
 							<button type="button" class="btn btn-primary mt-3"
 								data-bs-toggle="modal" data-bs-target="#voucherModal">Apply voucher
 							</button>
-						</form>
-						
+							
 						<!-- Voucher Modal -->
 						<div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
 						    <div class="modal-dialog modal-lg">
@@ -161,31 +159,24 @@
 						            <div class="modal-body">
 						                <!-- Danh sách Voucher -->
 						                <form id="voucherForm" th:action="@{/voucher/apply}" method="POST">
+						                	
 						                    <input type="hidden" name="courseId" th:value="${course.id}" />
 						                    
-						                    <div class="voucher-method" onclick="selectVoucher('voucher1')">
-						                        <div class="d-flex align-items-center">
+						                    
+						                    <div th:each = "voucher, iterStat : ${course_vouchers}">
+						                     	<div class="d-flex align-items-center" th:classappend="${iterStat.first ? '' : 'mt-3'}">
 						                            <div class="form-check">
-						                                <input class="form-check-input" type="radio" name="voucher" value="voucher1" id="voucher1" required>
+						                                <input class="form-check-input" type="radio" name="voucher" th:value="${voucher.id}" required>
 						                            </div>
 						                            <div>
-						                                <label class="form-check-label fw-bold" for="voucher1">Voucher Giảm 10%</label>
-						                                <p class="mb-0 text-muted">Giảm 10% trên tổng giá trị đơn hàng</p>
+						                                <label class="form-check-label fw-bold" th:text="${voucher.name}"></label>							                                
+														<p th:if="${voucher.valueType.toString() == 'percentage'}" class="mb-0 text-muted" th:text="'Giảm ' + ${voucher.discountValue} + '%'"></p>		                                			
+														<p th:if="${voucher.valueType.toString() == 'fixed'}" class="mb-0 text-muted" th:text="'Giảm ' + ${voucher.discountValue} + '$'"></p>
 						                            </div>
 						                        </div>
 						                    </div>
 						
-						                    <div class="voucher-method mt-3" onclick="selectVoucher('voucher2')">
-						                        <div class="d-flex align-items-center">
-						                            <div class="form-check">
-						                                <input class="form-check-input" type="radio" name="voucher" value="voucher2" id="voucher2" required>
-						                            </div>
-						                            <div>
-						                                <label class="form-check-label fw-bold" for="voucher2">Voucher Giảm 50K</label>
-						                                <p class="mb-0 text-muted">Giảm 50,000 VNĐ trên tổng đơn hàng</p>
-						                            </div>
-						                        </div>
-						                    </div>
+						                
 						
 						                    <div class="mt-4">
 						                        <button type="submit" class="btn btn-primary w-100 py-2">Xác nhận Voucher</button>

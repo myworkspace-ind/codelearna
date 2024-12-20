@@ -35,6 +35,11 @@ public class VoucherServiceImpl implements VoucherService {
     public Voucher getVoucherById(Long id) {
         return repo.findById(id).orElse(null);
     }
+    
+    @Override 
+    public List<Voucher> getAllVoucherByCourseId(Long courseId){
+    	return repo.findByCourseId(courseId);
+    }
 
     @Override
     public void deleteVoucher(Long id) {
