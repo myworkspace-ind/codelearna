@@ -28,27 +28,27 @@ public class SubcategoryController {
 	@Autowired
 	private CourseService courseService;
 
-	@GetMapping("/subcategory/{id}")
-	public ModelAndView getCoursesBySubcategory(@PathVariable Long id,
-			@RequestParam(value = "keyword", required = false) String keyword,
-			@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
-			@RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
-			@RequestParam(value = "level", required = false) String level,
-			@RequestParam(value = "rating", required = false) String rating) { 
-		ModelAndView mav = new ModelAndView("search");
+	// @GetMapping("/subcategory/{id}")
+	// public ModelAndView getCoursesBySubcategory(@PathVariable Long id,
+	// 		@RequestParam(value = "keyword", required = false) String keyword,
+	// 		@RequestParam(value = "sortOrder", required = false, defaultValue = "asc") String sortOrder,
+	// 		@RequestParam(value = "sortField", required = false, defaultValue = "createdDate") String sortField,
+	// 		@RequestParam(value = "level", required = false) String level,
+	// 		@RequestParam(value = "rating", required = false) String rating) { 
+	// 	ModelAndView mav = new ModelAndView("search");
 
-		List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, id,
-				rating);
+	// 	List<Course> courses = courseService.searchCoursesByKeywordAndFilters(keyword, sortOrder, sortField, level, id,
+	// 			rating);
 
-		mav.addObject("courses", courses);
-		mav.addObject("keyword", keyword);
-		mav.addObject("sortOrder", sortOrder);
-		mav.addObject("sortField", sortField);
-		mav.addObject("level", level);
-		mav.addObject("subcategoryId", id);
-		mav.addObject("rating", rating);
+	// 	mav.addObject("courses", courses);
+	// 	mav.addObject("keyword", keyword);
+	// 	mav.addObject("sortOrder", sortOrder);
+	// 	mav.addObject("sortField", sortField);
+	// 	mav.addObject("level", level);
+	// 	mav.addObject("subcategoryId", id);
+	// 	mav.addObject("rating", rating);
 
-		return mav;
-	}
+	// 	return mav;
+	// }
 
 }
