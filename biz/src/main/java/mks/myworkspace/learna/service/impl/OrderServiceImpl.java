@@ -134,6 +134,10 @@ public class OrderServiceImpl implements OrderService{
         return false;
     }
     
+    public boolean updateOrderStatusJdbc(String orderCode, Order.OrderStatus status) {
+        return orderJdbcRepository.updateOrderStatusJdbc(orderCode, status);
+    }
+    
     public List<Order> getOrdersByUserEid(String userEid) {
         return orderRepository.findByUserEid(userEid);
     }
