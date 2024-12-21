@@ -97,12 +97,20 @@ public class PaymentController extends BaseController {
     
     //xử lý thanh toán 
     @PostMapping("/vnpay")
-    public String processPaymentWithVnpay(HttpServletRequest request) {
+    public String processPaymentWithVnpay(HttpServletRequest request , @RequestParam BigDecimal finalPrice) {
     	
         Order order = (Order) request.getAttribute("order");
         if(order == null) {
             throw new RuntimeException("Order is missing");
         }
+        String finalPriceStr = request.getParameter("finalPrice");
+        log.info("Gia: {}", finalPriceStr);
+        if (order != null) {
+
+			order.setAmount(finalPrice);
+
+
+		}
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String ipAddress = request.getRemoteAddr();
         String vnpayUrl = paymentService.generatePaymentUrlVnpay(order.getAmount(), order.getOrderCode(), baseUrl, ipAddress);

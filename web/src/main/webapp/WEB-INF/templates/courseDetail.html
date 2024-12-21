@@ -9,6 +9,41 @@
 	href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" th:href="@{/resources/css/courseDetail.css}">
 <link rel="stylesheet" th:href="@{/resources/css/fragments/review.css}">
+ <style>
+        #voucherModal {
+            z-index: 1060 !important;
+        }
+        
+        #voucherModal .modal-dialog {
+            transition: transform 0.3s ease-out;
+        }
+        
+        /* Khi mở voucher modal, ẩn payment modal backdrop */
+        #voucherModal.show ~ .modal-backdrop:first-of-type {
+            display: none;
+        }
+        
+        /* Đảm bảo modal voucher luôn hiển thị trên cùng */
+        .modal-backdrop.show:nth-child(2) {
+            z-index: 1055;
+        }
+        
+        /* Style cho voucher items */
+        .voucher-item {
+            background-color: #fff;
+            transition: background-color 0.2s ease;
+        }
+        
+        .voucher-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Đảm bảo scroll hoạt động đúng khi có nhiều modal */
+        body.modal-open {
+            overflow: hidden;
+            padding-right: 0 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -63,6 +98,8 @@
 						<!-- Nếu chưa mua, hiện nút "Buy Now" -->
 						<form th:action="@{/payment/pay}" method="post" id="paymentForm">
 							<input type="hidden" name="courseId" th:value="${course.id}" />
+							<input type="hidden" name="finalPrice" th:value="${course.discountedPrice}" />
+							<input type="hidden" name="voucherId" value="" />
 							<button type="button" class="btn btn-primary mt-3"
 								data-bs-toggle="modal" data-bs-target="#paymentModal">Buy
 								now</button>
@@ -102,24 +139,51 @@
 														</span>
 													</div>
 
-													<!-- Phần mã giảm giá -->
-													<div class="coupon-section mb-3">
-														<div class="input-group">
-															<input type="text" class="form-control" id="couponCode"
-																placeholder="Nhập mã giảm giá">
-															<button class="btn btn-outline-secondary" type="button"
-																onclick="applyCoupon()">Áp dụng</button>
-														</div>
+													<!-- Thêm vào phần bên trong card-body, sau phần giá khuyến mãi -->
+													<div
+														class="d-flex justify-content-between align-items-center mb-3">
+														<span>Mã giảm giá:</span>
+														<button id="selectVoucherBtn" type="button"
+															class="btn btn-outline-primary btn-sm"
+															data-bs-toggle="modal" data-bs-target="#voucherModal">
+															Chọn voucher</button>
 													</div>
 
-													<hr>
-													<!-- Tổng thanh toán -->
+													<!-- Cập nhật phần finalPrice để thêm data-original-price -->
 													<div class="d-flex justify-content-between">
+														<span class="fw-bold">Tổng thanh toán:</span> <span
+															class="text-danger fw-bold" id="finalPrice"
+															th:data-original-price="${course.discountedPrice}"
+															th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}">
+														</span>
+													</div>
+
+													<!-- <!-- Modal Voucher cập nhật -->
+													<!-- <div class="modal fade" id="voucherModal" tabindex="-1"
+														aria-hidden="true">
+														<div class="modal-dialog">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<h5 class="modal-title">Chọn Voucher</h5>
+																	<button type="button" class="btn-close"
+																		data-bs-dismiss="modal" aria-label="Close"></button>
+																</div>
+																<div class="modal-body">
+																	<div class="voucher-list">
+																		Vouchers will be loaded here
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>  -->
+												
+													<!-- Tổng thanh toán -->
+													<!-- <div class="d-flex justify-content-between">
 														<span class="fw-bold">Tổng thanh toán:</span> <span
 															class="text-danger fw-bold" id="finalPrice"
 															th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}">
 														</span>
-													</div>
+													</div> -->
 												</div>
 											</div>
 										</div>
@@ -127,6 +191,8 @@
 										<form id="paymentForm" th:action="@{/orders}" method="POST"
 											onsubmit="return updateFormAction()">
 											<input type="hidden" name="courseId" th:value="${course.id}" />
+											<input type="hidden" name="finalPrice" th:value="${course.discountedPrice}" />
+											<input type="hidden" name="voucherId" value="" />
 											<div class="payment-method" onclick="selectPayment('vnpay')">
 												<div class="d-flex align-items-center">
 													<div class="form-check">
@@ -194,6 +260,21 @@
 		</div>
 		<div th:include="fragments/reviews :: reviews"></div>
 	</div>
+	<div class="modal fade" id="voucherModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chọn Voucher</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="voucher-list">
+                        <!-- Vouchers will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 	<th:block th:include="fragments/javascript"></th:block>
 
 </body>

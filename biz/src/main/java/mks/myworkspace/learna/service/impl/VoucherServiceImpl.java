@@ -1,6 +1,10 @@
 package mks.myworkspace.learna.service.impl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,5 +55,65 @@ public class VoucherServiceImpl implements VoucherService {
     public int getTotalVouchers() {
         // Đếm tổng số lượng voucher
         return repo.getTotalVouchers();
+    }
+    @Override
+    public List<Voucher> getAvailableVouchers(Long courseId, Double price) {
+        Date currentDate = new Date();
+        
+        return repo.findAll().stream()
+            .filter(voucher -> {
+                // Kiểm tra thời gian hiệu lực
+                boolean isValidDate = currentDate.after(voucher.getStartDate()) 
+                    && currentDate.before(voucher.getEndDate());
+                
+                // Kiểm tra số lượng còn lại
+                boolean hasQuantity = voucher.getQuantity() > 0;
+                
+                return isValidDate && hasQuantity;
+            })
+            .collect(Collectors.toList());
+    }
+    
+    @Override
+    public boolean isVoucherValid(Long voucherId, Long courseId, Double price) {
+        Voucher voucher = getVoucherById(voucherId);
+        if (voucher == null) return false;
+        
+        Date currentDate = new Date();
+        
+        return currentDate.after(voucher.getStartDate()) 
+            && currentDate.before(voucher.getEndDate())
+            && voucher.getQuantity() > 0;
+    }
+    
+    @Override
+    public Double calculateDiscountedPrice(Long voucherId, Double originalPrice) {
+        Voucher voucher = getVoucherById(voucherId);
+        if (voucher == null) return originalPrice;
+        
+        double discountAmount = 0;
+        
+        if (voucher.getValueType() == Voucher.ValueType.PERCENTAGE) {
+            discountAmount = (originalPrice * voucher.getDiscountValue()) / 100;
+            // Kiểm tra giới hạn giảm giá tối đa
+            if (voucher.getMaxValue() != null && discountAmount > voucher.getMaxValue()) {
+                discountAmount = voucher.getMaxValue();
+            }
+        } else {
+            discountAmount = voucher.getDiscountValue();
+        }
+        
+        return Math.max(0, originalPrice - discountAmount);
+    }
+    
+    @Override
+    @Transactional
+    public boolean updateVoucherUsage(Long voucherId) {
+        Voucher voucher = getVoucherById(voucherId);
+        if (voucher == null || voucher.getQuantity() <= 0) return false;
+        
+        voucher.setQuantity(voucher.getQuantity() - 1);
+        saveVoucher(voucher);
+        return true;
     }
 }
