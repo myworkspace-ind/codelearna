@@ -48,8 +48,11 @@
 						Lesson type: <span th:text="${course.lessonType.paramValue}">Video</span>
 					</p>
 					<div th:if="${!hasPurchased}">
-						<p th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}" style="text-decoration: line-through;"></p>
-						<h5 class="text-danger" th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
+						<p
+							th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"
+							style="text-decoration: line-through;"></p>
+						<h5 class="text-danger"
+							th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}"></h5>
 					</div>
 					<div th:if="${hasPurchased}">
 						<!-- Nếu đã mua khóa học, hiện nút "Learn Now" -->
@@ -71,12 +74,56 @@
 							<div class="modal-dialog modal-lg">
 								<div class="modal-content">
 									<div class="modal-header">
-										<h5 class="modal-title" id="paymentModalLabel">Chọn
-											phương thức thanh toán</h5>
+										<h5 class="modal-title" id="paymentModalLabel">Chi tiết
+											thanh toán</h5>
 										<button type="button" class="btn-close"
 											data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body">
+										<!-- Thông tin thanh toán -->
+										<div class="payment-info mb-4">
+											<h6 class="mb-3">Thông tin khóa học</h6>
+											<div class="card">
+												<div class="card-body">
+													<div class="d-flex justify-content-between mb-2">
+														<span>Tên khóa học:</span> <span class="fw-bold"
+															th:text="${course.name}"></span>
+													</div>
+													<div class="d-flex justify-content-between mb-2">
+														<span>Giá gốc:</span> <span
+															class="text-decoration-line-through"
+															th:text="'₫ ' + ${#numbers.formatDecimal(course.originalPrice, 1, 'DEFAULT', 0, 'DEFAULT')}">
+														</span>
+													</div>
+													<div class="d-flex justify-content-between mb-3">
+														<span>Giá khuyến mãi:</span> <span
+															class="text-danger fw-bold"
+															th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}">
+														</span>
+													</div>
+
+													<!-- Phần mã giảm giá -->
+													<div class="coupon-section mb-3">
+														<div class="input-group">
+															<input type="text" class="form-control" id="couponCode"
+																placeholder="Nhập mã giảm giá">
+															<button class="btn btn-outline-secondary" type="button"
+																onclick="applyCoupon()">Áp dụng</button>
+														</div>
+													</div>
+
+													<hr>
+													<!-- Tổng thanh toán -->
+													<div class="d-flex justify-content-between">
+														<span class="fw-bold">Tổng thanh toán:</span> <span
+															class="text-danger fw-bold" id="finalPrice"
+															th:text="'₫ ' + ${#numbers.formatDecimal(course.discountedPrice, 1, 'DEFAULT', 0, 'DEFAULT')}">
+														</span>
+													</div>
+												</div>
+											</div>
+										</div>
+										<h6 class="mb-3">Chọn phương thức thanh toán</h6>
 										<form id="paymentForm" th:action="@{/orders}" method="POST"
 											onsubmit="return updateFormAction()">
 											<input type="hidden" name="courseId" th:value="${course.id}" />
