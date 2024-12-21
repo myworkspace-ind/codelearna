@@ -162,7 +162,6 @@ public class AdminController extends BaseController {
 		List<Campaign> campaignList = campaignService.getAllCampaigns();
 		mav.addObject("campaignList", campaignList);
 
-		// Truyền ID chiến dịch đã chọn nếu có
 		if (campaignId != null) {
 			mav.addObject("selectedCampaignId", campaignId);
 		}
