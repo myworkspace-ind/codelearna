@@ -73,6 +73,7 @@ let selectedVoucher = null;
 
 
 function createVoucherElement(voucher) {
+	
     const div = document.createElement('div');
     div.className = 'voucher-item p-3 border rounded mb-2 hover:bg-gray-50';
     

@@ -3,6 +3,7 @@
 	<div class="carousel-indicators">
 		<button type="button" data-bs-target="#campaignCarousel"
 			th:each="campaign, iterStat : ${campaigns}"
+			th:if="${campaign.status == 'ACTIVE'}"
 			th:data-bs-slide-to="${iterStat.index}"
 			th:classappend="${iterStat.index == 0} ? 'active'"
 			th:aria-current="${iterStat.index == 0} ? 'true' : 'false'"
@@ -10,6 +11,7 @@
 	</div>
 	<div class="carousel-inner">
 		<div th:each="campaign, iterStat : ${campaigns}"
+			th:if="${campaign.status == 'ACTIVE'}"
 			th:classappend="${iterStat.index == 0} ? 'active'"
 			class="campaign-carousel-item carousel-item"
 			th:data-name="${campaign.name}"

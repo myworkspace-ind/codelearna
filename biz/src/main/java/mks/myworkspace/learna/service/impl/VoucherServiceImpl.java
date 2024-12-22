@@ -68,9 +68,8 @@ public class VoucherServiceImpl implements VoucherService {
                 
                 // Kiểm tra số lượng còn lại
                 boolean hasQuantity = voucher.getQuantity() > 0;
-
-                // Thêm điều kiện kiểm tra status
-                boolean isActiveStatus = "ACTIVE".equals(status);
+                // Fix: Compare with voucher's actual status
+                boolean isActiveStatus = status.equals(voucher.getStatus());
                 
                 return isValidDate && hasQuantity && isActiveStatus;
             })

@@ -5,13 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import mks.myworkspace.learna.entity.Campaign;
 import mks.myworkspace.learna.repository.CampaignRepository;
+import mks.myworkspace.learna.repository.CampaignJdbcRepository;
 import mks.myworkspace.learna.service.CampaignService;
 
 @Service
 public class CampaignServiceImpl implements CampaignService {
-
+    
     @Autowired
     private CampaignRepository repo;
+    
+    @Autowired
+    private CampaignJdbcRepository jdbcRepo;
 
     @Override
     public CampaignRepository getRepo() {
@@ -20,7 +24,8 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public Campaign saveCampaign(Campaign campaign) {
-        return repo.save(campaign);
+        // Using JDBC repository for save operation
+        return jdbcRepo.save(campaign);
     }
 
     @Override
@@ -30,7 +35,8 @@ public class CampaignServiceImpl implements CampaignService {
 
     @Override
     public void deleteCampaign(Long id) {
-        repo.deleteById(id);
+        // Using JDBC repository for soft delete
+        jdbcRepo.deleteById(id);
     }
 
     @Override
@@ -43,7 +49,8 @@ public class CampaignServiceImpl implements CampaignService {
         Campaign campaign = repo.findById(id).orElse(null);
         if (campaign != null) {
             campaign.setStatus(status);
-            repo.save(campaign);
+            // Using JDBC repository for update operation
+            jdbcRepo.save(campaign);
         }
     }
 }
