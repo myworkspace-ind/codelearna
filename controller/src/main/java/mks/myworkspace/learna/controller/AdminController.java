@@ -298,7 +298,7 @@ public class AdminController extends BaseController{
 					throw new IllegalArgumentException("Invalid discounted price");
 				}
 
-				// Xử lý subcategory
+				// X�� lý subcategory
 				String subcategoryString = (String) courseMap.get("subcategory");
 				log.info("Subcategory as string: {}", subcategoryString);
 				Parameter subcategoryParameter = parameterService.getParameterByParamKeyAndParamValue("subcategory",
@@ -1392,6 +1392,22 @@ public class AdminController extends BaseController{
 				return ResponseEntity.badRequest().body(response);
 			}
 		}
+		@PostMapping("/campaigns/toggleStatus/{id}")
+		@ResponseBody
+		public ResponseEntity<Map<String, String>> toggleCampaignStatus(@PathVariable("id") Long id, @RequestBody Map<String, String> request) {
+			Map<String, String> response = new HashMap<>();
+			try {
+				String newStatus = request.get("status");
+				campaignService.updateCampaignStatus(id, newStatus);
+				response.put("status", "success");
+				response.put("message", "Campaign status updated successfully");
+				return ResponseEntity.ok(response);
+			} catch (Exception e) {
+				response.put("status", "error");
+				response.put("message", "An error occurred while updating the campaign status: " + e.getMessage());
+				return ResponseEntity.badRequest().body(response);
+			}
+		}
 	@Data
 	public class UserLibraryDTO {
 	    private String userEid;
@@ -1400,6 +1416,3 @@ public class AdminController extends BaseController{
 	    private String xapiLink;
 	}
 }
-	
-	
-

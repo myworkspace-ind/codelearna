@@ -10,4 +10,5 @@ public interface CampaignService {
     Campaign getCampaignById(Long id);
     void deleteCampaign(Long id);
     List<Campaign> getAllCampaigns();
+    void updateCampaignStatus(Long id, String status);
 }

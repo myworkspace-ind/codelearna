@@ -37,4 +37,13 @@ public class CampaignServiceImpl implements CampaignService {
     public List<Campaign> getAllCampaigns() {
         return repo.findAll();
     }
+
+    @Override
+    public void updateCampaignStatus(Long id, String status) {
+        Campaign campaign = repo.findById(id).orElse(null);
+        if (campaign != null) {
+            campaign.setStatus(status);
+            repo.save(campaign);
+        }
+    }
 }

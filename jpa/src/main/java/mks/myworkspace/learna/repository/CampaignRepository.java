@@ -11,8 +11,12 @@ import mks.myworkspace.learna.entity.Campaign;
 
 @Repository
 public interface CampaignRepository extends JpaRepository<Campaign, Long> {
-	@Modifying
+	/* @Modifying
     @Transactional
     @Query("DELETE FROM Campaign c WHERE c.id = :id")
+    void deleteCampaignById(@Param("id") Long id); */
+    @Transactional
+    @Modifying
+    @Query("UPDATE Campaign c SET c.status = 'DELETED' WHERE c.id = :id")
     void deleteCampaignById(@Param("id") Long id);
 }

@@ -298,3 +298,55 @@ function addVoucherById(campaignId) {
         })
         .catch(error => console.error('Error loading add voucher page: ', error));
 }
+
+function showCampaignStatusChangeModal(campaignId, currentStatus) {
+    const modal = new bootstrap.Modal(document.getElementById('statusChangeModal'));
+    const confirmBtn = document.getElementById('confirmStatusChangeBtn');
+
+    // Xóa event listener cũ (nếu có)
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    // Thêm event listener mới
+    newConfirmBtn.addEventListener('click', () => {
+        toggleCampaignStatus(campaignId, currentStatus, modal);
+    });
+
+    modal.show();
+}
+
+function toggleCampaignStatus(campaignId, currentStatus, modal) {
+    const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+
+    fetch(`${_ctx}admin/campaigns/toggleStatus/${campaignId}`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Campaign status updated successfully');
+            loadCampaignsSection();
+
+            // Đóng modal nếu nó đang mở
+            if (modal) {
+                modal.hide();
+            }
+        } else {
+            throw new Error(data.message || 'Failed to update campaign status');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating campaign status:', error);
+        showErrorToast(error.message || 'An error occurred while updating the campaign status');
+    });
+}
