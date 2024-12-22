@@ -2,6 +2,7 @@ package mks.myworkspace.learna.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table (name = "learna_transaction")
 public class Transaction {
     @Id
     private String referenceNumber;
