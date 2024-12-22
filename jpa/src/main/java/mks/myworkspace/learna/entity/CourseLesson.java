@@ -9,7 +9,7 @@ import lombok.Data;
 @Entity
 @Table(name = "learna_course_lesson", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 @Data
-public class Course_lesson {
+public class CourseLesson {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
