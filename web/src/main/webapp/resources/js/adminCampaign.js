@@ -22,7 +22,15 @@ function submitCampaignForm(event) {
 	// Lấy form và dữ liệu form
 	const form = document.querySelector('#campaignForm');
 	const formData = new FormData(form);
-
+	const startTime = formData.get('startTime');
+	    const endTime = formData.get('endTime');
+	    
+	    if (startTime) {
+	        formData.set('startTime', new Date(startTime).toISOString());
+	    }
+	    if (endTime) {
+	        formData.set('endTime', new Date(endTime).toISOString());
+	    }
 	// Gửi yêu cầu fetch đến endpoint thêm chiến dịch
 	fetch(`${_ctx}admin/addCampaign`, {
 		method: 'POST',
