@@ -57,7 +57,7 @@ public class VoucherServiceImpl implements VoucherService {
         return repo.getTotalVouchers();
     }
     @Override
-    public List<Voucher> getAvailableVouchers(Long courseId, Double price) {
+    public List<Voucher> getAvailableVouchers(Long courseId, Double price, String status) {
         Date currentDate = new Date();
         
         return repo.findAll().stream()
@@ -68,14 +68,16 @@ public class VoucherServiceImpl implements VoucherService {
                 
                 // Kiểm tra số lượng còn lại
                 boolean hasQuantity = voucher.getQuantity() > 0;
+
+                // Thêm điều kiện kiểm tra status
+                boolean isActiveStatus = "ACTIVE".equals(status);
                 
-                return isValidDate && hasQuantity;
+                return isValidDate && hasQuantity && isActiveStatus;
             })
             .collect(Collectors.toList());
     }
-    
     @Override
-    public boolean isVoucherValid(Long voucherId, Long courseId, Double price) {
+    public boolean isVoucherValid(Long voucherId, Long courseId, Double price, String status) {
         Voucher voucher = getVoucherById(voucherId);
         if (voucher == null) return false;
         

@@ -65,6 +65,9 @@ public class Voucher {
 
     @Column(name = "end_date", nullable = false)
     private Date endDate;
+    
+    @Column(name = "status", nullable = false)
+    private String status; 
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
@@ -96,5 +99,9 @@ public class Voucher {
             }
             throw new IllegalArgumentException("Unknown value: " + value);
         }
+    }
+    public enum status {
+        ACTIVE,
+        DELETED
     }
 }

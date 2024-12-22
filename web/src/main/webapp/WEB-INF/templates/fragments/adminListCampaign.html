@@ -29,6 +29,7 @@
                             <th>Start Time</th>
                             <th>End Time</th>
                             <th>Short Description</th>
+                            <th>status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -41,6 +42,7 @@
                             <td th:text="${#dates.format(campaign.startTime, 'yyyy-MM-dd')}"></td>
                             <td th:text="${#dates.format(campaign.endTime, 'yyyy-MM-dd')}"></td>
                             <td th:text="${campaign.shortDescription}"></td>
+                            <td th:text="${campaign.status}"></td>
                             <td>
                                 <div class="btn-group" role="group">
                                     <a href="#" class="btn btn-primary btn-sm" th:attr="onclick='addVoucherById(' + ${campaign.id} + '); return false;'">Add voucher</a>

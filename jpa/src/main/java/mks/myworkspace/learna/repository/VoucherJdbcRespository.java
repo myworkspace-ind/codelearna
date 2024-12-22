@@ -20,8 +20,8 @@ public class VoucherJdbcRespository {
     public Voucher save(Voucher voucher) {
         if (voucher.getId() == null) {
             String sql = "INSERT INTO learna_voucher (campaign_id, name, discount_value, value_type, max_value, quantity, "
-                    + "start_date, end_date, description, `condition`) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    + "start_date, end_date, description, status, `condition`) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -37,6 +37,7 @@ public class VoucherJdbcRespository {
                 ps.setTimestamp(paramIndex++, new java.sql.Timestamp(voucher.getStartDate().getTime()));
                 ps.setTimestamp(paramIndex++, new java.sql.Timestamp(voucher.getEndDate().getTime()));
                 ps.setString(paramIndex++, voucher.getDescription());
+                ps.setString(paramIndex++, voucher.getStatus() != null ? voucher.getStatus() : "ACTIVE");
                 ps.setString(paramIndex++, voucher.getCondition());
                 return ps;
             }, keyHolder);
@@ -46,7 +47,7 @@ public class VoucherJdbcRespository {
 
         } else {
             String sql = "UPDATE learna_voucher SET campaign_id = ?, name = ?, discount_value = ?, value_type = ?, "
-                    + "max_value = ?, quantity = ?, start_date = ?, end_date = ?, description = ?, `condition` = ? "
+                    + "max_value = ?, quantity = ?, start_date = ?, end_date = ?, description = ?, status =?, `condition` = ? "
                     + "WHERE id = ?";
 
             int rowsAffected = jdbcTemplate.update(sql,
@@ -59,6 +60,7 @@ public class VoucherJdbcRespository {
                     new java.sql.Timestamp(voucher.getStartDate().getTime()),
                     new java.sql.Timestamp(voucher.getEndDate().getTime()),
                     voucher.getDescription(),
+                    voucher.getStatus(),
                     voucher.getCondition(),
                     voucher.getId()
             );
@@ -73,7 +75,7 @@ public class VoucherJdbcRespository {
 
 
     public void deleteById(Long id) {
-        String sql = "DELETE FROM learna_voucher WHERE id = ?";
+        String sql = "UPDATE learna_voucher SET status = 'DELETED' WHERE id = ?";
         int rowsAffected = jdbcTemplate.update(sql, id);
 
         if (rowsAffected == 0) {

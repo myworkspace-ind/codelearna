@@ -1,93 +1,126 @@
 <div th:fragment="vouchersContent">
-    <div class="container mt-5">
-        <h1 class="mb-4 fw-bolder">Voucher Management</h1>
+	<div class="container mt-5">
+		<h1 class="mb-4 fw-bolder">Voucher Management</h1>
 
-        <!-- Add Voucher Button -->
-        <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="btn btn-primary mx-3" onclick="fetchAddVoucherPage(event)">
-                Add Voucher
-            </button>
-        </div>
+		<!-- Add Voucher Button -->
+		<div class="d-flex justify-content-end mb-3">
+			<button type="button" class="btn btn-primary mx-3"
+				onclick="fetchAddVoucherPage(event)">Add Voucher</button>
+		</div>
 
-        <!-- Search Input -->
-        <div class="d-flex justify-content-between align-items-center mb-3" style="width: 300px;">
-            <input type="text" id="voucherSearchInput" class="form-control" placeholder="Search voucher name..."
-                aria-label="Search voucher name" onkeypress="handleSearchVoucherKeyPress(event)">
-            <button class="btn btn-outline-secondary ms-2" type="button" onclick="searchVouchers()">Search</button>
-        </div>
+		<!-- Search Input -->
+		<div class="d-flex justify-content-between align-items-center mb-3"
+			style="width: 300px;">
+			<input type="text" id="voucherSearchInput" class="form-control"
+				placeholder="Search voucher name..."
+				aria-label="Search voucher name"
+				onkeypress="handleSearchVoucherKeyPress(event)">
+			<button class="btn btn-outline-secondary ms-2" type="button"
+				onclick="searchVouchers()">Search</button>
+		</div>
 
-        <!-- Loading Container -->
-        <div id="loadingContainer">
+		<!-- Loading Container -->
+		<div id="loadingContainer">
 
-            <!-- Vouchers Table -->
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>#</th>
-                            <th>Campaign ID</th>
-                            <th>Name</th>
-                            <th>Discount Value</th>
-                            <th>Value Type</th>
-                            <th>Max Value</th>
-                            <th>Quantity</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="voucher, iterStat : ${vouchers}">
-                            <th th:text="${voucher.id}"></th>
-                            <td th:text="${voucher.campaign.id}"></td>
-                            <td th:text="${voucher.name}"></td>
-                            <td th:text="${voucher.discountValue}"></td>
-                            <td th:text="${voucher.valueType}"></td>
-                            <td th:text="${voucher.maxValue != null ? voucher.maxValue : 'N/A'}"></td>
-                            <td th:text="${voucher.quantity}"></td>
-                            <td th:text="${#dates.format(voucher.startDate, 'yyyy-MM-dd')}"></td>
-                            <td th:text="${#dates.format(voucher.endDate, 'yyyy-MM-dd')}"></td>
-                            <td>
-                                <a href="#" class="btn btn-warning btn-sm"
-                                th:data-voucher-id="${voucher.id}"
-                                th:onclick="'loadEditVoucherForm(this.dataset.voucherId)'"
-                                title="Edit Voucher">Edit</a>
-                                <a href="#" class="btn btn-danger btn-sm"
-                                th:onclick="showDeleteConfirmModal_voucher([[${voucher.id}]])"
-                                title="Delete Voucher"> Delete </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- Delete Confirmation Modal -->
-        <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                        <h5 class="modal-title" id="deleteConfirmModalLabel">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Delete
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete this voucher? This action cannot be undone.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+			<!-- Vouchers Table -->
+			<div class="table-responsive">
+				<table class="table table-bordered table-hover">
+					<thead class="thead-dark">
+						<tr>
+							<th>#</th>
+							<th>Campaign ID</th>
+							<th>Name</th>
+							<th>Discount Value</th>
+							<th>Value Type</th>
+							<th>Max Value</th>
+							<th>Quantity</th>
+							<th>Start Date</th>
+							<th>End Date</th>
+							<th>Status</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="voucher, iterStat : ${vouchers}">
+							<th th:text="${voucher.id}"></th>
+							<td th:text="${voucher.campaign.id}"></td>
+							<td th:text="${voucher.name}"></td>
+							<td th:text="${voucher.discountValue}"></td>
+							<td th:text="${voucher.valueType}"></td>
+							<td
+								th:text="${voucher.maxValue != null ? voucher.maxValue : 'N/A'}"></td>
+							<td th:text="${voucher.quantity}"></td>
+							<td th:text="${#dates.format(voucher.startDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${#dates.format(voucher.endDate, 'yyyy-MM-dd')}"></td>
+							<td th:text="${voucher.status}"></td>
+							<td><a href="#" class="btn btn-warning btn-sm"
+								th:data-voucher-id="${voucher.id}"
+								th:onclick="'loadEditVoucherForm(this.dataset.voucherId)'"
+								title="Edit Voucher">Edit</a> <a
+								th:if="${voucher.status == 'ACTIVE'}" href="#"
+								class="btn btn-danger btn-sm"
+								th:onclick="showDeleteConfirmModal_voucher([[${voucher.id}]])">Disable</a>
 
-        <!-- Pagination -->
-        <nav>
-            <ul class="pagination justify-content-center" id="vouchersPagination"></ul>
-        </nav>
-    </div>
+								<a th:if="${voucher.status == 'DELETED'}" href="#"
+								class="btn btn-success btn-sm"
+								th:data-parameter-id="${voucher.id}"
+								onclick="showVoucherRestoreConfirmModal(this.getAttribute('data-parameter-id'))">Enable</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- Delete Confirmation Modal -->
+		<div class="modal fade" id="deleteConfirmModal" tabindex="-1"
+			aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header bg-danger text-white">
+						<h5 class="modal-title" id="deleteConfirmModalLabel">
+							<i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm
+							Delete
+						</h5>
+						<button type="button" class="btn-close btn-close-white"
+							data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure you want to delete this voucher? This action
+							cannot be undone.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="restoreConfirmModal" tabindex="-1"
+			aria-labelledby="restoreConfirmModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="restoreConfirmModalLabel">Confirm
+							Restore</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">Are you sure you want to restore this
+						voucher?</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">Cancel</button>
+						<button type="button" class="btn btn-success"
+							id="confirmRestoreBtn">Restore</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Pagination -->
+		<nav>
+			<ul class="pagination justify-content-center" id="vouchersPagination"></ul>
+		</nav>
+	</div>
 </div>

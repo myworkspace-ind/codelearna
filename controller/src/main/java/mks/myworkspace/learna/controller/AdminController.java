@@ -1365,6 +1365,33 @@ public class AdminController extends BaseController{
 		        return ResponseEntity.badRequest().body(response);
 		    }
 		}
+		@PostMapping("/voucher/restoreVoucher/{id}") 
+		@ResponseBody
+		public ResponseEntity<Map<String, String>> restoreVoucher(@PathVariable("id") Long id,
+		        @ModelAttribute("voucher") Voucher voucher) {
+			Map<String, String> response = new HashMap<>();
+			try {
+				Voucher existingVoucher = voucherService.getVoucherById(id);
+				if (existingVoucher == null) {
+					response.put("status", "error");
+					response.put("message", "voucher not found");
+					return ResponseEntity.badRequest().body(response);
+				}
+
+				existingVoucher.setStatus("ACTIVE");
+				voucherService.saveVoucher(existingVoucher);
+				response.put("status", "success");
+				response.put("message", "Voucher has been restore successfully");
+				
+				return ResponseEntity.ok(response);
+				
+			} catch (Exception e) {
+				log.error("Error deleting voucher: ", e);
+				response.put("status", "error");
+				response.put("message", "An error occurred while trying to restore the Voucher: " + e.getMessage());
+				return ResponseEntity.badRequest().body(response);
+			}
+		}
 	@Data
 	public class UserLibraryDTO {
 	    private String userEid;

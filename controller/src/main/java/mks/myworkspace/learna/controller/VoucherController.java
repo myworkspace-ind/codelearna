@@ -20,7 +20,8 @@ public class VoucherController {
     public ResponseEntity<List<Voucher>> getAvailableVouchers(@RequestBody VoucherRequest request) {
         List<Voucher> vouchers = voucherService.getAvailableVouchers(
             request.getCourseId(), 
-            request.getPrice()
+            request.getPrice(),
+            "ACTIVE"
         );
         return ResponseEntity.ok(vouchers);
     }
@@ -31,7 +32,8 @@ public class VoucherController {
         boolean isValid = voucherService.isVoucherValid(
             request.getVoucherId(),
             request.getCourseId(),
-            request.getPrice()
+            request.getPrice(),
+            "ACTIVE"
         );
         
         Double discountedPrice = null;

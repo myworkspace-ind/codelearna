@@ -26,7 +26,7 @@ public interface VoucherService {
      * @param price Giá của khóa học
      * @return Danh sách voucher có thể áp dụng
      */
-    List<Voucher> getAvailableVouchers(Long courseId, Double price);
+    List<Voucher> getAvailableVouchers(Long courseId, Double price, String status);
     
     /**
      * Kiểm tra voucher có thể áp dụng không
@@ -35,7 +35,7 @@ public interface VoucherService {
      * @param price Giá của khóa học
      * @return true nếu voucher có thể áp dụng
      */
-    boolean isVoucherValid(Long voucherId, Long courseId, Double price);
+    boolean isVoucherValid(Long voucherId, Long courseId, Double price, String status);
     
     /**
      * Tính toán giá sau khi áp dụng voucher

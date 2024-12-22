@@ -292,3 +292,75 @@ function loadCampaignDates(event) {
         })
         .catch(error => console.error('Error fetching campaign dates:', error));
 }
+
+function showVoucherRestoreConfirmModal(voucherId) {
+    if (!voucherId) {
+        console.error('No voucher ID provided');
+        showErrorToast('Error: voucher ID is missing');
+        return;
+    }
+	console.log("vocherid", voucherId)
+
+    const modal = new bootstrap.Modal(document.getElementById('restoreConfirmModal'));
+    const confirmBtn = document.getElementById('confirmRestoreBtn');
+
+    // Remove any existing event listeners to prevent multiple triggers
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+
+    // Store the courseId on the button itself
+    newConfirmBtn.setAttribute('data-parameter-id', voucherId);
+
+    // Add the event listener with the stored courseId
+    newConfirmBtn.addEventListener('click', () => {
+        const storedVoucherId = newConfirmBtn.getAttribute('data-parameter-id');
+        restoreVoucher(storedVoucherId);
+    });
+
+    modal.show();
+}
+
+function restoreVoucher(voucherId) {
+    if (!voucherId) {
+        console.error('No voucher ID provided to restore');
+        showErrorToast('Error: voucher ID is missing');
+        return;
+    }
+
+    fetch(`${_ctx}admin/voucher/restoreVoucher/${voucherId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => Promise.reject(data));
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            showSuccessToast(data.message || 'Voucher restored successfully');
+            
+            // Close all modals
+            const restoreModal = bootstrap.Modal.getInstance(document.getElementById('restoreConfirmModal'));
+         
+            
+            if (restoreModal) restoreModal.hide();
+          
+            
+            // Remove modal backdrops
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+            // Reload the courses section
+            loadVouchersSection();
+        } else {
+            throw new Error(data.message || 'Failed to restore voucher');
+        }
+    })
+    .catch(error => {
+        console.error('Error restoring course:', error);
+        showErrorToast(error.message || 'An error occurred while restoring the course');
+    });
+}

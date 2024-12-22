@@ -42,6 +42,9 @@ public class Campaign {
     @Column(name = "cover_imageUrl", columnDefinition = "TEXT")
     private String coverImageUrl;
     
+    @Column(name = "status", nullable = false)
+    private String status; 
+    
     @CreationTimestamp
     @Column(name = "created_dte")
     private Date createdDate;
@@ -49,4 +52,9 @@ public class Campaign {
     @UpdateTimestamp
     @Column(name = "modified_dte")
     private Date modifiedDate;
+    
+    public enum status {
+        ACTIVE,
+        DELETED
+    }
 }
