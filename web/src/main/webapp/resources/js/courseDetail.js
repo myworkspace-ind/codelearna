@@ -1,31 +1,38 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.learn-now-btn').forEach(item => {
-        item.addEventListener('click', function() {
+        item.addEventListener('click', function () {
             const courseId = this.getAttribute('data-course-id');
             window.location.href = _ctx + `play/${courseId}`;
         });
     });
-	const priceElement = document.getElementById('finalPrice');
-	    if (priceElement) {
-	        originalPrice = parseFloat(priceElement.getAttribute('data-original-price'));
-	    }
 
-	    // Thêm sự kiện cho nút mở modal voucher
-	    const voucherButton = document.getElementById('selectVoucherBtn');
-	    if (voucherButton) {
-	        voucherButton.addEventListener('click', function() {
-	            loadVouchers();
-	        });
-	    }
+    const priceElement = document.getElementById('finalPrice');
+    if (priceElement) {
+        originalPrice = parseFloat(priceElement.getAttribute('data-original-price'));
+    }
+
+    const voucherButton = document.getElementById('selectVoucherBtn');
+    const voucherModal = new bootstrap.Modal(document.getElementById('voucherModal'), {
+        backdrop: 'static', // Ngăn click bên ngoài để đóng modal
+    });
+
+    if (voucherButton) {
+        voucherButton.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+			voucherModal.show();
+            loadVouchers();
+        });
+    }
 });
 
 if (document.getElementById('confirmPaymentBtn') != null) {
-    document.getElementById('confirmPaymentBtn').addEventListener(
-        'click', function() {
-            // Gửi form khi nhấn "Confirm"
-            document.getElementById('paymentForm').submit();
-        });
+    document.getElementById('confirmPaymentBtn').addEventListener('click', function () {
+        // Gửi form khi nhấn "Confirm"
+        document.getElementById('paymentForm').submit();
+    });
 }
+
 
 
 // payment
@@ -152,49 +159,20 @@ function loadVouchers() {
     });
 }
 
-/*// Tạo element hiển thị voucher
-function createVoucherElement(voucher) {
-    const div = document.createElement('div');
-    div.className = 'voucher-item p-3 border rounded mb-2 hover:bg-gray-50';
-    
-    // Tính toán số tiền giảm
-    let discountText = '';
-    if (voucher.valueType === 'PERCENTAGE') {
-        discountText = `Giảm ${voucher.discountValue}% `;
-        if (voucher.maxValue) {
-            discountText += `(tối đa ${formatCurrency(voucher.maxValue)})`;
-        }
-    } else {
-        discountText = `Giảm ${formatCurrency(voucher.discountValue)}`;
-    }
-
-    div.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="flex-grow-1">
-                <h6 class="mb-1 font-semibold">${voucher.name}</h6>
-                <p class="mb-1 text-success">${discountText}</p>
-                <small class="text-muted d-block">HSD: ${formatDate(voucher.endDate)}</small>
-                ${voucher.condition ? `<small class="text-muted d-block">Điều kiện: ${voucher.condition}</small>` : ''}
-            </div>
-            <button class="btn btn-outline-primary ms-3" onclick="applyVoucher(${JSON.stringify(voucher).replace(/"/g, '&quot;')})">
-                Áp dụng
-            </button>
-        </div>
-    `;
-    return div;
-}*/
 
 function applyVoucher(voucher) {
     selectedVoucher = voucher;
-    
+	let discountText = '';
     let discountAmount = 0;
     if (voucher.valueType === 'PERCENTAGE') {
         discountAmount = (originalPrice * voucher.discountValue) / 100;
         if (voucher.maxValue && discountAmount > voucher.maxValue) {
             discountAmount = voucher.maxValue;
         }
+		discountText = `${voucher.discountValue}%`;
     } else {
         discountAmount = voucher.discountValue;
+		discountText = formatCurrency(voucher.discountValue);
     }
     
     const finalPrice = Math.max(0, originalPrice - discountAmount);
@@ -210,7 +188,8 @@ function applyVoucher(voucher) {
     finalPriceInputs.forEach(input => {
         input.value = finalPrice;
     });
-    
+	const appliedVoucherElement = document.getElementById('appliedVoucher');
+	    appliedVoucherElement.textContent = `${voucher.name} (${discountText})`;
     // Update voucher ID in ALL forms
     const voucherInputs = document.querySelectorAll('input[name="voucherId"]');
     voucherInputs.forEach(input => {
@@ -218,10 +197,18 @@ function applyVoucher(voucher) {
     });
     
     // Close modal
-    const voucherModal = bootstrap.Modal.getInstance(document.getElementById('voucherModal'));
-    if (voucherModal) {
-        voucherModal.hide();
-    }
+	const voucherModalInstance = bootstrap.Modal.getInstance(voucherModal);
+	        if (voucherModalInstance) {
+	            voucherModalInstance.hide();
+	            // Khôi phục scroll cho payment modal
+	            setTimeout(() => {
+	                paymentModal.style.overflow = '';
+	                // Xóa tất cả backdrop dư thừa
+	                document.querySelectorAll('.modal-backdrop').forEach((backdrop, index) => {
+	                    if (index > 0) backdrop.remove();
+	                });
+	            }, 200);
+	        }
     
     showToast('Áp dụng voucher thành công!', 'success');
 }
