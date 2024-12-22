@@ -59,7 +59,7 @@ public class DBInitImpl implements DBInit {
                     JSONObject paramJson = parametersArray.getJSONObject(i);
 
                     parameter = new Parameter();
-                    parameter.setId(paramJson.getLong("id"));
+                    // parameter.setId(paramJson.getLong("id"));
                     parameter.setDescription(paramJson.optString("description", null));
                     parameter.setParamKey(paramJson.getString("param_key"));
                     parameter.setParamValue(paramJson.getString("param_value"));

@@ -1,7 +1,6 @@
 {
     "parameters": [
         {
-            "id": 0,
             "description": "Slogan",
             "param_key": "slogan",
             "param_value": "Learning is to built your own asset.",
@@ -9,7 +8,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 1,
             "description": "URL của logo trang web",
             "param_key": "site_logo",
             "param_value": "https://cdn-icons-png.flaticon.com/512/4762/4762311.png",
@@ -17,7 +15,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 2,
             "description": null,
             "param_key": "difficulty_level",
             "param_value": "BEGINNER",
@@ -25,7 +22,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 3,
             "description": null,
             "param_key": "difficulty_level",
             "param_value": "INTERMEDIATE",
@@ -33,7 +29,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 4,
             "description": null,
             "param_key": "difficulty_level",
             "param_value": "ADVANCED",
@@ -41,7 +36,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 5,
             "description": null,
             "param_key": "difficulty_level",
             "param_value": "EXPERT",
@@ -49,7 +43,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 6,
             "description": null,
             "param_key": "difficulty_level",
             "param_value": "MASTER",
@@ -57,7 +50,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 7,
             "description": null,
             "param_key": "lesson_type",
             "param_value": "VIDEO",
@@ -65,7 +57,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 8,
             "description": null,
             "param_key": "lesson_type",
             "param_value": "INTERACTIVE",
@@ -73,7 +64,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 9,
             "description": null,
             "param_key": "category",
             "param_value": "Programming",
@@ -81,7 +71,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 10,
             "description": null,
             "param_key": "category",
             "param_value": "Web Development",
@@ -89,7 +78,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 11,
             "description": null,
             "param_key": "category",
             "param_value": "Data Science",
@@ -97,7 +85,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 12,
             "description": null,
             "param_key": "category",
             "param_value": "Mobile Development",
@@ -105,7 +92,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 13,
             "description": null,
             "param_key": "category",
             "param_value": "Digital Marketing",
@@ -113,7 +99,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 14,
             "description": null,
             "param_key": "category",
             "param_value": "Finance",
@@ -121,7 +106,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 15,
             "description": null,
             "param_key": "subcategory",
             "param_value": "Python",
@@ -129,7 +113,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 16,
             "description": null,
             "param_key": "subcategory",
             "param_value": "Java",
@@ -137,7 +120,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 17,
             "description": null,
             "param_key": "subcategory",
             "param_value": "JavaScript",
@@ -145,7 +127,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 18,
             "description": null,
             "param_key": "subcategory",
             "param_value": "React",
@@ -153,7 +134,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 19,
             "description": null,
             "param_key": "subcategory",
             "param_value": "Machine Learning",
@@ -161,7 +141,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 20,
             "description": null,
             "param_key": "subcategory",
             "param_value": "iOS Development",
@@ -169,7 +148,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 21,
             "description": null,
             "param_key": "subcategory",
             "param_value": "Digital Marketing Strategy",
@@ -177,7 +155,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 22,
             "description": null,
             "param_key": "subcategory",
             "param_value": "Finance & Accounting",
@@ -185,7 +162,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 23,
             "description": null,
             "param_key": "subcategory",
             "param_value": "AI",
@@ -193,7 +169,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 24,
             "description": null,
             "param_key": "subcategory",
             "param_value": "Image Processing",
@@ -201,7 +176,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 25,
             "description": null,
             "param_key": "subcategory",
             "param_value": "Social Media",
@@ -209,7 +183,6 @@
             "status": "ACTIVE"
         },
         {
-            "id": 26,
             "description": null,
             "param_key": "subcategory",
             "param_value": "Flutter",
