@@ -7,7 +7,7 @@
 <link rel="stylesheet" th:href="@{/resources/css/fragments/courseItem.css}">
 <link rel="stylesheet" th:href="@{/resources/css/fragments/courseDetailPopup.css}">
 <link rel="stylesheet" th:href="@{/resources/css/search.css}">
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 </head>
 <body>
@@ -19,7 +19,12 @@
 			<!-- Filter Section -->
 			<div class="col-md-3 filter-section">
 				<h4>Filter by</h4>
-
+				<form th:action="@{/search}" method="get" class="d-flex search-form">
+					<button type="submit" class="btn btn-outline-primary rounded-circle d-flex align-items-center justify-content-center p-0"
+						style="width: 40px; height: 40px;">
+						<i class="bi bi-arrow-clockwise"></i>
+					</button>
+				</form>
 				<!-- Filter by Level -->
 				<h5 class="custom-h5">Level</h5>
 				<ul class="filters">
