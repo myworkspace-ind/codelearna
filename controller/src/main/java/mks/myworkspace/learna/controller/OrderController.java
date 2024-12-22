@@ -29,6 +29,7 @@ public class OrderController extends BaseController {
     		HttpSession httpSession,
             @RequestParam String paymentMethod,
             @RequestParam Long courseId,
+            @RequestParam BigDecimal finalPrice,
             Model model) {
     	// System.out.println("userEid:::::" + getCurrentUserEid());
         try {
@@ -36,6 +37,7 @@ public class OrderController extends BaseController {
             Order order = orderService.createOrder(paymentMethod, userEid, courseId);
             // System.out.println(order);
             if ("transfer".equals(paymentMethod)) {
+            	order.setAmount(finalPrice);
                 String qrCodeUrl = orderService.generateQrCodeUrl(order.getOrderCode(), order.getAmount());
                 model.addAttribute("orderId", order.getOrderCode());
                 model.addAttribute("qrCodeUrl", qrCodeUrl);
