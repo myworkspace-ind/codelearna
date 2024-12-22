@@ -42,10 +42,6 @@
 					<li><input type="radio" name="rating" value="3.5" th:checked="${rating == '3.5'}" onchange="applyFilter()"> 3.5 & up</li>
 					<li><input type="radio" name="rating" value="3.0" th:checked="${rating == '3.0'}" onchange="applyFilter()"> 3.0 & up</li>
 				</ul>
-
-				<form th:action="@{/search}" method="get" class="d-flex search-form">
-					<button type="submit" class="btn btn-outline-info mt-3">Clear Filter</button>
-				</form>
 			</div>
 
 			<!-- Courses Section -->
