@@ -2,19 +2,13 @@ package mks.myworkspace.learna.service.impl;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import javax.annotation.PostConstruct;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -60,10 +54,11 @@ public class DBInitImpl implements DBInit {
 
                 // Lưu Parameters
                 JSONArray parametersArray = root.getJSONArray("parameters");
+                Parameter parameter;
                 for (int i = 0; i < parametersArray.length(); i++) {
                     JSONObject paramJson = parametersArray.getJSONObject(i);
 
-                    Parameter parameter = new Parameter();
+                    parameter = new Parameter();
                     parameter.setId(paramJson.getLong("id"));
                     parameter.setDescription(paramJson.optString("description", null));
                     parameter.setParamKey(paramJson.getString("param_key"));
@@ -81,7 +76,7 @@ public class DBInitImpl implements DBInit {
 
                     Category category = new Category();
 
-                    Parameter parameter = parameterRepository.findById(categoryJson.getLong("parameter_id")).orElse(null);
+                    parameter = parameterRepository.findById(categoryJson.getLong("parameter_id")).orElse(null);
                     category.setParameter(parameter);  // Thiết lập Parameter cho Category
 
                     categoryJdbcRepository.save(category);
@@ -96,7 +91,7 @@ public class DBInitImpl implements DBInit {
 
                     // Lấy các đối tượng liên quan
                     Category category = categoryRepository.findById(subcategoryJson.optLong("category_id", 0)).orElse(null);
-                    Parameter parameter = parameterRepository.findById(subcategoryJson.getLong("parameter_id")).orElse(null);
+                    parameter = parameterRepository.findById(subcategoryJson.getLong("parameter_id")).orElse(null);
                     subcategory.setCategory(category);
                     subcategory.setParameter(parameter);
 
@@ -105,7 +100,7 @@ public class DBInitImpl implements DBInit {
 
                 log.info("Data loaded successfully!");
             } catch (Exception e) {
-                System.err.println("Error when loading data: " + e);
+                log.error("Error when loading data: " + e);
             }
         }
     }

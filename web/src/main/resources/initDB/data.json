@@ -1,6 +1,14 @@
 {
     "parameters": [
         {
+            "id": 0,
+            "description": "Slogan",
+            "param_key": "slogan",
+            "param_value": "Learning is to built your own asset.",
+            "seqno": null,
+            "status": "ACTIVE"
+        },
+        {
             "id": 1,
             "description": "URL của logo trang web",
             "param_key": "site_logo",
