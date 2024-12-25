@@ -73,6 +73,11 @@
 			<artifactId>spring-security-web</artifactId>
 			<version>${spring.security.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jasig.cas.client</groupId>
+			<artifactId>cas-client-core</artifactId>
+			<version>3.6.1</version>
+		</dependency>
 		<!-- Gson -->
 		<!--         <dependency> -->
 		<!--             <groupId>com.google.code.gson</groupId> -->

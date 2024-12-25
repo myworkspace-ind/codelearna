@@ -84,6 +84,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd
         <http entry-point-ref="casAuthenticationEntryPoint" use-expressions="true">
             <intercept-url pattern="/" access="permitAll" />
             <intercept-url pattern="/resources/**" access="permitAll" />
+            <intercept-url pattern="/search/**" access="permitAll" />
             <intercept-url pattern="/**" access="isAuthenticated()" />       
             <intercept-url pattern="/logout" access="permitAll"/>
             <custom-filter ref="singleLogoutFilter" before="LOGOUT_FILTER" />

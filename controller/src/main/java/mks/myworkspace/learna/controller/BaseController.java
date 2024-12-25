@@ -28,8 +28,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -99,7 +103,7 @@ public class BaseController {
             // Demo for Web App
             httpSession.setAttribute("currentSiteId", "DefaultSite");
             httpSession.setAttribute("userDisplayName", "Lê Ngọc Thạch");
-            httpSession.setAttribute("userEid", "thachln");
+            httpSession.setAttribute("userEid", getCurrentUserEid());
             httpSession.setAttribute("userEmail", "ThachLN@mgail.com");
             httpSession.setAttribute("userFirstName", "Thạch");
             httpSession.setAttribute("userLastName", "Lê");
@@ -110,7 +114,12 @@ public class BaseController {
 
 
     public String getCurrentUserEid() {
-        return (sakaiProxy != null) ? sakaiProxy.getCurrentUserEid(): "admin";
+        if (sakaiProxy != null) {
+            return sakaiProxy.getCurrentUserEid();
+        } else {
+            String username = getUserIdentifier();
+            return (username != null) ? username : "demouser";
+        }
     }
 
 
@@ -126,6 +135,22 @@ public class BaseController {
         return (sakaiProxy != null) ? sakaiProxy.getCurrentUserDisplayName(): "Lê Ngọc Thạch";
     }
 
+    public String getUserIdentifier() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            
+            if (principal instanceof User) {
+                User user = (User) principal;
+                return user.getUsername();
+            } else if (principal instanceof AttributePrincipal) {
+                AttributePrincipal attrPrincipal = (AttributePrincipal) principal;
+                return attrPrincipal.getName();
+            }
+        }
+
+        return null;
+    }
     /**
      * Write the content of the file to HttpServletReponse with file name "fileName".
      * @param file File download

@@ -55,7 +55,7 @@
                             id="userMenuButton" 
                             data-bs-toggle="dropdown" 
                             aria-expanded="false"
-                            th:text="${#request.userPrincipal.name}">
+                            th:text="${session.userEid}">
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="userMenuButton">
                             <li>
