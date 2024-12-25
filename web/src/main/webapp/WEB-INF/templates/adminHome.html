@@ -1,22 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard</title>
-
-<th:block th:include="fragments/head"></th:block>
-
-<link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" th:href="@{/resources/css/adminHome.css}">
-<link rel="stylesheet" href="/library/webjars/handsontable/handsontable.full.min.css">
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.css">
-<script src="https://cdn.jsdelivr.net/npm/handsontable@12.1.0/dist/handsontable.full.min.js"></script>
- -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    
+    <th:block th:include="fragments/head"></th:block>
+    
+    <link rel="stylesheet" th:href="@{/resources/css/adminHome.css}">
+    <link rel="stylesheet" href="/library/webjars/handsontable/handsontable.full.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 </head>
 <body>
 	<!-- <th:block th:include="fragments/hnav"></th:block> -->

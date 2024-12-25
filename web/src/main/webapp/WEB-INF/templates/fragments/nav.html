@@ -39,11 +39,15 @@
 					<button type="submit" class="btn btn-outline-primary ms-2">Search</button>
 				</form>
 
-				<ul class="navbar-nav ms-auto">
-					<li class="nav-item mx-3"><a class="nav-link" th:href="@{/library}">My Courses</a></li>
-					<!-- <li class="nav-item mx-2">
-						<span class="nav-link">Balance: <span th:text="${#numbers.formatDecimal(session.userBalance, 2, 'DEFAULT', 0, 'DEFAULT')}"></span></span>
-					</li> -->
+                <!-- Anonymous -->
+                <div th:unless="${#httpServletRequest.remoteUser}">
+                    <a th:href="${session.loginUrl}" class="btn btn-primary" title="Authentication with CAS.">Login</a>
+<!--                     <a th:href="@{/register}" class="btn btn-secondary">Đăng ký</a> -->
+                </div>
+        
+                <!-- Authenticated -->
+                <ul class="navbar-nav ms-auto" th:if="${#request.userPrincipal != null}">
+                    <li class="nav-item mx-3"><a class="nav-link" th:href="@{/library}">My Courses</a></li>
                     <li class="nav-item dropdown ms-3">
                         <button 
                             class="btn btn-outline-secondary dropdown-toggle" 
@@ -51,7 +55,7 @@
                             id="userMenuButton" 
                             data-bs-toggle="dropdown" 
                             aria-expanded="false"
-                            th:text="${session.userDisplayName}">
+                            th:text="${#request.userPrincipal.name}">
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="userMenuButton">
                             <li>
@@ -66,7 +70,7 @@
                             </li>
                         </ul>
                     </li>
-				</ul>
+                </ul>
 			</div>
 		</div>
 	</nav>

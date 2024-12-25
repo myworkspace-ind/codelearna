@@ -6,6 +6,11 @@ CREATE database learna default character set utf8;
 CREATE user 'learna_user'@'%.%.%.%' identified by 'LearnA!123';
 GRANT ALL PRIVILEGES ON learna.* TO 'learna_user'@'%.%.%.%';
 
+# MySQL Commands to delete database;
+REVOKE ALL PRIVILEGES ON learna.* FROM 'learna_user'@'%.%.%.%';
+DROP user 'learna_user'@'%.%.%.%';
+DROP DATABASE learna;
+
 CREATE database learna default character set utf8;
 CREATE user 'learna_user'@'localhost' identified by 'LearnA!123';
 GRANT ALL PRIVILEGES ON learna.* TO 'learna_user'@'localhost';

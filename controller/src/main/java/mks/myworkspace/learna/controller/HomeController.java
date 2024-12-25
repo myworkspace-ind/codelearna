@@ -47,7 +47,7 @@ public class HomeController extends BaseController {
 
     @GetMapping
     public ModelAndView getAllCourses(HttpServletRequest request, HttpSession httpSession) {
-        ModelAndView mav = new ModelAndView("homePage");
+        ModelAndView mav = new ModelAndView("home");
 
         initSession(request, httpSession);
         

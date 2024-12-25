@@ -63,6 +63,16 @@
 			<artifactId>spring-beans</artifactId>
 		</dependency>
 
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${spring.security.version}</version>
+		</dependency>
 		<!-- Gson -->
 		<!--         <dependency> -->
 		<!--             <groupId>com.google.code.gson</groupId> -->
@@ -75,19 +85,10 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>4.0.1</version>
+			<!--			<version>4.0.1</version>-->
 			<!--         <scope>provided</scope> -->
 		</dependency>
-		<!--         <dependency> -->
-		<!--             <groupId>javax.servlet.jsp</groupId> -->
-		<!--             <artifactId>jsp-api</artifactId> -->
-		<!--             <scope>provided</scope> -->
-		<!--         </dependency> -->
-		<!--         <dependency> -->
-		<!--             <groupId>javax.servlet</groupId> -->
-		<!--             <artifactId>jstl</artifactId> -->
-		<!--             <version>1.2</version> -->
-		<!--         </dependency> -->
+
 
 		<!-- Sakai dependencies -->
 		<dependency>
@@ -103,14 +104,13 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
-			<version>2.5.2</version> <!-- hoặc phiên bản khác mà bạn đang sử dụng -->
 		</dependency>
 
-		<dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>5.6.14.Final</version> <!-- Bạn có thể thay đổi version phù hợp -->
-    </dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.hibernate</groupId>-->
+<!--			<artifactId>hibernate-core</artifactId>-->
+<!--			<version>5.6.14.Final</version>-->
+<!--		</dependency>-->
 
 	</dependencies>
 	<build>
