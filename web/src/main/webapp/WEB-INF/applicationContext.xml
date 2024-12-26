@@ -15,5 +15,5 @@
     </bean>
 
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	<import resource="spring-security_cas_myworkspace.vn.xml"/>
+	<import resource="spring-security_cas_xmyworkspace.com.xml"/>
 </beans>
