@@ -62,10 +62,10 @@
     <!-- Load configuration file. -->
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
         <property name="ignoreUnresolvablePlaceholders" value="true" />
-<!--         <property name="location" value="file:///etc/myworkspace/codelearna/app-config.properties" /> -->
-        <property name="location">
-            <value>/WEB-INF/app-config.properties</value>
-        </property>
+        <property name="location" value="file:///etc/myworkspace/codelearna/app-config.properties" />
+<!--         <property name="location"> -->
+<!--             <value>/WEB-INF/app-config.properties</value> -->
+<!--         </property> -->
     </bean>
 
 	<context:component-scan base-package="mks.myworkspace.learna" />
