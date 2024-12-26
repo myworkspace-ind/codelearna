@@ -101,6 +101,13 @@
 			<artifactId>sakai-kernel-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<!--Use org.sakaiproject.authz.impl.BaseRole -->
+		<dependency>
+			<groupId>org.sakaiproject.kernel</groupId>
+			<artifactId>sakai-kernel-impl</artifactId>
+			<version>${sakai.kernel.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.sakaiproject.kernel</groupId>
 			<artifactId>sakai-component-manager</artifactId>

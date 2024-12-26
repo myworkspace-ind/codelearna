@@ -99,7 +99,7 @@ public class AdminController extends BaseController {
 	@GetMapping
 	public String showAdminHomePage(Model model) {
 		String currentUserEid = getCurrentUserEid();
-		if (!"admin".equals(currentUserEid)) {
+		if (!"admin".equalsIgnoreCase(currentUserEid)) {
 			return "accessDenied";
 		}
 		int totalCourses = courseService.getTotalCourses();

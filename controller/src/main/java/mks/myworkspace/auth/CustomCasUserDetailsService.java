@@ -13,10 +13,8 @@ public class CustomCasUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found");
         }
 
-        // Tạo một UserDetails (nếu cần, có thể kết nối với cơ sở dữ liệu để lấy thông tin người dùng)
-        return User.withUsername(username)
-                   .password("")  // CAS không sử dụng mật khẩu thông thường, nên để trống
-                   .roles("USER")  // Ví dụ, chỉ định quyền cho người dùng
-                   .build();
+        return "admin".equalsIgnoreCase(username) ?
+                User.withUsername(username).password("").roles("ADMIN", "USER").build():
+                User.withUsername(username).password("").roles("USER").build();
     }
 }

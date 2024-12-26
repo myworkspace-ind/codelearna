@@ -214,7 +214,17 @@
 			<version>${sakai.jstl.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<!--Use org.sakaiproject.authz.impl.BaseRole -->
+		<dependency>
+			<groupId>org.sakaiproject.kernel</groupId>
+			<artifactId>sakai-kernel-api</artifactId>
+			<version>${sakai.kernel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.sakaiproject.kernel</groupId>
+			<artifactId>sakai-kernel-impl</artifactId>
+			<version>${sakai.kernel.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.sakaiproject.kernel</groupId>
 			<artifactId>sakai-component-manager</artifactId>

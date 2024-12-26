@@ -22,6 +22,9 @@ package mks.myworkspace.learna.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -29,9 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.jasig.cas.client.authentication.AttributePrincipal;
+import org.sakaiproject.authz.api.Role;
+import org.sakaiproject.authz.impl.BaseRole;
 import org.sakaiproject.component.cover.ComponentManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
@@ -99,16 +105,24 @@ public class BaseController {
             httpSession.setAttribute("userEmail", sakaiProxy.getCurrentUserEmail());
             httpSession.setAttribute("userFirstName", sakaiProxy.getCurrentUserFirstName());
             httpSession.setAttribute("userLastName", sakaiProxy.getCurrentUserLastName());
+            httpSession.setAttribute("roles", sakaiProxy.getRoles());
+            log.debug("Roles of user {}: {}", sakaiProxy.getCurrentUserEid(), sakaiProxy.getRoles());
         } else {
             // Demo for Web App
+            String username = getCurrentUserEid();
+            List<Role> userRoles = getUserRolesBySpring();
+
             httpSession.setAttribute("currentSiteId", "DefaultSite");
             httpSession.setAttribute("userDisplayName", "Lê Ngọc Thạch");
-            httpSession.setAttribute("userEid", getCurrentUserEid());
+            httpSession.setAttribute("userEid", username);
             httpSession.setAttribute("userEmail", "ThachLN@mgail.com");
             httpSession.setAttribute("userFirstName", "Thạch");
             httpSession.setAttribute("userLastName", "Lê");
+            httpSession.setAttribute("roles", userRoles);
             httpSession.setAttribute("loginUrl", loginUrl);
             httpSession.setAttribute("logoutUrl", logoutUrl);
+
+            log.debug("Roles of user {}: {}", username, userRoles);
         }
     }
 
@@ -117,11 +131,27 @@ public class BaseController {
         if (sakaiProxy != null) {
             return sakaiProxy.getCurrentUserEid();
         } else {
-            String username = getUserIdentifier();
+            String username = getUserIdentifierBySpring();
             return (username != null) ? username : "demouser";
         }
     }
 
+    public List<Role> getCurrentUserRoles() {
+        List<Role> roles;
+
+        if (sakaiProxy != null) {
+            roles = sakaiProxy.getRoles();
+        } else {
+            roles = getUserRolesBySpring();
+            
+            if (roles == null) {
+                roles = new ArrayList<Role>(1);
+                roles.add(new BaseRole("ROLE_USER"));
+            }
+        }
+        
+        return roles;
+    }
 
     public String getCurrentSiteId() {
         return (sakaiProxy != null) ? sakaiProxy.getCurrentSiteId(): "DefaultSite";
@@ -135,7 +165,11 @@ public class BaseController {
         return (sakaiProxy != null) ? sakaiProxy.getCurrentUserDisplayName(): "Lê Ngọc Thạch";
     }
 
-    public String getUserIdentifier() {
+    /**
+     * Get authenticated identifier by spring.
+     * @return account name.
+     */
+    public String getUserIdentifierBySpring() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
@@ -151,6 +185,38 @@ public class BaseController {
 
         return null;
     }
+
+    /**
+     * Get user roles by Spring.
+     * @return
+     */
+    public List<Role> getUserRolesBySpring() {
+        List<Role> roles = new ArrayList<Role>();
+        // Get the authentication object
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Ensure the user is authenticated
+        if (authentication != null && authentication.isAuthenticated()) {
+            // Retrieve roles (authorities)
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+            // Print roles
+            BaseRole role;
+            log.debug("User Roles:");
+            for (GrantedAuthority authority : authorities) {
+                role = new BaseRole(authority.getAuthority());
+                roles.add(role);
+                log.debug(authority.getAuthority());
+            }
+            
+            return roles;
+        } else {
+            log.debug("No authenticated user.");
+        }
+        
+        return null;
+    }
+
     /**
      * Write the content of the file to HttpServletReponse with file name "fileName".
      * @param file File download
