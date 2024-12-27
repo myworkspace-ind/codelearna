@@ -63,12 +63,16 @@ function submitEditCourseForm(event, courseId) {
 		showErrorToast('Please enter a course name');
 		return;
 	}
+	
+	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
 	fetch(form.action, {
 		method: 'POST',
 		body: formData,
 		headers: {
-			'Accept': 'application/json'
+			'Accept': 'application/json',
+			[csrfHeader]: csrfToken
 		}
 	})
 		.then(response => {
@@ -306,9 +310,15 @@ function submitCourseForm(event) {
 	const form = document.querySelector('#courseForm');
 	const formData = new FormData(form);
 	
+	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
 	fetch(`${_ctx}admin/addCourse`, {
 		method: 'POST',
-		body: formData
+		body: formData,
+		headers: {
+			[csrfHeader]: csrfToken
+		}
 	})
 		.then(response => {
 			if (!response.ok) {

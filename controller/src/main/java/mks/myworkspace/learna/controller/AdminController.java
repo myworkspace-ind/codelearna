@@ -1,51 +1,17 @@
 package mks.myworkspace.learna.controller;
 
-import mks.myworkspace.learna.entity.Course;
-import mks.myworkspace.learna.entity.Voucher;
-import mks.myworkspace.learna.entity.Campaign;
-import mks.myworkspace.learna.repository.CourseJdbcRepository;
-import mks.myworkspace.learna.repository.VoucherJdbcRespository;
-import mks.myworkspace.learna.repository.ParameterRepository;
-import mks.myworkspace.learna.entity.Lesson;
-import mks.myworkspace.learna.entity.Parameter;
-import mks.myworkspace.learna.entity.Subcategory;
-import mks.myworkspace.learna.entity.UserLibraryCourse;
-import mks.myworkspace.learna.service.CampaignService;
-import mks.myworkspace.learna.service.CategoryService;
-import mks.myworkspace.learna.service.CourseService;
-import mks.myworkspace.learna.service.LessonService;
-import mks.myworkspace.learna.service.VoucherService;
-import mks.myworkspace.learna.service.ParameterService;
-import mks.myworkspace.learna.service.PlayService;
-import mks.myworkspace.learna.service.RevenueService;
-import mks.myworkspace.learna.service.SubcategoryService;
-import mks.myworkspace.learna.service.UserLibraryCourseService;
-
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -53,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,13 +27,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import mks.myworkspace.learna.entity.Campaign;
+import mks.myworkspace.learna.entity.Course;
+import mks.myworkspace.learna.entity.Lesson;
+import mks.myworkspace.learna.entity.Parameter;
+import mks.myworkspace.learna.entity.Subcategory;
+import mks.myworkspace.learna.entity.UserLibraryCourse;
+import mks.myworkspace.learna.entity.Voucher;
+import mks.myworkspace.learna.service.CampaignService;
+import mks.myworkspace.learna.service.CategoryService;
+import mks.myworkspace.learna.service.CourseService;
+import mks.myworkspace.learna.service.LessonService;
+import mks.myworkspace.learna.service.ParameterService;
+import mks.myworkspace.learna.service.PlayService;
+import mks.myworkspace.learna.service.RevenueService;
+import mks.myworkspace.learna.service.SubcategoryService;
+import mks.myworkspace.learna.service.UserLibraryCourseService;
+import mks.myworkspace.learna.service.VoucherService;
 
 @Controller
 @RequestMapping("/admin")
@@ -415,25 +394,24 @@ public class AdminController extends BaseController {
 	@GetMapping("/addCourse")
 	public ModelAndView showAddCoursePage() {
 		ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
-		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValueAndStatus("difficulty_level",
-				"ACTIVE");
-		log.info("do kho" + difficultyLevels);
+		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValueAndStatus("difficulty_level", "ACTIVE");
+
+		log.info("DifficultyLevels: {}", difficultyLevels);
 		List<Parameter> lessonTypes = parameterService.getListParamsByParamValueAndStatus("lesson_type", "ACTIVE");
 		mav.addObject("difficultyLevels", difficultyLevels);
 		mav.addObject("lessonTypes", lessonTypes);
+
 		return mav;
 	}
 
 	@PostMapping("/addCourse")
-	@Transactional
-	public ResponseEntity<Map<String, String>> addCourse(@Validated @ModelAttribute("course") Course course,
-			BindingResult bindingResult) {
+	public ResponseEntity<Map<String, String>> addCourse(@Validated @ModelAttribute("course") Course course, BindingResult bindingResult) {
 		Map<String, String> response = new HashMap<>();
 
 		if (bindingResult.hasErrors()) {
 			response.put("status", "error");
 			response.put("message", "Invalid information.");
-			System.out.println(bindingResult.getAllErrors());
+			log.error("Errors: ", bindingResult.getAllErrors());
 			return ResponseEntity.badRequest().body(response);
 		}
 
@@ -459,7 +437,7 @@ public class AdminController extends BaseController {
 			course.setStatus("INACTIVE");
 		}
 		 //|| course.getDifficultyLevel().getId() == null
-		System.out.println(course.getDifficultyLevel());
+		log.debug("course.getDifficultyLevel(): {}", course.getDifficultyLevel());
 		if (course.getDifficultyLevel() == null || course.getDifficultyLevel().getId() == null) {
 			response.put("status", "error");
 			response.put("message", "Difficulty Level is required and must be valid.");
@@ -497,16 +475,16 @@ public class AdminController extends BaseController {
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		try {
+//		try {
 			courseService.saveCourse(course);
 			response.put("status", "success");
 			response.put("message", "The course has been added successfully!");
 			return ResponseEntity.ok(response);
-		} catch (Exception e) {
-			response.put("status", "error");
-			response.put("message", "System error: " + e.getMessage());
-			return ResponseEntity.badRequest().body(response);
-		}
+//		} catch (Exception e) {
+//			response.put("status", "error");
+//			response.put("message", "System error: " + e.getMessage());
+//			return ResponseEntity.badRequest().body(response);
+//		}
 	}
 
 	@GetMapping("/addCourseHandsontable")
