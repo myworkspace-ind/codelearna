@@ -59,7 +59,8 @@ function submitLessonForm(event) {
         method: 'POST',
         body: formData,
         headers: {
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+			[csrfHeader]: csrfToken
         }
     })
     .then(response => {
@@ -113,7 +114,8 @@ function submitEditLessonForm(event, lessonId) {
 		method: 'POST',
 		body: formData,
 		headers: {
-			'Accept': 'application/json'
+			'Accept': 'application/json',
+			[csrfHeader]: csrfToken
 		}
 	})
 		.then(response => {
@@ -144,9 +146,10 @@ function submitEditLessonForm(event, lessonId) {
 
 function deleteLesson(lessonId, courseId) {
 	fetch(`${_ctx}admin/lessons/delete/${lessonId}`, {
-		method: 'POST', // Chuyển từ DELETE sang POST
+		method: 'DELETE',
 		headers: {
-			'Accept': 'application/json'
+			'Accept': 'application/json',
+			[csrfHeader]: csrfToken
 		}
 	})
 		.then(response => {
@@ -195,7 +198,8 @@ function toggleLessonStatus(lessonId, courseId) {
     fetch(`${_ctx}admin/lessons/toggleLessonStatus/${lessonId}`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+			[csrfHeader]: csrfToken
         },
         body: JSON.stringify({ courseId: courseId, lessonId: lessonId })
     })
@@ -355,7 +359,8 @@ function submitLessonData(event, courseId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json' // Thêm header này
+            'Accept': 'application/json',
+			[csrfHeader]: csrfToken
         },
         body: JSON.stringify(lessonData)
     })
@@ -416,7 +421,8 @@ function restoreLesson(lessonId, courseId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+			[csrfHeader]: csrfToken
         },
         body: JSON.stringify({ 
             lessonId: lessonId, 

@@ -133,7 +133,8 @@ function submitReview(courseId, form) {
 	}
 	fetch(`${_ctx}course/${courseId}/review`, {
 		method: 'POST',
-		body: formData
+		body: formData,
+		[csrfHeader]: csrfToken
 	})
 		.then(response => {
 			if (!response.ok) {
@@ -180,6 +181,7 @@ function deleteReview(courseInfor) {
 	if (courseInfor.courseId && courseInfor.reviewId) {
 		fetch(`${_ctx}course/${courseInfor.courseId}/review/${courseInfor.reviewId}/delete`, {
 			method: 'POST',
+			[csrfHeader]: csrfToken
 		})
 			.then(response => {
 				if (!response.ok) {
@@ -260,7 +262,8 @@ function submitEditReviewForm(event, reviewId) {
 		method: 'POST',
 		body: formData,
 		headers: {
-			'Accept': 'application/json'
+			'Accept': 'application/json',
+			[csrfHeader]: csrfToken
 		}
 	})
 		.then(response => {

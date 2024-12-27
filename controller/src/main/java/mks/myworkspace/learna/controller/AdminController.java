@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -612,7 +613,7 @@ public class AdminController extends BaseController {
 		}
 	}
 
-	@PostMapping("/courses/delete/{id}")
+	@DeleteMapping("/courses/delete/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> deleteCourse(@PathVariable("id") Long id) {
 		Map<String, String> response = new HashMap<>();
@@ -635,7 +636,7 @@ public class AdminController extends BaseController {
 		}
 	}
 
-	@PostMapping("/campaigns/delete/{id}")
+	@DeleteMapping("/campaigns/delete/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> deleteCampaign(@PathVariable("id") Long id) {
 		Map<String, String> response = new HashMap<>();
@@ -1136,7 +1137,7 @@ public class AdminController extends BaseController {
 		}
 	}
 
-	@PostMapping("/lessons/delete/{id}")
+	@DeleteMapping("/lessons/delete/{id}")
 	@ResponseBody
 	public ResponseEntity<Map<String, String>> deleteLesson(@PathVariable("id") Long id) {
 		Map<String, String> response = new HashMap<>();

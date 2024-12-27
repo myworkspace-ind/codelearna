@@ -119,10 +119,11 @@ function submitVoucherForm(event) {
         description: formData.get('description'),
     };
     // Gửi dữ liệu đến API (controller)
-    fetch('/codelearna-web/admin/addVoucher', {
+    fetch('${_ctx}/admin/addVoucher', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+			[csrfHeader]: csrfToken
         },
         body: JSON.stringify(data),
     })
@@ -200,7 +201,8 @@ function submitEditVoucherForm(event, voucherId) {
 	fetch(form.action, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			[csrfHeader]: csrfToken
 		},
 		body: JSON.stringify(data),
 	})
