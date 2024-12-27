@@ -44,7 +44,7 @@ public class MyAdminController extends BaseController {
 		httpSession.setAttribute("currentMenu", "Parameters");
 		model.addAttribute("parameters", parameterService.getAllParams());
 		model.addAttribute("parameterKeyDiff", parameterService.getParamKeyDiff());
-		log.info("do kho" + parameterService.getAllParams());
+		log.info("Difficulty levels: {}", parameterService.getAllParams());
 		return "myadmin";
 	}
 
