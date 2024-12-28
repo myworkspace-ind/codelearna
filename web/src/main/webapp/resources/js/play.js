@@ -162,7 +162,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	        fetch(`${_ctx}api/lesson-tracking`, {
 	            method: 'POST',
 	            headers: {
-	                'Content-Type': 'application/json'
+	                'Content-Type': 'application/json',
+					[csrfHeader]: csrfToken
 	            },
 	            body: JSON.stringify({
 	                userEid: userEid,
@@ -304,6 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
+					[csrfHeader]: csrfToken
                 },
                 body: new URLSearchParams({
                     content: content
@@ -384,6 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
+					[csrfHeader]: csrfToken
                 },
                 body: new URLSearchParams({
                     content: commentContent

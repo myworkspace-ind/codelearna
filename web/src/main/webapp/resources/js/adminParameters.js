@@ -161,7 +161,8 @@ function submitParameterData(event) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+			[csrfHeader]: csrfToken
         },
         body: JSON.stringify(parameterData)
     })
@@ -198,7 +199,8 @@ function deleteParameter(parameterId, modal) {
     fetch(`${_ctx}admin/parameter/delete/${parameterId}`, {
         method: 'POST',
         headers: {
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+			[csrfHeader]: csrfToken
         }
     })
         .then(response => {
@@ -271,7 +273,8 @@ function submitEditParameterForm(event, parameterId) {
 
     fetch(form.action, {
         method: 'POST',
-        body: formData
+        body: formData,
+		[csrfHeader]: csrfToken
     })
         .then(response => response.json())
         .then(data => {
@@ -365,7 +368,8 @@ function restoreParameter(parameterId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+			[csrfHeader]: csrfToken
         }
     })
     .then(response => {

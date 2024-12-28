@@ -4,6 +4,9 @@ import {
 	showErrorToast 
 } from './toast.js';
 */
+const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
 function loadCoursesSection(event) {
 	if (event) {
 		event.preventDefault();
@@ -117,9 +120,10 @@ function showDeleteConfirmModal(courseId) {
 
 function deleteCourse(courseId, modal) {
 	fetch(`${_ctx}admin/courses/delete/${courseId}`, {
-		method: 'POST', // Chuyển từ DELETE sang POST
+		method: 'DELETE',
 		headers: {
-			'Accept': 'application/json'
+			'Accept': 'application/json',
+			[csrfHeader]: csrfToken
 		}
 	})
 		.then(response => {
@@ -153,7 +157,8 @@ function toggleCourseStatus(courseId) {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+			[csrfHeader]: csrfToken
         },
         body: JSON.stringify({ courseId: courseId })
     })
@@ -273,6 +278,7 @@ function submitNewParamValue() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+				[csrfHeader]: csrfToken
             },
         })
             .then(response => {
@@ -593,7 +599,8 @@ function submitCourseData(event) {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'Accept': 'application/json'
+			'Accept': 'application/json',
+			[csrfHeader]: csrfToken
 		},
 		body: JSON.stringify(courseData)
 	})
@@ -687,7 +694,8 @@ function restoreCourse(courseId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+			[csrfHeader]: csrfToken
         }
     })
     .then(response => {

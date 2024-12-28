@@ -26,7 +26,10 @@ function submitCampaignForm(event) {
 	// Gửi yêu cầu fetch đến endpoint thêm chiến dịch
 	fetch(`${_ctx}admin/addCampaign`, {
 		method: 'POST',
-		body: formData
+		body: formData,
+		headers: {
+			[csrfHeader]: csrfToken
+		}
 	})
 		.then(response => {
 			if (!response.ok) {
@@ -68,7 +71,10 @@ function submitCampaignData(event) {
 
 	fetch(`${_ctx}admin/addCampaign`, {
 		method: 'POST',
-		body: formData
+		body: formData,
+		headers: {
+		    [csrfHeader]: csrfToken
+		}
 	})
 		.then(response => {
 			if (!response.ok) {
@@ -161,9 +167,10 @@ function showDeleteConfirmModal_campaign(campaignId) {
 
 function deleteCampaign(campaignId, modal) {
 	fetch(`${_ctx}admin/campaigns/delete/${campaignId}`, {
-		method: 'POST', // Chuyển từ DELETE sang POST
+		method: 'DELETE',
 		headers: {
-			'Accept': 'application/json'
+			'Accept': 'application/json',
+			[csrfHeader]: csrfToken
 		}
 	})
 		.then(response => {
@@ -237,7 +244,8 @@ function submitEditCampaignForm(event, campaignId) {
         method: 'POST',
         body: formData,
         headers: {
-            'Accept': 'application/json'
+            'Accept': 'application/json',
+			[csrfHeader]: csrfToken
         }
     })
         .then(response => {
