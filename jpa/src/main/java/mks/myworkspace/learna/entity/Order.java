@@ -14,6 +14,9 @@ import java.time.LocalDateTime;
 @Table(name = "learna_orders")
 public class Order {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "order_code", unique = true, nullable = false)
     private String orderCode;
 

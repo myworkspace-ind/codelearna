@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import mks.myworkspace.learna.entity.Order;
-import mks.myworkspace.learna.repository.OrderRepository;
 
 public interface OrderService {
 	public String generateQrCodeUrl(String orderCode, BigDecimal amount);

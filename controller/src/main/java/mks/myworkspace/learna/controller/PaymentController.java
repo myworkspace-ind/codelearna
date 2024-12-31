@@ -1,15 +1,16 @@
 package mks.myworkspace.learna.controller;
 
-import mks.myworkspace.learna.entity.Order;
-import mks.myworkspace.learna.service.OrderService;
-import mks.myworkspace.learna.service.PaymentService;
-import mks.myworkspace.learna.service.UserLibraryCourseService;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,20 +22,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
+
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import mks.myworkspace.learna.entity.Order;
+import mks.myworkspace.learna.service.OrderService;
+import mks.myworkspace.learna.service.PaymentService;
+import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 @Slf4j
 @Controller
@@ -137,7 +130,7 @@ public class PaymentController extends BaseController {
                 fieldName = URLEncoder.encode((String) params.nextElement(), StandardCharsets.US_ASCII.toString());
                 fieldValue = URLEncoder.encode(request.getParameter(fieldName), StandardCharsets.US_ASCII.toString());
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                log.error("Could not perform post-process fieldName=" + fieldName + ";fieldValue=" + fieldValue, e);
             }
             if ((fieldValue != null) && (fieldValue.length() > 0)) {
                 fields.put(fieldName, fieldValue);
@@ -145,9 +138,9 @@ public class PaymentController extends BaseController {
         }
         
         int paymentStatus = paymentService.processReturnVnpay(fields, userEid);
+        log.info("paymentStatus={}", paymentStatus);
 
         return "redirect:/library";
-
     }
     
 }
