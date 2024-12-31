@@ -5,16 +5,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Value;
 import mks.myworkspace.learna.entity.Course;
 import mks.myworkspace.learna.entity.Order;
 import mks.myworkspace.learna.repository.CourseRepository;
@@ -111,11 +109,11 @@ public class OrderServiceImpl implements OrderService{
     }
 
     public String generateOrderCode() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmm");
         String currentDate = dateFormat.format(new Date());
-        Random random = new Random();
-        int randomNumber = random.nextInt(90000000) + 10000000;
-        return "LA" + currentDate + randomNumber;
+        // Random random = new Random();
+        // int randomNumber = random.nextInt(90000000) + 10000000;
+        return "DH" + currentDate; // + randomNumber;
     }
 
     public Optional<Order> getOrder(String orderCode) {
