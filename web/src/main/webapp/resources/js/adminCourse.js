@@ -4,8 +4,6 @@ import {
 	showErrorToast 
 } from './toast.js';
 */
-const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
 
 function loadCoursesSection(event) {
 	if (event) {
@@ -67,9 +65,6 @@ function submitEditCourseForm(event, courseId) {
 		return;
 	}
 	
-	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-	const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
 	fetch(form.action, {
 		method: 'POST',
 		body: formData,
@@ -316,9 +311,6 @@ function submitCourseForm(event) {
 	const form = document.querySelector('#courseForm');
 	const formData = new FormData(form);
 	
-	const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
-	const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
-
 	fetch(`${_ctx}admin/addCourse`, {
 		method: 'POST',
 		body: formData,
