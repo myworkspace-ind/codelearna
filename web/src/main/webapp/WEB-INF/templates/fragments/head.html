@@ -1,4 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
 <link rel="stylesheet" href="/library/webjars/bootstrap/5.2.0/css/bootstrap.min.css">
 
 <link rel="stylesheet" type="text/css" href="/library/skin/default-skin/tool.css">
@@ -21,4 +23,9 @@
 
 <meta name="_csrf" th:content="${_csrf?.token}"/>
 <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
+
+<script th:inline="javascript">
+    const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+</script>
 
