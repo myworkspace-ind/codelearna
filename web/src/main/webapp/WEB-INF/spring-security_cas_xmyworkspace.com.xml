@@ -91,7 +91,7 @@ http://www.springframework.org/schema/beans/spring-beans.xsd
             <custom-filter ref="singleLogoutFilter" before="LOGOUT_FILTER" />
             <custom-filter ref="casAuthenticationFilter" position="CAS_FILTER" />
         
-            <logout logout-url="/logout" logout-success-url="https://xmyworkspace.com/cas/logout?service=https://xmyworkspace.com/l4f" />
+            <logout logout-url="/logout" logout-success-url="https://xmyworkspace.com/cas/logout?service=https://xmyworkspace.com/learn" />
         </http>
 
     <!--
@@ -158,13 +158,11 @@ http://www.springframework.org/schema/beans/spring-beans.xsd
         actual redirect that will be triggered after the CAS login sequence.
     -->
     <beans:bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
-        <beans:property name="service" value="https://xmyworkspace.com/l4f/j_spring_cas_security_check"></beans:property>
+        <beans:property name="service" value="https://xmyworkspace.com/learn/j_spring_cas_security_check"></beans:property>
         <beans:property name="sendRenew" value="false"></beans:property>
     </beans:bean>
 
     <!-- Handles a Single Logout Request from the CAS Server must be in custom-filter of security.xml -->
     <beans:bean id="singleLogoutFilter" class="org.jasig.cas.client.session.SingleSignOutFilter"/>
-
-    
 
 </beans:beans>
