@@ -521,7 +521,7 @@ public class AdminController extends BaseController {
         mav.addObject("course", course);
         mav.addObject("categories", categoryService.getAllCategories());
         mav.addObject("lessonTypes", parameterService.getListParamsByParamValue("lesson_type"));
-        mav.addObject("difficultyLevel", parameterService.getListParamsByParamValue("difficulty_level"));
+        mav.addObject("difficultyLevels", parameterService.getListParamsByParamValue("difficulty_level"));
         return mav;
     }
 
