@@ -1,0 +1,16 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="CourseContent">
+	<div class="container mt-5">
+		<h1 class="mb-4 fw-bolder">Add New Course</h1>
+
+		<!-- Error Message Display -->
+		<div id="error-message-course" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
+			<strong>Error!</strong> <span id="error-text-course"></span>
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="closeError(event)">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+
+        <th:block th:include="fragments/course/ne_course.html"></th:block>
+	</div>
+</div>

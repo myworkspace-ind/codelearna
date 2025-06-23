@@ -98,6 +98,13 @@ public class PaymentServiceImpl implements PaymentService {
         Wallet wallet = walletRepository.findByUserEid(userEid);
         Course course = courseRepository.findById(courseId).orElse(null);
 
+        // Demo only
+        if (wallet == null) {
+            wallet = new Wallet();
+            wallet.setUserEid(userEid);
+            wallet.setBalance(10000000D);
+            walletRepository.save(wallet);
+        }
         // Kiểm tra xem wallet và course có tồn tại
         if (wallet == null || course == null) {
             return false; // Nếu không có wallet hoặc course, trả về false
