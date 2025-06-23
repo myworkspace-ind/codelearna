@@ -392,15 +392,35 @@ public class AdminController extends BaseController {
         return mav;
     }
 
-	@GetMapping("/addCourse")
-	public ModelAndView showAddCoursePage() {
-		ModelAndView mav = new ModelAndView("fragments/adminAddCourse :: addCourseContent");
+	/**
+	 * Main form for screen "Add or update course".
+	 * @param id course id.
+	 * if course id is null: create newly.
+	 * 
+	 * @return
+	 */
+	@GetMapping(value = {"/add_update_course_mf", "/add_update_course_mf/{id}"})
+	public ModelAndView showAddCoursePage(@PathVariable(name = "id", required = false) Long id) {
+		ModelAndView mav = new ModelAndView("fragments/course/add_update_course :: CourseContent");
 		List<Parameter> difficultyLevels = parameterService.getListParamsByParamValueAndStatus("difficulty_level", "ACTIVE");
 
 		log.info("DifficultyLevels: {}", difficultyLevels);
 		List<Parameter> lessonTypes = parameterService.getListParamsByParamValueAndStatus("lesson_type", "ACTIVE");
 		mav.addObject("difficultyLevels", difficultyLevels);
 		mav.addObject("lessonTypes", lessonTypes);
+
+//        mav.addObject("categories", categoryService.getAllCategories());
+//        mav.addObject("lessonTypes", parameterService.getListParamsByParamValue("lesson_type"));
+//        mav.addObject("difficultyLevel", parameterService.getListParamsByParamValue("difficulty_level"));
+        
+		// Default value
+		Course course = (id != null) ?  courseService.getCourseById(id) : new Course();
+		
+		Parameter dl = new Parameter();
+		dl.setParamKey("difficulty_level");
+		dl.setParamValue("BEGINNER");
+        course.setDifficultyLevel(dl);
+		mav.addObject("course", course);
 
 		return mav;
 	}
@@ -421,18 +441,19 @@ public class AdminController extends BaseController {
 			response.put("message", "Course name is required.");
 			return ResponseEntity.badRequest().body(response);
 		}
-		if (course.getOriginalPrice() == null) {
-			response.put("status", "error");
-			response.put("message", "Original price is required.");
-			return ResponseEntity.badRequest().body(response);
-		}
 
-		if (course.getDiscountedPrice() == null) {
-			response.put("status", "error");
-			response.put("message", "Discount price is required.");
-			return ResponseEntity.badRequest().body(response);
+        if (course.getOriginalPrice() == null) {
+            response.put("status", "error");
+            response.put("message", "Original price is required.");
+            return ResponseEntity.badRequest().body(response);
+        }
 
-		}
+        if (course.getDiscountedPrice() == null) {
+            response.put("status", "error");
+            response.put("message", "Discount price is required.");
+            return ResponseEntity.badRequest().body(response);
+
+        }
 
 		if (course.getStatus() == null || course.getStatus().isEmpty()) {
 			course.setStatus("INACTIVE");
@@ -487,6 +508,22 @@ public class AdminController extends BaseController {
 //			return ResponseEntity.badRequest().body(response);
 //		}
 	}
+
+    @GetMapping("/courses/edit/{id}")
+    @Deprecated 
+    public ModelAndView showEditCourseForm(@PathVariable("id") Long id) {
+        Course course = courseService.getCourseById(id);
+        if (course == null) {
+            return new ModelAndView("redirect:/admin/listCourse");
+        }
+
+        ModelAndView mav = new ModelAndView("fragments/adminEditCourse :: editCourseModal");
+        mav.addObject("course", course);
+        mav.addObject("categories", categoryService.getAllCategories());
+        mav.addObject("lessonTypes", parameterService.getListParamsByParamValue("lesson_type"));
+        mav.addObject("difficultyLevel", parameterService.getListParamsByParamValue("difficulty_level"));
+        return mav;
+    }
 
 	@GetMapping("/addCourseHandsontable")
 	@ResponseBody
@@ -717,21 +754,6 @@ public class AdminController extends BaseController {
 		}
 	}
 
-	@GetMapping("/courses/edit/{id}")
-	public ModelAndView showEditCourseForm(@PathVariable("id") Long id) {
-		Course course = courseService.getCourseById(id);
-		if (course == null) {
-			return new ModelAndView("redirect:/admin/listCourse");
-		}
-
-		ModelAndView mav = new ModelAndView("fragments/adminEditCourse :: editCourseModal");
-		mav.addObject("course", course);
-		mav.addObject("categories", categoryService.getAllCategories());
-		mav.addObject("lessonTypes", parameterService.getListParamsByParamValue("lesson_type"));
-		mav.addObject("difficultyLevel", parameterService.getListParamsByParamValue("difficulty_level"));
-		return mav;
-	}
-
 	@GetMapping("/campaigns/edit/{id}")
 	public ModelAndView showEditCampaignForm(@PathVariable("id") Long id) {
 	    Campaign campaign = campaignService.getCampaignById(id);
@@ -793,8 +815,7 @@ public class AdminController extends BaseController {
 
 	@PostMapping("/courses/edit/{id}")
 	@ResponseBody
-	public ResponseEntity<Map<String, String>> editCourse(@PathVariable("id") Long id,
-			@ModelAttribute("course") Course course) {
+	public ResponseEntity<Map<String, String>> editCourse(@PathVariable("id") Long id, @ModelAttribute("course") Course course) {
 		Map<String, String> response = new HashMap<>();
 
 		try {

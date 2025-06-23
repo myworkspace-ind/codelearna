@@ -82,11 +82,12 @@ http://www.springframework.org/schema/beans/spring-beans.xsd
 <!--         <custom-filter position="CAS_FILTER" ref="casAuthenticationFilter"></custom-filter> -->
 <!--     </http> -->
         <http entry-point-ref="casAuthenticationEntryPoint" use-expressions="true">
+            <csrf />
             <intercept-url pattern="/" access="permitAll" />
             <intercept-url pattern="/resources/**" access="permitAll" />
             <intercept-url pattern="/search/**" access="permitAll" />
-            <intercept-url pattern="/admin/**" access="hasRole('ADMIN')" />
-            <intercept-url pattern="/**" access="isAuthenticated()" />       
+            <intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+            <intercept-url pattern="/**" access="isAuthenticated()" />
             <intercept-url pattern="/logout" access="permitAll"/>
             <custom-filter ref="singleLogoutFilter" before="LOGOUT_FILTER" />
             <custom-filter ref="casAuthenticationFilter" position="CAS_FILTER" />

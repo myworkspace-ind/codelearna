@@ -42,10 +42,10 @@ function loadEditCourseForm(courseId) {
 			const editCourseModal = new bootstrap.Modal(document.getElementById('editCourseModal'));
 			editCourseModal.show();
 
-			document.getElementById('editCourseForm').addEventListener('submit', function(event) {
-				event.preventDefault();
-				submitEditCourseForm(event, courseId);
-			});
+//			document.getElementById('editCourseForm').addEventListener('submit', function(event) {
+//				event.preventDefault();
+//				submitEditCourseForm(event, courseId);
+//			});
 		})
 		.catch(error => {
 			console.error('Error loading edit course form:', error);
@@ -53,6 +53,7 @@ function loadEditCourseForm(courseId) {
 		});
 }
 
+// To be deleted: Re-used the common form to new and edit course.
 function submitEditCourseForm(event, courseId) {
 	event.preventDefault();
 	const form = event.target;
@@ -207,6 +208,10 @@ function showCourseStatusChangeModal(courseId, currentStatus) {
 
     modal.show();
 }
+
+/**
+ * Display screen "Add course" in single page mode.
+ */
 function fetchAddCoursePage(event) {
 	if (event) {
 		event.preventDefault();
@@ -216,8 +221,9 @@ function fetchAddCoursePage(event) {
 		console.error("Phần tử 'dynamic-content' không tồn tại trên trang.");
 		return;
 	}
-
-	fetch(`${_ctx}admin/addCourse`)
+	
+	// Fetch main form of screen "Add or update course"
+	fetch(`${_ctx}admin/add_update_course_mf`)
 		.then(response => response.text())
 		.then(html => {
 			dynamicContent.innerHTML = html;
@@ -305,6 +311,9 @@ function submitNewParamValue() {
     }
 }
 
+/**
+ * Save course in screens New or Update course.
+ */
 function submitCourseForm(event) {
 	event.preventDefault();
 
@@ -328,8 +337,22 @@ function submitCourseForm(event) {
 		})
 		.then(data => {
 			if (data.status === "success") {
-				showSuccessToast('Course added successfully!');
-				loadCoursesSection(event);
+				const idInput = form.querySelector('input[name="id"]');
+				const idValue = idInput ? idInput.value : null;
+				const isNew = !idValue;  // true if idValue is null, undefined, or an empty string
+				
+				if (isNew) {
+					showSuccessToast('Course added successfully!');
+					loadCoursesSection(event);
+				} else {
+					// Update
+					showSuccessToast(data.message || 'Course updated successfully!');
+					const modal = bootstrap.Modal.getInstance(document.getElementById('editCourseModal'));
+					if (modal) {
+						modal.hide();
+					}
+					loadCoursesSection();
+				}
 			} else {
 				throw new Error(data.message);
 			}

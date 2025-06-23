@@ -14,3 +14,7 @@ DROP DATABASE learna;
 CREATE database learna default character set utf8;
 CREATE user 'learna_user'@'localhost' identified by 'LearnA!123';
 GRANT ALL PRIVILEGES ON learna.* TO 'learna_user'@'localhost';
+
+CREATE database learn default character set utf8;
+CREATE user 'learn_user'@'localhost' identified by 'Learn!123';
+GRANT ALL PRIVILEGES ON learn.* TO 'learn_user'@'localhost';

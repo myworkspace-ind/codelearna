@@ -32,6 +32,7 @@ function updateFormAction() {
     const selectedPaymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
 
     if (selectedPaymentMethod && selectedPaymentMethod.value === 'ewallet') {
+		// [TODO]
         form.action = `${_ctx}payment/pay`;
     } else {
         form.action = `${_ctx}orders`;
