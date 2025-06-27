@@ -46,10 +46,10 @@
 <!-- 					</select> -->
 					
 						<select class="form-select" id="difficultyLevel" th:field="*{difficultyLevel.id}" required>
-									<option th:each="difficulty : ${difficultyLevels}"
-										th:value="${difficulty.id}" th:text="${difficulty.paramValue}"
-										th:selected="${course.difficultyLevel.id == difficulty.id}">
-									</option>
+							<option th:each="difficulty : ${difficultyLevels}"
+								th:value="${difficulty.id}" th:text="${difficulty.paramValue}"
+								th:selected="${course.difficultyLevel.id == difficulty.id}">
+							</option>
 						</select>
 				</div>
 				<div class="col-md-6 mb-3">
