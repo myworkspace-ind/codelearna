@@ -18,3 +18,6 @@ GRANT ALL PRIVILEGES ON learna.* TO 'learna_user'@'localhost';
 CREATE database learn default character set utf8;
 CREATE user 'learn_user'@'localhost' identified by 'Learn!123';
 GRANT ALL PRIVILEGES ON learn.* TO 'learn_user'@'localhost';
+
+CREATE user 'learn_user'@'%' identified by 'Learn!123';
+GRANT ALL PRIVILEGES ON learn.* TO 'learn_user'@'%';

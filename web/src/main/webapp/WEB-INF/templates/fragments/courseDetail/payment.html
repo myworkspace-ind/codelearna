@@ -1,77 +1,79 @@
 <html xmlns:th="http://www.thymeleaf.org">
-						<!-- Payment Modal -->
-						<div class="modal fade" id="paymentModal" tabindex="-1"
-							aria-labelledby="paymentModalLabel" aria-hidden="true">
-							<div class="modal-dialog modal-lg">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h5 class="modal-title" id="paymentModalLabel">Chọn
-											phương thức thanh toán</h5>
-										<button type="button" class="btn-close"
-											data-bs-dismiss="modal" aria-label="Close"></button>
-									</div>
-									<div class="modal-body">
-										<form id="paymentForm" th:action="@{/orders}" method="POST"
-											onsubmit="return updateFormAction()">
-											<input type="hidden" name="courseId" th:value="${course.id}" />
-											<div class="payment-method" onclick="selectPayment('vnpay')">
-												<div class="d-flex align-items-center">
-													<div class="form-check">
-														<input class="form-check-input" type="radio"
-															name="paymentMethod" value="vnpay" id="vnpay" required>
-													</div>
-													<img
-														src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp1v7T287-ikP1m7dEUbs2n1SbbLEqkMd1ZA&s"
-														alt="VNPay" class="mx-3">
-													<div>
-														<label class="form-check-label fw-bold" for="vnpay">VNPay</label>
-														<p class="mb-0 text-muted">Thanh toán qua VNPay QR</p>
-													</div>
-												</div>
-											</div>
-											<div class="payment-method"
-												onclick="selectPayment('transfer')">
-												<div class="d-flex align-items-center">
-													<div class="form-check">
-														<input class="form-check-input" type="radio"
-															name="paymentMethod" value="transfer" id="transfer"
-															required>
-													</div>
-													<img
-														src="https://as2.ftcdn.net/v2/jpg/05/75/04/69/1000_F_575046954_qW0J1XojpoKKVXsqRBv9EEHxpWbXYXwZ.jpg"
-														alt="Bank Transfer" class="mx-3">
-													<div>
-														<label class="form-check-label fw-bold" for="bank">Chuyển
-															khoản ngân hàng</label>
-														<p class="mb-0 text-muted">Chuyển khoản trực tiếp đến
-															tài khoản ngân hàng</p>
-													</div>
-												</div>
-											</div>
-											<div class="payment-method"
-												onclick="selectPayment('ewallet')">
-												<div class="d-flex align-items-center">
-													<div class="form-check">
-														<input class="form-check-input" type="radio"
-															name="paymentMethod" value="ewallet" id="ewallet"
-															required>
-													</div>
-													<img
-														src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRArEDOq61XOZCihVYcectnLqJ4LiFswQlpHg&s"
-														alt="eWallet" class="mx-3">
-													<div>
-														<label class="form-check-label fw-bold" for="ewallet">Ví
-															điện tử</label>
-														<p class="mb-0 text-muted">Thanh toán qua ví điện tử</p>
-													</div>
-												</div>
-											</div>
-											<div class="mt-4">
-												<button type="submit" class="btn btn-primary w-100 py-2">Xác
-													nhận thanh toán</button>
-											</div>
-										</form>
-									</div>
-								</div>
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="paymentModalLabel">Chọn phương thức thanh toán</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="paymentForm" th:action="@{/orders}" method="POST" onsubmit="return updateFormAction()">
+					<input type="hidden" name="courseId" th:value="${course.id}" />
+<!-- 					<div class="payment-method" onclick="selectPayment('vnpay')"> -->
+<!-- 						<div class="d-flex align-items-center"> -->
+<!-- 							<div class="form-check"> -->
+<!-- 								<input class="form-check-input" type="radio" name="paymentMethod" value="vnpay" id="vnpay" required> -->
+<!-- 							</div> -->
+<!-- 							<img -->
+<!-- 								src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp1v7T287-ikP1m7dEUbs2n1SbbLEqkMd1ZA&s" -->
+<!-- 								alt="VNPay" class="mx-3"> -->
+<!-- 							<div> -->
+<!-- 								<label class="form-check-label fw-bold" for="vnpay">VNPay</label> -->
+<!-- 								<p class="mb-0 text-muted">Thanh toán qua VNPay QR</p> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+					<div class="payment-method selected" onclick="selectPayment('transfer')">
+						<div class="d-flex align-items-center">
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="paymentMethod" value="transfer" id="transfer" checked="checked" required>
+							</div>
+							<img
+								src="https://as2.ftcdn.net/v2/jpg/05/75/04/69/1000_F_575046954_qW0J1XojpoKKVXsqRBv9EEHxpWbXYXwZ.jpg" alt="Bank Transfer" class="mx-3">
+							<div>
+								<label class="form-check-label fw-bold" for="bank">Chuyển khoản tự động</label>
+								<p class="mb-0 text-muted">Chuyển khoản và xử lý đơn hàng tự động</p>
 							</div>
 						</div>
+					</div>
+<!-- 					<div class="payment-method" onclick="selectPayment('ewallet')"> -->
+<!-- 						<div class="d-flex align-items-center"> -->
+<!-- 							<div class="form-check"> -->
+<!-- 								<input class="form-check-input" type="radio" -->
+<!-- 									name="paymentMethod" value="ewallet" id="ewallet" -->
+<!-- 									required> -->
+<!-- 							</div> -->
+<!-- 							<img -->
+<!-- 								src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRArEDOq61XOZCihVYcectnLqJ4LiFswQlpHg&s" -->
+<!-- 								alt="eWallet" class="mx-3"> -->
+<!-- 							<div> -->
+<!-- 								<label class="form-check-label fw-bold" for="ewallet">Ví điện tử</label> -->
+<!-- 								<p class="mb-0 text-muted">Thanh toán qua ví điện tử</p> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 					<div class="payment-method" onclick="selectPayment('manual-transfer')"> -->
+<!-- 						<div class="d-flex align-items-center"> -->
+<!-- 							<div class="form-check"> -->
+<!-- 								<input class="form-check-input" type="radio" -->
+<!-- 									name="paymentMethod" value="ewallet" id="ewallet" -->
+<!-- 									required> -->
+<!-- 							</div> -->
+<!-- 							<img -->
+<!-- 								src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRArEDOq61XOZCihVYcectnLqJ4LiFswQlpHg&s" -->
+<!-- 								alt="eWallet" class="mx-3"> -->
+<!-- 							<div> -->
+<!-- 								<label class="form-check-label fw-bold" for="ewallet">Chuyển khoản bình thường</label> -->
+<!-- 								<p class="mb-0 text-muted">Chuyển khoản và xử lý đơn hàng trong 24h. Giảm giá 10%.</p> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+					<div class="mt-4">
+						<button type="submit" class="btn btn-primary w-100 py-2">Tiếp tục</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

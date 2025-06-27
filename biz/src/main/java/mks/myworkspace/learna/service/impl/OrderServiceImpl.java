@@ -23,7 +23,7 @@ import mks.myworkspace.learna.service.UserLibraryCourseService;
 
 @Service
 @Slf4j
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private OrderRepository orderRepository;
 
@@ -44,6 +44,9 @@ public class OrderServiceImpl implements OrderService{
     
     @Value("${payment.sepay.bankCode}")
     private String bankCode;
+
+    @Value("${payment.sepay.orderPattern.prefix:DH}")
+    private String orderPatternPrefix;
 
     public String generateQrCodeUrl(String orderCode, BigDecimal amount) {
         String template = "qronly";
@@ -113,7 +116,7 @@ public class OrderServiceImpl implements OrderService{
         String currentDate = dateFormat.format(new Date());
         // Random random = new Random();
         // int randomNumber = random.nextInt(90000000) + 10000000;
-        return "DH" + currentDate; // + randomNumber;
+        return orderPatternPrefix + currentDate;
     }
 
     public Optional<Order> getOrder(String orderCode) {

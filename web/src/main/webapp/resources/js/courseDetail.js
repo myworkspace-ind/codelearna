@@ -37,6 +37,7 @@ function updateFormAction() {
     } else {
         form.action = `${_ctx}orders`;
     }
+
     return true;
 }
 
